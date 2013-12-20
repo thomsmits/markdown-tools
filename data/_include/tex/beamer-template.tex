@@ -1,0 +1,23 @@
+\setbeamertemplate{frametitle}{%
+   \begin{beamercolorbox}[wd=\paperwidth,leftskip=6mm,%
+       rightskip=0pt,vmode]{frametitle}%
+    \usebeamerfont*{frametitle}%
+    \vskip4mm\insertframetitle\hfill\parbox{1.3cm}{\insertlogo}\vskip4mm%
+  \end{beamercolorbox}\vskip-5mm}
+\makeatother
+\setbeamertemplate{sidebar right}{% hier kein logo
+  \vfill%
+  \vskip2pt%
+  \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
+  \vskip2pt%
+}
+
+\setbeamertemplate{footline}
+{%
+  \vskip-1mm
+  \begin{beamercolorbox}{section in foot}
+  \hskip6mm{\Tiny \copyrightline \hfill \insertframenumber \hspace{6mm}}
+  \end{beamercolorbox}%
+  \vskip3.5mm
+}
+
