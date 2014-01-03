@@ -42,8 +42,11 @@ module Rendering
     # Initialize the renderer
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
-    def initialize(io, language)
-      super(io, language)
+    # @param [String] result_dir location for results
+    # @param [String] image_dir location for generated images (relative to result_dir)
+    # @param [String] temp_dir location for temporary files
+    def initialize(io, language, result_dir, image_dir, temp_dir)
+      super(io, language, result_dir, image_dir, temp_dir)
       @ul_level = 0
       @toc = nil            # table of contents
       @last_toc_name = ''   # last name of toc entry to skip double entries
@@ -384,6 +387,16 @@ module Rendering
       result = ''
       s.each { |s| result << "<script>#{s}</script>" << nl }
       result
+    end
+
+    ##
+    # Render an UML inline diagram using an external tool
+    # @param [String] picture_name name of the picture
+    # @param [String] contents the embedded UML
+    # @param [String] width width of the diagram
+    def uml(picture_name, contents, width)
+      img_path = super(picture_name, contents, width, 'svg')
+      @io << "<img src='#{img_path}' width='#{width}'>" << nl
     end
   end
 end

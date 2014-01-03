@@ -14,12 +14,20 @@ all: $(OUTPUT_DIR) $(REQ_FILES) \
 	example \
 	$(OUTPUT_DIR)/index.html
 
+pdf: $(OUTPUT_DIR) $(REQ_FILES) \
+	example-pdf
+
 clean:
 	rm -rf $(OUTPUT_DIR)/css
 	rm -rf $(OUTPUT_DIR)/img
 	rm -rf $(OUTPUT_DIR)/js
 	rm -rf $(OUTPUT_DIR)/lib
 	rm -rf $(OUTPUT_DIR)
+
+.PHONY: example-pdf
+example-pdf: 
+	@cd 01_example && $(MAKE) pdf-slide
+	@cd 01_example && $(MAKE) pdf-plain
 
 .PHONY: example
 example: 

@@ -147,6 +147,18 @@ module Parsing
     ## Title of a chapter
     alias chapter_title? chapter_title
 
+    ## Beginning of UML block
+    def uml_start?; /^@startuml.*$/ =~ @line.strip; end
+    def uml_start; /^@startuml\[(.*)\]$/ =~ @line; $1; end
+
+    ## Beginning of UML block
+    def uml_end?; /^@enduml$/ =~ @line.strip; end
+
+    ## Forwarding of String's sub method
+    def sub(pattern, replacement)
+      @line.sub(pattern, replacement)
+    end
+
     ## String representation
     def to_s; @line; end
   end

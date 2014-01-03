@@ -9,6 +9,12 @@ module Domain
   class Comment < Container
 
     ##
+    # Create a new instance
+    def initialize
+      super()
+    end
+
+    ##
     # Render contents
     # @param [Renderer] renderer Rendering class used for generation
     def render(renderer)

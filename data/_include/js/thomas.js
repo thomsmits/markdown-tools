@@ -170,7 +170,7 @@
   }
 
   function synchronizeCSS(element, template) {
-      var parents = $(element).parents("section");
+      var parents = $(element).parent("section");
       var input = parents.find("pre code");
       var output = parents.find("iframe");
       var content = deprettyfy(input.html());
@@ -178,7 +178,7 @@
   }
 
   function executePre(element) {
-      var pre = $(element).parents("section").find("[name='pre']").html();
+      var pre = $(element).parent("section").find("[name='pre']").html();
       executeNew(element, pre);
   }
 

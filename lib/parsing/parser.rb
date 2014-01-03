@@ -54,6 +54,7 @@ module Parsing
       STATE_TABLE       = 11
       STATE_QUOTE       = 12
       STATE_EQUATION    = 13
+      STATE_UML         = 14
 
       public
 
@@ -157,6 +158,12 @@ module Parsing
       ## switch to inside a quote
       def quote!;       @state =  STATE_QUOTE; end
 
+      ## inside a UML block?
+      def uml?;         @state == STATE_UML; end
+
+      ## switch to inside a UML block
+      def uml!;         @state =  STATE_UML; end
+
       ##
       # Return the state of the parser as a string
       # @return [String] state of the parser as string
@@ -233,6 +240,17 @@ module Parsing
         elsif ps.equation?
           append(ps.slide, line, ps.comment_mode)
 
+        elsif line.uml_start? && !ps.uml?
+          # @startuml
+          handle_uml_start(ps, line)
+
+        elsif line.uml_end? && ps.uml?
+          # @enduml
+          ps.normal!
+
+        elsif ps.uml?
+          append(ps.slide, line, ps.comment_mode)
+
         elsif line.ol1? && !ps.code_or_code_fenced?
           #   1. item
           handle_ol1(ps, line)
@@ -266,7 +284,7 @@ module Parsing
 
         elsif line.quote?
           # > Quote
-          handle_quote(ps)
+          handle_quote(ps, line)
 
         elsif line.table_row?
           # | Table | Table |
@@ -358,8 +376,16 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_code_fenced_start(ps, line)
-      ps.language = line.fenced_code_start
-      add_to_slide(ps.slide, Domain::Source.new(ps.language), ps.comment_mode)
+      language_hint = line.fenced_code_start
+      order = 0
+
+      if /(.*?)\[(.*)\]/ =~ language_hint
+        language_hint = $1
+        order = $2.to_i
+      end
+
+      ps.language = language_hint
+      add_to_slide(ps.slide, Domain::Source.new(ps.language, order), ps.comment_mode)
       ps.code_fenced!
     end
 
@@ -374,7 +400,7 @@ module Parsing
         ps.current_list = ps.current_list.parent
       elsif !ps.ol1?
         ps.current_list = Domain::OrderedList.new(start_number)
-        add_to_slide(slide, ps.current_list, ps.comment_mode)
+        add_to_slide(ps.slide, ps.current_list, ps.comment_mode)
       end
 
       ps.current_list.append(line.ol1)
@@ -430,7 +456,7 @@ module Parsing
     ##
     # Quotes "> Quote"
     # @param [ParserState] ps State of the parser
-    def handle_quote(ps)
+    def handle_quote(ps, line)
       if !ps.quote?
         quote = Domain::Quote.new
         quote.append(line.sub(/> /, ''))
@@ -474,6 +500,16 @@ module Parsing
     def handle_equation_start(ps)
       add_to_slide(ps.slide, Domain::Equation.new(), ps.comment_mode)
       ps.equation!
+    end
+
+    ##
+    # Beginning of an uml section
+    # @param [ParserState] ps State of the parser
+    def handle_uml_start(ps, line)
+      picture_name = "#{ps.slide.title}_uml"
+      width = line.uml_start
+      add_to_slide(ps.slide, Domain::UML.new(picture_name, width), ps.comment_mode)
+      ps.uml!
     end
 
     ##

@@ -31,8 +31,21 @@ module Rendering
     # Initialize the renderer
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
-    def initialize(io, language)
+    # @param [String] result_dir location for results
+    # @param [String] image_dir location for generated images (realtive to result_dir)
+    # @param [String] temp_dir location for temporary files
+    def initialize(io, language, result_dir, image_dir, temp_dir)
       @io, @language = io, language
+      @result_dir = result_dir
+      @image_dir = image_dir
+      @temp_dir = temp_dir
+    end
+
+    ##
+    # Indicates whether the renderer handles animations or not. false indicates
+    # that slides should not be repeated.
+    def handles_animation?
+      false
     end
 
     ##
@@ -316,5 +329,37 @@ module Rendering
     ##
     # End of slide
     def slide_end; end
+
+    ##
+    # Render an UML inline diagram using an external tool
+    # @param [String] picture_name name of the picture
+    # @param [String] contents the embedded UML
+    # @param [String] type the generated file type (svg, pdf, png)
+    # @param [String] width width of the diagram
+    def uml(picture_name, contents, width, type = 'pdf')
+
+      begin
+        Dir.mkdir(@temp_dir)
+      rescue
+        # ignored
+      end
+
+      base_name = picture_name.sub(/ /, '_').downcase
+
+      img_file    = "#{@image_dir}/#{base_name}.#{type}"
+      uml_file    = "#{@temp_dir}/#{base_name}.uml"
+      dot_file    = "#{@temp_dir}/#{base_name}.dot"
+      result_file = "#{@result_dir}/#{img_file}"
+
+      # write uml to file
+      File.write(uml_file, contents)
+
+      # generate image
+      %x(/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/Tools/umlifier_ruby/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
+
+      puts "/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/Tools/umlifier_ruby/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
+
+      img_file
+    end
   end
 end

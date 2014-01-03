@@ -5,12 +5,13 @@ require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
 require_relative '../lib/rendering/renderer_html_presentation'
 require_relative '../lib/rendering/renderer_html_plain'
-require_relative '../lib/rendering/renderer_latex'
+require_relative '../lib/rendering/renderer_latex_presentation'
+require_relative '../lib/rendering/renderer_latex_plain'
 require 'stringio'
 
 class Main
 
-  def self.main(directory, type, output)
+  def self.main(directory, type, output_file)
 
     dir = Dir.new(directory)
     prop_file = directory + '/metadata.properties'
@@ -23,6 +24,13 @@ class Main
     copyright = props.get('copyright')
     author = props.get('author')
     default_language = props.get('default_language')
+    image_dir = props.get('image_dir')
+    temp_dir = props.get('temp_dir')
+
+    image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
+    temp_dir  = temp_dir.sub(/\/$/, '')   unless image_dir.nil?
+
+    result_dir = File.dirname(output_file)
 
     files = [ ]
 
@@ -40,26 +48,27 @@ class Main
         copyright, author, default_language)
 
     files.each { |file|
-
       puts "Parsing: #{file}"
       p.parse(directory + '/' + file, default_language, pres)
     }
 
-    puts "Result written to: #{output}"
+    puts "Result written to: #{output_file}"
 
     io = StringIO.new
 
     if type == 'slide'
-      r = Rendering::RendererHTMLPresentation.new(io, default_language)
+      r = Rendering::RendererHTMLPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
     elsif type == 'plain'
-      r = Rendering::RendererHTMLPlain.new(io, default_language)
-    elsif type == 'tex'
-      r = Rendering::RendererLatex.new(io, default_language)
+      r = Rendering::RendererHTMLPlain.new(io, default_language, result_dir, image_dir, temp_dir)
+    elsif type == 'tex-slide'
+      r = Rendering::RendererLatexPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
+    elsif type == 'tex-plain'
+      r = Rendering::RendererLatexPlain.new(io, default_language, result_dir, image_dir, temp_dir)
     end
 
     pres.render(r)
 
-    File.open(output, 'w') { |f|
+    File.open(output_file, 'w') { |f|
       f << io.string
     }
   end

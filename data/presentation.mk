@@ -16,9 +16,11 @@ all: $(OUTPUT_DIR) \
 		$(OUTPUT_DIR)/$(CHAPTER)_plain.html \
 #		$(OUTPUT_DIR)/$(CHAPTER)_print.html \
 
-pdf: $(OUTPUT_DIR) \
+pdf-slide: $(OUTPUT_DIR) \
 		$(OUTPUT_DIR)/$(CHAPTER).pdf
 
+pdf-plain: $(OUTPUT_DIR) \
+		$(OUTPUT_DIR)/$(CHAPTER)_plain.pdf
 
 $(OUTPUT_DIR)/$(CHAPTER).html: *.md metadata.properties img/*
 	$(COMPILE) . slide $@
@@ -29,11 +31,18 @@ $(OUTPUT_DIR)/$(CHAPTER)_plain.html: *.md metadata.properties img/*
 	rsync -a img/* $(OUTPUT_DIR)/img/
 
 $(OUTPUT_DIR)/$(CHAPTER).pdf: *.md metadata.properties img/* $(TEMP_DIR)
-	$(COMPILE) . tex $(TEMP_DIR)/$(CHAPTER).tex
+	$(COMPILE) . tex-slide $(TEMP_DIR)/$(CHAPTER).tex
 	cp ../_include/tex/* $(TEMP_DIR)
 	rsync -a img/* $(TEMP_DIR)/img/
 	cd $(TEMP_DIR) ; $(LATEX) $(CHAPTER).tex
 	cp $(TEMP_DIR)/$(CHAPTER).pdf $(OUTPUT_DIR)
+
+$(OUTPUT_DIR)/$(CHAPTER)_plain.pdf: *.md metadata.properties img/* $(TEMP_DIR)
+	$(COMPILE) . tex-plain $(TEMP_DIR)/$(CHAPTER)_plain.tex
+	cp ../_include/tex/* $(TEMP_DIR)
+	rsync -a img/* $(TEMP_DIR)/img/
+	cd $(TEMP_DIR) ; $(LATEX) $(CHAPTER)_plain.tex
+	cp $(TEMP_DIR)/$(CHAPTER)_plain.pdf $(OUTPUT_DIR)
 
 $(TEMP_DIR):
 	mkdir -p $(TEMP_DIR)

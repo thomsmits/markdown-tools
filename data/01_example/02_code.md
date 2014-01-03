@@ -39,3 +39,27 @@ Instead of fenced code blocks, code indented by four spaces is supported. Progra
     looks the same before and after RSA encryption.</dfn></p>
 
 
+## Code with output
+
+When the code generates output, the language `console` can be used.
+
+```bash
+echo "Hello World"
+```
+
+```console
+Hello World
+```
+
+
+## Revealing output on the next slide
+
+In case the output should be revealed on the next slide, it can be marked with a number indicating the display order, e.g. `[1]`. 0 is the default number for all elements.
+
+```bash
+echo "Hello World"
+```
+
+```console[1]
+Hello World
+```

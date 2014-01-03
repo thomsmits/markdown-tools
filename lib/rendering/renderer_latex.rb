@@ -14,9 +14,19 @@ module Rendering
     # Initialize the renderer
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
-    def initialize(io, language)
-      super(io, language)
+    # @param [String] result_dir location for results
+    # @param [String] image_dir location for generated images (relative to result_dir)
+    # @param [String] temp_dir location for temporary files
+    def initialize(io, language, result_dir, image_dir, temp_dir)
+      super(io, language, result_dir, image_dir, temp_dir)
       @ul_level = 1
+    end
+
+    ##
+    # Indicates whether the renderer handles animations or not. false indicates
+    # that slides should not be repeated.
+    def handles_animation?
+      true
     end
 
     ##
@@ -36,8 +46,8 @@ module Rendering
       result.gsub!(/\*\*(.+?)\*\*/,       '\strongenglish{\1}')
       result.gsub!(/\*(.+?)\*/,           '\termenglish{\1}')
       result.gsub!(/~~(.+?)~~/,           '\strikeout{\1}')
-      result.gsub!(/s\[(.+?)\]\((.+?)\)/, '[\1]')
-      result.gsub!(/\[(.+?)\]\((.+?)\)/,  '[\1]')
+      result.gsub!(/s\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
+      result.gsub!(/\[(.+?)\]\((.+?)\)/,  '\href{\2}{\1}')
       result.gsub!(/z\.B\./,              'z.\\\\,B.')
       result.gsub!(/d\.h\./,              'd.\\\\,h.')
       result.gsub!(/u\.a\./,              'u.\\\\,a.')
@@ -47,8 +57,8 @@ module Rendering
       result.gsub!(/#/,                   '\\\\#')
       result.gsub!(/&/,                   '\\\\&')
       result.gsub!(/_/,                   '\\\\_*')
-      result.gsub!(/</,                   '\\textless')
-      result.gsub!(/>/,                   '\\textgreater')
+      result.gsub!(/</,                   '{\\textless}')
+      result.gsub!(/>/,                   '{\\textgreater}')
 
       result
     end
@@ -78,7 +88,7 @@ module Rendering
     # Equation
     # @param [String] contents LaTeX source of equation
     def equation(contents)
-      @io << '\[' << nl << "#{contents}" << nl << '\]' << nl
+      @io << '\begin{displaymath}' << nl << "#{contents}" << '\end{displaymath}' << nl
     end
 
     ##
@@ -170,7 +180,7 @@ module Rendering
       @io << <<-ENDOFTEXT
       \\vspace{2mm}
       \\renewcommand{\\arraystretch}{1.1}
-      \\sffamily
+      {\\sffamily
       \\begin{footnotesize}\\tablefont
       \\begin{tabular}{#{column_line}}
       \\toprule
@@ -225,7 +235,7 @@ module Rendering
       @io <<  <<-ENDOFTEXT
       \\bottomrule
       \\end{tabular}
-      \\end{footnotesize}
+      \\end{footnotesize}}
       ENDOFTEXT
     end
 
@@ -242,25 +252,6 @@ module Rendering
     # @param [String] title title of the heading
     def heading(level, title)
       ## TODO: subheadings
-    end
-
-    ##
-    # Start a chapter
-    # @param [String] title the title of the chapter
-    # @param [String] number the number of the chapter
-    # @param [String] id the uniquie id of the chapter (for references)
-    def chapter_start(title, number, id)
-      @io << <<-ENDOFTEXT
-      \\section{#{title}}\\label{#{id}}
-      \\begin{frame}
-        \\separator{#{title}}
-      \\end{frame}
-      ENDOFTEXT
-    end
-
-    ## End of a chapter
-    def chapter_end
-      @io << nl
     end
 
     ##
@@ -281,64 +272,19 @@ module Rendering
     end
 
     ##
-    # Start of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    # @param [String] term the current term of the lecture/presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, term = '')
-      @io << <<-ENDOFTEXT
-      \\include{preambel}
-      \\include{lst_javascript}
-      \\mode<presentation>{\\input{beamer-template}}
-      \\newcommand{\\copyrightline}[0]{#{title1} | #{copyright}}
-      \\title{#{title1} \\\\ \\small #{title2} \\\\ \\Large \\vspace{8mm} #{section_name}}
-      \\author{\\small #{author}}
-      \\date{\\color{grau} \\small #{term}}
-      \\begin{document}
-      \\begin{frame}
-        \\maketitle
-      \\end{frame}
+    # Render an UML inline diagram using an external tool
+    # @param [String] picture_name name of the picture
+    # @param [String] contents the embedded UML
+    def uml(picture_name, contents, width)
 
-      \\begin{frame}
-        \\separator{#{LOCALIZED_MESSAGES[:toc]}}
-      \\end{frame}
+      if /%/ =~ width
+        width.gsub!(/%/, '')
+        width_num = width.to_i / 100.0
+        width = "#{width_num.to_s}\\textwidth"
+      end
 
-      \\begin{frame}\\frametitle<presentation>{#{LOCALIZED_MESSAGES[:toc]}}
-        \\tableofcontents
-      \\end{frame}
-      ENDOFTEXT
-    end
-
-    ##
-    # End of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << '\end{document}' << nl
-    end
-
-    ##
-    # Start of slide
-    # @param [String] title the title of the slide
-    # @param [String] number the number of the slide
-    # @param [String] id the unique id of the slide (for references)
-    # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
-      @io << "\\begin{frame}[fragile]{#{inline_code(title)}}\\label{#{id}}" << nl
-    end
-
-    ##
-    # End of slide
-    def slide_end
-      @io << '\end{frame}' << nl << nl
+      img_path = super(picture_name, contents, width, 'pdf')
+      image(img_path, '', '', width, width)
     end
   end
 end

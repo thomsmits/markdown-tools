@@ -8,6 +8,12 @@ module Domain
   # Base class for all line elements
   class LineElement < Element
     attr_accessor :type
+
+    ##
+    # Create a new instance
+    def initialize
+      super()
+    end
   end
 
   ##
@@ -18,6 +24,7 @@ module Domain
     ## Create a new button
     # @param [String] line_id id of the source line
     def initialize(line_id)
+      super()
       @line_id = line_id
     end
 
@@ -73,6 +80,7 @@ module Domain
     # @param [Fixnum] level of the heading
     # @param [String] title title of the heading
     def initialize(level, title)
+      super()
       @level, @title = level, title
     end
 
@@ -92,6 +100,7 @@ module Domain
     # Create a new element
     # @param [String] content HTML code
     def initialize(content)
+      super()
       @content = content
     end
 
@@ -119,6 +128,7 @@ module Domain
     # @param [String] width_slide width for slides
     # @param [String] width_plain width for plain text
     def initialize(location, alt, title, width_slide, width_plain)
+      super()
       @location, @alt, @title, @width_slide, @width_plain = location, alt, title, width_slide, width_plain
     end
 

@@ -9,7 +9,7 @@
   * Level 1 again with<br>[Link](http://www.google.com)
 
 ---
-Exmplanation not shown on the slide directly goes here. It can again contain all elements usable on the slide like enumerations, images, tables etc.
+Explanation not shown on the slide directly goes here. It can again contain all elements usable on the slide like enumerations, images, tables etc.
 
   * Item 1
   * Item 2
@@ -37,7 +37,7 @@ HTML Versions
 
 ## Mathematical Typesetting
 
-Latex formula can be directly embedded (requires [MathJax](http://www.mathjax.org/) to be included into the project)
+Latex formula can be directly embedded (requires [MathJax](http://www.mathjax.org/) to be included into the project if HTML slides are generated. LaTeX slides will handle formula automatically.)
 
 \[
 \sum_{i=0}^N{P(X = i)} = 1

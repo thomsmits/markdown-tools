@@ -85,7 +85,7 @@ class Index
 
     io = StringIO.new
 
-    renderer = Rendering::RendererHTML.new(io, '')
+    renderer = Rendering::RendererHTML.new(io, '', '', '', '')
     renderer.index_start(title1, title2, copyright, description)
 
     entries.each { |e|

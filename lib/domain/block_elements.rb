@@ -12,8 +12,9 @@ module Domain
     ##
     # Create a new element with the given content
     # @param [String] content of the element
-    def initialize(content)
-      super()
+    # @param [Fixnum] order the order of displaying the item
+    def initialize(content, order = 0)
+      super(order)
       @content = content
     end
 
@@ -45,14 +46,14 @@ module Domain
 
   ##
   # Unordered list
-  class UnorderedList < Element
+  class UnorderedList < BlockElement
 
     attr_accessor :entries, :parent
 
     ##
     # Crate a new list
     def initialize
-      super()
+      super('')
       @parent = nil
       @entries = [ ]
     end
@@ -237,8 +238,9 @@ module Domain
     ##
     # Create a new source code fragment with the given language
     # @param [String] language the programming language
-    def initialize(language)
-      super('')
+    # @param [Fixnum] order the order of displaying the item
+    def initialize(language, order = 0)
+      super('', order)
       @language = language
     end
 
@@ -268,6 +270,28 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
       renderer.text(@content)
+    end
+  end
+
+  ##
+  # Inline UML, embedded in the slide and compiled to a graphic
+  class UML < BlockElement
+
+    attr_accessor :picture_name, :width
+
+    ##
+    # Create a new element
+    def initialize(picture_name, width)
+      super('')
+      @picture_name = picture_name
+      @width = width
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.uml(@picture_name, @content, @width)
     end
   end
 end

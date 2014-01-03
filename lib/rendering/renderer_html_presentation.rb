@@ -49,9 +49,19 @@ module Rendering
     # Initialize the renderer
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
-    def initialize(io, language)
-      super(io, language)
+    # @param [String] result_dir location for results
+    # @param [String] image_dir location for generated images (relative to result_dir)
+    # @param [String] temp_dir location for temporary files
+    def initialize(io, language, result_dir, image_dir, temp_dir)
+      super(io, language, result_dir, image_dir, temp_dir)
       @dialog_counter = 1   # counter for dialog popups
+    end
+
+    ##
+    # Indicates whether the renderer handles animations or not. false indicates
+    # that slides should not be repeated.
+    def handles_animation?
+      true
     end
 
     ##
