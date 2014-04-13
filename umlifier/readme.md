@@ -1,12 +1,8 @@
-# Markdown Tools
+# Markdown Tools (uml compiler)
 
 ## Purpose
 
-I am a big fan of Markdown and I am currently changing all my workflows to use markdown as the only source and several tools to compile the Markdown input into the desired target formats.
-
-Due to my job, I am performing lots of lectures regarding programming topics. For these, I need presentation slides and text documents containing the contents of the slides plus additional information.
-
-The the readme files in the sub projects for details.
+The purpose of this tool is to compile a simple text language into UML diagrams using Graphviz. See the example in the `data/` directory for details.
 
 
 ## Copyright and License
