@@ -1,0 +1,72 @@
+B --!> A
+C --!> B
+D --!> C
+
+Class { Vogel {abstract}
+    +fliegen() {abstract}
+}
+
+Class { Ente
+    +fliegen()
+    +schwimmen()
+    +eierlegen()
+}
+
+Class { Flugzeug
+    +fliegen()
+}
+
+Class { Wasserflugzeug
+    +fliegen()
+    +schwimmen()
+}
+
+Interface { Flieger
+    +fliegen()
+}
+
+Interface { Schwimmer
+    +schwimmen()
+}
+
+Class { X
+}
+
+Class { Y
+}
+
+X --<<uses>>--.> Ente
+Y [1..3]---[2..5]<> X
+
+
+Wasserflugzeug ---!> Flugzeug
+Ente ---!> Vogel
+Ente ---!> Flieger
+Ente ---> Schwimmer
+Flugzeug ---!> Flieger
+Wasserflugzeug ---!> Schwimmer
+
+Ente ---<> Wasserflugzeug
+Wasserflugzeug ---<#> Flugzeug
+
+Ente --<<Verkehrsmittel>>-- Flugzeug
+
+
+Annotation --<kennzeichnet>--> Unit-Test
+Unit-Test --<gruppiert>--> Test-Suite
+Unit-Test --<testet>--> Klasse
+Klasse --<enthält>--> Methode
+Unit-Test --<testet>--> Methode
+JavaDoc --<dokumentiert>--> Klasse
+JavaDoc --<dokumentiert>--> Methode
+
+Class { Kfz
+  name : String
+}
+
+Instance { Porsche : Kfz
+  name = "911"
+}
+
+Porsche : Kfz --<<instantiate>>--.> Kfz
+
