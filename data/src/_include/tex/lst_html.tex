@@ -1,0 +1,23 @@
+\lstdefinelanguage{html}{
+    sensitive=true,
+    keywords={%
+    % JavaScript
+    typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break,
+    % HTML
+    html, title, meta, style, head, body, script, canvas,
+    % CSS
+    border:, transform:, -moz-transform:, transition-duration:, transition-property:,
+    transition-timing-function:
+    },
+    % http://texblog.org/tag/otherkeywords/
+    otherkeywords={<, >, \/},   
+    ndkeywords={class, export, boolean, throw, implements, import, this},   
+    comment=[l]{//},
+    % morecomment=[s][keywordstyle]{<}{>},  
+    morecomment=[s]{/*}{*/},
+    morecomment=[s]{<!}{>},
+    morestring=[b]',
+    morestring=[b]",    
+    alsoletter={-},
+    alsodigit={:}
+}

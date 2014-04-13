@@ -6,6 +6,10 @@ module Rendering
   # Base class for all renderer used by the markdown compiler
   class Renderer
 
+    LEFT = 1
+    RIGHT = 2
+    CENTER = 3
+
     ##
     # Class representing the parts of a line
     class LinePart
@@ -86,6 +90,10 @@ module Rendering
     end
 
     ##
+    # Vertical space
+    def vertical_space; end
+
+    ##
     # Equation
     # @param [String] contents LaTeX source of equation
     def equation(contents); end
@@ -127,7 +135,13 @@ module Rendering
     ##
     # Quote
     # @param [String] content the content
-    def quote(content); end
+    # @param [String] source the source of the quote
+    def quote(content, source); end
+
+    ##
+    # Important
+    # @param [String] content the box
+    def important(content); end
 
     ##
     # Script
@@ -137,11 +151,13 @@ module Rendering
     ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
-    def code_start(language); end
+    # @param [String] caption caption of the sourcecode
+    def code_start(language, caption); end
 
     ##
     # End of a code fragment
-    def code_end; end
+    # @param [String] caption caption of the sourcecode
+    def code_end(caption); end
 
     ##
     # Output code
@@ -150,17 +166,15 @@ module Rendering
 
     ##
     # Start of a table
-    def table_start(num_columns); end
-
-    ##
-    # Header of table
     # @param [Array] headers the headers
-    def table_header(headers); end
+    # @param [Array] alignment alignments of the cells
+    def table_start(headers, alignment); end
 
     ##
     # Row of the table
     # @param [Array] row row of the table
-    def table_row(row); end
+    # @param [Array] alignment alignments of the cells
+    def table_row(row, alignment); end
 
     ##
     # End of the table
@@ -288,11 +302,13 @@ module Rendering
     ##
     # Render an image
     # @param [String] location path to image
+    # @param [Array] formats available file formats
     # @param [String] alt alt text
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    def image(location, alt, title, width_slide, width_plain); end
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil); end
 
     ##
     # Start of presentation
@@ -302,7 +318,9 @@ module Rendering
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author); end
+    # @param [String] description additional description
+    # @param [String] term of the lecture
+    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = ''); end
 
     ##
     # End of presentation
@@ -344,7 +362,7 @@ module Rendering
         # ignored
       end
 
-      base_name = picture_name.sub(/ /, '_').downcase
+      base_name = picture_name.gsub(/ /, '_').downcase
 
       img_file    = "#{@image_dir}/#{base_name}.#{type}"
       uml_file    = "#{@temp_dir}/#{base_name}.uml"

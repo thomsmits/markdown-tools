@@ -42,14 +42,23 @@ module Parsing
       end
     end
 
+    ## Vertical space
+    def vspace?; /^<br>$/ =~ @line.strip; end
+
     ## Source code prefixed by four blanks
-    def source?; /^ {4}[^\*](.*)/ =~ @line; end
+    def source?; /^ {4}[^\*\-](.*)/ =~ @line; end
 
     ## Row of a table
     def table_row?; /^\|(.*)\| *$/ =~ @line; end
 
     ## A quote
     def quote?; /^> (.*)$/ =~ @line; end
+
+    # The source of a quote
+    def quote_source?; /^>> (.*)$/ =~ @line; end
+
+    ## A box for important content
+    def important?; /^>! (.*)$/ =~ @line; end
 
     ## An empty line
     def empty?; /^$/ =~ @line.strip; end
@@ -91,19 +100,19 @@ module Parsing
     def table_separator?; /^\|[-]{2,}\|.*/ =~ @line.strip; end
 
     ## unordered list, level 1
-    def ul1; /^ {2}[\*](.*)/ =~ @line; $1; end
+    def ul1; /^ {2}[\*\-](.*)/ =~ @line; $1; end
 
     ## unordered list, level 1
     alias ul1? ul1
 
     ## unordered list, level 2
-    def ul2; /^ {4}[\*](.*)/ =~ @line; $1; end
+    def ul2; /^ {4}[\*\-](.*)/ =~ @line; $1; end
 
     ## unordered list, level 1
     alias ul2? ul2
 
     ## unordered list, level 3
-    def ul3; /^ {6}[\*](.*)/ =~ @line; $1; end
+    def ul3; /^ {6}[\*\-](.*)/ =~ @line; $1; end
 
     ## unordered list, level 1
     alias ul3? ul3
@@ -123,6 +132,9 @@ module Parsing
     ## ordered list, level 2
     alias ol2? ol2
 
+    ## ordered list, level 1 with number
+    def ol2_number; /^ {4}([0-9]+)\..*/ =~ @line; $1; end
+
     ## ordered list, level 3
     def ol3; /^ {6}[1-9]+\.(.*)/ =~ @line; $1; end
 
@@ -130,7 +142,14 @@ module Parsing
     alias ol3? ol3
 
     ## Beginning of a fenced code block
-    def fenced_code_start; /^```(.*)/ =~ @line.strip; $1; end
+    def fenced_code_start; /^```([a-zA-Z0-9]*)(\[[1-9]\])?(\{.*?\})?/ =~ @line.strip; $1; end
+
+    ## Beginning of a fenced code block with order mark
+    def fenced_code_order; /^```[a-zA-Z0-9]*\[([1-9])\](\{.*?\})?/ =~ @line.strip; $1; end
+    alias fenced_code_order? fenced_code_order
+
+    ## Caption annotated for a fenced code block
+    def fenced_code_caption; /^```([a-zA-Z0-9]*)(\[[1-9]\])?\{(.*?)\}/ =~ @line.strip; $3; end
 
     ## Beginning of a fenced code block
     alias fenced_code_start? fenced_code_start

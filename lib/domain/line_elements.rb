@@ -120,6 +120,8 @@ module Domain
   # Image
   class Image < Element
 
+    attr_accessor :location, :formats, :license
+
     ##
     # Create a new image
     # @param [String] location path of the image
@@ -130,13 +132,16 @@ module Domain
     def initialize(location, alt, title, width_slide, width_plain)
       super()
       @location, @alt, @title, @width_slide, @width_plain = location, alt, title, width_slide, width_plain
+      @formats = [ ]
+      @license = nil
     end
 
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
-      renderer.image(@location, @alt, @title, @width_slide, @width_plain)
+      renderer.image(@location, @formats, @alt, @title, @width_slide, @width_plain,
+                     @license.nil? ? nil : @license.source )
     end
   end
 
@@ -207,6 +212,24 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
       renderer.live_preview_float(@line_id)
+    end
+  end
+
+  ##
+  # A vertical space
+  class VerticalSpace < Element
+
+    ##
+    # Create a new object
+    def initialize
+      super()
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.vertical_space()
     end
   end
 end

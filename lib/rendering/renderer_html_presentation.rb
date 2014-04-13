@@ -179,11 +179,15 @@ module Rendering
     ##
     # Render an image
     # @param [String] location path to image
+    # @param [Array] formats available file formats
     # @param [String] alt alt text
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    def image(location, alt, title, width_slide, width_plain)
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+
+      chosen_image = choose_image(location, formats)
 
       width_attr = ''
 
@@ -191,7 +195,8 @@ module Rendering
           width_attr = " width='#{width_slide}'"
       end
 
-      @io << "<img class='presentation' src='#{location}' alt='#{alt}' title='#{title}'#{width_attr}>" << nl
+      @io << "<img class='presentation' src='#{chosen_image}' alt='#{alt}' title='#{title}'#{width_attr}>" << nl
+      @io << "<div class='img_info'>#{inline(title)}</div>" << nl
     end
 
 
@@ -203,7 +208,9 @@ module Rendering
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author)
+    # @param [String] description additional description
+    # @param [String] term of the lecture
+    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
       @io << <<-ENDOFTEXT
       <!DOCTYPE html>
       <html lang='de'>
@@ -231,7 +238,7 @@ module Rendering
         <h2>#{title2}</h2>
         <div class='kapitel_nr' style='margin-top: 50%'>#{section_number}</div>
         <div class='kapitel'>#{section_name}</div>
-        <img class='plain' style='position: absolute; bottom: -10px; right: 0;' src='img/telefon.png' alt='Telefon'>
+        <img class='plain' style='position: absolute; bottom: -10px; right: 0;' src='img/logo_title.png' alt='Telefon'>
       </section>
       ENDOFTEXT
     end

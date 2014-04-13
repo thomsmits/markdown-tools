@@ -141,11 +141,15 @@ module Rendering
     ##
     # Render an image
     # @param [String] location path to image
+    # @param [Array] formats available file formats
     # @param [String] alt alt text
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    def image(location, alt, title, width_slide, width_plain)
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+
+      chosen_image = choose_image(location, formats)
 
       width_attr = ''
 
@@ -154,8 +158,8 @@ module Rendering
       end
 
       @io << "<figure class='picture'>" << nl
-      @io << "<img alt='#{alt}' src='#{location}'#{width_attr}>" << nl
-      @io << "<figcaption>#{title}</figcaption>" << nl
+      @io << "<img alt='#{alt}' src='#{chosen_image}'#{width_attr}>" << nl
+      @io << "<figcaption>#{inline(title)}</figcaption>" << nl
       @io << "</figure>" << nl
     end
 
@@ -204,7 +208,9 @@ module Rendering
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author)
+    # @param [String] description additional description
+    # @param [String] term of the lecture
+    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
       @io << <<-ENDOFTEXT
       <!DOCTYPE html>
       <html lang='de'>

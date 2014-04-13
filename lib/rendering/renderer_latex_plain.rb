@@ -20,6 +20,7 @@ module Rendering
     def initialize(io, language, result_dir, image_dir, temp_dir)
       super(io, language, result_dir, image_dir, temp_dir)
       @ul_level = 1
+      @last_title = nil
     end
 
     ##
@@ -52,15 +53,31 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] term the current term of the lecture/presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, term = '')
+    # @param [String] description additional description
+    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
       @io << <<-ENDOFTEXT
       \\include{preambel_plain}
       \\include{lst_javascript}
       \\include{lst_console}
+      \\include{lst_html}
       \\include{lst_css}
+      \\makeindex
+      \\titlehead{\\vspace{-2cm}\\bfseries\\sffamily\\titlelogo\\\\ \\large #{title1}\\\\ \\vspace{2mm}\\normalsize #{title2}}
+      %\\titlehead{\\vspace{3cm}\\sffamily #{title1}\\\\ \\vspace{2mm} \\small #{title2}}
+      \\title{\\vspace{3cm}#{section_name}}
+      \\author{\\small \\sffamily #{author}}
+      \\date{\\vspace{1cm}\\color{grau} \\Large\\sffamily #{term}\\\\ \\scriptsize\\vspace{2mm}\\today}
       \\begin{document}
+      \\pagenumbering{roman}
+      \\dedication{\\vspace{7cm} \\sffamily \\small \\textit{#{description}}}
+      %\\publishers{Herausgeber}
+      \\maketitle
+      \\thispagestyle{empty}
+      \\newpage
       \\changefont{ptm}{m}{n}  % Times New Roman
       \\tableofcontents
+      \\newpage
+      \\pagenumbering{arabic}
       ENDOFTEXT
     end
 
@@ -73,6 +90,9 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     def presentation_end(title1, title2, section_number, section_name, copyright, author)
+      @io << '\clearpage' << nl
+      @io << '\pagenumbering{roman}' << nl
+      @io << '\printindex' << nl
       @io << '\end{document}' << nl
     end
 
@@ -83,8 +103,11 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      @io << "\\subsection{#{inline_code(title)}}\\label{#{id}}" << nl
-      @slide_ended = false
+      unless title == @last_title
+        @io << "\\subsection{#{inline_code(title)} [#{number}]}\\label{#{id}}" << nl
+        @slide_ended = false
+        @last_title = title
+      end
     end
 
     ##
@@ -97,12 +120,48 @@ module Rendering
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
       @io << nl
+      @io << '\begin{comment}' << nl
       @slide_ended = true
     end
 
     ##
     # End of comment section
     def comment_end
+      @io << '\end{comment}' << nl
+    end
+
+    ##
+    # Render an image
+    # @param [String] location path to image
+    # @param [Array] formats available file formats
+    # @param [String] alt alt text
+    # @param [String] title title of image
+    # @param [String] width_slide width for slide
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+
+      # Skip images with width 0
+      unless /^0$/ =~ width_plain
+        image_latex(location, title, width_plain, source)
+      end
+    end
+
+    ##
+    # Simple text
+    # @param [String] content the text
+    def text(content)
+      @io <<  "#{inline_code(content)}" << nl << nl
+      @io << '\vspace{0.1mm}' << nl
     end
   end
+
+  ##
+  # Start of an unordered list
+  def ul_start
+    @io << '\vspace{0.1mm}' << nl  if @ul_level == 1
+    @io << '\vspace{0.1mm}' << nl  if @ul_level == 2
+    @io << "\\begin{ul#{@ul_level}}" << nl
+    @ul_level += 1
+  end
+
 end

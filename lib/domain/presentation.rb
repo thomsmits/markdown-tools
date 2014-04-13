@@ -9,7 +9,7 @@ module Domain
   # Representation of the whole presentation
   class Presentation
 
-    attr_accessor :title1, :title2, :section_number, :section_name, :author, :copyright, :default_language, :chapters, :toc
+    attr_accessor :title1, :title2, :section_number, :section_name, :author, :copyright, :default_language, :chapters, :toc, :description, :term
 
     ##
     # Create a new presentation
@@ -20,9 +20,10 @@ module Domain
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] default_language default programming language
-    def initialize(title1, title2, section_number, section_name, copyright, author, default_language)
+    def initialize(title1, title2, section_number, section_name, copyright, author, default_language, description, term)
       @title1, @title2, @section_number, @section_name = title1, title2, section_number, section_name
       @copyright, @author, @default_language = copyright, author, default_language
+      @description, @term = description, term
 
       @chapters = [ ]
       @toc = TOC.new
@@ -54,7 +55,7 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
       build_toc
-      renderer.presentation_start(@title1, @title2, @section_number, @section_name, @copyright, @author)
+      renderer.presentation_start(@title1, @title2, @section_number, @section_name, @copyright, @author, @description, @term)
       renderer.render_toc(@toc)
       @chapters.each { |chapter| chapter.render(renderer) }
       renderer.presentation_end(@title1, @title2, @section_number, @section_name, @copyright, @author)

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 require_relative '../domain/block_elements'
 
 module Transformer

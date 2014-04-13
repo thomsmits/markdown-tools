@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require_relative 'element'
+require_relative '../constants'
 
 module Domain
 
@@ -120,6 +121,9 @@ module Domain
 
     attr_accessor :parent
 
+    ##
+    # Create a new element with the given content
+    # @param [String] content content of the item
     def initialize(content)
       super(content)
       @parent = nil
@@ -136,18 +140,42 @@ module Domain
   ##
   # Quote
   class Quote < BlockElement
+
+    attr_accessor :source
+
     ##
     # Create a new quote with the given content
     # @param [String] content content of the quote
     def initialize(content = '')
       super(content)
+      @source = nil
     end
 
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
-      renderer.quote(@content)
+      renderer.quote(@content, source)
+    end
+  end
+
+  ##
+  # Important
+  class Important < BlockElement
+
+    ##
+    # Create a box for important content
+    # @param [String] content content of the box
+    def initialize(content = '')
+      super(content)
+      @source = nil
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.important(@content)
     end
   end
 
@@ -173,6 +201,20 @@ module Domain
   # Table
   class Table < BlockElement
 
+    ## Header of the tabke
+    class TableHeader
+
+      attr_accessor :name, :alignment
+
+      ##
+      # Create a new header
+      # @param [String] name name of the header
+      # @param [Fixnum] alignment alignment of the header cell
+      def initialize(name, alignment = Constants::LEFT)
+        @name, @alignment = name, alignment
+      end
+    end
+
     attr_accessor :headers, :rows
 
     ##
@@ -185,9 +227,10 @@ module Domain
 
     ##
     # Add a header to the table
-    # @param [String] header one header of the table
-    def add_header(header)
-      @headers << header
+    # @param [String] header_name name of the header
+    # @param [Fixnum] alignment alignment of the header
+    def add_header(header_name, alignment)
+      @headers << TableHeader.new(header_name, alignment)
     end
 
     ##
@@ -201,9 +244,16 @@ module Domain
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
-      renderer.table_start(@headers.size)
-      renderer.table_header(@headers)
-      @rows.each { |r| renderer.table_row(r) }
+
+      alignment = [ ]
+      titles = [ ]
+      @headers.each { |h|
+        alignment << h.alignment
+        titles    << h.name
+      }
+
+      renderer.table_start(titles, alignment)
+      @rows.each { |r| renderer.table_row(r, alignment) }
       renderer.table_end
     end
   end
@@ -233,24 +283,26 @@ module Domain
   ##
   # Source code
   class Source < BlockElement
-    attr_accessor :language
+    attr_accessor :language, :caption
 
     ##
     # Create a new source code fragment with the given language
     # @param [String] language the programming language
+    # @param [String] caption caption of the source code
     # @param [Fixnum] order the order of displaying the item
-    def initialize(language, order = 0)
+    def initialize(language, caption = nil, order = 0)
       super('', order)
       @language = language
+      @caption = caption
     end
 
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
-      renderer.code_start(@language)
+      renderer.code_start(@language, @caption)
       renderer.code(@content)
-      renderer.code_end
+      renderer.code_end(@caption)
     end
   end
 

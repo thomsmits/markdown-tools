@@ -57,12 +57,14 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] term the current term of the lecture/presentation
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, term = '')
+    # @param [String] description additional description
+    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
       @io << <<-ENDOFTEXT
       \\include{preambel}
       \\include{lst_javascript}
       \\include{lst_console}
       \\include{lst_css}
+      \\include{lst_html}
       \\mode<presentation>{\\input{beamer-template}}
       \\newcommand{\\copyrightline}[0]{#{title1} | #{copyright}}
       \\title{#{title1} \\\\ \\small #{title2} \\\\ \\Large \\vspace{8mm} #{section_name}}
@@ -81,6 +83,14 @@ module Rendering
         \\tableofcontents
       \\end{frame}
       ENDOFTEXT
+    end
+
+    ##
+    # Simple text
+    # @param [String] content the text
+    def text(content)
+      @io <<  "#{inline_code(content)}" << nl << nl
+      @io << '\vspace{1mm}' << nl
     end
 
     ##
@@ -122,6 +132,30 @@ module Rendering
     ##
     # End of comment section
     def comment_end
+    end
+
+    ##
+    # Render an image
+    # @param [String] location path to image
+    # @param [Array] formats available file formats
+    # @param [String] alt alt text
+    # @param [String] title title of image
+    # @param [String] width_slide width for slide
+    # @param [String] width_plain width for plain text
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+      # alt contains source, title the description of the image
+      # we only render the source
+      image_latex(location, alt, width_slide, source)
+    end
+
+    ##
+    # Start of an unordered list
+    def ul_start
+      @io << '\vspace{0.2mm}' << nl  if @ul_level == 1
+      @io << '\vspace{0.2mm}' << nl  if @ul_level == 2
+      @io << "\\begin{ul#{@ul_level}}" << nl
+      @ul_level += 1
     end
   end
 end

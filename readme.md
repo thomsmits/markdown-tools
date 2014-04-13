@@ -25,17 +25,17 @@ To use the tool, you need the following prerequisites
   * rsync
 
  A project has this structure
- 
+
      _include
          ...
      01_chapter
          01_section1.md
          02_section2.md
          ...
-         Makefile       
+         Makefile
          metadata.properties
      02_chapter
-     ... 
+     ...
      compile.sh
      index.sh
      Makefile
@@ -56,12 +56,13 @@ This project contains and uses the following software:
   * jQuery UI by the jQuery Foundation (http://jqueryui.com)
   * reveal.js by Hakim El Hattab (http://lab.hakim.se/reveal-js)
   * showdown.js by John Fraser
-  * highlight.hs by Ivan Sagalaev (http://highlightjs.org/)
+  * highlight.hs by Ivan Sagalaev (http://highlightjs.org)
+  * MathJax (http://www.mathjax.org)
 
 
 ## Copyright and License
 
-Copyright (c) 2013 Thomas Smits
+Copyright (c) 2014 Thomas Smits
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

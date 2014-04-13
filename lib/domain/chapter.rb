@@ -40,7 +40,10 @@ module Domain
     # Render contents
     # @param [Renderer] renderer Rendering class used for generation
     def render(renderer)
-      renderer.chapter_start(title, @slides[0].number - 1, id)
+
+      page_number = @slides.length > 0 ? @slides[0].number - 1 : 0
+
+      renderer.chapter_start(title, page_number, id)
       @slides.each { |slide| slide.render(renderer) }
       renderer.chapter_end
     end

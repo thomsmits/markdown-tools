@@ -2,6 +2,7 @@
 
 require_relative 'renderer'
 require_relative '../messages'
+require_relative '../constants'
 
 module Rendering
 
@@ -38,6 +39,8 @@ module Rendering
         JS_MATHJAX,
     ]
 
+    PREFERRED_IMAGE_FORMATS = %w(svg png jpg)
+
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -63,6 +66,10 @@ module Rendering
 
       result = input
 
+      result.gsub!(/ ([A-Za-z0-9])_([A-Za-z0-9]) /,  ' \1<sub>\2</sub> ')
+      result.gsub!(/ ([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> ')
+      result.gsub!( /([A-Za-z0-9])\^([A-Za-z0-9])$/, ' \1<sup>\2</sup>')
+      result.gsub!( /([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> ')
       result.gsub!(/__(.+?)__/,           '<strong>\1</strong>')
       result.gsub!(/_(.+?)_/,             '<em>\1</em>')
       result.gsub!(/\*\*(.+?)\*\*/,       '<strong class="alternative">\1</strong>')
@@ -73,6 +80,11 @@ module Rendering
       result.gsub!(/z\.B\./,              'z.&nbsp;B.')
       result.gsub!(/d\.h\./,              'd.&nbsp;h.')
       result.gsub!(/u\.a\./,              'u.&nbsp;a.')
+      result.gsub!(/ -> /,                ' &rarr; ')
+      result.gsub!(/ => /,                ' &rArr; ')
+      result.gsub!(/---/,                 '&mdash;')
+      result.gsub!(/--/,                  '&ndash;')
+      result.gsub!(/\.\.\./,              '&hellip;')
 
       result
     end
@@ -107,6 +119,12 @@ module Rendering
       }
 
       result
+    end
+
+    ##
+    # Vertical space
+    def vertical_space
+      @io << '<br>' << nl
     end
 
     ##
@@ -168,8 +186,19 @@ module Rendering
     ##
     # Quote
     # @param [String] content the content
-    def quote(content)
-      @io << "<blockquote>#{inline_code(content)}</blockquote>" << nl
+    # @param [String] source the source of the quote
+    def quote(content, source)
+      @io << "<blockquote>#{inline_code(content)}" << nl
+      @io << "<div class='quote_source'>#{source}</div>" << nl  unless source.nil?
+      @io << '</blockquote>' << nl
+    end
+
+    ##
+    # Important
+    # @param [String] content the box
+    def important(content);
+      @io << "<blockquote class='important'>#{inline_code(content)}" << nl
+      @io << '</blockquote>' << nlend
     end
 
     ##
@@ -182,13 +211,15 @@ module Rendering
     ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
-    def code_start(language)
+    # @param [String] caption caption of the sourcecode
+    def code_start(language, caption)
       @io << "<pre><code class='#{language}' contenteditable>"
     end
 
     ##
     # End of a code fragment
-    def code_end
+    # @param [String] caption caption of the sourcecode
+    def code_end(caption)
       @io << '</code></pre>'
     end
 
@@ -200,26 +231,44 @@ module Rendering
     end
 
     ##
-    # Start of a table
-    def table_start(num_columns)
-      @io << "<table class='small content'>" << nl
-    end
-
-    ##
     # Header of table
     # @param [Array] headers the headers
-    def table_header(headers)
+    # @param [Array] alignment alignments of the cells
+    def table_start(headers, alignment)
+      @io << "<table class='small content'>" << nl
       @io << '<thead><tr>' << nl
-      headers.each { |e| @io << "<th>#{inline_code(e)}</th>" << nl }
+
+      headers.each_with_index { |e, i|
+
+        css_class = " class='left'"       if alignment[i] == Constants::LEFT
+        css_class = " class='right'"      if alignment[i] == Constants::RIGHT
+        css_class = " class='center'"     if alignment[i] == Constants::CENTER
+        css_class = " class='separator'"  if alignment[i] == Constants::SEPARATOR
+
+        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl  if alignment[i] != Constants::SEPARATOR
+        @io << "<th#{css_class}></th>" << nl  if alignment[i] == Constants::SEPARATOR
+      }
+
       @io << '</tr></thead><tbody>' << nl
     end
 
     ##
     # Row of the table
     # @param [Array] row row of the table
-    def table_row(row)
+    # @param [Array] alignment alignments of the cells
+    def table_row(row, alignment)
       @io << '<tr>' << nl
-      row.each { |e| @io << "<td>#{inline_code(e)}</td>" << nl }
+      row.each_with_index { |e, i|
+
+        css_class = " class='left'"       if alignment[i] == Constants::LEFT
+        css_class = " class='right'"      if alignment[i] == Constants::RIGHT
+        css_class = " class='center'"     if alignment[i] == Constants::CENTER
+        css_class = " class='separator'"  if alignment[i] == Constants::SEPARATOR
+
+        @io << "<td#{css_class}>#{inline_code(e)}</td>" << nl  if alignment[i] != Constants::SEPARATOR
+        @io << "<td#{css_class}></td>" << nl  if alignment[i] == Constants::SEPARATOR
+      }
+
       @io <<  '</tr>' << nl
     end
 
@@ -397,6 +446,24 @@ module Rendering
     def uml(picture_name, contents, width)
       img_path = super(picture_name, contents, width, 'svg')
       @io << "<img src='#{img_path}' width='#{width}'>" << nl
+    end
+
+    ##
+    # Return the most suitable image file for the given
+    # @param [String] file_name name of the image
+    # @param [Array] formats available file formats
+    # @return the most preferred image filen ame
+    def choose_image(file_name, formats)
+
+      format = formats.each { |f|
+        break f  if PREFERRED_IMAGE_FORMATS.include?(f)
+      }
+
+      if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name
+        "#{$1}.#{format}"
+      else
+        "#{file_name}.#{format}"
+      end
     end
   end
 end

@@ -13,9 +13,13 @@ class Main
 
   def self.main(directory, type, output_file)
 
+    # Read global properties
     dir = Dir.new(directory)
     prop_file = directory + '/metadata.properties'
-    props = Parsing::PropertiesReader.new(prop_file)
+
+    defaults_file = directory + '/..' + '/metadata.properties'
+
+    props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
     title1 = props.get('title_1')
     title2 = props.get('title_2')
@@ -26,12 +30,15 @@ class Main
     default_language = props.get('default_language')
     image_dir = props.get('image_dir')
     temp_dir = props.get('temp_dir')
+    description = props.get('description')
+    term = props.get('term')
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless image_dir.nil?
 
     result_dir = File.dirname(output_file)
 
+    # Scan files matching the pattern 01_...
     files = [ ]
 
     dir.each { |file|
@@ -45,14 +52,13 @@ class Main
 
     p = Parsing::Parser.new
     pres = Domain::Presentation.new(title1, title2, chapter_no, chapter_name,
-        copyright, author, default_language)
+        copyright, author, default_language, description, term)
 
+    # Parse files in directory
     files.each { |file|
       puts "Parsing: #{file}"
       p.parse(directory + '/' + file, default_language, pres)
     }
-
-    puts "Result written to: #{output_file}"
 
     io = StringIO.new
 
@@ -64,7 +70,12 @@ class Main
       r = Rendering::RendererLatexPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
     elsif type == 'tex-plain'
       r = Rendering::RendererLatexPlain.new(io, default_language, result_dir, image_dir, temp_dir)
+    else
+      puts "Unknown type #{type} for result"
+      exit 5
     end
+
+    puts "Result written to: #{output_file}"
 
     pres.render(r)
 
@@ -75,3 +86,5 @@ class Main
 end
 
 Main::main(ARGV[0], ARGV[1], ARGV[2])
+
+#Main::main('/Users/thomas/Documents/Work/HS-Mannheim/GDI/03_Folien/src/01_einfuehrung', 'tex', '/Users/thomas/Temp/01_einfuehrung/01_einfuehrung.tex')

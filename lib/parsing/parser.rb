@@ -7,8 +7,12 @@ require_relative '../../lib/domain/presentation'
 require_relative '../../lib/domain/comment'
 require_relative '../../lib/domain/line_elements'
 require_relative '../../lib/domain/block_elements'
+require_relative '../../lib/domain/license'
+require_relative '../constants'
+
 require_relative 'markdown_line'
 require_relative 'line_matcher'
+require_relative 'properties_reader'
 
 require 'stringio'
 
@@ -19,6 +23,8 @@ module Parsing
   # class are normal markdown files with special tags possible to use
   # them in presentations.
   class Parser
+
+    public
 
     ##
     # Create a new parser
@@ -34,6 +40,154 @@ module Parsing
     def slide_id(slide_counter)
       "slide_id_#{@chapter_counter}_#{slide_counter}"
     end
+
+    ##
+    # Parse the given file
+    # @param [String] file_name File to be parsed
+    # @param [String] default_language language for code blocks not tagged
+    # @param [Domain::Presentation] presentation Storage of results
+
+    def parse(file_name, default_language, presentation)
+
+      begin
+        ps = ParserState.new(presentation, file_name)
+
+        ps.language = default_language
+
+        # Read whole file into an array to allow looking ahead
+        lines = File.readlines(file_name, "\n", :encoding => 'UTF-8')
+
+        ps.comment_mode = false
+
+        lines.each { |raw_line|
+
+          line = MarkdownLine.new(raw_line)
+          ps.line_counter = ps.line_counter + 1
+          ps.line_id = "id_#{@chapter_counter}_#{ps.line_counter}"
+
+          if line.separator? && !ps.code_or_code_fenced?
+            # ---
+            handle_separator(ps)
+
+          elsif line.vspace? && !ps.code_or_code_fenced?
+            # <br>
+            add_to_slide(ps.slide, Domain::VerticalSpace.new, ps.comment_mode)
+
+          elsif line.chapter_title? && !ps.code_or_code_fenced?
+            # # Chapter Title
+            handle_chapter_title(ps, line)
+
+          elsif line.slide_title? && !ps.code_or_code_fenced?
+            # ## Slide Title
+            handle_slide_title(ps, line)
+
+          elsif line.fenced_code_start? && !ps.code_fenced?
+            # ```code
+            handle_code_fenced_start(ps, line)
+
+          elsif line.fenced_code_end? && ps.code_fenced?
+            # ```
+            ps.normal!
+
+          elsif line.script_end? && ps.script?
+            # </script>
+            ps.normal!
+
+          elsif ps.script?
+            # inside <script>...</script>
+            append(ps.slide, line, ps.comment_mode)
+
+          elsif line.script_start? && !ps.code_or_code_fenced?
+            # <script>
+            add_to_slide(ps.slide, Domain::Script.new, ps.comment_mode)
+            ps.script!
+
+          elsif line.equation_start? && !ps.equation?
+            # \[
+            handle_equation_start(ps)
+
+          elsif line.equation_end? && ps.equation?
+            # \]
+            ps.normal!
+
+          elsif ps.equation?
+            append(ps.slide, line, ps.comment_mode)
+
+          elsif line.uml_start? && !ps.uml?
+            # @startuml
+            handle_uml_start(ps, line)
+
+          elsif line.uml_end? && ps.uml?
+            # @enduml
+            ps.normal!
+
+          elsif ps.uml?
+            append(ps.slide, line, ps.comment_mode)
+
+          elsif line.ol1? && !ps.code_or_code_fenced?
+            #   1. item
+            handle_ol1(ps, line)
+
+          elsif line.ol2? && !ps.code_or_code_fenced?
+            #     1. item
+            handle_ol2(ps, line)
+
+          elsif line.ol3? && !ps.code_or_code_fenced?
+            #       1. item
+            handle_ol3(ps, line)
+
+          elsif line.ul2? && ps.code?
+            # special case. Code starts with a * sign
+            handle_code_with_stars(ps, line)
+
+          elsif line.ul1? && !ps.code_or_code_fenced?
+            #   * Item
+            handle_ul1(ps, line)
+
+          elsif line.ul2? && !ps.code_or_code_fenced?
+            handle_ul2(ps, line)
+
+          elsif line.ul3? && !ps.code_or_code_fenced?
+            handle_ul3(ps, line)
+
+          elsif line.source? && !ps.code_or_code_fenced? && !line.empty?
+            handle_source_start(ps, line)
+
+          elsif line.source? && ps.code? && !line.empty?
+            handle_source(ps, line)
+
+          elsif ps.code? && line.empty?
+            handle_source_lookahead(ps, lines)
+
+          elsif ps.code_fenced?
+            append(ps.slide, line, ps.comment_mode)
+
+          elsif line.quote? || line.quote_source?
+            # > Quote
+            handle_quote(ps, line)
+
+          elsif line.important?
+            # >! Important text
+            handle_important(ps, line)
+
+          elsif line.table_row?
+            # | Table | Table |
+            handle_table(ps, line)
+
+          else
+            # Other cases (simple inline matches)
+            handle_inline(ps, line)
+
+          end
+        }
+      rescue Exception => e
+        puts e
+        puts ps
+        exit(-1)
+      end
+    end
+
+    private
 
     ##
     # State of the parser
@@ -173,130 +327,6 @@ module Parsing
       end
     end
 
-    ##
-    # Parse the given file
-    # @param [String] file_name File to be parsed
-    # @param [String] default_language language for code blocks not tagged
-    # @param [Domain::Presentation] presentation Storage of results
-
-    def parse(file_name, default_language, presentation)
-
-      ps = ParserState.new(presentation, file_name)
-
-      ps.language = default_language
-
-      # Read whole file into an array to allow looking ahead
-      lines = File.readlines(file_name, "\n", :encoding => 'UTF-8')
-
-      ps.comment_mode = false
-
-      lines.each { |raw_line|
-
-        line = MarkdownLine.new(raw_line)
-        ps.line_counter = ps.line_counter + 1
-        ps.line_id = "id_#{@chapter_counter}_#{ps.line_counter}"
-
-        if line.separator?
-          # ---
-          handle_separator(ps)
-
-        elsif line.chapter_title? && !ps.code_or_code_fenced?
-          # # Chapter Title
-          handle_chapter_title(ps, line)
-
-        elsif line.slide_title? && !ps.code_or_code_fenced?
-          # ## Slide Title
-          handle_slide_title(ps, line)
-
-        elsif line.fenced_code_start? && !ps.code_fenced?
-          # ```code
-          handle_code_fenced_start(ps, line)
-
-        elsif line.fenced_code_end? && ps.code_fenced?
-          # ```
-          ps.normal!
-
-        elsif line.script_end? && ps.script?
-          # </script>
-          ps.normal!
-
-        elsif ps.script?
-          # inside <script>...</script>
-          append(ps.slide, line, ps.comment_mode)
-
-        elsif line.script_start? && !ps.code_or_code_fenced?
-          # <script>
-          add_to_slide(ps.slide, Domain::Script.new, ps.comment_mode)
-          ps.script!
-
-        elsif line.equation_start? && !ps.equation?
-          # \[
-          handle_equation_start(ps)
-
-        elsif line.equation_end? && ps.equation?
-          # \]
-          ps.normal!
-
-        elsif ps.equation?
-          append(ps.slide, line, ps.comment_mode)
-
-        elsif line.uml_start? && !ps.uml?
-          # @startuml
-          handle_uml_start(ps, line)
-
-        elsif line.uml_end? && ps.uml?
-          # @enduml
-          ps.normal!
-
-        elsif ps.uml?
-          append(ps.slide, line, ps.comment_mode)
-
-        elsif line.ol1? && !ps.code_or_code_fenced?
-          #   1. item
-          handle_ol1(ps, line)
-
-        elsif line.ol2? && !ps.code_or_code_fenced?
-          #     1. item
-          handle_ol2(ps, line)
-
-        elsif line.source? && !ps.code_or_code_fenced? && !line.empty?
-          handle_source_start(ps, line)
-
-        elsif line.source? && ps.code? && !line.empty?
-          handle_source(ps, line)
-
-        elsif ps.code_fenced?
-          append(ps.slide, line, ps.comment_mode)
-
-        elsif line.ul2? && ps.code?
-          # special case. Code starts with a * sign
-          handle_code_with_stars(ps, line)
-
-        elsif ps.code? && line.empty?
-          handle_source_lookahead(ps, lines)
-
-        elsif line.ul1? && !ps.code_or_code_fenced?
-          #   * Item
-          handle_ul1(ps, line)
-
-        elsif line.ul2? && !ps.code_or_code_fenced?
-          handle_ul2(ps, line)
-
-        elsif line.quote?
-          # > Quote
-          handle_quote(ps, line)
-
-        elsif line.table_row?
-          # | Table | Table |
-          handle_table(ps, line)
-
-        else
-          # Other cases (simple inline matches)
-          handle_inline(ps, line)
-
-        end
-      }
-    end
 
     ##
     # Adds an element to the given slide.
@@ -377,15 +407,14 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def handle_code_fenced_start(ps, line)
       language_hint = line.fenced_code_start
+      caption = line.fenced_code_caption
       order = 0
 
-      if /(.*?)\[(.*)\]/ =~ language_hint
-        language_hint = $1
-        order = $2.to_i
+      if line.fenced_code_order?
+        order = line.fenced_code_order.to_i
       end
 
-      ps.language = language_hint
-      add_to_slide(ps.slide, Domain::Source.new(ps.language, order), ps.comment_mode)
+      add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
       ps.code_fenced!
     end
 
@@ -396,7 +425,7 @@ module Parsing
     def handle_ol1(ps, line)
       start_number = line.ol1_number
 
-      if ps.ol2? || ps.ul2?
+      if ps.ol2? || ps.ul2? || ps.ol3? || ps.ul3?
         ps.current_list = ps.current_list.parent
       elsif !ps.ol1?
         ps.current_list = Domain::OrderedList.new(start_number)
@@ -412,7 +441,12 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_ol2(ps, line)
-      if !ps.ol2?
+
+      start_number = line.ol2_number
+
+      if ps.ol3? || ps.ul3?
+        ps.current_list = ps.current_list.parent
+      elsif !ps.ol2?
         list = Domain::OrderedList.new(start_number)
         ps.current_list.add(list)
         ps.current_list = list
@@ -423,11 +457,26 @@ module Parsing
     end
 
     ##
+    # Ordered list on level 3
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def handle_ol3(ps, line)
+      if !ps.ol3?
+        list = Domain::OrderedList.new(start_number)
+        ps.current_list.add(list)
+        ps.current_list = list
+      end
+
+      ps.current_list.append(line.ol3)
+      ps.ol3!
+    end
+
+    ##
     # Unordered list on level 1
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_ul1(ps, line)
-      if ps.ol2? || ps.ul2?
+      if ps.ol2? || ps.ul2? || ps.ol3? || ps.ul3?
         ps.current_list = ps.current_list.parent
       elsif !ps.ul1?
         ps.current_list = Domain::UnorderedList.new
@@ -443,7 +492,9 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_ul2(ps, line)
-      if !ps.ul2?
+      if ps.ol3? || ps.ul3?
+        ps.current_list = ps.current_list.parent
+      elsif !ps.ul2?
         list = Domain::UnorderedList.new
         ps.current_list.add(list)
         ps.current_list = list
@@ -451,6 +502,21 @@ module Parsing
 
       ps.current_list.append(line.ul2)
       ps.ul2!
+    end
+
+    ##
+    # Unordered list on level 3
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def handle_ul3(ps, line)
+      if !ps.ul3?
+        list = Domain::UnorderedList.new
+        ps.current_list.add(list)
+        ps.current_list = list
+      end
+
+      ps.current_list.append(line.ul3)
+      ps.ul3!
     end
 
     ##
@@ -463,8 +529,29 @@ module Parsing
         add_to_slide(ps.slide, quote, ps.comment_mode)
         ps.quote!
       elsif ps.quote?
+
         quote = current_element(ps.slide, ps.comment_mode)
-        quote.append(line.sub(/> /, ''))
+
+        if line.quote_source?
+          quote.source = line.sub(/>> /, '')
+        else
+          quote.append(line.sub(/> /, ''))
+        end
+      end
+    end
+
+    ##
+    # Important section ">! Text"
+    # @param [ParserState] ps State of the parser
+    def handle_important(ps, line)
+      if !ps.quote?
+        element = Domain::Important.new
+        element.append(line.sub(/>! /, ''))
+        add_to_slide(ps.slide, element, ps.comment_mode)
+        ps.quote!
+      elsif ps.quote?
+        element = current_element(ps.slide, ps.comment_mode)
+        element.append(line.sub(/>! /, ''))
       end
     end
 
@@ -473,12 +560,31 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_table(ps, line)
+
+      # remove quoted table separators
+      cleaned_line = line.string.gsub('\|', '~~pipe~~')
+
       if !ps.table?
         table = Domain::Table.new
-        columns = line.string.split('|')
+
+        columns = cleaned_line.split('|')
+
         columns.each { |e|
-          table.add_header(e.strip)  if e.strip.length > 0
+          if /^[ ]{2,}.*[ ]{2,}$/ =~ e
+            alignment = Constants::CENTER
+          elsif /^[ ]{2,}.*[ ]{1}$/ =~ e
+            alignment = Constants::RIGHT
+          elsif /^[ ]{1}.*[ ]{1,}$/ =~ e
+            alignment = Constants::LEFT
+          elsif /^!$/ =~ e
+            alignment = Constants::SEPARATOR
+          else
+            alignment = Constants::LEFT
+          end
+
+          table.add_header(e.strip.gsub('~~pipe~~', '|') , alignment)  if e.strip.length > 0
         }
+
         add_to_slide(ps.slide, table, ps.comment_mode)
         ps.table!
 
@@ -487,9 +593,9 @@ module Parsing
         return  if line.table_separator?
 
         # Split columns and add them to the table
-        columns = line.string.split('|')
+        columns = cleaned_line.split('|')
         row = [ ]
-        columns.each { |e| row << e  if e.strip.length > 0 }
+        columns.each { |e| row << e.gsub('~~pipe~~', '|')  if e.strip.length > 0 }
         current_element(ps.slide, ps.comment_mode).add_row(row)
       end
     end
@@ -506,7 +612,8 @@ module Parsing
     # Beginning of an uml section
     # @param [ParserState] ps State of the parser
     def handle_uml_start(ps, line)
-      picture_name = "#{ps.slide.title}_uml"
+      picture_name = "uml_#{ps.line_id}"
+
       width = line.uml_start
       add_to_slide(ps.slide, Domain::UML.new(picture_name, width), ps.comment_mode)
       ps.uml!
@@ -571,6 +678,12 @@ module Parsing
 
       if !e.nil?
         add_to_slide(ps.slide, e, ps.comment_mode)
+
+        if e.instance_of?(Domain::Image)
+          # for image, read available extensions
+          e.formats = get_extensions(e.location)
+          e.license = get_license(e.location)
+        end
       else
         if line.normal?
 
@@ -599,6 +712,61 @@ module Parsing
       str_line = line.string
       str_line = str_line[4..-1]  if str_line.length > 4
       append(ps.slide, MarkdownLine.new(str_line), ps.comment_mode)
+    end
+
+    ##
+    # Return a filename without extension
+    def get_path_and_name(file)
+
+      basename = File.basename(file)
+
+      if /.*?(\.[a-zA-Z]{3,4})/ =~ basename
+        basename.gsub!($1, '')
+      end
+
+      dirname = File.dirname(file)
+
+      return dirname, basename
+
+    end
+
+    ##
+    # Returns all available extensions (file formats) for a given file
+    # @param [String] file the name of the file (with or without extensions)
+    # @return [Array] all found extensions for the name
+    def get_extensions(file)
+
+      extensions = [ ]
+
+      dirname, basename = get_path_and_name(file)
+      dir = Dir.new(dirname)
+
+      dir.each { |f|
+        if f.start_with?(basename)
+          /.*?\.([a-zA-Z]{3,4})/ =~f
+          extensions << $1
+        end
+      }
+
+      extensions
+    end
+
+    ##
+    # Returns the license information for the image.
+    # @param [String] file the name of the file (with or without extensions)
+    # @return [Domain::License] license of the image
+    def get_license(file)
+
+      dirname, basename = get_path_and_name(file)
+      license_file = "#{dirname}/#{basename}.txt"
+
+      if File.exist?(license_file)
+        license = Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
+      else
+        license = nil
+      end
+
+      license
     end
   end
 end

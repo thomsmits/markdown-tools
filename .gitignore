@@ -1,3 +1,6 @@
 .idea
 mdc_ruby.iml
 result/*
+data/_include/lib/mathjax/*
+temp/
+result/

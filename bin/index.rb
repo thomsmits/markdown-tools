@@ -67,8 +67,12 @@ class Index
     entries = [ ]
 
     dirs.each { |f|
-      chapter_props      = Parsing::PropertiesReader.new(
-          "#{directory}/#{f}/metadata.properties")
+
+      prop_file = "#{directory}/#{f}/metadata.properties"
+
+      next  unless Dir.exist?(prop_file)
+
+      chapter_props      = Parsing::PropertiesReader.new(prop_file)
 
       chapter_make_file  = Parsing::PropertiesReader.new(
           "#{directory}/#{f}/Makefile")
