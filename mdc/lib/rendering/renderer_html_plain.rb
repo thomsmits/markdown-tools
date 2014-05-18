@@ -164,6 +164,17 @@ module Rendering
     end
 
     ##
+    # Render an UML inline diagram using an external tool
+    # @param [String] picture_name name of the picture
+    # @param [String] contents the embedded UML
+    # @param [String] width_slide width of the diagram on slides
+    # @param [String] width_plain width of the diagram on plain documents
+    def uml(picture_name, contents, width_slide, width_plain)
+      img_path = super(picture_name, contents, width_slide, width_plain, 'svg')
+      @io << "<img src='#{img_path}' width='#{width_plain}'>" << nl
+    end
+
+    ##
     # Start a chapter
     # @param [String] title the title of the chapter
     # @param [String] number the number of the chapter

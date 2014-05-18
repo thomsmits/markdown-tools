@@ -168,7 +168,14 @@ module Parsing
 
     ## Beginning of UML block
     def uml_start?; /^@startuml.*$/ =~ @line.strip; end
-    def uml_start; /^@startuml\[(.*)\]$/ =~ @line; $1; end
+    def uml_start
+      if /^@startuml\[(.*?)\]\[(.*?)\]$/ =~ @line
+        return $1, $2
+      elsif /^@startuml\[(.*)\]$/ =~ @line
+        return $1, $1
+      end
+    end
+
 
     ## Beginning of UML block
     def uml_end?; /^@enduml$/ =~ @line.strip; end

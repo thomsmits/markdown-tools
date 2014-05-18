@@ -370,18 +370,6 @@ module Rendering
     end
 
     ##
-    # Render an UML inline diagram using an external tool
-    # @param [String] picture_name name of the picture
-    # @param [String] contents the embedded UML
-    def uml(picture_name, contents, width)
-
-      new_width = calculate_width(width)
-      formats = %w(pdf eps)
-      img_path = super(picture_name, contents, width, 'pdf')
-      image(img_path, formats, '', '', new_width, new_width)
-    end
-
-    ##
     # Transform width given in % into a latex compatible format
     # @param [String] width width in %, e.g. "80%"
     def calculate_width(width)

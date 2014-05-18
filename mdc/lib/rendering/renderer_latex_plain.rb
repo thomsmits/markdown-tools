@@ -153,15 +153,28 @@ module Rendering
       @io <<  "#{inline_code(content)}" << nl << nl
       @io << '\vspace{0.1mm}' << nl
     end
-  end
 
-  ##
-  # Start of an unordered list
-  def ul_start
-    @io << '\vspace{0.1mm}' << nl  if @ul_level == 1
-    @io << '\vspace{0.1mm}' << nl  if @ul_level == 2
-    @io << "\\begin{ul#{@ul_level}}" << nl
-    @ul_level += 1
-  end
+    ##
+    # Start of an unordered list
+    def ul_start
+      @io << '\vspace{0.1mm}' << nl  if @ul_level == 1
+      @io << '\vspace{0.1mm}' << nl  if @ul_level == 2
+      @io << "\\begin{ul#{@ul_level}}" << nl
+      @ul_level += 1
+    end
 
+    ##
+    # Render an UML inline diagram using an external tool
+    # @param [String] picture_name name of the picture
+    # @param [String] contents the embedded UML
+    # @param [String] width_slide width of the diagram on slides
+    # @param [String] width_plain width of the diagram on plain documents
+    def uml(picture_name, contents, width_slide, width_plain)
+      new_width = calculate_width(width_plain)
+      formats = %w(pdf eps)
+      img_path = super(picture_name, contents, width_slide, width_plain, 'pdf')
+      image(img_path, formats, '', '', new_width, new_width)
+    end
+  end
 end
+

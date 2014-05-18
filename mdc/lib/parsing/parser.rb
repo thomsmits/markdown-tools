@@ -613,9 +613,8 @@ module Parsing
     # @param [ParserState] ps State of the parser
     def handle_uml_start(ps, line)
       picture_name = "uml_#{ps.line_id}"
-
-      width = line.uml_start
-      add_to_slide(ps.slide, Domain::UML.new(picture_name, width), ps.comment_mode)
+      width_slide, width_plain = line.uml_start
+      add_to_slide(ps.slide, Domain::UML.new(picture_name, width_slide, width_plain), ps.comment_mode)
       ps.uml!
     end
 

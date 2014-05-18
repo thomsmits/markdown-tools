@@ -87,4 +87,4 @@ end
 
 Main::main(ARGV[0], ARGV[1], ARGV[2])
 
-#Main::main('/Users/thomas/Documents/Work/HS-Mannheim/GDI/03_Folien/src/01_einfuehrung', 'tex', '/Users/thomas/Temp/01_einfuehrung/01_einfuehrung.tex')
+#Main::main('/Users/thomas/Documents/Work/Vorlesungen/GDI/03_Folien/src/06_oo', 'tex-plain', '/Users/thomas/Temp/06_oo/06_oo.tex')

@@ -353,8 +353,9 @@ module Rendering
     # @param [String] picture_name name of the picture
     # @param [String] contents the embedded UML
     # @param [String] type the generated file type (svg, pdf, png)
-    # @param [String] width width of the diagram
-    def uml(picture_name, contents, width, type = 'pdf')
+    # @param [String] width_slide width of the diagram on slides
+    # @param [String] width_plain width of the diagram on plain documents
+    def uml(picture_name, contents, width_slide, width_plain, type = 'pdf')
 
       begin
         Dir.mkdir(@temp_dir)
@@ -373,9 +374,9 @@ module Rendering
       File.write(uml_file, contents)
 
       # generate image
-      %x(/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/Tools/umlifier_ruby/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
+      %x(/Users/thomas/Documents/Work/Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
 
-      puts "/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/Tools/umlifier_ruby/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
+      puts "/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
 
       img_file
     end

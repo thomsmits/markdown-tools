@@ -439,16 +439,6 @@ module Rendering
     end
 
     ##
-    # Render an UML inline diagram using an external tool
-    # @param [String] picture_name name of the picture
-    # @param [String] contents the embedded UML
-    # @param [String] width width of the diagram
-    def uml(picture_name, contents, width)
-      img_path = super(picture_name, contents, width, 'svg')
-      @io << "<img src='#{img_path}' width='#{width}'>" << nl
-    end
-
-    ##
     # Return the most suitable image file for the given
     # @param [String] file_name name of the image
     # @param [Array] formats available file formats
