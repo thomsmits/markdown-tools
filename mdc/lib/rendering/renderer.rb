@@ -374,9 +374,9 @@ module Rendering
       File.write(uml_file, contents)
 
       # generate image
-      %x(/Users/thomas/Documents/Work/Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
+      %x(ruby ../../../../../Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
 
-      puts "/Users/thomas/Documents/Work/HS-Mannheim/Sonstiges/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
+      puts "../../../../../Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
 
       img_file
     end
