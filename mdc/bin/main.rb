@@ -61,6 +61,7 @@ class Main
     }
 
     io = StringIO.new
+    io.set_encoding("UTF-8")
 
     if type == 'slide'
       r = Rendering::RendererHTMLPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
@@ -79,7 +80,7 @@ class Main
 
     pres.render(r)
 
-    File.open(output_file, 'w') { |f|
+    File.open(output_file, 'w', :encoding => 'UTF-8') { |f|
       f << io.string
     }
   end
