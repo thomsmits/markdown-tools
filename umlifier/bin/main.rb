@@ -35,8 +35,8 @@ class Main
     puts ".dot file written to: #{dot_file}"
 
     puts "Compiling with graphviz to: #{output_file}"
-    %x(/usr/local/bin/dot -T#{type} #{dot_file} > #{output_file})
-    puts "/usr/local/bin/dot -T#{type} #{dot_file} > #{output_file}"
+    %x(dot -T#{type} #{dot_file} > #{output_file})
+    puts "dot -T#{type} #{dot_file} > #{output_file}"
   end
 end
 
