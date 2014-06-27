@@ -91,6 +91,8 @@ module Rendering
       result.gsub!('<br>=> ',             '<br>$\Rightarrow$ ')
       result.gsub!(' -> ',                ' $\rightarrow$ ')
       result.gsub!(' => ',                ' $\Rightarrow$ ')
+      result.gsub!(' <- ',                ' $\leftarrow$ ')
+      result.gsub!(' <= ',                ' $\Leftarrow$ ')
       result.gsub!(' <=> ',               ' $\Leftrightarrow$ ')
       result.gsub!('<br><=> ',            '<br>$\Leftrightarrow$ ')
       result.gsub!(/<br>/,                "\\newline\n")
