@@ -13,6 +13,7 @@ LOCALIZED_MESSAGES_EN = {
     more_info:'More Information',
     toc:'Table of Contents',
     source:'Source: ',
+    output:'Output',
 }
 
 LOCALIZED_MESSAGES_DE = {
@@ -22,10 +23,11 @@ LOCALIZED_MESSAGES_DE = {
     plain:'Skript',
     presentation:'Folien',
     material:'Material',
-    run:'Starten',
+    run:'Los',
     more_info:'Mehr Information',
     toc:'Inhaltsverzeichnis',
     source:'Quelle: ',
+    output:'Ausgabe',
 }
 
 LOCALIZED_MESSAGES = LOCALIZED_MESSAGES_DE

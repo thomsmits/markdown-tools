@@ -68,7 +68,7 @@ module Rendering
     # @param [String] line_id internal ID of the line
     def button_with_log(line_id)
       @io << <<-ENDOFTEXT
-      <p class='ausgabe'>Ausgabe:</p><div name='log' class='output_small'></div>
+      <p class='ausgabe'>#{LOCALIZED_MESSAGES[:output]}:</p><div name='log' class='output_small'></div>
       <script id='#{line_id}'>executeNew($('##{line_id}'));</script>
       ENDOFTEXT
     end
@@ -78,7 +78,7 @@ module Rendering
     # @param [String] line_id internal ID of the line
     def button_with_log_pre(line_id)
       @io << <<-ENDOFTEXT
-      <p class='ausgabe'>Ausgabe:</p><div name='log' class='output_small'></div>
+      <p class='ausgabe'>#{LOCALIZED_MESSAGES[:output]}</p><div name='log' class='output_small'></div>
       <script id='#{line_id}'>executePre($('##{line_id}'));</script>
       ENDOFTEXT
     end
