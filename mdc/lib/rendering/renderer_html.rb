@@ -10,20 +10,20 @@ module Rendering
   # Base class for rendering slides to HTML
   class RendererHTML < Renderer
 
-    CSS_PLAIN     = "css/plain.css"
-    CSS_BOOK      = "css/book.css"
-    CSS_ZENBURN   = "css/zenburn.css"
-    CSS_LIGHTNESS = "css/ui-lightness/jquery-ui-1.10.3.css"
-    CSS_THOMAS    = "css/thomas.css"
-    CSS_MAIN      = "css/main.css"
-    JS_HEAD       = "lib/js/head.min.js"
-    JS_THOMAS     = "js/thomas.js"
-    JS_HIGHLIGHT  = "lib/js/highlight.js"
-    JS_JQUERY     = "lib/js/jquery-1.9.1.js"
-    JS_MATHJAX    = "lib/mathjax/MathJax.js?config=TeX-AMS_HTML"
-    JS_JQUERY_UI  = "lib/js/jquery-ui-1.10.3.js"
-    JS_REVEAL     = "lib/js/reveal.min.js"
-    JS_SETTINGS   = "js/settings.js"
+    CSS_PLAIN     = 'css/plain.css'
+    CSS_BOOK      = 'css/book.css'
+    CSS_ZENBURN   = 'css/zenburn.css'
+    CSS_LIGHTNESS = 'css/ui-lightness/jquery-ui-1.10.3.css'
+    CSS_THOMAS    = 'css/thomas.css'
+    CSS_MAIN      = 'css/main.css'
+    JS_HEAD       = 'lib/js/head.min.js'
+    JS_THOMAS     = 'js/thomas.js'
+    JS_HIGHLIGHT  = 'lib/js/highlight.js'
+    JS_JQUERY     = 'lib/js/jquery-1.9.1.js'
+    JS_MATHJAX    = 'lib/mathjax/MathJax.js?config=TeX-AMS_HTML'
+    JS_JQUERY_UI  = 'lib/js/jquery-ui-1.10.3.js'
+    JS_REVEAL     = 'lib/js/reveal.min.js'
+    JS_SETTINGS   = 'js/settings.js'
 
     INCLUDED_STYLESHEETS = [
         CSS_PLAIN,
@@ -196,9 +196,9 @@ module Rendering
     ##
     # Important
     # @param [String] content the box
-    def important(content);
+    def important(content)
       @io << "<blockquote class='important'>#{inline_code(content)}" << nl
-      @io << '</blockquote>' << nlend
+      @io << '</blockquote>' << nl
     end
 
     ##
@@ -231,6 +231,19 @@ module Rendering
     end
 
     ##
+    # Return a css class for the given alignment constant
+    # @param [Fixnum] alignment for the alignment
+    # @return [String] css class string to be used in HTML page
+    def class_for_constant(alignment)
+      case alignment
+        when Constants::LEFT then " class='left'"
+        when Constants::RIGHT then " class='right'"
+        when Constants::CENTER then " class='center'"
+        when Constants::SEPARATOR then " class='separator'"
+        else ''
+      end
+end
+    ##
     # Header of table
     # @param [Array] headers the headers
     # @param [Array] alignment alignments of the cells
@@ -240,10 +253,7 @@ module Rendering
 
       headers.each_with_index { |e, i|
 
-        css_class = " class='left'"       if alignment[i] == Constants::LEFT
-        css_class = " class='right'"      if alignment[i] == Constants::RIGHT
-        css_class = " class='center'"     if alignment[i] == Constants::CENTER
-        css_class = " class='separator'"  if alignment[i] == Constants::SEPARATOR
+        css_class = class_for_constant(alignment[i])
 
         @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl  if alignment[i] != Constants::SEPARATOR
         @io << "<th#{css_class}></th>" << nl  if alignment[i] == Constants::SEPARATOR
@@ -260,10 +270,7 @@ module Rendering
       @io << '<tr>' << nl
       row.each_with_index { |e, i|
 
-        css_class = " class='left'"       if alignment[i] == Constants::LEFT
-        css_class = " class='right'"      if alignment[i] == Constants::RIGHT
-        css_class = " class='center'"     if alignment[i] == Constants::CENTER
-        css_class = " class='separator'"  if alignment[i] == Constants::SEPARATOR
+        css_class = class_for_constant(alignment[i])
 
         @io << "<td#{css_class}>#{inline_code(e)}</td>" << nl  if alignment[i] != Constants::SEPARATOR
         @io << "<td#{css_class}></td>" << nl  if alignment[i] == Constants::SEPARATOR
@@ -434,7 +441,7 @@ module Rendering
     # @param [Array] s scripts to be added
     def scripts(s)
       result = ''
-      s.each { |s| result << "<script>#{s}</script>" << nl }
+      s.each { |f| result << "<script>#{f}</script>" << nl }
       result
     end
 

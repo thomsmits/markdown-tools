@@ -290,9 +290,9 @@ module Rendering
       result = ''
       i = 0
 
-      headers.each_with_index { |e, i|
-        result << "\\textbf{#{inline_code(e)}} " if alignment[i] != Constants::SEPARATOR
-        result << ' & '  if i < headers.size - 1 && alignment[i] != Constants::SEPARATOR
+      headers.each_with_index { |e, k|
+        result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
+        result << ' & '  if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
       }
 
@@ -309,9 +309,9 @@ module Rendering
       result = ''
       i = 0
 
-      row.each_with_index { |e, i|
+      row.each_with_index { |e, k|
 
-        next  if alignment[i] == Constants::SEPARATOR
+        next  if alignment[k] == Constants::SEPARATOR
 
         text = inline_code(e, true)
 
@@ -321,7 +321,7 @@ module Rendering
         end
 
         result << text
-        result << ' & '  if i < row.size - 1
+        result << ' & '  if k < row.size - 1
         i += 1
       }
 
@@ -358,7 +358,7 @@ module Rendering
 
       full_title = title
 
-      if !source.nil?
+      unless source.nil?
         full_title << ', '  if !full_title.nil? && full_title.length > 0
         full_title = "#{full_title}#{LOCALIZED_MESSAGES[:source]}#{source}"
       end

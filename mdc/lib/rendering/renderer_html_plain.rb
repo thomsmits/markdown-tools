@@ -28,7 +28,7 @@ module Rendering
     ##
     # Inline scripts
     JAVASCRIPTS = [
-        "hljs.initHighlighting();",
+        'hljs.initHighlighting();',
         "$('code.inline').each(function(i, e) { hljs.highlightBlock(e)} );",
     ]
 
@@ -107,7 +107,6 @@ module Rendering
     ##
     # Link to previous slide (for active CSS)
     # @param [String] line_id internal ID of the line
-    # @param [String] fragment HTML fragment used for CSS styling
     def live_preview(line_id)
       @io << <<-ENDOFTEXT
       <div class='outputhtml plain' id='#{line_id}' name='html_output'>&nbsp;</div>
@@ -160,7 +159,7 @@ module Rendering
       @io << "<figure class='picture'>" << nl
       @io << "<img alt='#{alt}' src='#{chosen_image}'#{width_attr}>" << nl
       @io << "<figcaption>#{inline(title)}</figcaption>" << nl
-      @io << "</figure>" << nl
+      @io << '</figure>' << nl
     end
 
     ##

@@ -62,6 +62,9 @@ module Domain
       max_order > 0
     end
 
+    ##
+    # Determine the maximum ordering number assigned to elements of this slide
+    # @return [Fixnum] the maximum number found in the elements
     def max_order
       max = 0
       @elements.each { |e| max = !e.order.nil? && e.order > max ? e.order : max }

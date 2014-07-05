@@ -61,19 +61,16 @@ class Main
     }
 
     io = StringIO.new
-    io.set_encoding("UTF-8")
+    io.set_encoding('UTF-8')
 
-    if type == 'slide'
-      r = Rendering::RendererHTMLPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
-    elsif type == 'plain'
-      r = Rendering::RendererHTMLPlain.new(io, default_language, result_dir, image_dir, temp_dir)
-    elsif type == 'tex-slide'
-      r = Rendering::RendererLatexPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
-    elsif type == 'tex-plain'
-      r = Rendering::RendererLatexPlain.new(io, default_language, result_dir, image_dir, temp_dir)
-    else
-      puts "Unknown type #{type} for result"
-      exit 5
+    r = case type
+      when 'slide' then Rendering::RendererHTMLPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
+      when 'plain' then Rendering::RendererHTMLPlain.new(io, default_language, result_dir, image_dir, temp_dir)
+      when 'tex-slide' then Rendering::RendererLatexPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
+      when 'tex-plain' then Rendering::RendererLatexPlain.new(io, default_language, result_dir, image_dir, temp_dir)
+      else
+        puts "Unknown type #{type} for result"
+        exit 5
     end
 
     puts "Result written to: #{output_file}"

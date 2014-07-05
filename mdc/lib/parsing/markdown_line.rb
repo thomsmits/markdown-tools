@@ -73,7 +73,7 @@ module Parsing
     def html?; /^<.*$/ =~ @line; end
 
     ## Image
-    def image?; /\!\[.*\]\(.*\)/ =~ @line; end
+    def image?; /!\[.*\]\(.*\)/ =~ @line; end
 
     ## End of a fenced code block
     def fenced_code_end?; /^```$/ =~ @line.strip; end

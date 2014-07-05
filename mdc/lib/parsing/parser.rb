@@ -46,7 +46,6 @@ module Parsing
     # @param [String] file_name File to be parsed
     # @param [String] default_language language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
-
     def parse(file_name, default_language, presentation)
 
       begin
@@ -726,7 +725,6 @@ module Parsing
       dirname = File.dirname(file)
 
       return dirname, basename
-
     end
 
     ##
