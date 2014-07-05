@@ -366,6 +366,7 @@ end
         <div class='title_second'>#{title2}</div>
         <div class='copyright'>#{copyright}</div>
         <div class='description'>#{description}</div>
+        <br>
       <table>
       <tr><th>#{LOCALIZED_MESSAGES[:chapter]}</th>
       <th colspan='2'>#{LOCALIZED_MESSAGES[:material]}</th></tr>

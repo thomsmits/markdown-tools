@@ -27,13 +27,6 @@ class Index
     end
 
     ##
-    # Render the entry
-    # @param [Rendering::Renderer] renderer renderer to be used
-    def render(renderer)
-      renderer.index_entry(@chapter_number, @chapter_name, @slide_file, @plain_file)
-    end
-
-    ##
     # Return string representation
     # @return string representation
     def puts
@@ -70,7 +63,7 @@ class Index
 
       prop_file = "#{directory}/#{f}/metadata.properties"
 
-      next  unless Dir.exist?(prop_file)
+      next  unless File.exist?(prop_file)
 
       chapter_props      = Parsing::PropertiesReader.new(prop_file)
 
@@ -88,6 +81,7 @@ class Index
     }
 
     io = StringIO.new
+    io.set_encoding('UTF-8')
 
     renderer = Rendering::RendererHTML.new(io, '', '', '', '')
     renderer.index_start(title1, title2, copyright, description)

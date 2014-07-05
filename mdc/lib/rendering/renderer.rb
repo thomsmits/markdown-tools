@@ -236,8 +236,10 @@ module Rendering
     # @param [Fixnum] chapter_number number of chapter
     # @param [String] chapter_name name of chapter
     # @param [String] slide_file file containing the slides
+    # @param [String] slide_name name of the slide file
     # @param [String] plain_file file containing the plain version
-    def index_entry(chapter_number, chapter_name, slide_file, plain_file); end
+    # @param [String] plain_name name of the plain file
+    def index_entry(chapter_number, chapter_name, slide_file, slide_name, plain_file, plain_name); end
 
     ##
     # HTML output
