@@ -285,7 +285,6 @@ module Rendering
     ##
     # Link to previous slide (for active CSS)
     # @param [String] line_id internal ID of the line
-    # @param [String] fragment HTML fragment used for CSS styling
     def live_preview(line_id); end
 
     ##
