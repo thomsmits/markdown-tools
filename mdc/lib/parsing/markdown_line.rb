@@ -42,6 +42,12 @@ module Parsing
       end
     end
 
+    ## HTML comment
+    def comment; /<!--(.*)-->/ =~ @line.strip; $1; end
+
+    ## HTML comment
+    alias comment? comment
+
     ## Vertical space
     def vspace?; /^<br>$/ =~ @line.strip; end
 

@@ -173,6 +173,10 @@ module Parsing
             # | Table | Table |
             handle_table(ps, line)
 
+          elsif line.comment?
+            # <!-- -->
+            handle_comment(ps, line)
+
           else
             # Other cases (simple inline matches)
             handle_inline(ps, line)
@@ -708,6 +712,14 @@ module Parsing
       str_line = line.string
       str_line = str_line[4..-1]  if str_line.length > 4
       append(ps.slide, MarkdownLine.new(str_line), ps.comment_mode)
+    end
+
+    ##
+    # HTML-Comment in the page
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def handle_comment(ps, line)
+      ps.presentation.comments << line.comment.strip
     end
 
     ##

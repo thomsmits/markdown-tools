@@ -9,7 +9,8 @@ module Domain
   # Representation of the whole presentation
   class Presentation
 
-    attr_accessor :title1, :title2, :section_number, :section_name, :author, :copyright, :default_language, :chapters, :toc, :description, :term
+    attr_accessor :title1, :title2, :section_number, :section_name, :author, :copyright, :default_language,
+                  :chapters, :toc, :description, :term, :comments
 
     ##
     # Create a new presentation
@@ -26,6 +27,7 @@ module Domain
       @description, @term = description, term
 
       @chapters = [ ]
+      @comments = [ ]
       @toc = TOC.new
     end
 
