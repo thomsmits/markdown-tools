@@ -43,11 +43,14 @@ module Parsing
         LineMatcher.new(/\(\(Button-With-Log-Pre\)\)/) \
             { |line, line_id| Domain::ButtonWithLogPre.new(line_id) },
 
+        LineMatcher.new(/##### (.*)/) \
+            { |line, line_id, title| Domain::Heading.new(5, title.gsub('#', '')) },
+
         LineMatcher.new(/#### (.*)/) \
-            { |line, line_id, title| Domain::Heading.new(4, title) },
+            { |line, line_id, title| Domain::Heading.new(4, title.gsub('#', '')) },
 
         LineMatcher.new(/### (.*)/) \
-            { |line, line_id, title| Domain::Heading.new(3, title) },
+            { |line, line_id, title| Domain::Heading.new(3, title.gsub('#', '')) },
 
         LineMatcher.new(/!\[(.*)\]\((.*) "(.*)"\)\/(.*)\/\/(.*)\//) \
             { |line, line_id, alt, location, title, width_slide, width_plain| Domain::Image.new(location, alt, title, width_slide, width_plain) },

@@ -155,13 +155,13 @@ module Parsing
     alias fenced_code_start? fenced_code_start
 
     ## Title of a slide
-    def slide_title; /^ *## (.*)#?#?/ =~ @line; $1; end
+    def slide_title; /^ *## (.*)/ =~ @line; $1; end
 
     ## Title of a slide
     alias slide_title? slide_title
 
     ## Title of a chapter
-    def chapter_title; /^ *# (.*)#?/ =~ @line; $1; end
+    def chapter_title; /^ *# (.*)/ =~ @line; $1; end
 
     ## Title of a chapter
     alias chapter_title? chapter_title
