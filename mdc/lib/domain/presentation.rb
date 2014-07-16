@@ -51,6 +51,20 @@ module Domain
     end
 
     ##
+    # Create a digest of the content with the given length
+    # @param [Fixnum] length length of the digest in characters
+    # @return [String] a digest of the presentation, i.e. the first length characters
+    def digest(length)
+      digest = ''
+      @chapters.each { |chapter| digest << chapter.digest }
+      digest.gsub!("\n", '')
+      digest.gsub!('_', '')
+      digest.gsub!('*', '')
+      digest.squeeze!(' ')
+      digest[0...length]
+    end
+
+    ##
     # Render the presentation
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)

@@ -22,6 +22,16 @@ module Domain
     end
 
     ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      digest = ''
+      digest << @title << ' '
+      digest << super
+      digest
+    end
+
+    ##
     # Render the Slide
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)

@@ -13,5 +13,12 @@ module Domain
     def initialize(order = 0)
       @order = order
     end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+     ''
+    end
   end
 end

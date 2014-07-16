@@ -14,11 +14,18 @@ module Domain
     def initialize
       super()
     end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      ''
+    end
   end
 
   ##
   # Button to cause some action
-  class Button < Element
+  class Button < LineElement
     attr_accessor :line_id
 
     ## Create a new button
@@ -73,7 +80,7 @@ module Domain
 
   ##
   # Heading
-  class Heading < Element
+  class Heading < LineElement
 
     ##
     # Create a new heading
@@ -90,11 +97,18 @@ module Domain
     def render(renderer)
       renderer.heading(@level, @title)
     end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      @title
+    end
   end
 
   ##
   # HTML code (can only be used in HTML slides)
-  class HTML < Element
+  class HTML < LineElement
 
     ##
     # Create a new element
@@ -118,7 +132,7 @@ module Domain
 
   ##
   # Image
-  class Image < Element
+  class Image < LineElement
 
     attr_accessor :location, :formats, :license
 
@@ -217,7 +231,7 @@ module Domain
 
   ##
   # A vertical space
-  class VerticalSpace < Element
+  class VerticalSpace < LineElement
 
     ##
     # Create a new object

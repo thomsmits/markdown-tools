@@ -30,5 +30,14 @@ module Domain
     def current_element
       @elements.last
     end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      digest = ''
+      @elements.each { |element| digest << element.digest << ' '}
+      digest
+    end
   end
 end

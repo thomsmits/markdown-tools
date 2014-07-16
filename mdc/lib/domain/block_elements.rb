@@ -25,6 +25,13 @@ module Domain
     def append(line)
       @content << line
     end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      @content
+    end
   end
 
   ##
@@ -81,6 +88,15 @@ module Domain
       renderer.ul_start
       @entries.each { |e| e.render(renderer) }
       renderer.ul_end
+    end
+
+    ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      digest = ''
+      @entries.each { |entry| digest << entry.digest << ' '}
+      digest
     end
   end
 

@@ -37,6 +37,15 @@ module Domain
     end
 
     ##
+    # Create a digest of the content
+    # @return [String] a digest of the slide
+    def digest
+      digest = ' '
+      @slides.each { |slide| digest << slide.digest << ' ' }
+      digest
+    end
+
+    ##
     # Render contents
     # @param [Renderer] renderer Rendering class used for generation
     def render(renderer)
