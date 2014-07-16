@@ -136,4 +136,4 @@ class NotesHandling
   end
 end
 
-NotesHandling::main(ARGV[0], ARGV[1])
+NotesHandling::main(ARGV[0].dup, ARGV[1].dup)
