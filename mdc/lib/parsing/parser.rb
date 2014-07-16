@@ -378,7 +378,7 @@ module Parsing
       @chapter_counter += 1
       @page_counter += 1
       id = "chap_#{@chapter_counter}"
-      ps.chapter = Domain::Chapter.new(line.chapter_title, id)
+      ps.chapter = Domain::Chapter.new(line.chapter_title.gsub('#', ''), id)
       ps.presentation.add(ps.chapter)
       ps.normal!
       ps.comment_mode = false
@@ -392,7 +392,7 @@ module Parsing
       skip = line.skipped_slide?
       ps.slide_counter += 1
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
-          line.slide_title, @page_counter, skip)
+          line.slide_title.gsub('#', ''), @page_counter, skip)
       ps.chapter.add_slide(ps.slide)
       ps.normal!
       ps.comment_mode = false
@@ -459,7 +459,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_ol3(ps, line)
-      if !ps.ol3?
+      unless ps.ol3?
         list = Domain::OrderedList.new(start_number)
         ps.current_list.add(list)
         ps.current_list = list
@@ -507,7 +507,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def handle_ul3(ps, line)
-      if !ps.ul3?
+      unless ps.ul3?
         list = Domain::UnorderedList.new
         ps.current_list.add(list)
         ps.current_list = list
@@ -521,13 +521,7 @@ module Parsing
     # Quotes "> Quote"
     # @param [ParserState] ps State of the parser
     def handle_quote(ps, line)
-      if !ps.quote?
-        quote = Domain::Quote.new
-        quote.append(line.sub(/> /, ''))
-        add_to_slide(ps.slide, quote, ps.comment_mode)
-        ps.quote!
-      elsif ps.quote?
-
+      if ps.quote?
         quote = current_element(ps.slide, ps.comment_mode)
 
         if line.quote_source?
@@ -535,6 +529,12 @@ module Parsing
         else
           quote.append(line.sub(/> /, ''))
         end
+      else
+        quote = Domain::Quote.new
+        quote.append(line.sub(/> /, ''))
+        add_to_slide(ps.slide, quote, ps.comment_mode)
+        ps.quote!
+
       end
     end
 
@@ -570,9 +570,9 @@ module Parsing
         columns.each { |e|
           if /^[ ]{2,}.*[ ]{2,}$/ =~ e
             alignment = Constants::CENTER
-          elsif /^[ ]{2,}.*[ ]{1}$/ =~ e
+          elsif /^[ ]{2,}.*[ ]$/ =~ e
             alignment = Constants::RIGHT
-          elsif /^[ ]{1}.*[ ]{1,}$/ =~ e
+          elsif /^[ ]{1}.*[ ]+$/ =~ e
             alignment = Constants::LEFT
           elsif /^!$/ =~ e
             alignment = Constants::SEPARATOR
@@ -602,7 +602,7 @@ module Parsing
     # Beginning of an equation "\["
     # @param [ParserState] ps State of the parser
     def handle_equation_start(ps)
-      add_to_slide(ps.slide, Domain::Equation.new(), ps.comment_mode)
+      add_to_slide(ps.slide, Domain::Equation.new, ps.comment_mode)
       ps.equation!
     end
 
@@ -673,17 +673,8 @@ module Parsing
     def handle_inline(ps, line)
       e = LineMatcher.match(line.string, ps.line_id)
 
-      if !e.nil?
-        add_to_slide(ps.slide, e, ps.comment_mode)
-
-        if e.instance_of?(Domain::Image)
-          # for image, read available extensions
-          e.formats = get_extensions(e.location)
-          e.license = get_license(e.location)
-        end
-      else
+      if e.nil?
         if line.normal?
-
           if line.text?
             add_to_slide(ps.slide, Domain::Text.new(line.string), ps.comment_mode)
           end
@@ -695,6 +686,14 @@ module Parsing
           ps.normal!
         else
           raise Exception, "#{ps.file_name} [#{ps.line_counter}], #{ps}, #{line}"
+        end
+      else
+        add_to_slide(ps.slide, e, ps.comment_mode)
+
+        if e.instance_of?(Domain::Image)
+          # for image, read available extensions
+          e.formats = get_extensions(e.location)
+          e.license = get_license(e.location)
         end
       end
     end
