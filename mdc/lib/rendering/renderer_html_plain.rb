@@ -25,6 +25,7 @@ module Rendering
         JS_JQUERY,
         JS_MATHJAX,
     ]
+
     ##
     # Inline scripts
     JAVASCRIPTS = [
