@@ -176,7 +176,6 @@ module Parsing
       end
     end
 
-
     ## Beginning of UML block
     def uml_end?; /^@enduml$/ =~ @line.strip; end
 

@@ -326,7 +326,6 @@ module Parsing
       end
     end
 
-
     ##
     # Adds an element to the given slide.
     # @param [Domain::Slide] slide the slide to be used
