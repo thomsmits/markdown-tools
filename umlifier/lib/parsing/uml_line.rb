@@ -43,7 +43,7 @@ module Parsing
     def interface; /Interface \{ (.*)$/ =~ @line.strip; $1; end
     alias interface? interface
 
-    def comment_line?; /^#.*$/ =~ @line.strip; end
+    def comment_line?; /^%.*$/ =~ @line.strip; end
 
     def end_line?; /^\}$/ =~ @line.strip; end
 
