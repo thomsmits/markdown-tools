@@ -57,7 +57,7 @@ module Rendering
       type_node
 
       if abstract
-        name_formatted = "<b><i>#{name}</i></b><br align='left'/>\\{abstract\\}"
+        name_formatted = "<b><i>#{name}</i></b><br/>\\{abstract\\}"
       else
         name_formatted = "<b>#{name}</b>"
       end
@@ -77,7 +77,7 @@ module Rendering
       @io << " #{normalize_name(name)} [" << nl
       @io << type_node
       @io << ' label=<{'
-      @io << "&laquo;interface&raquo;<br align='left'/><b><i>#{name}</i></b><br align='left'/>"
+      @io << "&laquo;interface&raquo;<br/><b><i>#{name}</i></b><br/>"
     end
 
     def interface_end
@@ -86,7 +86,6 @@ module Rendering
     end
 
     def instance_start(name)
-
       @io << " #{normalize_name(name)} [" << nl
       @io << type_node
       @io << ' label=<{'
