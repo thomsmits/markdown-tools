@@ -1,4 +1,5 @@
 .idea
+.DS_Store
 mdc_ruby.iml
 result/*
 data/_include/lib/mathjax/*
