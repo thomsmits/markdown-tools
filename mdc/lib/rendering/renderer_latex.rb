@@ -209,7 +209,7 @@ module Rendering
     # @param [String] source the source of the quote
     def quote(content, source)
       if !source.nil? && source.length > 0
-        @io << "\\quoted{#{inline_code(content)}}{#{source}}" << nl
+        @io << "\\quoted{#{inline_code(content)}}{#{inline(source)}}" << nl
       else
         @io << "\\quotedns{#{inline_code(content)}}" << nl
       end
