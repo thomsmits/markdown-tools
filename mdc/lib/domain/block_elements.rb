@@ -196,6 +196,26 @@ module Domain
   end
 
   ##
+  # Question
+  class Question < BlockElement
+
+    ##
+    # Create a box for question content
+    # @param [String] content content of the box
+    def initialize(content = '')
+      super(content)
+      @source = nil
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.question(@content)
+    end
+  end
+
+  ##
   # Script
   class Script < BlockElement
     ##

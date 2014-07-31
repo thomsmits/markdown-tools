@@ -202,6 +202,14 @@ module Rendering
     end
 
     ##
+    # Question
+    # @param [String] content the box
+    def question(content)
+      @io << "<blockquote class='question'>#{inline_code(content)}" << nl
+      @io << '</blockquote>' << nl
+    end
+
+    ##
     # Script
     # @param [String] content the script to be included
     def script(content)

@@ -144,6 +144,11 @@ module Rendering
     def important(content); end
 
     ##
+    # Question
+    # @param [String] content the box
+    def question(content); end
+
+    ##
     # Script
     # @param [String] content the script to be included
     def script(content); end

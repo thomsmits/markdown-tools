@@ -223,6 +223,13 @@ module Rendering
     end
 
     ##
+    # Important
+    # @param [String] content the box
+    def question(content)
+      @io << "\\question{#{inline_code(content, false, true)}}" << nl
+    end
+
+    ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode

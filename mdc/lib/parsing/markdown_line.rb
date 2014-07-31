@@ -66,6 +66,9 @@ module Parsing
     ## A box for important content
     def important?; /^>! (.*)$/ =~ @line; end
 
+    ## A box for a question
+    def question?; /^>\? (.*)$/ =~ @line; end
+
     ## An empty line
     def empty?; /^$/ =~ @line.strip; end
 

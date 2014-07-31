@@ -169,6 +169,10 @@ module Parsing
             # >! Important text
             handle_important(ps, line)
 
+          elsif line.question?
+            # >? Question text
+            handle_question(ps, line)
+
           elsif line.table_row?
             # | Table | Table |
             handle_table(ps, line)
@@ -524,6 +528,7 @@ module Parsing
     ##
     # Quotes "> Quote"
     # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
     def handle_quote(ps, line)
       if ps.quote?
         quote = current_element(ps.slide, ps.comment_mode)
@@ -545,6 +550,7 @@ module Parsing
     ##
     # Important section ">! Text"
     # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
     def handle_important(ps, line)
       if !ps.quote?
         element = Domain::Important.new
@@ -554,6 +560,21 @@ module Parsing
       elsif ps.quote?
         element = current_element(ps.slide, ps.comment_mode)
         element.append(line.sub(/>! /, ''))
+      end
+    end
+
+    ##
+    # Question section ">? Text"
+    # @param [ParserState] ps State of the parser
+    def handle_question(ps, line)
+      if !ps.quote?
+        element = Domain::Question.new
+        element.append(line.sub(/>\? /, ''))
+        add_to_slide(ps.slide, element, ps.comment_mode)
+        ps.quote!
+      elsif ps.quote?
+        element = current_element(ps.slide, ps.comment_mode)
+        element.append(line.sub(/>\? /, ''))
       end
     end
 
