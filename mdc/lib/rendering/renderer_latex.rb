@@ -38,6 +38,26 @@ module Rendering
     # @return [String] Text with replacements performed
     def inline(input, alternate = false)
 
+      parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
+      result = ''
+
+      parts.each { |p|
+        if p.matched
+          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
+        else
+          result << inline_replacements(p.content, alternate)
+        end
+      }
+
+      result
+    end
+
+    ##
+    # Apply regular expressions to replace inline content
+    # @param [String] input Text to be replaced
+    # @param [boolean] alternate alternate emphasis to be used
+    # @return [String] Text with replacements performed
+    def inline_replacements(input, alternate = false)
       return ''  if input.nil?
 
       result = input
@@ -74,8 +94,8 @@ module Rendering
       end
 
       result.gsub!(/~~(.+?)~~/,           '\strikeout{\1}')
-      result.gsub!(/s\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
-      result.gsub!(/\[(.+?)\]\((.+?)\)/,  '\href{\2}{\1}')
+      #result.gsub!(/s\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
+      #result.gsub!(/\[(.+?)\]\((.+?)\)/,  '\href{\2}{\1}')
       result.gsub!('Z.B.',                'Z.\,B.')
       result.gsub!('z.B.',                'z.\,B.')
       result.gsub!('D.h.',                'D.\,h.')
@@ -118,7 +138,7 @@ module Rendering
     # @param [boolean] alternate alternate emphasis to be used
     # @return the input with replaced code fragments
     def inline_code(input, table = false, alternate = false)
-      parts = tokenize_line(input)
+      parts = tokenize_line(input, /`(.+?)`/)
 
       result = ''
       size = table ? ',basicstyle=\scriptsize' : ',style=inline'
@@ -126,7 +146,7 @@ module Rendering
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
 
       parts.each { |p|
-        if p.code
+        if p.matched
           if p.content.include?('|')
             result << "\\lstinline[#{options}language=#{@language}#{size}]+#{p.content}+"
           else
@@ -395,3 +415,4 @@ module Rendering
     end
   end
 end
+

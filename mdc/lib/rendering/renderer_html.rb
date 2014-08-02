@@ -56,11 +56,33 @@ module Rendering
     end
 
     ##
-    # Replace inline elements like emphasis (_..._) etc.
+    # Replace inline elements like emphasis (_..._)
     #
     # @param [String] input Text to be replaced
+    # @param [boolean] alternate alternate emphasis to be used
     # @return [String] Text with replacements performed
-    def inline(input)
+    def inline(input, alternate = false)
+
+      parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
+      result = ''
+
+      parts.each { |p|
+        if p.matched
+          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
+        else
+          result << inline_replacements(p.content, alternate)
+        end
+      }
+
+      result
+    end
+
+    ##
+    # Apply regular expressions to replace inline content
+    # @param [String] input Text to be replaced
+    # @param [boolean] alternate alternate emphasis to be used
+    # @return [String] Text with replacements performed
+    def inline_replacements(input, alternate = false)
 
       return ''  if input.nil?
 
@@ -75,8 +97,8 @@ module Rendering
       result.gsub!(/\*\*(.+?)\*\*/,       '<strong class="alternative">\1</strong>')
       result.gsub!(/\*(.+?)\*/,           '<em class="alternative">\1</em>')
       result.gsub!(/~~(.+?)~~/,           '<del>\1</del>')
-      result.gsub!(/s\[(.+?)\]\((.+?)\)/, '<a class="small" href="\2">\1</a>')
-      result.gsub!(/\[(.+?)\]\((.+?)\)/,  '<a href="\2">\1</a>')
+      #result.gsub!(/s\[(.+?)\]\((.+?)\)/, '<a class="small" href="\2">\1</a>')
+      #result.gsub!(/\[(.+?)\]\((.+?)\)/,  '<a href="\2">\1</a>')
       result.gsub!(/z\.B\./,              'z.&nbsp;B.')
       result.gsub!(/d\.h\./,              'd.&nbsp;h.')
       result.gsub!(/u\.a\./,              'u.&nbsp;a.')
@@ -107,7 +129,26 @@ module Rendering
     # @param [String] input the input
     # @return the input with replaced code fragments
     def inline_code(input)
-      parts = tokenize_line(input)
+      parts = tokenize_line(input, /`(.+?)`/)
+      result = ''
+
+      parts.each { |p|
+        if p.matched
+          result << "<code class='inline #{@language}'>#{entities(p.content)}</code>"
+        else
+          result << inline(p.content)
+        end
+      }
+
+      result
+    end
+
+    ##
+    # Replace []() links in input
+    # @param [String] input the input
+    # @return the input with replaced code fragments
+    def inline_links(input)
+      parts = tokenize_line(input, /`(.+?)`/)
       result = ''
 
       parts.each { |p|

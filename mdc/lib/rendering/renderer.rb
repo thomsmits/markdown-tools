@@ -14,14 +14,14 @@ module Rendering
     # Class representing the parts of a line
     class LinePart
 
-      attr_accessor :code, :content
+      attr_accessor :matched, :content
 
       ##
       # Create a new instance
       # @param [String] content content of the part
-      # @param [Boolean] code indicates whether we have code or normal text
-      def initialize(content, code)
-        @code, @content = code, content
+      # @param [Boolean] matched indicates whether we have a match or normal text
+      def initialize(content, matched)
+        @matched, @content = matched, content
       end
 
       ##
@@ -56,12 +56,13 @@ module Rendering
     # Split the line into tokens. One token for each code / non-code fragment
     # is created
     # @param [String] input the input
+    # @param [Pattern] expression regex used for tokenizing
     # @return [Renderer::LinePart[]] the input tokenized
-    def tokenize_line(input)
+    def tokenize_line(input, expression)
       parts = [ ]
       remainder = input
 
-      while /`(.+?)`/ =~ remainder
+      while expression =~ remainder
         parts << LinePart.new($`, false)
         parts << LinePart.new($1, true)
         remainder = $'
