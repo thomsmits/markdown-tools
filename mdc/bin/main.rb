@@ -50,7 +50,7 @@ class Main
     puts "Directory: #{directory}"
     puts "Type: #{type}"
 
-    p = Parsing::Parser.new
+    p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
     pres = Domain::Presentation.new(title1, title2, chapter_no, chapter_name,
         copyright, author, default_language, description, term)
 

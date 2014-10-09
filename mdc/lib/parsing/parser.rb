@@ -28,9 +28,10 @@ module Parsing
 
     ##
     # Create a new parser
-    def initialize
+    # @param [Fixnum] count_fontmatter number of pages of front matter
+    def initialize(count_fontmatter)
       @chapter_counter = 0
-      @page_counter = 3
+      @last_slide_counter = count_fontmatter
     end
 
     ##
@@ -49,7 +50,7 @@ module Parsing
     def parse(file_name, default_language, presentation)
 
       begin
-        ps = ParserState.new(presentation, file_name)
+        ps = ParserState.new(presentation, file_name, @last_slide_counter)
 
         ps.language = default_language
 
@@ -192,6 +193,11 @@ module Parsing
         puts ps
         exit(-1)
       end
+
+      # As chapters may be parsed separately, with new invocations of the
+      # parse method, the counter of the last slide of the previous chapter
+      # needs to be saved to ensure correct slide numbering
+      @last_slide_counter = ps.slide_counter
     end
 
     private
@@ -227,11 +233,12 @@ module Parsing
       # Create a new object
       # @param [Domain::Presentation] presentation presentation to work on
       # @param [String] file_name name of the file being parsed
-      def initialize(presentation, file_name)
+      # @param [Fixnum] slide_counter start value of the slide numbers
+      def initialize(presentation, file_name, slide_counter)
         @presentation = presentation
         @state = STATE_NORMAL
         @line_counter = 0
-        @slide_counter = 0
+        @slide_counter = slide_counter
         @file_name = file_name
         @comment_mode = false
         @chapter = nil
@@ -384,12 +391,13 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def handle_chapter_title(ps, line)
       @chapter_counter += 1
-      @page_counter += 1
       id = "chap_#{@chapter_counter}"
+      ps.slide_counter += 1
       ps.chapter = Domain::Chapter.new(line.chapter_title.gsub('#', ''), id)
       ps.presentation.add(ps.chapter)
       ps.normal!
       ps.comment_mode = false
+      puts line.chapter_title + " #{ps.slide_counter}"
     end
 
     ##
@@ -398,13 +406,13 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def handle_slide_title(ps, line)
       skip = line.skipped_slide?
-      ps.slide_counter += 1
+      ps.slide_counter += 1 unless skip
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
-          line.slide_title.gsub('#', ''), @page_counter, skip)
+          line.slide_title.gsub('#', ''), ps.slide_counter, skip)
       ps.chapter.add_slide(ps.slide)
       ps.normal!
       ps.comment_mode = false
-      @page_counter += 1  unless skip
+      puts line.slide_title + " #{ps.slide_counter}"
     end
 
     ##
@@ -422,6 +430,10 @@ module Parsing
 
       add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
       ps.code_fenced!
+
+      # increase slide counter to account for additional slide numbers generated
+      # through the animations
+      ps.slide_counter += order
     end
 
     ##

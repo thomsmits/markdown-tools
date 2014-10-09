@@ -7,4 +7,5 @@ class Constants
   RIGHT = 2
   CENTER = 3
   SEPARATOR = -1
+  PAGES_FRONT_MATTER = 3
 end
