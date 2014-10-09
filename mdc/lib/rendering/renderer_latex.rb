@@ -66,8 +66,8 @@ module Rendering
       result.gsub!('{',                   '\{')
       result.gsub!('}',                   '\}')
 
-      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([<,.;:) ]|$)/,  '\1\begin{math}\2\textsubscript{\3}\end{math}\4')
-      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:) ]|$)/,  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4')
+      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,  '\1\begin{math}\2\textsubscript{\3}\end{math}\4')
+      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4')
       result.gsub!(/"(.*?)"/, '"`\1"\'')
 
       #result.gsub!(/(^|[ (>])([A-Za-z0-9])_([A-Za-z0-9+-]{1,})$/,               '\1\begin{math}\2\textsubscript{\3}\end{math}')
