@@ -45,8 +45,8 @@ class Index
     main_prop_file = directory + '/metadata.properties'
     main_props = Parsing::PropertiesReader.new(main_prop_file)
 
-    postfix_slide = '.html'
-    postfix_plain = '_plain.html'
+    postfix_slide = '-Folien.html'
+    postfix_plain = '-Skript.html'
 
     title1           = main_props.get('title_1')
     title2           = main_props.get('title_2')
@@ -67,10 +67,7 @@ class Index
 
       chapter_props      = Parsing::PropertiesReader.new(prop_file)
 
-      chapter_make_file  = Parsing::PropertiesReader.new(
-          "#{directory}/#{f}/Makefile")
-
-      chapter_file = chapter_make_file.get('CHAPTER')
+      chapter_file = chapter_props.get('resultfile')
       slide_file   = chapter_file + postfix_slide
       plain_file   = chapter_file + postfix_plain
 
