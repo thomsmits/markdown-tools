@@ -397,7 +397,7 @@ module Parsing
       ps.presentation.add(ps.chapter)
       ps.normal!
       ps.comment_mode = false
-      puts line.chapter_title + " #{ps.slide_counter}"
+      # puts line.chapter_title + " #{ps.slide_counter}"
     end
 
     ##
@@ -412,7 +412,7 @@ module Parsing
       ps.chapter.add_slide(ps.slide)
       ps.normal!
       ps.comment_mode = false
-      puts line.slide_title + " #{ps.slide_counter}"
+      # puts line.slide_title + " #{ps.slide_counter}"
     end
 
     ##
