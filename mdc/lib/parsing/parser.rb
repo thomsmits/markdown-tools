@@ -28,10 +28,10 @@ module Parsing
 
     ##
     # Create a new parser
-    # @param [Fixnum] count_fontmatter number of pages of front matter
-    def initialize(count_fontmatter)
+    # @param [Fixnum] count_front_matter number of pages of front matter
+    def initialize(count_front_matter)
       @chapter_counter = 0
-      @last_slide_counter = count_fontmatter
+      @last_slide_counter = count_front_matter
     end
 
     ##
