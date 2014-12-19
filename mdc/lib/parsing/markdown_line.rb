@@ -38,15 +38,15 @@ module Parsing
     # Remove the code prefix (i.e. four blanks) from the line
     def trim_code_prefix!
       if @line.length > 4
-        @line = @line[4..-1]
+        substr!(4)
       end
     end
 
     ## HTML comment
-    def comment; /<!--(.*)-->/ =~ @line.strip; $1; end
+    def comment; @line.strip[/<!--(.*)-->/, 1]; end
 
     ## HTML comment
-    alias comment? comment
+    def comment?; !!comment; end
 
     ## Vertical space
     def vspace?; /^<br>$/ =~ @line.strip; end
@@ -76,13 +76,28 @@ module Parsing
     def normal?; /^[^ ].*$/ =~ @line; end
 
     ## Just text
-    def text?; /^[A-Za-z0-9_ÄÖÜäöü`*].*$/ =~ @line; end
+    def text?; /^[A-Za-z0-9_ÄÖÜäöüß`*].*$/ =~ @line; end
 
     ## HTML code
     def html?; /^<.*$/ =~ @line; end
 
     ## Image
-    def image?; /!\[.*\]\(.*\)/ =~ @line; end
+    def image?; /!\[.*\]\(.+\)/ =~ @line; end
+
+    ## Beginning of a fenced code block
+    def fenced_code_start; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?(\{.*?\})?/, 1]; end
+
+    ## Beginning of a fenced code block
+    def fenced_code_start?; !!fenced_code_start; end
+
+    ## Beginning of a fenced code block with order mark
+    def fenced_code_order; @line.strip[/^```[a-zA-Z0-9]*\[([1-9])\](\{.*?\})?/, 1]; end
+
+    ## Beginning of a fenced code block with order mark
+    def fenced_code_order?; !!fenced_code_order; end
+
+    ## Caption annotated for a fenced code block
+    def fenced_code_caption; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?\{(.*?)\}/, 3]; end
 
     ## End of a fenced code block
     def fenced_code_end?; /^```$/ =~ @line.strip; end
@@ -109,74 +124,72 @@ module Parsing
     def table_separator?; /^\|[-]{2,}\|.*/ =~ @line.strip; end
 
     ## unordered list, level 1
-    def ul1; /^ {2}[\*\-](.*)/ =~ @line; $1; end
+    def ul1; @line[/^ {2}[\*\-] (.*)/, 1]; end
 
     ## unordered list, level 1
-    alias ul1? ul1
+    def ul1?; !!ul1; end
 
     ## unordered list, level 2
-    def ul2; /^ {4}[\*\-](.*)/ =~ @line; $1; end
+    def ul2; @line[/^ {4}[\*\-] (.*)/, 1]; end
 
-    ## unordered list, level 1
-    alias ul2? ul2
+    ## unordered list, level 2
+    def ul2?; !!ul2; end
 
     ## unordered list, level 3
-    def ul3; /^ {6}[\*\-](.*)/ =~ @line; $1; end
+    def ul3; @line[/^ {6}[\*\-] (.*)/, 1]; end
 
-    ## unordered list, level 1
-    alias ul3? ul3
-
-    ## ordered list, level 1
-    def ol1; /^ {2}[0-9]+\.(.*)/ =~ @line; $1; end
+    ## unordered list, level 3
+    def ul3?; !!ul3; end
 
     ## ordered list, level 1
-    alias ol1? ol1
+    def ol1; @line[/^ {2}[0-9]+\. (.*)/, 1]; end
+
+    ## ordered list, level 1
+    def ol1?; !!ol1; end
 
     ## ordered list, level 1 with number
-    def ol1_number; /^ {2}([0-9]+)\..*/ =~ @line; $1; end
+    def ol1_number; @line[/^ {2}([0-9]+)\..*/, 1]; end
 
     ## ordered list, level 2
-    def ol2; /^ {4}[0-9]+\.(.*)/ =~ @line; $1; end
+    def ol2; @line[/^ {4}[0-9]+\. (.*)/, 1]; end
 
     ## ordered list, level 2
-    alias ol2? ol2
+    def ol2?; !!ol2; end
 
-    ## ordered list, level 1 with number
-    def ol2_number; /^ {4}([0-9]+)\..*/ =~ @line; $1; end
-
-    ## ordered list, level 3
-    def ol3; /^ {6}[1-9]+\.(.*)/ =~ @line; $1; end
+    ## ordered list, level 2 with number
+    def ol2_number; @line[/^ {4}([0-9]+)\..*/, 1]; end
 
     ## ordered list, level 3
-    alias ol3? ol3
+    def ol3; @line[/^ {6}[1-9]+\. (.*)/, 1]; end
 
-    ## Beginning of a fenced code block
-    def fenced_code_start; /^```([a-zA-Z0-9]*)(\[[1-9]\])?(\{.*?\})?/ =~ @line.strip; $1; end
+    ## ordered list, level 3
+    def ol3?; !!ol3; end
 
-    ## Beginning of a fenced code block with order mark
-    def fenced_code_order; /^```[a-zA-Z0-9]*\[([1-9])\](\{.*?\})?/ =~ @line.strip; $1; end
-    alias fenced_code_order? fenced_code_order
-
-    ## Caption annotated for a fenced code block
-    def fenced_code_caption; /^```([a-zA-Z0-9]*)(\[[1-9]\])?\{(.*?)\}/ =~ @line.strip; $3; end
-
-    ## Beginning of a fenced code block
-    alias fenced_code_start? fenced_code_start
+    ## ordered list, level 2 with number
+    def ol3_number; @line[/^ {6}([0-9]+)\. .*/, 1]; end
 
     ## Title of a slide
-    def slide_title; /^ *## (.*)/ =~ @line; $1; end
+    def slide_title
+      title = @line[/^ *## (.*)/, 1]
+      title.nil? ? nil : title.sub(/##/, '').strip
+    end
 
     ## Title of a slide
-    alias slide_title? slide_title
+    def slide_title?; !!slide_title; end
 
     ## Title of a chapter
-    def chapter_title; /^ *# (.*)/ =~ @line; $1; end
+    def chapter_title;
+      title = @line[/^ *# (.*)/, 1]
+      title.nil? ? nil : title.sub(/#/, '').strip
+    end
 
     ## Title of a chapter
-    alias chapter_title? chapter_title
+    def chapter_title?; !!chapter_title; end
 
     ## Beginning of UML block
     def uml_start?; /^@startuml.*$/ =~ @line.strip; end
+
+    ## Beginning of UML block
     def uml_start
       if /^@startuml\[(.*?)\]\[(.*?)\]$/ =~ @line
         return $1, $2
@@ -185,7 +198,7 @@ module Parsing
       end
     end
 
-    ## Beginning of UML block
+    ## End of UML block
     def uml_end?; /^@enduml$/ =~ @line.strip; end
 
     ## Forwarding of String's sub method
