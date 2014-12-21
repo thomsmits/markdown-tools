@@ -7,11 +7,11 @@ module Parsing
 
     ##
     # Create a new instance
-    # @param [String] file_name name of properties file
+    # @param [String|IO] file name of properties file
     # @param [String] defaults_file file containing the default values
     # @param [String] separator the separation character
-    def initialize(file_name, separator = '=', defaults_file = nil)
-      @result = read_file_into_array(file_name, separator)
+    def initialize(file, separator = '=', defaults_file = nil)
+      @result = read_file_into_array(file, separator)
 
       if defaults_file.nil?
         @defaults = {}
@@ -22,20 +22,26 @@ module Parsing
 
     ##
     # Read the contents of a java properties file into an associative array
-    # @param [String] file_name name of properties file
+    # @param [String|IO] file name of properties file
     # @param [String] separator the separation character
-    def read_file_into_array(file_name, separator)
-      lines = File.readlines(file_name, "\n", :encoding => 'UTF-8')
+    def read_file_into_array(file, separator)
+
+      if file.respond_to?(:readlines)
+        lines = file.readlines("\n")
+      else
+        lines = File.readlines(file, "\n", :encoding => 'UTF-8')
+      end
+
       result = {}
 
       regex = Regexp.new("(.*?)#{separator}(.*)")
 
       lines.each { |line|
+        # ignore comments
         next  if /^[ ]*#.*/ =~ line
 
-        if regex.match(line)
-          result[ $1.strip ] = $2.strip
-        end
+        # Add entry to the hash
+        regex.match(line) { |m| result[ m[1].strip ] = m[2].strip }
       }
 
       result
@@ -46,18 +52,14 @@ module Parsing
     # @param [String] key the key to look up
     # @return [String] the value for the key
     def get(key)
-
-      value = @result[key]
-
-      if value.nil?
-        value = @defaults[key]
-      end
-
-      value
+      @result[key] || @defaults[key]
     end
 
+    ##
+    # Return string representation
     def to_s
       @result.to_s + @defaults.to_s
     end
   end
 end
+
