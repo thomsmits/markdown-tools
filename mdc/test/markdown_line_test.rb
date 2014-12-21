@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-require "minitest/autorun"
+require 'minitest/autorun'
 require_relative '../lib/parsing/markdown_line'
 
 ##

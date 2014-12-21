@@ -8,6 +8,7 @@ module Domain
   ##
   # Base class for all elements that span more than one line
   class BlockElement < Element
+
     attr_accessor :content
 
     ##
@@ -32,11 +33,19 @@ module Domain
     def digest
       @content
     end
+
+    ##
+    # Return a string representation of the object
+    # @return [String] a string representation
+    def to_s
+      @content.strip
+    end
   end
 
   ##
   # Equation
   class Equation < BlockElement
+
     ##
     # Create a new element with the given content
     # @param [String] content of the element
@@ -218,6 +227,7 @@ module Domain
   ##
   # Script
   class Script < BlockElement
+
     ##
     # Create a new script with the given content
     # @param [String] content content of the script
@@ -319,6 +329,7 @@ module Domain
   ##
   # Source code
   class Source < BlockElement
+
     attr_accessor :language, :caption
 
     ##
