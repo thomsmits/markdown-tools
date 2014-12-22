@@ -66,13 +66,13 @@ module Rendering
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
 
-      parts.each { |p|
+      parts.each do |p|
         if p.matched
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
         else
           result << inline_replacements(p.content, alternate)
         end
-      }
+      end
 
       result
     end
@@ -151,13 +151,13 @@ module Rendering
       parts = tokenize_line(input, /`(.+?)`/)
       result = ''
 
-      parts.each { |p|
+      parts.each do |p|
         if p.code
           result << "<code class='inline #{@language}'>#{entities(p.content)}</code>"
         else
           result << inline(p.content)
         end
-      }
+      end
 
       result
     end
@@ -300,13 +300,13 @@ end
       @io << "<table class='small content'>" << nl
       @io << '<thead><tr>' << nl
 
-      headers.each_with_index { |e, i|
+      headers.each_with_index do |e, i|
 
         css_class = class_for_constant(alignment[i])
 
-        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl  if alignment[i] != Constants::SEPARATOR
-        @io << "<th#{css_class}></th>" << nl  if alignment[i] == Constants::SEPARATOR
-      }
+        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl if alignment[i] != Constants::SEPARATOR
+        @io << "<th#{css_class}></th>" << nl if alignment[i] == Constants::SEPARATOR
+      end
 
       @io << '</tr></thead><tbody>' << nl
     end
@@ -317,13 +317,13 @@ end
     # @param [Array] alignment alignments of the cells
     def table_row(row, alignment)
       @io << '<tr>' << nl
-      row.each_with_index { |e, i|
+      row.each_with_index do |e, i|
 
         css_class = class_for_constant(alignment[i])
 
-        @io << "<td#{css_class}>#{inline_code(e)}</td>" << nl  if alignment[i] != Constants::SEPARATOR
-        @io << "<td#{css_class}></td>" << nl  if alignment[i] == Constants::SEPARATOR
-      }
+        @io << "<td#{css_class}>#{inline_code(e)}</td>" << nl if alignment[i] != Constants::SEPARATOR
+        @io << "<td#{css_class}></td>" << nl if alignment[i] == Constants::SEPARATOR
+      end
 
       @io <<  '</tr>' << nl
     end

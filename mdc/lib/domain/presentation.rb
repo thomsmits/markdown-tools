@@ -42,14 +42,14 @@ module Domain
     # Build the table of contents from the contained data. This method must be
     # called after all slides and chapters have been added to the presentation
     def build_toc
-      @chapters.each { |chapter|
+      @chapters.each do |chapter|
 
         @toc.add(chapter.id, chapter.title)
 
         chapter.each { |slide|
-          toc.add_sub_entry(chapter.id, slide.id, slide.title)  unless slide.skip
+          toc.add_sub_entry(chapter.id, slide.id, slide.title) unless slide.skip
         }
-      }
+      end
     end
 
     ##

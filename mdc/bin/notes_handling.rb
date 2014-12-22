@@ -29,13 +29,13 @@ class NotesHandling
   # @return [Hash] a hash
   def strings_to_hash(comments)
     hash = {}
-    comments.each { |c|
+    comments.each do |c|
       if /(.*):(.*)/ =~ c
         name = $1.strip
         value = $2.strip
         hash[name] = value
       end
-    }
+    end
     hash
   end
 
@@ -46,13 +46,13 @@ class NotesHandling
 
     p = Parsing::Parser.new
 
-    folder.files.each { |file|
+    folder.files.each do |file|
       src_path = folder.path + '/' + file.name;
       dest_dir = target + '/' + folder.name;
 
-      FileUtils.mkdir_p(dest_dir)  unless Dir.exist?(dest_dir)
+      FileUtils.mkdir_p(dest_dir) unless Dir.exist?(dest_dir)
 
-      dest_path =  dest_dir + '/' + file.name + '.html'
+      dest_path = dest_dir + '/' + file.name + '.html'
 
       pres = Domain::Presentation.new('', '', '', '', '', '', '', '', '')
       p.parse(src_path, '', pres)
@@ -63,18 +63,16 @@ class NotesHandling
 
       metadata = strings_to_hash(pres.comments)
 
-      file.date = Date.parse(metadata['date'])  unless metadata['date'].nil?
-      file.tags = metadata['tags'].split(/, ?/)  unless metadata['tags'].nil?
+      file.date = Date.parse(metadata['date']) unless metadata['date'].nil?
+      file.tags = metadata['tags'].split(/, ?/) unless metadata['tags'].nil?
 
       io = File.new(dest_path, 'w', :encoding => 'UTF-8')
       renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', file.tags, file.date, folder.title)
       pres.render(renderer)
       io.close
-    }
+    end
 
-    folder.folders.each { |dir|
-      read_files_and_convert(dir, target + '/' + folder.name)
-    }
+    folder.folders.each { |dir| read_files_and_convert(dir, target + '/' + folder.name) }
 
     dest_dir = target + '/' + folder.name;
     make_index(dest_dir, folder)
@@ -118,9 +116,9 @@ class NotesHandling
     end
 
     # Search for files in folder
-    Dir.foreach(directory) { |d|
+    Dir.foreach(directory) do |d|
 
-      next  if d.end_with?('.')
+      next if d.end_with?('.')
 
       path = "#{directory}/#{d}"
 
@@ -132,7 +130,7 @@ class NotesHandling
         parse_folder(path, sub_folder)
         folder.add_folder(sub_folder)
       end
-    }
+    end
   end
 end
 

@@ -59,23 +59,23 @@ class Index
 
     entries = [ ]
 
-    dirs.each { |f|
+    dirs.each do |f|
 
       prop_file = "#{directory}/#{f}/metadata.properties"
 
-      next  unless File.exist?(prop_file)
+      next unless File.exist?(prop_file)
 
-      chapter_props      = Parsing::PropertiesReader.new(prop_file)
+      chapter_props = Parsing::PropertiesReader.new(prop_file)
 
       chapter_file = chapter_props.get('resultfile')
-      slide_file   = chapter_file + postfix_slide
-      plain_file   = chapter_file + postfix_plain
+      slide_file = chapter_file + postfix_slide
+      plain_file = chapter_file + postfix_plain
 
       entries << Entry.new(chapter_props.get('chapter_no'),
-                             chapter_props.get('chapter_name'),
-                             slide_file,
-                             plain_file)
-    }
+                           chapter_props.get('chapter_name'),
+                           slide_file,
+                           plain_file)
+    end
 
     io = StringIO.new
     io.set_encoding('UTF-8')
@@ -83,11 +83,11 @@ class Index
     renderer = Rendering::RendererHTML.new(io, '', '', '', '')
     renderer.index_start(title1, title2, copyright, description)
 
-    entries.each { |e|
+    entries.each do |e|
       renderer.index_entry(e.chapter_number, e.chapter_name,
                            e.slide_file, LOCALIZED_MESSAGES[:presentation],
                            e.plain_file, LOCALIZED_MESSAGES[:plain])
-    }
+    end
 
     renderer.index_end
 

@@ -38,9 +38,7 @@ module Notes
       result = ''
       result << "#{@title} '#{@description}' -> #{@path}\n"
 
-      @files.each { |e|
-        result << '    ' << e.to_s << "\n"
-      }
+      @files.each { |e| result << '    ' << e.to_s << "\n" }
 
       result
     end
@@ -70,16 +68,12 @@ module Notes
     # @return [String[]] found tags alphabetically sorted
     def all_tags
       tags = {}
-      @files.each { |f|
-        f.tags.each { |t|
-          tags[t] = :present
-        }
-      }
+      @files.each do |f|
+        f.tags.each { |t| tags[t] = :present }
+      end
 
       result = []
-      tags.each_key { |k|
-        result << k
-      }
+      tags.each_key { |k| result << k }
 
       result.sort!
     end

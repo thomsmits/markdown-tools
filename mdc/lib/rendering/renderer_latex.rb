@@ -41,13 +41,13 @@ module Rendering
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
 
-      parts.each { |p|
+      parts.each do |p|
         if p.matched
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
         else
           result << inline_replacements(p.content, alternate)
         end
-      }
+      end
 
       result
     end
@@ -297,12 +297,12 @@ module Rendering
 
       column_line = ''
 
-      alignment.each { |a|
+      alignment.each do |a|
         column_line << 'l '  if a == Constants::LEFT
         column_line << 'r '  if a == Constants::RIGHT
         column_line << 'c '  if a == Constants::CENTER
         column_line << '| '  if a == Constants::SEPARATOR
-      }
+      end
 
       @io << <<-ENDOFTEXT
       \\begin{center}
@@ -317,11 +317,11 @@ module Rendering
       result = ''
       i = 0
 
-      headers.each_with_index { |e, k|
+      headers.each_with_index do |e, k|
         result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
-        result << ' & '  if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
+        result << ' & ' if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
-      }
+      end
 
       @io << "#{result} \\\\" << nl
       @io << '\midrule' << nl
@@ -336,9 +336,9 @@ module Rendering
       result = ''
       i = 0
 
-      row.each_with_index { |e, k|
+      row.each_with_index do |e, k|
 
-        next  if alignment[k] == Constants::SEPARATOR
+        next if alignment[k] == Constants::SEPARATOR
 
         text = inline_code(e, true)
 
@@ -348,9 +348,9 @@ module Rendering
         end
 
         result << text
-        result << ' & '  if k < row.size - 1
+        result << ' & ' if k < row.size - 1
         i += 1
-      }
+      end
 
       @io << "#{result} \\\\" << nl
     end

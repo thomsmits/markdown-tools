@@ -81,7 +81,7 @@ module Parsing
 
         handler = @parser_handler
 
-        lines.each { |raw_line|
+        lines.each do |raw_line|
 
           line = MarkdownLine.new(raw_line)
           ps.line_counter = ps.line_counter + 1
@@ -207,7 +207,7 @@ module Parsing
             handler.inline(ps, line)
 
           end
-        }
+        end
 #      rescue Exception => e
 #        puts e
 #        puts ps.to_s

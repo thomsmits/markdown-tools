@@ -41,9 +41,7 @@ class Main
     # Scan files matching the pattern 01_...
     files = [ ]
 
-    dir.each { |file|
-      files << file  if /[0-9][0-9]_.*\.md/ =~ file
-    }
+    dir.each { |file| files << file  if /[0-9][0-9]_.*\.md/ =~ file }
 
     files.sort
 
@@ -77,9 +75,7 @@ class Main
 
     pres.render(r)
 
-    File.open(output_file, 'w', :encoding => 'UTF-8') { |f|
-      f << io.string
-    }
+    File.open(output_file, 'w', :encoding => 'UTF-8') { |f| f << io.string }
   end
 end
 

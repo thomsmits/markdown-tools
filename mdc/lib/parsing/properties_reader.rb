@@ -36,13 +36,13 @@ module Parsing
 
       regex = Regexp.new("(.*?)#{separator}(.*)")
 
-      lines.each { |line|
+      lines.each do |line|
         # ignore comments
-        next  if /^[ ]*#.*/ =~ line
+        next if /^[ ]*#.*/ =~ line
 
         # Add entry to the hash
-        regex.match(line) { |m| result[ m[1].strip ] = m[2].strip }
-      }
+        regex.match(line) { |m| result[m[1].strip] = m[2].strip }
+      end
 
       result
     end

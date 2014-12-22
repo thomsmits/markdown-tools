@@ -237,11 +237,11 @@ module Rendering
 
     def print_tags(tags)
       count = 0
-      tags.each { |t|
+      tags.each do |t|
         @io << "<span class='tag'>#{t}</span>"
         count = count + 1
-        break  if count > 10
-      }
+        break if count > 10
+      end
     end
 
     ##

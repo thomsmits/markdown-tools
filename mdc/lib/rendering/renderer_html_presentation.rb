@@ -310,12 +310,12 @@ module Rendering
         if e.entries.length > 0
           result << '    <ul>' << nl
 
-          e.entries.each { |se|
+          e.entries.each do |se|
             unless se.name == @last_toc_name
               result << "      <li><a href='##{se.id}'>#{se.name}</a>" << nl
               @last_toc_name = se.name
             end
-          }
+          end
         end
 
         result << '    </ul>' << nl
