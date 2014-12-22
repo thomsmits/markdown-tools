@@ -30,7 +30,7 @@ class NotesHandling
   def strings_to_hash(comments)
     hash = {}
     comments.each do |c|
-      if /(.*):(.*)/ =~ c
+      if /(.*):(.*)/ === c
         name = $1.strip
         value = $2.strip
         hash[name] = value

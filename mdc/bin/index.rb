@@ -55,7 +55,7 @@ class Index
 
     dirs = [ ]
 
-    dir.each { |f| dirs << f  if /[0-9][0-9]_.*/ =~ f }
+    dir.each { |f| dirs << f  if /[0-9][0-9]_.*/ === f }
 
     entries = [ ]
 

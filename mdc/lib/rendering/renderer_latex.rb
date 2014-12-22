@@ -342,7 +342,7 @@ module Rendering
 
         text = inline_code(e, true)
 
-        if /\\newline/ =~ text
+        if /\\newline/ === text
           text = "\\specialcell[t]{#{text}}"
           text.gsub!(/\\newline/, '\\\\\\\\')
         end
@@ -405,7 +405,7 @@ module Rendering
 
       new_width = width
 
-      if /%/ =~ new_width
+      if /%/ === new_width
         new_width.gsub!(/%/, '')
         width_num = new_width.to_i / 100.0
         new_width = "#{width_num.to_s}\\textwidth"

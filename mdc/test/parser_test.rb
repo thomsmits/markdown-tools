@@ -349,7 +349,7 @@ ENDOFTEXT
   def check_slide(slide, title, code, skipped, content_types = [ ], contents = [ ], &checks)
     assert_equal(title, slide.title)
     assert_equal(code, slide.contains_code?)
-    assert_equal(skipped, !!slide.skip)
+    assert_equal(skipped, slide.skip)
     content_types.each_with_index { |e, i| assert_kind_of(e, slide.elements[i])  }
     contents.each_with_index { |e, i| assert_equal(e, slide.elements[i].to_s.strip)  }
     checks.call(slide.elements)  unless checks.nil?

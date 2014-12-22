@@ -288,13 +288,13 @@ module Parsing
         columns = cleaned_line.split('|')
 
         columns.each { |e|
-          if /^[ ]{2,}.*[ ]{2,}$/ =~ e
+          if /^[ ]{2,}.*[ ]{2,}$/ === e
             alignment = Constants::CENTER
-          elsif /^[ ]{2,}.*[ ]$/ =~ e
+          elsif /^[ ]{2,}.*[ ]$/ === e
             alignment = Constants::RIGHT
-          elsif /^[ ]{1}.*[ ]+$/ =~ e
+          elsif /^[ ]{1}.*[ ]+$/ === e
             alignment = Constants::LEFT
-          elsif /^!$/ =~ e
+          elsif /^!$/ === e
             alignment = Constants::SEPARATOR
           else
             alignment = Constants::LEFT

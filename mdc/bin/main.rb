@@ -41,7 +41,7 @@ class Main
     # Scan files matching the pattern 01_...
     files = [ ]
 
-    dir.each { |file| files << file  if /[0-9][0-9]_.*\.md/ =~ file }
+    dir.each { |file| files << file  if /[0-9][0-9]_.*\.md/ === file }
 
     files.sort
 

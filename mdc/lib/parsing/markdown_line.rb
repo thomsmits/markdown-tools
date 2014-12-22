@@ -49,40 +49,40 @@ module Parsing
     def comment?; !!comment; end
 
     ## Vertical space
-    def vspace?; /^<br>$/ =~ @line.strip; end
+    def vspace?; /^<br>$/ === @line.strip; end
 
     ## Source code prefixed by four blanks
-    def source?; /^ {4}[^\*\-](.*)/ =~ @line; end
+    def source?; /^ {4}[^\*\-](.*)/ === @line; end
 
     ## Row of a table
-    def table_row?; /^\|(.*)\| *$/ =~ @line; end
+    def table_row?; /^\|(.*)\| *$/ === @line; end
 
     ## A quote
-    def quote?; /^> (.*)$/ =~ @line; end
+    def quote?; /^> (.*)$/ === @line; end
 
     # The source of a quote
-    def quote_source?; /^>> (.*)$/ =~ @line; end
+    def quote_source?; /^>> (.*)$/ === @line; end
 
     ## A box for important content
-    def important?; /^>! (.*)$/ =~ @line; end
+    def important?; /^>! (.*)$/ === @line; end
 
     ## A box for a question
-    def question?; /^>\? (.*)$/ =~ @line; end
+    def question?; /^>\? (.*)$/ === @line; end
 
     ## An empty line
-    def empty?; /^$/ =~ @line.strip; end
+    def empty?; /^$/ === @line.strip; end
 
     ## A normal line
-    def normal?; /^[^ ].*$/ =~ @line; end
+    def normal?; /^[^ ].*$/ === @line; end
 
     ## Just text
-    def text?; /^[A-Za-z0-9_ÄÖÜäöüß`*].*$/ =~ @line; end
+    def text?; /^[A-Za-z0-9_ÄÖÜäöüß`*].*$/ === @line; end
 
     ## HTML code
-    def html?; /^<.*$/ =~ @line; end
+    def html?; /^<.*$/ === @line; end
 
     ## Image
-    def image?; /!\[.*\]\(.+\)/ =~ @line; end
+    def image?; /!\[.*\]\(.+\)/ === @line; end
 
     ## Beginning of a fenced code block
     def fenced_code_start; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?(\{.*?\})?/, 1]; end
@@ -100,28 +100,28 @@ module Parsing
     def fenced_code_caption; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?\{(.*?)\}/, 3]; end
 
     ## End of a fenced code block
-    def fenced_code_end?; /^```$/ =~ @line.strip; end
+    def fenced_code_end?; /^```$/ === @line.strip; end
 
     ## Slide to be skipped
-    def skipped_slide?; /.*--skip--.*/ =~ @line.strip; end
+    def skipped_slide?; /.*--skip--.*/ === @line.strip; end
 
     ## Start of a script
-    def script_start?; /^<script>$/ =~ @line.strip; end
+    def script_start?; /^<script>$/ === @line.strip; end
 
     ## End of a script
-    def script_end?; /^<\/script>$/ =~ @line.strip; end
+    def script_end?; /^<\/script>$/ === @line.strip; end
 
     ## Start of an equation
-    def equation_start?; /^\\\[$/ =~ @line.strip; end
+    def equation_start?; /^\\\[$/ === @line.strip; end
 
     ## End of an equation
-    def equation_end?; /^\\\]$/ =~ @line.strip; end
+    def equation_end?; /^\\\]$/ === @line.strip; end
 
     ## Separator of slide and comment
-    def separator?; /^---.*/ =~ @line; end
+    def separator?; /^---.*/ === @line; end
 
     ## Separator of tables
-    def table_separator?; /^\|[-]{2,}\|.*/ =~ @line.strip; end
+    def table_separator?; /^\|[-]{2,}\|.*/ === @line.strip; end
 
     ## unordered list, level 1
     def ul1; @line[/^ {2}[\*\-] (.*)/, 1]; end
@@ -187,19 +187,19 @@ module Parsing
     def chapter_title?; !!chapter_title; end
 
     ## Beginning of UML block
-    def uml_start?; /^@startuml.*$/ =~ @line.strip; end
+    def uml_start?; /^@startuml.*$/ === @line.strip; end
 
     ## Beginning of UML block
     def uml_start
-      if /^@startuml\[(.*?)\]\[(.*?)\]$/ =~ @line
+      if /^@startuml\[(.*?)\]\[(.*?)\]$/ === @line
         return $1, $2
-      elsif /^@startuml\[(.*)\]$/ =~ @line
+      elsif /^@startuml\[(.*)\]$/ === @line
         return $1, $1
       end
     end
 
     ## End of UML block
-    def uml_end?; /^@enduml$/ =~ @line.strip; end
+    def uml_end?; /^@enduml$/ === @line.strip; end
 
     ## Forwarding of String's sub method
     def sub(pattern, replacement)

@@ -38,7 +38,7 @@ module Parsing
 
       lines.each do |line|
         # ignore comments
-        next if /^[ ]*#.*/ =~ line
+        next  if /^[ ]*#.*/ === line
 
         # Add entry to the hash
         regex.match(line) { |m| result[m[1].strip] = m[2].strip }
