@@ -19,6 +19,14 @@ module Parsing
   class ParserHandler
 
     ##
+    # Create a new instance
+    # @param [Bool] test_mode indicates that the handler is tested and should not perform
+    #    any file access
+    def initialize(test_mode = false)
+      @test_mode = test_mode
+    end
+
+    ##
     # Copy a line to the document
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
@@ -404,7 +412,7 @@ module Parsing
       else
         add_to_slide(ps.slide, e, ps.comment_mode)
 
-        if e.instance_of?(Domain::Image)
+        if e.instance_of?(Domain::Image) && !@test_mode
           # for image, read available extensions
           e.formats = get_extensions(e.location)
           e.license = get_license(e.location)

@@ -82,6 +82,8 @@ module Domain
   # Heading
   class Heading < LineElement
 
+    attr_reader :level, :title
+
     ##
     # Create a new heading
     # @param [Fixnum] level of the heading
@@ -102,6 +104,13 @@ module Domain
     # Create a digest of the content
     # @return [String] a digest of the slide
     def digest
+      @title
+    end
+
+    ##
+    # Return a string representation of this element
+    # @return [String] string representation
+    def to_s
       @title
     end
   end
@@ -128,6 +137,13 @@ module Domain
     def render(renderer)
       renderer.html(@content)
     end
+
+    ##
+    # Return a string representation of this element
+    # @return [String] string representation
+    def to_s
+      @content
+    end
   end
 
   ##
@@ -135,6 +151,7 @@ module Domain
   class Image < LineElement
 
     attr_accessor :location, :formats, :license
+    attr_reader :alt, :title, :width_slide, :width_plain
 
     ##
     # Create a new image
@@ -156,6 +173,13 @@ module Domain
     def render(renderer)
       renderer.image(@location, @formats, @alt, @title, @width_slide, @width_plain,
                      @license.nil? ? nil : @license.source )
+    end
+
+    ##
+    # Return a string representation of this element
+    # @return [String] string representation
+    def to_s
+      @location
     end
   end
 
@@ -244,6 +268,13 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
       renderer.vertical_space
+    end
+
+    ##
+    # Return a string representation of this element
+    # @return [String] string representation
+    def to_s
+      ''
     end
   end
 end
