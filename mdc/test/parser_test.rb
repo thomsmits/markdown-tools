@@ -41,6 +41,21 @@ i++;
 
 ## Slide 1.4 --skip--
 
+
+## Slide 1.5
+
+> Quote Line 1
+> Quote Line 2
+
+
+## Slide 1.6
+
+>! Important Line 1
+>! Important Line 2
+>? Question Line 1
+>? Question Line 2
+
+
 # Chapter 2
 
 ## Slide 2.1
@@ -109,6 +124,18 @@ ENDOFTEXT
     assert_equal('Slide 1.4', slide.title)
     assert(!slide.contains_code?)
     assert(slide.skip)
+
+    slide = slides[4]
+    assert_equal('Slide 1.5', slide.title)
+    assert_kind_of(Domain::Quote, slide.elements[0])
+    assert_equal("Quote Line 1\nQuote Line 2", slide.elements[0].to_s)
+
+    slide = slides[5]
+    assert_equal('Slide 1.6', slide.title)
+    assert_kind_of(Domain::Important, slide.elements[0])
+    assert_kind_of(Domain::Question, slide.elements[1])
+    assert_equal("Important Line 1\nImportant Line 2", slide.elements[0].to_s)
+    assert_equal("Question Line 1\nQuestion Line 2", slide.elements[1].to_s)
 
     chapter2 = presentation.chapters[1]
 

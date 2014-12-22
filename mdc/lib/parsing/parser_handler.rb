@@ -238,12 +238,12 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def important(ps, line)
-      if !ps.quote?
+      if !ps.important?
         element = Domain::Important.new
         element.append(line.sub(/>! /, ''))
         add_to_slide(ps.slide, element, ps.comment_mode)
-        ps.quote!
-      elsif ps.quote?
+        ps.important!
+      elsif ps.important?
         element = current_element(ps.slide, ps.comment_mode)
         element.append(line.sub(/>! /, ''))
       end
@@ -254,12 +254,12 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def question(ps, line)
-      if !ps.quote?
+      if !ps.question?
         element = Domain::Question.new
         element.append(line.sub(/>\? /, ''))
         add_to_slide(ps.slide, element, ps.comment_mode)
-        ps.quote!
-      elsif ps.quote?
+        ps.question!
+      elsif ps.question?
         element = current_element(ps.slide, ps.comment_mode)
         element.append(line.sub(/>\? /, ''))
       end

@@ -57,20 +57,22 @@ module Parsing
 
  #     begin
         ps = ParserState.new(presentation, file_name, @last_slide_counter,
-                             :NORMAL,
-                             :CODE_FENCED,
-                             :CODE,
-                             :SCRIPT,
-                             :EQUATION,
-                             :UL1,
-                             :UL2,
-                             :UL3,
-                             :OL1,
-                             :OL2,
-                             :OL3,
-                             :TABLE,
-                             :QUOTE,
-                             :UML)
+                              :NORMAL,
+                              :CODE_FENCED,
+                              :CODE,
+                              :SCRIPT,
+                              :EQUATION,
+                              :UL1,
+                              :UL2,
+                              :UL3,
+                              :OL1,
+                              :OL2,
+                              :OL3,
+                              :TABLE,
+                              :QUOTE,
+                              :UML,
+                              :IMPORTANT,
+                              :QUESTION)
 
         ps.language = default_language
         ps.comment_mode = false
