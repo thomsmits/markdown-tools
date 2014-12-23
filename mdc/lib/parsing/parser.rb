@@ -47,6 +47,7 @@ module Parsing
     def initialize(count_front_matter, parser_handler = ParserHandler.new)
       @last_slide_counter = count_front_matter
       @parser_handler = parser_handler
+      @chapter_counter = 0
     end
 
     ##
@@ -78,6 +79,7 @@ module Parsing
 
         ps.language = default_language
         ps.comment_mode = false
+        ps.chapter_counter = @chapter_counter
 
         handler = @parser_handler
 
@@ -218,6 +220,7 @@ module Parsing
       # parse method, the counter of the last slide of the previous chapter
       # needs to be saved to ensure correct slide numbering
       @last_slide_counter = ps.slide_counter
+      @chapter_counter = ps.chapter_counter
     end
 
     ##
