@@ -9,6 +9,138 @@ module Rendering
   # Renderer to HTML for plain (book) like output
   class RendererHTMLPlain < RendererHTML
 
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+        button: erb(
+            %q|
+            <span style='visibility: hidden;' name='log' class='output'>&nbsp;</span>
+            <script id='<%= line_id %>'>executeNew($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        button_with_log: erb(
+            %q|
+            <p class='ausgabe'><%= LOCALIZED_MESSAGES[:output] %>:</p><div name='log' class='output_small'></div>
+            <script id='<%= line_id %>'>executeNew($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        button_with_log_pre: erb(
+            %q|
+            <p class='ausgabe'><%= LOCALIZED_MESSAGES[:output] %></p><div name='log' class='output_small'></div>
+            <script id='<%= line_id %>'>executePre($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        link_previous: erb(
+            %q|
+             <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+             <script>synchronizePrevious($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        live_css: erb(
+            %q|
+             <iframe name='dest' src='' class='framed_wide'></iframe>
+             <script id='<%= line_id %>'>synchronizeCSS($('#<%= line_id %>'), <%= fragment %>);</script>
+            |
+        ),
+
+        live_preview: erb(
+            %q|
+            <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+            <script>synchronize($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        live_preview_float: erb(
+            %q|
+            <div class='outputhtml plain' sytle='float: right;' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+            <script>synchronize($('#<%= line_id %>'));</script>
+            |
+        ),
+
+        comment_start: erb(
+            %q|
+            <hr><div class='comment'>
+            |
+        ),
+
+        comment_end: erb(
+            %q|
+            <hr></div>
+            |
+        ),
+
+        image: erb(
+            %q|
+            <figure class='picture'>
+            <img alt='<%= alt %>' src='<%= chosen_image %>'<%= width_attr %>>
+            <figcaption><%= inline(title) %></figcaption>
+            </figure>
+            |
+        ),
+
+        uml: erb(
+            %q|
+            <img src='<%= img_path %>' width='<%= width_plain %>'>
+            |
+        ),
+
+        chapter_start: erb(
+            %q|
+            <section id='<%= id %>' class='chapter'><h1 class='trenner'><%= title %></h1>
+            |
+        ),
+
+        chapter_end: erb(
+            %q|
+            </section>
+            |
+        ),
+
+        slide_start: erb(
+            %q|
+            <section id='<%= id %>' class='slide'>
+            |
+        ),
+
+        slide_end: erb(
+            %q|
+            </section>
+            |
+        ),
+
+        presentation_start: erb(
+            %q|
+            <!DOCTYPE html>
+            <html lang='de'>
+            <head>
+              <meta charset='utf-8'>
+              <title><%= title1 %>: <%= section_name %></title>
+              <meta name='author' content='<%= author %>'>
+              <%= include_css(INCLUDED_STYLESHEETS) %>
+            <%= include_javascript(INCLUDED_SCRIPTS_HEAD) %>
+            </head>
+            <body>
+              <div class='title_first'><%= title1 %></div>
+              <div class='title_first'><%= title2 %></div>
+              <div class='kapitel_nr'><%= section_number %></div>
+              <div class='kapitel'><%= section_name %></div>
+              <div class='copyright'><%= copyright %></div>
+            |
+        ),
+
+        presentation_end: erb(
+            %q|
+            </div>
+            <%= scripts(JAVASCRIPTS) %>
+            </body>
+            </html>
+            |
+        ),
+    }
+    
     ##
     # Stylesheets used by this renderer
     INCLUDED_STYLESHEETS = [
@@ -57,41 +189,28 @@ module Rendering
     # Render a button
     # @param [String] line_id internal ID of the line
     def button(line_id)
-      @io << <<-ENDOFTEXT
-      <span style='visibility: hidden;'
-          name='log' class='output'>&nbsp;</span>
-      <script id='#{line_id}'>executeNew($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:button].result(binding)
     end
 
     ##
     # Render a button with log area
     # @param [String] line_id internal ID of the line
     def button_with_log(line_id)
-      @io << <<-ENDOFTEXT
-      <p class='ausgabe'>#{LOCALIZED_MESSAGES[:output]}:</p><div name='log' class='output_small'></div>
-      <script id='#{line_id}'>executeNew($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:button_with_log].result(binding)
     end
 
     ##
     # Render a button with output
     # @param [String] line_id internal ID of the line
     def button_with_log_pre(line_id)
-      @io << <<-ENDOFTEXT
-      <p class='ausgabe'>#{LOCALIZED_MESSAGES[:output]}</p><div name='log' class='output_small'></div>
-      <script id='#{line_id}'>executePre($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:button_with_log_pre].result(binding)
     end
 
     ##
     # Link to previous slide (for active HTML)
     # @param [String] line_id internal ID of the line
     def link_previous(line_id)
-      @io << <<-ENDOFTEXT
-      <div class='outputhtml plain' id='#{line_id}' name='html_output'>&nbsp;</div>
-      <script>synchronizePrevious($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:link_previous].result(binding)
     end
 
     ##
@@ -99,42 +218,33 @@ module Rendering
     # @param [String] line_id internal ID of the line
     # @param [String] fragment HTML fragment used for CSS styling
     def live_css(line_id, fragment)
-      @io << <<-ENDOFTEXT
-      <iframe name='dest' src='' class='framed_wide'></iframe>
-      <script id='#{line_id}'>synchronizeCSS($('##{line_id}'), #{fragment});</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:live_css].result(binding)
     end
 
     ##
     # Link to previous slide (for active CSS)
     # @param [String] line_id internal ID of the line
     def live_preview(line_id)
-      @io << <<-ENDOFTEXT
-      <div class='outputhtml plain' id='#{line_id}' name='html_output'>&nbsp;</div>
-      <script>synchronize($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:live_preview].result(binding)
     end
 
     ##
     # Perform a live preview
     # @param [String] line_id internal ID of the line
     def live_preview_float(line_id)
-      @io << <<-ENDOFTEXT
-      <div class='outputhtml plain' sytle='float: right;' id='#{line_id}' name='html_output'>&nbsp;</div>
-      <script>synchronize($('##{line_id}'));</script>
-      ENDOFTEXT
+      @io << TEMPLATES[:live_preview_float].result(binding)
     end
 
     ##
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
-      @io << "<hr><div class='comment'>" << nl
+      @io << TEMPLATES[:comment_start].result(binding)
     end
 
     ##
     # End of comment section
     def comment_end
-      @io << '<hr></div>' << nl
+      @io << TEMPLATES[:comment_end].result(binding)
       @dialog_counter += 1
     end
 
@@ -157,10 +267,7 @@ module Rendering
         width_attr = " width='#{width_plain}'"
       end
 
-      @io << "<figure class='picture'>" << nl
-      @io << "<img alt='#{alt}' src='#{chosen_image}'#{width_attr}>" << nl
-      @io << "<figcaption>#{inline(title)}</figcaption>" << nl
-      @io << '</figure>' << nl
+      @io << TEMPLATES[:image].result(binding)
     end
 
     ##
@@ -171,7 +278,7 @@ module Rendering
     # @param [String] width_plain width of the diagram on plain documents
     def uml(picture_name, contents, width_slide, width_plain)
       img_path = super(picture_name, contents, width_slide, width_plain, 'svg')
-      @io << "<img src='#{img_path}' width='#{width_plain}'>" << nl
+      @io << TEMPLATES[:uml].result(binding)
     end
 
     ##
@@ -180,12 +287,12 @@ module Rendering
     # @param [String] number the number of the chapter
     # @param [String] id the uniquie id of the chapter (for references)
     def chapter_start(title, number, id)
-      @io << "<section id='#{id}' class='chapter'><h1 class='trenner'>#{title}</h1>" << nl
+      @io << TEMPLATES[:chapter_start].result(binding)
     end
 
     ## End of a chapter
     def chapter_end
-      @io << '</section>' << nl
+      @io << TEMPLATES[:chapter_end].result(binding)
     end
 
     ##
@@ -196,8 +303,7 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       escaped_title = inline_code(title)
-
-      @io << "<section id='#{id}' class='slide'>" << nl
+      @io << TEMPLATES[:slide_start].result(binding)
 
       unless title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl
@@ -208,7 +314,7 @@ module Rendering
     ##
     # End of slide
     def slide_end
-      @io << '</section>' << nl << nl
+      @io << TEMPLATES[:slide_end].result(binding)
     end
 
     ##
@@ -222,23 +328,7 @@ module Rendering
     # @param [String] description additional description
     # @param [String] term of the lecture
     def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << <<-ENDOFTEXT
-      <!DOCTYPE html>
-      <html lang='de'>
-      <head>
-        <meta charset='utf-8'>
-        <title>#{title1}: #{section_name}</title>
-        <meta name='author' content='#{author}'>
-        #{include_css(INCLUDED_STYLESHEETS)}
-        #{include_javascript(INCLUDED_SCRIPTS_HEAD)}
-      </head>
-      <body>
-        <div class='title_first'>#{title1}</div>
-        <div class='title_first'>#{title2}</div>
-        <div class='kapitel_nr'>#{section_number}</div>
-        <div class='kapitel'>#{section_name}</div>
-        <div class='copyright'>#{copyright}</div>
-      ENDOFTEXT
+      @io << TEMPLATES[:presentation_start].result(binding)
     end
 
     ##
@@ -250,12 +340,7 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << <<-ENDOFTEXT
-      </div>
-      #{scripts(JAVASCRIPTS)}
-      </body>
-      </html>
-      ENDOFTEXT
+      @io << TEMPLATES[:presentation_end].result(binding)
     end
   end
 end

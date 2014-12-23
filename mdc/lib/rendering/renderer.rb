@@ -11,6 +11,23 @@ module Rendering
     CENTER = 3
 
     ##
+    # Remove all trailing spaces on all lines of the string
+    # @param [String] input the input string
+    def self.clean(input)
+      result = ''
+      input.split(/\n/).each { |line| result.concat(line.strip).concat("\n") }
+      result
+    end
+
+    ##
+    # Create an ERB template from the given string but remove leading
+    # and trailing spaces before
+    # @param [String] input the input string for the template
+    def self.erb(input)
+      ERB.new(clean(input))
+    end
+
+    ##
     # Class representing the parts of a line
     class LinePart
 

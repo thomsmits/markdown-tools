@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require 'erb'
+
 require_relative 'renderer'
 require_relative '../messages'
 require_relative '../constants'
@@ -9,6 +11,221 @@ module Rendering
   ##
   # Base class for rendering slides to HTML
   class RendererHTML < Renderer
+
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+        vertical_space: erb(
+            %q|
+            <br>
+            |
+        ),
+
+        equation: erb(
+            %q|
+            \[
+            <%= contents %>
+            \]
+            |
+        ),
+
+        ol_start: erb(
+            %q|
+            <ol start='<%= number %>'>
+            |
+        ),
+
+        ol_item: erb(
+            %q|
+            <li><%= inline_code(content) %>
+            |
+        ),
+
+        ol_end: erb(
+            %q|
+            </ol>
+            |
+        ),
+
+        ul_start: erb(
+            %q|
+            <ul>
+            |
+        ),
+
+        ul_item: erb(
+            %q|
+            <li><%= inline_code(content) %>
+            |
+        ),
+
+        ul_end: erb(
+            %q|
+            </ul>
+            |
+        ),
+
+        quote: erb(
+            %q|
+            <blockquote><%= inline_code(content) %>
+            <% if !source.nil? %>
+              <div class='quote_source'><%= source %></div>
+            <% end %>
+            </blockquote>
+            |
+        ),
+
+        important: erb(
+            %q|
+            <blockquote class='important'><%= inline_code(content) %>
+            </blockquote>
+            |
+        ),
+
+        question: erb(
+            %q|
+            <blockquote class='question'><%= inline_code(content) %>
+            </blockquote>
+            |
+        ),
+
+        script: erb(
+            %q|
+            <script><%= content %></script>
+            |
+        ),
+
+        code_start: erb(
+            %q|<pre><code class='<%= language %>' contenteditable>|
+        ),
+
+        code: erb(
+            %q|<%= entities(content) %>|
+        ),
+
+        code_end: erb(
+            %q|</code></pre>|
+        ),
+
+        table_start: erb(
+            %q|
+            <table class='small content'>
+            <thead><tr>
+            |
+        ),
+
+        table_end: erb(
+            %q|
+            </tbody></table>
+            |
+        ),
+
+
+        text: erb(
+            %q|
+            <p><%= inline_code(content) %></p>
+            |
+        ),
+
+        heading: erb(
+            %q|
+            <h<%= level %>><%= title %></h<%= level %>>
+            |
+        ),
+
+        toc_start: erb(
+            %q|
+            <section data-number='2'>
+            <h1 class='title toc'><%= LOCALIZED_MESSAGES[:toc] %></h1>
+            <ul>
+            |
+        ),
+
+        toc_entry: erb(
+            %q|
+            <li><a href='#<%= anchor %>'><%= name %></a>
+            |
+        ),
+
+        toc_end: erb(
+            %q|
+            </ul>
+            </section>
+            |
+        ),
+
+        toc_sub_entries_start: erb(
+            %q|
+            <ul class='subentry'>
+            |
+        ),
+
+        toc_sub_entry: erb(
+            %q|
+            <li><a href='#<%= anchor %>'><%= name %></a>
+            |
+        ),
+
+        toc_sub_entries_end: erb(
+            %q|
+            </ul>
+            |
+        ),
+
+        index_start: erb(
+            %q|
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset='utf-8'>
+              <title><%= title1 %></title>
+              <%= include_javascript(INCLUDED_SCRIPTS) %>
+              <%= include_css(INCLUDED_STYLESHEETS) %>
+            </head>
+            <body>
+            <div class='title_first'><%= title1 %></div>
+            <div class='title_second'>%= title2 %></div>
+            <div class='copyright'>%= copyright%></div>
+            <div class='description'>%= description%></div>
+            <br>
+            <table>
+            <tr><th><%= LOCALIZED_MESSAGES[:chapter] %></th>
+            <th colspan='2'><%= LOCALIZED_MESSAGES[:material] %></th></tr>
+            |
+        ),
+
+        index_entry: erb(
+            %q|
+            <tr>
+            <td><%= chapter_number %> - <%= chapter_name %></td>
+            <td><a href='<%= slide_file %>'><%= slide_name %></a></td>
+            <td><a href='<%= plain_file %>'><%= plain_name %></a></td>
+            </tr>
+            |
+        ),
+
+        index_end: erb(
+            %q|
+            </table>
+            </div>
+            </body>
+            </html>
+            |
+        ),
+
+        html: erb(
+            %q|<%= content %>|
+        ),
+
+        css: erb(
+            %q|<link rel='stylesheet' href='<%= css %>'>
+            |
+        ),
+
+        js: erb(
+            %q|<script src='<%= js %>'></script>
+            |
+        ),
+    }
 
     CSS_PLAIN     = 'css/plain.css'
     CSS_BOOK      = 'css/book.css'
@@ -165,30 +382,28 @@ module Rendering
     ##
     # Vertical space
     def vertical_space
-      @io << '<br>' << nl
+      @io << TEMPLATES[:vertical_space].result(binding)
     end
 
     ##
     # Equation
     # @param [String] contents LaTeX source of equation
     def equation(contents)
-      @io << '\[' << nl << "#{contents}" << nl << '\]' << nl
+      @io << TEMPLATES[:equation].result(binding)
     end
 
     ##
     # Start of an ordered list
     # @param [Fixnum] number start number of list
     def ol_start(number = 1)
-      indent(@ul_level * 2)
-      @io << "<ol start='#{number}'>"
+      @io << TEMPLATES[:ol_start].result(binding)
       @ul_level += 1
     end
 
     ##
     # End of ordered list
     def ol_end
-      indent(@ul_level * 2)
-      @io << '</ol>'
+      @io << TEMPLATES[:ol_end].result(binding)
       @ul_level -= 1
     end
 
@@ -196,22 +411,20 @@ module Rendering
     # Item of an ordered list
     # @param [String] content content
     def ol_item(content)
-      ul_item(content)
+      @io << TEMPLATES[:ol_item].result(binding)
     end
 
     ##
     # Start of an unordered list
     def ul_start
-      indent(@ul_level * 2)
-      @io << "<ul>\n"
+      @io << TEMPLATES[:ul_start].result(binding)
       @ul_level += 1
     end
 
     ##
     # End of an unordered list
     def ul_end
-      indent(@ul_level * 2)
-      @io << "</ul>\n"
+      @io << TEMPLATES[:ul_end].result(binding)
       @ul_level -= 1
     end
 
@@ -219,9 +432,7 @@ module Rendering
     # Item of an unordered list
     # @param [String] content content
     def ul_item(content)
-      text = inline_code(content)
-      indent(@ul_level)
-      @io << "<li>#{text}\n"
+      @io << TEMPLATES[:ul_item].result(binding)
     end
 
     ##
@@ -229,32 +440,28 @@ module Rendering
     # @param [String] content the content
     # @param [String] source the source of the quote
     def quote(content, source)
-      @io << "<blockquote>#{inline_code(content)}" << nl
-      @io << "<div class='quote_source'>#{source}</div>" << nl  unless source.nil?
-      @io << '</blockquote>' << nl
+      @io << TEMPLATES[:quote].result(binding)
     end
 
     ##
     # Important
     # @param [String] content the box
     def important(content)
-      @io << "<blockquote class='important'>#{inline_code(content)}" << nl
-      @io << '</blockquote>' << nl
+      @io << TEMPLATES[:important].result(binding)
     end
 
     ##
     # Question
     # @param [String] content the box
     def question(content)
-      @io << "<blockquote class='question'>#{inline_code(content)}" << nl
-      @io << '</blockquote>' << nl
+      @io << TEMPLATES[:question].result(binding)
     end
 
     ##
     # Script
     # @param [String] content the script to be included
     def script(content)
-      @io << "<script>#{content}</script>" << nl
+      @io << TEMPLATES[:script].result(binding)
     end
 
     ##
@@ -262,21 +469,21 @@ module Rendering
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
     def code_start(language, caption)
-      @io << "<pre><code class='#{language}' contenteditable>"
+      @io << TEMPLATES[:code_start].result(binding)
     end
 
     ##
     # End of a code fragment
     # @param [String] caption caption of the sourcecode
     def code_end(caption)
-      @io << '</code></pre>'
+      @io << TEMPLATES[:code_end].result(binding)
     end
 
     ##
     # Output code
     # @param [String] content the code content
     def code(content)
-      @io << entities(content)
+      @io << TEMPLATES[:code].result(binding)
     end
 
     ##
@@ -297,8 +504,8 @@ end
     # @param [Array] headers the headers
     # @param [Array] alignment alignments of the cells
     def table_start(headers, alignment)
-      @io << "<table class='small content'>" << nl
-      @io << '<thead><tr>' << nl
+
+      @io << TEMPLATES[:table_start].result(binding)
 
       headers.each_with_index do |e, i|
 
@@ -331,14 +538,14 @@ end
     ##
     # End of the table
     def table_end
-      @io << '</tbody></table>' << nl
+      @io << TEMPLATES[:table_end].result(binding)
     end
 
     ##
     # Simple text
     # @param [String] content the text
     def text(content)
-      @io << "<p>#{inline_code(content)}</p>" << nl
+      @io << TEMPLATES[:text].result(binding)
     end
 
     ##
@@ -346,27 +553,25 @@ end
     # @param [Fixnum] level heading level
     # @param [String] title title of the heading
     def heading(level, title)
-      @io << "<h#{level}>#{title}</h#{level}>" << nl
+      @io << TEMPLATES[:heading].result(binding)
     end
 
     ##
     # Start of the TOC
     def toc_start
-      @io << "<section data-number='2'>" << nl
-      @io << "  <h1 class='title toc'>#{LOCALIZED_MESSAGES[:toc]}</h1>" << nl
-      @io << '  <ul>' << nl
+      @io << TEMPLATES[:toc_start].result(binding)
     end
 
     ##
     # Start of sub entries in toc
     def toc_sub_entries_start
-      @io << "    <ul class='subentry'>" << nl
+      @io << TEMPLATES[:toc_sub_entries_start].result(binding)
     end
 
     ##
     # End of sub entries
     def toc_sub_entries_end
-      @io <<  '    </ul>' << nl
+      @io << TEMPLATES[:toc_sub_entries_end].result(binding)
     end
 
     ##
@@ -376,7 +581,7 @@ end
     def toc_sub_entry(name, anchor)
       return  if name == @last_toc_name
       @last_toc_name = name
-      @io << "      <li><a href='##{anchor}'>#{name}</a>" << nl
+      @io << TEMPLATES[:toc_sub_entry].result(binding)
     end
 
     ##
@@ -384,13 +589,13 @@ end
     # @param [String] name name of the entry
     # @param [String] anchor anchor of the entry
     def toc_entry(name, anchor)
-      @io << "    <li><a href='##{anchor}'>#{name}</a>" << nl
+      @io << TEMPLATES[:toc_entry].result(binding)
     end
 
     ##
     # End of toc
     def toc_end
-      @io << '  </ul>' << nl << '</section>' << nl
+      @io << TEMPLATES[:toc_end].result(binding)
     end
 
     ##
@@ -400,37 +605,13 @@ end
     # @param [String] copyright copyright info
     # @param [String] description description
     def index_start(title1, title2, copyright, description)
-      @io << <<-ENDOFTEXT
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset='utf-8'>
-        <title>#{title1}</title>
-      #{include_javascript(INCLUDED_SCRIPTS)}
-      #{include_css(INCLUDED_STYLESHEETS)}
-      </head>
-
-      <body>
-        <div class='title_first'>#{title1}</div>
-        <div class='title_second'>#{title2}</div>
-        <div class='copyright'>#{copyright}</div>
-        <div class='description'>#{description}</div>
-        <br>
-      <table>
-      <tr><th>#{LOCALIZED_MESSAGES[:chapter]}</th>
-      <th colspan='2'>#{LOCALIZED_MESSAGES[:material]}</th></tr>
-      ENDOFTEXT
+      @io << TEMPLATES[:index_start].result(binding)
     end
 
     ##
     # End of index
     def index_end
-      @io << <<-ENDOFTEXT
-      </table>
-      </div>
-      </body>
-      </html>
-      ENDOFTEXT
+      @io << TEMPLATES[:index_end].result(binding)
     end
 
     ##
@@ -440,16 +621,14 @@ end
     # @param [String] slide_file file containing the slides
     # @param [String] plain_file file containing the plain version
     def index_entry(chapter_number, chapter_name, slide_file, slide_name, plain_file, plain_name)
-      @io << "<tr><td>#{chapter_number} - #{chapter_name}</td>"
-      @io << "<td><a href='#{slide_file}'>#{slide_name}</a></td>"
-      @io << "<td><a href='#{plain_file}'>#{plain_name}</a></td></tr>" << nl
+      @io << TEMPLATES[:index_entry].result(binding)
     end
 
     ##
     # HTML output
     # @param [String] content html
     def html(content)
-      @io << content << nl
+      @io << TEMPLATES[:html].result(binding)
     end
 
     ##
@@ -476,14 +655,14 @@ end
     # Single css entry
     # @param [String] css location of css file
     def css(css)
-      "<link rel='stylesheet' href='#{css}'>" << nl
+      TEMPLATES[:css].result(binding)
     end
 
     ##
     # Single JavaScript entry
     # @param [String] js location of JavaScript file
     def js(js)
-      "<script src='#{js}'></script>" << nl
+      TEMPLATES[:js].result(binding)
     end
 
     ##

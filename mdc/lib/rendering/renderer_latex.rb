@@ -11,6 +11,142 @@ module Rendering
   # using LaTeX
   class RendererLatex < Renderer
 
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+        vertical_space: erb(
+          %q|
+          \vspace{4mm}
+         |
+        ),
+
+        equation: erb(
+            %q|
+            \begin{align*}'
+            <%= contents %>
+            \end{align*}
+            |
+        ),
+
+        ol_start: erb(
+            %q|
+            \begin{ol<%= @ol_level %>}
+            |
+        ),
+
+        ol_item: erb(
+            %q|
+            \item <%= inline_code(content) %>
+            |
+        ),
+
+        ol_end: erb(
+            %q|
+            \end{ol<%= @ol_level %>}
+            |
+        ),
+
+        ul_start: erb(
+            %q|
+            \begin{ul<%= @ul_level %>}
+            |
+        ),
+
+        ul_item: erb(
+            %q|
+            \item <%= inline_code(content) %>
+            |
+        ),
+
+        ul_end: erb(
+            %q|
+            \end{ul<%= @ul_level %>}
+            |
+        ),
+
+        quote: erb(
+            %q|
+            <% if with_source %>
+              \quoted{<%= inline_code(content) %>}{<%= inline(source) %>}
+            <% else %>
+              \quotedns{<%= inline_code(content) %>}
+            <% end %>
+            |
+        ),
+
+        important: erb(
+            %q|
+            \important{<%= inline_code(content, false, true) %>}
+            |
+        ),
+
+        question: erb(
+            %q|
+            \question{<%= inline_code(content, false, true) %>}
+            |
+        ),
+
+        script: erb(
+            %q||
+        ),
+
+        code_start: erb(
+            %q|
+            \begin{lstblock}
+            {\setstretch{1.3}\small
+            \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily]|
+        ),
+
+        code: erb(
+            %q|<%= content %>|
+        ),
+
+        code_end: erb(
+            %q|
+            \end{lstlisting}}
+            \end{lstblock}
+            |
+        ),
+
+        table_start: erb(
+            %q|
+            \begin{center}
+            \vspace{2mm}
+            \renewcommand{\arraystretch}{1.1}
+            {\sffamily
+            \begin{footnotesize}\tablefont
+            \begin{tabular}{<%= column_line %>}
+            \toprule
+            |
+        ),
+
+        table_end: erb(
+            %q|
+            \bottomrule
+            \end{tabular}
+            \end{footnotesize}}
+            \end{center}
+            |
+        ),
+
+        text: erb(
+            %q|
+            <%= inline_code(cleaned_content) %>
+            \vspace{0.1mm}
+            |
+        ),
+
+        # TODO: Handle headings
+        heading: erb(
+            %q||
+        ),
+
+        image: erb(
+            %q!
+            \bild{<%= stripped_location %>}{<%= new_width %>}{<%= full_title %>}
+            !
+        )
+    }
+
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -70,17 +206,6 @@ module Rendering
       result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4')
       result.gsub!(/"(.*?)"/, '"`\1"\'')
 
-      #result.gsub!(/(^|[ (>])([A-Za-z0-9])_([A-Za-z0-9+-]{1,})$/,               '\1\begin{math}\2\textsubscript{\3}\end{math}')
-#      result.gsub!(/^([A-Za-z0-9])_([A-Za-z0-9+-]{1,})([,.;) ])/,             '\begin{math}\1\textsubscript{\2}\end{math}\3')
-#      result.gsub!(/^([A-Za-z0-9])_([A-Za-z0-9+-]{1,})$/,                     '\begin{math}\1\textsubscript{\2}\end{math}')
-
-#      result.gsub!(/ ([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})$/,              ' \begin{math}\1\textsuperscript{\2}\end{math}')
-#      result.gsub!(/ ([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})([,.;) ])/,      ' \begin{math}\1\textsuperscript{\2}\end{math}\3')
-#      result.gsub!(/^([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})$/,              ' \begin{math}\1\textsuperscript{\2}\end{math}')
-#      result.gsub!(/^([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})([,.;) ])/,      ' \begin{math}\1\textsuperscript{\2}\end{math}\3')
-#      result.gsub!(/>([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})$/,              '>\begin{math}\1\textsuperscript{\2}\end{math}')
-#      result.gsub!(/>([A-Za-z0-9])\^([A-Za-z0-9+-]{1,})([,.;) ])/,      '>\begin{math}\1\textsuperscript{\2}\end{math}\3')
-
       if alternate
         result.gsub!(/__(.+?)__/,           '\termalt{\1}\index{\1}')
         result.gsub!(/_(.+?)_/,             '\strongalt{\1}')
@@ -94,8 +219,6 @@ module Rendering
       end
 
       result.gsub!(/~~(.+?)~~/,           '\strikeout{\1}')
-      #result.gsub!(/s\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
-      #result.gsub!(/\[(.+?)\]\((.+?)\)/,  '\href{\2}{\1}')
       result.gsub!('Z.B.',                'Z.\,B.')
       result.gsub!('z.B.',                'z.\,B.')
       result.gsub!('D.h.',                'D.\,h.')
@@ -116,7 +239,6 @@ module Rendering
       result.gsub!(' <=> ',               ' $\Leftrightarrow$ ')
       result.gsub!('<br><=> ',            '<br>$\Leftrightarrow$ ')
       result.gsub!(/<br>/,                "\\newline\n")
-      #result.gsub!('"',                   '{\textquotedbl}')
       result.gsub!('#',                   '\#')
       result.gsub!('&',                   '\\\\&')
       result.gsub!('_',                   '\_')
@@ -163,21 +285,21 @@ module Rendering
     ##
     # Vertical space
     def vertical_space
-      @io << '\vspace{4mm}' << nl
+      @io << TEMPLATES[:vertical_space].result(binding)
     end
 
     ##
     # Equation
     # @param [String] contents LaTeX source of equation
     def equation(contents)
-      @io << '\begin{align*}' << nl << "#{contents}" << '\end{align*}' << nl
+      @io << TEMPLATES[:equation].result(binding)
     end
 
     ##
     # Start of an ordered list
     # @param [Fixnum] number start number of list
     def ol_start(number = 1)
-      @io << "\\begin{ol#{@ol_level}}" << nl
+      @io << TEMPLATES[:ol_start].result(binding)
       @ol_level += 1
     end
 
@@ -185,20 +307,20 @@ module Rendering
     # End of ordered list
     def ol_end
       @ol_level -= 1
-      @io << "\\end{ol#{@ol_level}}" << nl
+      @io << TEMPLATES[:ol_end].result(binding)
     end
 
     ##
     # Item of an ordered list
     # @param [String] content content
     def ol_item(content)
-      ul_item(content)
+      @io << TEMPLATES[:ol_item].result(binding)
     end
 
     ##
     # Start of an unordered list
     def ul_start
-      @io << "\\begin{ul#{@ul_level}}" << nl
+      @io << TEMPLATES[:ul_start].result(binding)
       @ul_level += 1
     end
 
@@ -206,14 +328,14 @@ module Rendering
     # Simple text
     # @param [String] content the text
     def text(content)
-      @io <<  "#{inline_code(content)}" << nl << nl
+      @io << TEMPLATES[:text].result(binding)
     end
 
     ##
     # End of an unordered list
     def ul_end
       @ul_level -= 1
-      @io << "\\end{ul#{@ul_level}}" << nl
+      @io << TEMPLATES[:ul_end].result(binding)
     end
 
     ##
@@ -228,25 +350,22 @@ module Rendering
     # @param [String] content the content
     # @param [String] source the source of the quote
     def quote(content, source)
-      if !source.nil? && source.length > 0
-        @io << "\\quoted{#{inline_code(content)}}{#{inline(source)}}" << nl
-      else
-        @io << "\\quotedns{#{inline_code(content)}}" << nl
-      end
+      with_source = !source.nil? && source.length > 0
+      @io << TEMPLATES[:quote].result(binding)
     end
 
     ##
     # Important
     # @param [String] content the box
     def important(content)
-      @io << "\\important{#{inline_code(content, false, true)}}" << nl
+      @io << TEMPLATES[:important].result(binding)
     end
 
     ##
     # Important
     # @param [String] content the box
     def question(content)
-      @io << "\\question{#{inline_code(content, false, true)}}" << nl
+      @io << TEMPLATES[:question].result(binding)
     end
 
     ##
@@ -267,26 +386,21 @@ module Rendering
         caption_command = "title={#{caption}},aboveskip=-0.4 \\baselineskip,"
       end
 
-      @io << <<-ENDOFTEXT
-      \\begin{lstblock}
-      {\\setstretch{1.3}\\small
-      \\begin{lstlisting}[language=#{language},#{caption_command}#{column_style}basicstyle=\\scriptsize\\ttfamily]
-      ENDOFTEXT
+      @io << TEMPLATES[:code_start].result(binding)
     end
 
     ##
     # End of a code fragment
     # @param [String] caption caption of the sourcecode
     def code_end(caption)
-      @io << '\end{lstlisting}}' << nl
-      @io << '\end{lstblock}' << nl
+      @io << TEMPLATES[:code_end].result(binding)
     end
 
     ##
     # Output code
     # @param [String] content the code content
     def code(content)
-      @io  << content
+      @io << TEMPLATES[:code].result(binding)
     end
 
     ##
@@ -304,22 +418,14 @@ module Rendering
         column_line << '| '  if a == Constants::SEPARATOR
       end
 
-      @io << <<-ENDOFTEXT
-      \\begin{center}
-      \\vspace{2mm}
-      \\renewcommand{\\arraystretch}{1.1}
-      {\\sffamily
-      \\begin{footnotesize}\\tablefont
-      \\begin{tabular}{#{column_line}}
-      \\toprule
-      ENDOFTEXT
+      @io << TEMPLATES[:table_start].result(binding)
 
       result = ''
       i = 0
 
       headers.each_with_index do |e, k|
-        result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
-        result << ' & ' if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
+        result << "\\textbf{#{inline_code(e)}} "  if alignment[k] != Constants::SEPARATOR
+        result << ' & '  if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
       end
 
@@ -358,12 +464,7 @@ module Rendering
     ##
     # End of the table
     def table_end
-      @io <<  <<-ENDOFTEXT
-      \\bottomrule
-      \\end{tabular}
-      \\end{footnotesize}}
-      \\end{center}
-      ENDOFTEXT
+      @io << TEMPLATES[:table_end].result(binding)
     end
 
     ##
@@ -389,13 +490,9 @@ module Rendering
         full_title << ', '  if !full_title.nil? && full_title.length > 0
         full_title = "#{full_title}#{LOCALIZED_MESSAGES[:source]}#{source}"
       end
+      new_width = width ? calculate_width(width) : '\textwidth'
 
-      if width
-        new_width = calculate_width(width)
-        @io << "\\bild{#{stripped_location}}{#{new_width}}{#{full_title}}" << nl
-      else
-        @io <<  "\\bild{#{stripped_location}}{\\textwidth}{#{full_title}}" << nl
-      end
+      @io << TEMPLATES[:image].result(binding)
     end
 
     ##

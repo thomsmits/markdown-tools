@@ -10,6 +10,97 @@ module Rendering
   # using LaTeX
   class RendererLatexPresentation < RendererLatex
 
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+        presentation_start: erb(
+            %q!
+            \include{preambel}
+            \include{lst_javascript}
+            \include{lst_console}
+            \include{lst_css}
+            \include{lst_html}
+            \mode<presentation>{\input{beamer-template}}
+            \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
+            \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
+            \author{\small <%= author %>}
+            \date{\color{grau} \small <%= term %>}
+            \begin{document}
+            \begin{frame}
+            \maketitle
+            \end{frame}
+
+            \begin{frame}
+            \separator{<%= LOCALIZED_MESSAGES[:toc] %>}
+            \end{frame}
+
+            \begin{frame}\frametitle<presentation>{<%= LOCALIZED_MESSAGES[:toc] %>}
+            \tableofcontents
+            \end{frame}
+            !
+        ),
+
+        presentation_end: erb(
+            %q|
+            \end{document}
+            |
+        ),
+
+        chapter_start: erb(
+            %q|
+            \section{<%= title %>}\label{<%= id %>}
+            \begin{frame}
+            \separator{<%= title %>}
+            \end{frame}
+            |
+            ),
+
+        chapter_end: erb(
+            %q|
+            |
+        ),
+
+        slide_start: erb(
+            %q|
+            \begin{frame}[fragile]{<%= inline_code(title) %>}\label{<%= id %>}
+            |
+        ),
+
+        slide_end: erb(
+            %q|
+            \end{frame}
+            |
+        ),
+
+        comment_start: erb(
+            %q|
+            \end{frame}
+            |
+        ),
+
+        comment_end: erb(
+            %q|
+            |
+        ),
+
+        text: erb(
+            %q|
+            <%= inline_code(content) %>
+            \vspace{0.1mm}
+            |
+        ),
+
+        ul_start: erb(
+            %q|
+            <% if @ul_level == 1 %>
+              \vspace{0.2mm}
+            <% elsif @ul_level == 2 %>
+              \vspace{0.2mm}
+            <% end %>
+            \begin{ul<%= @ul_level %>}
+            |
+        ),
+    }
+
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -35,17 +126,12 @@ module Rendering
     # @param [String] number the number of the chapter
     # @param [String] id the uniquie id of the chapter (for references)
     def chapter_start(title, number, id)
-      @io << <<-ENDOFTEXT
-      \\section{#{title}}\\label{#{id}}
-      \\begin{frame}
-        \\separator{#{title}}
-      \\end{frame}
-      ENDOFTEXT
+      @io << TEMPLATES[:chapter_start].result(binding)
     end
 
     ## End of a chapter
     def chapter_end
-      @io << nl
+      @io << TEMPLATES[:chapter_end].result(binding)
     end
 
     ##
@@ -59,38 +145,14 @@ module Rendering
     # @param [String] term the current term of the lecture/presentation
     # @param [String] description additional description
     def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << <<-ENDOFTEXT
-      \\include{preambel}
-      \\include{lst_javascript}
-      \\include{lst_console}
-      \\include{lst_css}
-      \\include{lst_html}
-      \\mode<presentation>{\\input{beamer-template}}
-      \\newcommand{\\copyrightline}[0]{#{title1} | #{copyright}}
-      \\title{#{title1} \\\\ \\small #{title2} \\\\ \\Large \\vspace{8mm} #{section_name}}
-      \\author{\\small #{author}}
-      \\date{\\color{grau} \\small #{term}}
-      \\begin{document}
-      \\begin{frame}
-        \\maketitle
-      \\end{frame}
-
-      \\begin{frame}
-        \\separator{#{LOCALIZED_MESSAGES[:toc]}}
-      \\end{frame}
-
-      \\begin{frame}\\frametitle<presentation>{#{LOCALIZED_MESSAGES[:toc]}}
-        \\tableofcontents
-      \\end{frame}
-      ENDOFTEXT
+      @io << TEMPLATES[:presentation_start].result(binding)
     end
 
     ##
     # Simple text
     # @param [String] content the text
     def text(content)
-      @io <<  "#{inline_code(content)}" << nl << nl
-      @io << '\vspace{1mm}' << nl
+      @io << TEMPLATES[:text].result(binding)
     end
 
     ##
@@ -102,7 +164,7 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << '\end{document}' << nl
+      @io << TEMPLATES[:presentation_end].result(binding)
     end
 
     ##
@@ -112,26 +174,27 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      @io << "\\begin{frame}[fragile]{#{inline_code(title)}}\\label{#{id}}" << nl
+      @io << TEMPLATES[:slide_start].result(binding)
       @slide_ended = false
     end
 
     ##
     # End of slide
     def slide_end
-      @io << nl << '\end{frame}' << nl << nl  unless @slide_ended
+      @io << TEMPLATES[:slide_end].result(binding)  unless @slide_ended
     end
 
     ##
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
-      @io << nl << '\end{frame}' << nl << nl
+      @io << TEMPLATES[:comment_start].result(binding)
       @slide_ended = true
     end
 
     ##
     # End of comment section
     def comment_end
+      @io << TEMPLATES[:comment_end].result(binding)
     end
 
     ##
@@ -165,9 +228,7 @@ module Rendering
     ##
     # Start of an unordered list
     def ul_start
-      @io << '\vspace{0.2mm}' << nl  if @ul_level == 1
-      @io << '\vspace{0.2mm}' << nl  if @ul_level == 2
-      @io << "\\begin{ul#{@ul_level}}" << nl
+      @io << TEMPLATES[:ul_start].result(binding)
       @ul_level += 1
     end
   end

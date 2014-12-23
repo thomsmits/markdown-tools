@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require 'erb'
+
 require_relative 'renderer_latex'
 require_relative '../messages'
 
@@ -9,6 +11,97 @@ module Rendering
   # Render the presentation into a latex file for further processing
   # using LaTeX
   class RendererLatexPlain < RendererLatex
+
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+        presentation_start: erb(
+            %q|
+            \include{preambel_plain}
+            \include{lst_javascript}
+            \include{lst_console}
+            \include{lst_html}
+            \include{lst_css}
+            \makeindex
+            \titlehead{\vspace{-2cm}\bfseries\sffamily\titlelogo\\\\ \large <%= title1 %>\\\\ \vspace{2mm}\normalsize <%= title2 %>}
+            %\titlehead{\vspace{3cm}\sffamily <%= title1 %>\\\\ \vspace{2mm} \small<%= title2 %>}
+            \title{\vspace{3cm}<%= section_name  %>}
+            \author{\small \sffamily <%= author %>}
+            \date{\vspace{1cm}\color{grau} \Large\sffamily <%= term %>\\\\ \scriptsize\vspace{2mm}\today}
+            \begin{document}
+            \pagenumbering{roman}
+            \dedication{\vspace{7cm} \sffamily \small \textit{<%= description %>}}
+            %\publishers{Herausgeber}
+            \maketitle
+            \thispagestyle{empty}
+            \newpage
+            \changefont{ptm}{m}{n}  % Times New Roman
+            \tableofcontents
+            \newpage
+            \pagenumbering{arabic}
+            |
+        ),
+
+        presentation_end: erb(
+            %q|
+            \clearpage
+            \pagenumbering{roman}
+            \printindex
+            \end{document}
+            |
+        ),
+
+        chapter_start: erb(
+            %q|\section{<%= title %>}\label{<%= id %>}
+
+            |
+        ),
+
+        chapter_end: erb(
+            %q|
+            |
+        ),
+
+        slide_start: erb(
+            %q|\subsection{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
+            |
+        ),
+
+        slide_end: erb(
+            %q|
+            |.strip
+        ),
+
+        comment_start: erb(
+            %q|
+            \begin{comment}
+
+            |
+        ),
+
+        comment_end: erb(
+            %q|
+            \end{comment}
+            |
+        ),
+
+        text: erb(
+            %q|
+            <%= inline_code(content) %>
+            \vspace{0.1mm}
+            |
+        ),
+
+        ul_start: erb(
+            %q|
+            <% if @ul_level == 1 %>
+              \vspace{0.1mm}
+            <% elsif @ul_level == 2 %>
+              \vspace{0.1mm}
+            <% end %>
+            \begin{ul<%= @ul_level %>}
+            |
+        ),
+    }
 
     ##
     # Initialize the renderer
@@ -34,14 +127,14 @@ module Rendering
     # Start a chapter
     # @param [String] title the title of the chapter
     # @param [String] number the number of the chapter
-    # @param [String] id the uniquie id of the chapter (for references)
+    # @param [String] id the unique id of the chapter (for references)
     def chapter_start(title, number, id)
-      @io << "\\section{#{title}}\\label{#{id}}" << nl << nl
+      @io << TEMPLATES[:chapter_start].result(binding)
     end
 
     ## End of a chapter
     def chapter_end
-      @io << nl
+      @io << TEMPLATES[:chapter_end].result(binding)
     end
 
     ##
@@ -55,30 +148,7 @@ module Rendering
     # @param [String] term the current term of the lecture/presentation
     # @param [String] description additional description
     def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << <<-ENDOFTEXT
-      \\include{preambel_plain}
-      \\include{lst_javascript}
-      \\include{lst_console}
-      \\include{lst_html}
-      \\include{lst_css}
-      \\makeindex
-      \\titlehead{\\vspace{-2cm}\\bfseries\\sffamily\\titlelogo\\\\ \\large #{title1}\\\\ \\vspace{2mm}\\normalsize #{title2}}
-      %\\titlehead{\\vspace{3cm}\\sffamily #{title1}\\\\ \\vspace{2mm} \\small #{title2}}
-      \\title{\\vspace{3cm}#{section_name}}
-      \\author{\\small \\sffamily #{author}}
-      \\date{\\vspace{1cm}\\color{grau} \\Large\\sffamily #{term}\\\\ \\scriptsize\\vspace{2mm}\\today}
-      \\begin{document}
-      \\pagenumbering{roman}
-      \\dedication{\\vspace{7cm} \\sffamily \\small \\textit{#{description}}}
-      %\\publishers{Herausgeber}
-      \\maketitle
-      \\thispagestyle{empty}
-      \\newpage
-      \\changefont{ptm}{m}{n}  % Times New Roman
-      \\tableofcontents
-      \\newpage
-      \\pagenumbering{arabic}
-      ENDOFTEXT
+      @io << TEMPLATES[:presentation_start].result(binding)
     end
 
     ##
@@ -90,10 +160,7 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << '\clearpage' << nl
-      @io << '\pagenumbering{roman}' << nl
-      @io << '\printindex' << nl
-      @io << '\end{document}' << nl
+      @io << TEMPLATES[:presentation_end].result(binding)
     end
 
     ##
@@ -104,7 +171,7 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       unless title == @last_title
-        @io << "\\subsection{#{inline_code(title)} [#{number}]}\\label{#{id}}" << nl
+        @io << TEMPLATES[:slide_start].result(binding)
         @slide_ended = false
         @last_title = title
       end
@@ -113,21 +180,20 @@ module Rendering
     ##
     # End of slide
     def slide_end
-      @io << nl
+      @io << TEMPLATES[:slide_end].result(binding)
     end
 
     ##
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
-      @io << nl
-      @io << '\begin{comment}' << nl
+      @io << TEMPLATES[:comment_start].result(binding)
       @slide_ended = true
     end
 
     ##
     # End of comment section
     def comment_end
-      @io << '\end{comment}' << nl
+      @io << TEMPLATES[:comment_end].result(binding)
     end
 
     ##
@@ -150,16 +216,13 @@ module Rendering
     # Simple text
     # @param [String] content the text
     def text(content)
-      @io <<  "#{inline_code(content)}" << nl << nl
-      @io << '\vspace{0.1mm}' << nl
+      @io << TEMPLATES[:text].result(binding)
     end
 
     ##
     # Start of an unordered list
     def ul_start
-      @io << '\vspace{0.1mm}' << nl  if @ul_level == 1
-      @io << '\vspace{0.1mm}' << nl  if @ul_level == 2
-      @io << "\\begin{ul#{@ul_level}}" << nl
+      @io << TEMPLATES[:ul_start].result(binding)
       @ul_level += 1
     end
 
