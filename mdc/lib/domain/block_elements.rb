@@ -376,7 +376,7 @@ module Domain
   # Inline UML, embedded in the slide and compiled to a graphic
   class UML < BlockElement
 
-    attr_accessor :picture_name, :width_slide, :with_plain
+    attr_accessor :picture_name, :width_slide, :width_plain
 
     ##
     # Create a new element
