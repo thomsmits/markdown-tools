@@ -152,6 +152,37 @@ int k = 17;
 
 ![Alt title of image](img/file.png "Title of image")
 
+
+## Slide 2.8
+
+@startuml[100%][70%]
+Class { Auto
+  v : int
+  vmax : int
+  beschleunigen()
+}
+
+Instance { Porsche : Auto
+  vmax = 289
+  v = 0
+}
+
+Instance { M6 : Auto
+  vmax = 305
+  v = 0
+}
+
+Porsche : Auto --<<instantiate>>--.> Auto
+M6 : Auto --<<instantiate>>--.> Auto
+@enduml
+
+
+## Slide 2.9
+
+\\[
+\\sum_{i=0}^N{P(X = i)} = 1
+\\]
+
 ENDOFTEXT
 
 
@@ -333,6 +364,16 @@ ENDOFTEXT
       assert_equal('Alt title of image', e[2].alt)
       assert_equal('Title of image', e[2].title)
     end
+
+    check_slide(slides[7], 'Slide 2.8', false, false,
+                [ Domain::UML ]) do |e|
+      assert_equal('100%', e[0].width_slide)
+      assert_equal('70%', e[0].width_plain)
+    end
+
+    check_slide(slides[8], 'Slide 2.9', false, false,
+                [ Domain::Equation ],
+                [ '\sum_{i=0}^N{P(X = i)} = 1' ])
   end
 
   private
