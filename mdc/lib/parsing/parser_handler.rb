@@ -515,7 +515,7 @@ module Parsing
 
       dir.each do |f|
         if f.start_with?(basename)
-          /.*?\.([a-zA-Z]{3,4})/ =~f
+          /.*?\.([a-zA-Z]{3,4})/ =~ f
           extensions << $1
         end
       end
