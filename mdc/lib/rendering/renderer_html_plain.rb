@@ -9,30 +9,6 @@ module Rendering
   # Renderer to HTML for plain (book) like output
   class RendererHTMLPlain < RendererHTML
 
-    ##
-    # Stylesheets used by this renderer
-    INCLUDED_STYLESHEETS = [
-        CSS_BOOK,
-        CSS_ZENBURN,
-    ]
-
-    ##
-    # JavaScripts used in the header
-    INCLUDED_SCRIPTS_HEAD = [
-        JS_HEAD,
-        JS_THOMAS,
-        JS_HIGHLIGHT,
-        JS_JQUERY,
-        JS_MATHJAX,
-    ]
-
-    ##
-    # Inline scripts
-    JAVASCRIPTS = [
-        'hljs.initHighlighting();',
-        "$('code.inline').each(function(i, e) { hljs.highlightBlock(e)} );",
-    ]
-
     ## ERB templates to be used by the renderer
     TEMPLATES = {
         button: erb(
@@ -136,15 +112,21 @@ module Rendering
         ),
 
         presentation_start: erb(
-            %Q|
+            %q|
             <!DOCTYPE html>
             <html lang='de'>
             <head>
               <meta charset='utf-8'>
               <title><%= title1 %>: <%= section_name %></title>
               <meta name='author' content='<%= author %>'>
-              #{ include_css(INCLUDED_STYLESHEETS) }
-              #{ include_javascript(INCLUDED_SCRIPTS_HEAD) }
+              <link rel='stylesheet' href='css/book.css'>
+              <link rel='stylesheet' href='css/zenburn.css'>
+
+              <script src='lib/js/head.min.js'></script>
+              <script src='js/thomas.js'></script>
+              <script src='lib/js/highlight.js'></script>
+              <script src='lib/js/jquery-1.9.1.js'></script>
+              <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
             </head>
             <body>
               <div class='title_first'><%= title1 %></div>
@@ -156,9 +138,10 @@ module Rendering
         ),
 
         presentation_end: erb(
-            %Q|
+            %q|
             </div>
-            #{ scripts(JAVASCRIPTS) }
+            <script>hljs.initHighlighting();</script>
+            <script>$('code.inline').each(function(i, e) { hljs.highlightBlock(e)} );</script>
             </body>
             </html>
             |

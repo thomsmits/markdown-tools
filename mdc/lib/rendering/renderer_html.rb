@@ -12,78 +12,6 @@ module Rendering
   # Base class for rendering slides to HTML
   class RendererHTML < Renderer
 
-    ##
-    # Include CSS files
-    # @param [Array] locations locations of the css files
-    # @return [String] link tags
-    def self.include_css(locations)
-      result = ''
-      locations.each { |l| result << css(l) }
-      result
-    end
-
-    ##
-    # Include JavaScript files
-    # @param [Array] locations locations of the javscript files
-    # @return [String] script tags
-    def self.include_javascript(locations)
-      result = ''
-      locations.each { |l| result << js(l) }
-      result
-    end
-
-    ##
-    # Single css entry
-    # @param [String] css location of css file
-    def self.css(css)
-      "<link rel='stylesheet' href='#{css}'>\n"
-    end
-
-    ##
-    # Single JavaScript entry
-    # @param [String] js location of JavaScript file
-    def self.js(js)
-      "<script src='#{js}'></script>\n"
-    end
-
-    ##
-    # Include inline scripts
-    # @param [Array] s scripts to be added
-    def self.scripts(s)
-      result = ''
-      s.each { |f| result << "<script>#{f}</script>\n" }
-      result
-    end
-
-    CSS_PLAIN     = 'css/plain.css'
-    CSS_BOOK      = 'css/book.css'
-    CSS_ZENBURN   = 'css/zenburn.css'
-    CSS_LIGHTNESS = 'css/ui-lightness/jquery-ui-1.10.3.css'
-    CSS_THOMAS    = 'css/thomas.css'
-    CSS_MAIN      = 'css/main.css'
-    JS_HEAD       = 'lib/js/head.min.js'
-    JS_THOMAS     = 'js/thomas.js'
-    JS_HIGHLIGHT  = 'lib/js/highlight.js'
-    JS_JQUERY     = 'lib/js/jquery-1.9.1.js'
-    JS_MATHJAX    = 'lib/mathjax/MathJax.js?config=TeX-AMS_HTML'
-    JS_JQUERY_UI  = 'lib/js/jquery-ui-1.10.3.js'
-    JS_REVEAL     = 'lib/js/reveal.min.js'
-    JS_SETTINGS   = 'js/settings.js'
-
-    INCLUDED_STYLESHEETS = [
-        CSS_PLAIN,
-        CSS_BOOK,
-        CSS_ZENBURN,
-    ]
-
-    INCLUDED_SCRIPTS = [
-        JS_HEAD,
-        JS_THOMAS,
-        JS_HIGHLIGHT,
-        JS_JQUERY,
-        JS_MATHJAX,
-    ]
-
     PREFERRED_IMAGE_FORMATS = %w(svg png jpg)
 
     ## ERB templates to be used by the renderer
@@ -246,14 +174,20 @@ module Rendering
         ),
 
         index_start: erb(
-            %Q|
+            %q|
             <!DOCTYPE html>
             <html>
             <head>
               <meta charset='utf-8'>
               <title><%= title1 %></title>
-              #{ include_javascript(INCLUDED_SCRIPTS) }
-              #{ include_css(INCLUDED_STYLESHEETS) }
+              <link rel='stylesheet' href='css/plain.css'>
+              <link rel='stylesheet' href='css/book.css'>
+              <link rel='stylesheet' href='css/zenburn.css'>
+              <script src='lib/js/head.min.js'></script>
+              <script src='js/thomas.js'></script>
+              <script src='lib/js/highlight.js'></script>
+              <script src='lib/js/jquery-1.9.1.js'></script>
+              <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
             </head>
             <body>
             <div class='title_first'><%= title1 %></div>

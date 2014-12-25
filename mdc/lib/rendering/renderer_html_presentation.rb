@@ -9,42 +9,6 @@ module Rendering
   # Renderer to HTML for presentations
   class RendererHTMLPresentation < RendererHTML
 
-    ##
-    # Stylesheets used by this renderer
-    INCLUDED_STYLESHEETS = [
-        CSS_PLAIN,
-        CSS_ZENBURN,
-        CSS_LIGHTNESS,
-        CSS_MAIN,
-        CSS_THOMAS,
-    ]
-
-    ##
-    # JavaScripts used in the header
-    INCLUDED_SCRIPTS_HEAD = [
-        JS_HEAD,
-        JS_THOMAS,
-        JS_HIGHLIGHT,
-        JS_JQUERY,
-        JS_JQUERY_UI,
-        JS_MATHJAX,
-    ]
-
-    ##
-    # JavaScript used in the footer
-    INCLUDED_SCRIPTS_FOOTER = [
-        JS_REVEAL,
-        JS_SETTINGS,
-    ]
-
-    ##
-    # Inline scripts
-    JAVASCRIPTS = [
-        "$('code.inline').each(function(i, e) { hljs.highlightBlock(e) } );",
-        "$(function() { $('#menu').menu({ position: { my: 'left bottom', at: 'right-5 top+5' } }); });",
-        "Reveal.addEventListener( 'slidechanged', function( event ) { $('#slide_nr').html($(event.currentSlide).attr('data-number')); } );",
-    ]
-
     ## ERB templates to be used by the renderer
     TEMPLATES = {
         button: erb(
@@ -153,7 +117,7 @@ module Rendering
         ),
 
         presentation_start: erb(
-            %Q|
+            %q|
             <!DOCTYPE html>
             <html lang='de'>
 
@@ -163,8 +127,18 @@ module Rendering
               <meta name='author' content='<%= author %>'>
               <meta name='apple-mobile-web-app-capable' content='yes' />
               <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
-              #{ include_css(INCLUDED_STYLESHEETS) }
-              #{ include_javascript(INCLUDED_SCRIPTS_HEAD) }
+              <link rel='stylesheet' href='css/plain.css'>
+              <link rel='stylesheet' href='css/zenburn.css'>
+              <link rel='stylesheet' href='css/ui-lightness/jquery-ui-1.10.3.css'>
+              <link rel='stylesheet' href='css/main.css'>
+              <link rel='stylesheet' href='css/thomas.css'>
+
+              <script src='lib/js/head.min.js'></script>
+              <script src='js/thomas.js'></script>
+              <script src='lib/js/highlight.js'></script>
+              <script src='lib/js/jquery-1.9.1.js'></script>
+              <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
+              <script src='lib/js/jquery-ui-1.10.3.js'></script>
             </head>
 
             <body>
@@ -191,7 +165,7 @@ module Rendering
 
             <!-- The navigational controls UI -->
             <aside class='controls'>
-              <a class='left' href='#'>&#x25C4;</a>
+            <a class='left' href='#'>&#x25C4;</a>
             <a class='right' href='#'>&#x25BA;</a>
             <a class='up' href='#'>&#x25B2;</a>
             <a class='down' href='#'>&#x25BC;</a>
@@ -213,8 +187,12 @@ module Rendering
               <div class='nummer'>
               <span id='slide_nr'>&nbsp;</span>
             </div>
-              #{ include_javascript(INCLUDED_SCRIPTS_FOOTER) }
-              #{ scripts(JAVASCRIPTS) }
+              <script src='lib/js/reveal.min.js'></script>
+              <script src='js/settings.js'></script>
+
+              <script>$('code.inline').each(function(i, e) { hljs.highlightBlock(e) } );</script>
+              <script>$(function() { $('#menu').menu({ position: { my: 'left bottom', at: 'right-5 top+5' } }); });</script>
+              <script>Reveal.addEventListener( 'slidechanged', function( event ) { $('#slide_nr').html($(event.currentSlide).attr('data-number')); } );</script>
               </body>
             </html>
             ?
