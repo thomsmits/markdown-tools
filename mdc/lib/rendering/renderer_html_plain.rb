@@ -9,6 +9,30 @@ module Rendering
   # Renderer to HTML for plain (book) like output
   class RendererHTMLPlain < RendererHTML
 
+    ##
+    # Stylesheets used by this renderer
+    INCLUDED_STYLESHEETS = [
+        CSS_BOOK,
+        CSS_ZENBURN,
+    ]
+
+    ##
+    # JavaScripts used in the header
+    INCLUDED_SCRIPTS_HEAD = [
+        JS_HEAD,
+        JS_THOMAS,
+        JS_HIGHLIGHT,
+        JS_JQUERY,
+        JS_MATHJAX,
+    ]
+
+    ##
+    # Inline scripts
+    JAVASCRIPTS = [
+        'hljs.initHighlighting();',
+        "$('code.inline').each(function(i, e) { hljs.highlightBlock(e)} );",
+    ]
+
     ## ERB templates to be used by the renderer
     TEMPLATES = {
         button: erb(
@@ -112,15 +136,15 @@ module Rendering
         ),
 
         presentation_start: erb(
-            %q|
+            %Q|
             <!DOCTYPE html>
             <html lang='de'>
             <head>
               <meta charset='utf-8'>
               <title><%= title1 %>: <%= section_name %></title>
               <meta name='author' content='<%= author %>'>
-              <%= include_css(INCLUDED_STYLESHEETS) %>
-            <%= include_javascript(INCLUDED_SCRIPTS_HEAD) %>
+              #{ include_css(INCLUDED_STYLESHEETS) }
+              #{ include_javascript(INCLUDED_SCRIPTS_HEAD) }
             </head>
             <body>
               <div class='title_first'><%= title1 %></div>
@@ -132,38 +156,14 @@ module Rendering
         ),
 
         presentation_end: erb(
-            %q|
+            %Q|
             </div>
-            <%= scripts(JAVASCRIPTS) %>
+            #{ scripts(JAVASCRIPTS) }
             </body>
             </html>
             |
         ),
     }
-    
-    ##
-    # Stylesheets used by this renderer
-    INCLUDED_STYLESHEETS = [
-        CSS_BOOK,
-        CSS_ZENBURN,
-    ]
-
-    ##
-    # JavaScripts used in the header
-    INCLUDED_SCRIPTS_HEAD = [
-        JS_HEAD,
-        JS_THOMAS,
-        JS_HIGHLIGHT,
-        JS_JQUERY,
-        JS_MATHJAX,
-    ]
-
-    ##
-    # Inline scripts
-    JAVASCRIPTS = [
-        'hljs.initHighlighting();',
-        "$('code.inline').each(function(i, e) { hljs.highlightBlock(e)} );",
-    ]
 
     ##
     # Initialize the renderer
@@ -179,73 +179,18 @@ module Rendering
     end
 
     ##
+    # Method returning the templates used by the renderer. Should be overwritten by the
+    # subclasses.
+    # @return [Hash] the templates
+    def templates
+      @templates = super.merge(TEMPLATES)
+    end
+
+    ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
     def handles_animation?
       false
-    end
-
-    ##
-    # Render a button
-    # @param [String] line_id internal ID of the line
-    def button(line_id)
-      @io << TEMPLATES[:button].result(binding)
-    end
-
-    ##
-    # Render a button with log area
-    # @param [String] line_id internal ID of the line
-    def button_with_log(line_id)
-      @io << TEMPLATES[:button_with_log].result(binding)
-    end
-
-    ##
-    # Render a button with output
-    # @param [String] line_id internal ID of the line
-    def button_with_log_pre(line_id)
-      @io << TEMPLATES[:button_with_log_pre].result(binding)
-    end
-
-    ##
-    # Link to previous slide (for active HTML)
-    # @param [String] line_id internal ID of the line
-    def link_previous(line_id)
-      @io << TEMPLATES[:link_previous].result(binding)
-    end
-
-    ##
-    # Link to previous slide (for active CSS)
-    # @param [String] line_id internal ID of the line
-    # @param [String] fragment HTML fragment used for CSS styling
-    def live_css(line_id, fragment)
-      @io << TEMPLATES[:live_css].result(binding)
-    end
-
-    ##
-    # Link to previous slide (for active CSS)
-    # @param [String] line_id internal ID of the line
-    def live_preview(line_id)
-      @io << TEMPLATES[:live_preview].result(binding)
-    end
-
-    ##
-    # Perform a live preview
-    # @param [String] line_id internal ID of the line
-    def live_preview_float(line_id)
-      @io << TEMPLATES[:live_preview_float].result(binding)
-    end
-
-    ##
-    # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start
-      @io << TEMPLATES[:comment_start].result(binding)
-    end
-
-    ##
-    # End of comment section
-    def comment_end
-      @io << TEMPLATES[:comment_end].result(binding)
-      @dialog_counter += 1
     end
 
     ##
@@ -267,7 +212,7 @@ module Rendering
         width_attr = " width='#{width_plain}'"
       end
 
-      @io << TEMPLATES[:image].result(binding)
+      @io << @templates[:image].result(binding)
     end
 
     ##
@@ -278,21 +223,7 @@ module Rendering
     # @param [String] width_plain width of the diagram on plain documents
     def uml(picture_name, contents, width_slide, width_plain)
       img_path = super(picture_name, contents, width_slide, width_plain, 'svg')
-      @io << TEMPLATES[:uml].result(binding)
-    end
-
-    ##
-    # Start a chapter
-    # @param [String] title the title of the chapter
-    # @param [String] number the number of the chapter
-    # @param [String] id the uniquie id of the chapter (for references)
-    def chapter_start(title, number, id)
-      @io << TEMPLATES[:chapter_start].result(binding)
-    end
-
-    ## End of a chapter
-    def chapter_end
-      @io << TEMPLATES[:chapter_end].result(binding)
+      @io << @templates[:uml].result(binding)
     end
 
     ##
@@ -303,44 +234,12 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       escaped_title = inline_code(title)
-      @io << TEMPLATES[:slide_start].result(binding)
+      @io << @templates[:slide_start].result(binding)
 
       unless title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl
         @last_title = title
       end
-    end
-
-    ##
-    # End of slide
-    def slide_end
-      @io << TEMPLATES[:slide_end].result(binding)
-    end
-
-    ##
-    # Start of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    # @param [String] description additional description
-    # @param [String] term of the lecture
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << TEMPLATES[:presentation_start].result(binding)
-    end
-
-    ##
-    # End of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << TEMPLATES[:presentation_end].result(binding)
     end
   end
 end

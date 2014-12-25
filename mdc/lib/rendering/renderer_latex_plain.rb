@@ -112,8 +112,15 @@ module Rendering
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
       super(io, language, result_dir, image_dir, temp_dir)
-      @ul_level = 1
       @last_title = nil
+    end
+
+    ##
+    # Method returning the templates used by the renderer. Should be overwritten by the
+    # subclasses.
+    # @return [Hash] the templates
+    def templates
+      @templates = super.merge(TEMPLATES)
     end
 
     ##
@@ -124,46 +131,6 @@ module Rendering
     end
 
     ##
-    # Start a chapter
-    # @param [String] title the title of the chapter
-    # @param [String] number the number of the chapter
-    # @param [String] id the unique id of the chapter (for references)
-    def chapter_start(title, number, id)
-      @io << TEMPLATES[:chapter_start].result(binding)
-    end
-
-    ## End of a chapter
-    def chapter_end
-      @io << TEMPLATES[:chapter_end].result(binding)
-    end
-
-    ##
-    # Start of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    # @param [String] term the current term of the lecture/presentation
-    # @param [String] description additional description
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << TEMPLATES[:presentation_start].result(binding)
-    end
-
-    ##
-    # End of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << TEMPLATES[:presentation_end].result(binding)
-    end
-
-    ##
     # Start of slide
     # @param [String] title the title of the slide
     # @param [String] number the number of the slide
@@ -171,29 +138,17 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       unless title == @last_title
-        @io << TEMPLATES[:slide_start].result(binding)
+        @io << @templates[:slide_start].result(binding)
         @slide_ended = false
         @last_title = title
       end
     end
 
     ##
-    # End of slide
-    def slide_end
-      @io << TEMPLATES[:slide_end].result(binding)
-    end
-
-    ##
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
-      @io << TEMPLATES[:comment_start].result(binding)
+      @io << @templates[:comment_start].result(binding)
       @slide_ended = true
-    end
-
-    ##
-    # End of comment section
-    def comment_end
-      @io << TEMPLATES[:comment_end].result(binding)
     end
 
     ##
@@ -210,20 +165,6 @@ module Rendering
       unless /^0$/ === width_plain
         image_latex(location, title, width_plain, source)
       end
-    end
-
-    ##
-    # Simple text
-    # @param [String] content the text
-    def text(content)
-      @io << TEMPLATES[:text].result(binding)
-    end
-
-    ##
-    # Start of an unordered list
-    def ul_start
-      @io << TEMPLATES[:ul_start].result(binding)
-      @ul_level += 1
     end
 
     ##

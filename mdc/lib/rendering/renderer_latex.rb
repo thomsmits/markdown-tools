@@ -156,7 +156,14 @@ module Rendering
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
       super(io, language, result_dir, image_dir, temp_dir)
-      @ul_level, @ol_level = 1, 1
+    end
+
+    ##
+    # Method returning the templates used by the renderer. Should be overwritten by the
+    # subclasses.
+    # @return [Hash] the templates
+    def templates
+      @templates = super.merge(TEMPLATES)
     end
 
     ##
@@ -283,92 +290,6 @@ module Rendering
     end
 
     ##
-    # Vertical space
-    def vertical_space
-      @io << TEMPLATES[:vertical_space].result(binding)
-    end
-
-    ##
-    # Equation
-    # @param [String] contents LaTeX source of equation
-    def equation(contents)
-      @io << TEMPLATES[:equation].result(binding)
-    end
-
-    ##
-    # Start of an ordered list
-    # @param [Fixnum] number start number of list
-    def ol_start(number = 1)
-      @io << TEMPLATES[:ol_start].result(binding)
-      @ol_level += 1
-    end
-
-    ##
-    # End of ordered list
-    def ol_end
-      @ol_level -= 1
-      @io << TEMPLATES[:ol_end].result(binding)
-    end
-
-    ##
-    # Item of an ordered list
-    # @param [String] content content
-    def ol_item(content)
-      @io << TEMPLATES[:ol_item].result(binding)
-    end
-
-    ##
-    # Start of an unordered list
-    def ul_start
-      @io << TEMPLATES[:ul_start].result(binding)
-      @ul_level += 1
-    end
-
-    ##
-    # Simple text
-    # @param [String] content the text
-    def text(content)
-      @io << TEMPLATES[:text].result(binding)
-    end
-
-    ##
-    # End of an unordered list
-    def ul_end
-      @ul_level -= 1
-      @io << TEMPLATES[:ul_end].result(binding)
-    end
-
-    ##
-    # Item of an unordered list
-    # @param [String] content content
-    def ul_item(content)
-      @io << "\\item #{inline_code(content)}" << nl
-    end
-
-    ##
-    # Quote
-    # @param [String] content the content
-    # @param [String] source the source of the quote
-    def quote(content, source)
-      with_source = !source.nil? && source.length > 0
-      @io << TEMPLATES[:quote].result(binding)
-    end
-
-    ##
-    # Important
-    # @param [String] content the box
-    def important(content)
-      @io << TEMPLATES[:important].result(binding)
-    end
-
-    ##
-    # Important
-    # @param [String] content the box
-    def question(content)
-      @io << TEMPLATES[:question].result(binding)
-    end
-
-    ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
@@ -386,21 +307,7 @@ module Rendering
         caption_command = "title={#{caption}},aboveskip=-0.4 \\baselineskip,"
       end
 
-      @io << TEMPLATES[:code_start].result(binding)
-    end
-
-    ##
-    # End of a code fragment
-    # @param [String] caption caption of the sourcecode
-    def code_end(caption)
-      @io << TEMPLATES[:code_end].result(binding)
-    end
-
-    ##
-    # Output code
-    # @param [String] content the code content
-    def code(content)
-      @io << TEMPLATES[:code].result(binding)
+      @io << @templates[:code_start].result(binding)
     end
 
     ##
@@ -418,7 +325,7 @@ module Rendering
         column_line << '| '  if a == Constants::SEPARATOR
       end
 
-      @io << TEMPLATES[:table_start].result(binding)
+      @io << @templates[:table_start].result(binding)
 
       result = ''
       i = 0
@@ -462,20 +369,6 @@ module Rendering
     end
 
     ##
-    # End of the table
-    def table_end
-      @io << TEMPLATES[:table_end].result(binding)
-    end
-
-    ##
-    # Heading of a given level
-    # @param [Fixnum] level heading level
-    # @param [String] title title of the heading
-    def heading(level, title)
-      ## TODO: subheadings
-    end
-
-    ##
     # Render an image
     # @param [String] location path to image
     # @param [String] title title of image
@@ -492,7 +385,7 @@ module Rendering
       end
       new_width = width ? calculate_width(width) : '\textwidth'
 
-      @io << TEMPLATES[:image].result(binding)
+      @io << @templates[:image].result(binding)
     end
 
     ##
