@@ -50,7 +50,7 @@ class NotesHandling
       src_path = folder.path + '/' + file.name;
       dest_dir = target + '/' + folder.name;
 
-      FileUtils.mkdir_p(dest_dir) unless Dir.exist?(dest_dir)
+      FileUtils.mkdir_p(dest_dir)  unless Dir.exist?(dest_dir)
 
       dest_path = dest_dir + '/' + file.name + '.html'
 
@@ -63,8 +63,8 @@ class NotesHandling
 
       metadata = strings_to_hash(pres.comments)
 
-      file.date = Date.parse(metadata['date']) unless metadata['date'].nil?
-      file.tags = metadata['tags'].split(/, ?/) unless metadata['tags'].nil?
+      file.date = Date.parse(metadata['date'])  unless metadata['date'].nil?
+      file.tags = metadata['tags'].split(/, ?/)  unless metadata['tags'].nil?
 
       io = File.new(dest_path, 'w', :encoding => 'UTF-8')
       renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', file.tags, file.date, folder.title)
@@ -135,3 +135,4 @@ class NotesHandling
 end
 
 NotesHandling::main(ARGV[0].dup, ARGV[1].dup)
+#NotesHandling::main('/Users/thomas/Dropbox/Notes/', '/Users/thomas/Dropbox/Notes_Html/')
