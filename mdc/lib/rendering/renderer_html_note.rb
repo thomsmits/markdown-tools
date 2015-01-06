@@ -1,30 +1,565 @@
 # -*- coding: utf-8 -*-
 
-require_relative 'renderer_html'
+require_relative 'renderer_html_plain'
 require_relative '../messages'
 
 module Rendering
 
   ##
   # Renderer to HTML for plain (book) like output
-  class RendererHTMLNote < RendererHTML
+  class RendererHTMLNote < RendererHTMLPlain
 
     attr_accessor :tags, :date, :topic
 
-    ##
-    # Stylesheets used by this renderer
-    INCLUDED_STYLESHEETS = [
-        '../book.css',
-        CSS_ZENBURN,
-    ]
+    STYLE = %q|
+        <style>
+        body {
+            background-color: #ffffff;
+            font-size: 12pt;
+            font-family: Helvetica, arial, freesans, clean, sans-serif, "Segoe UI", "Helvetica Neue";
+            line-height: 150%;
+            margin-left: 0em;
+            margin-right: 0em;
+            margin-top: 0em;
+            padding: 10px;
+            padding-top: 50px;
+            background: #f3f5f7;
+        }
 
-    ##
-    # JavaScripts used in the header
-    INCLUDED_SCRIPTS_HEAD = []
+        .infoline {
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 3.2ex;
+            color: #7a7d81;
+            background: #f3f5f7;
+            margin-bottom: 1em;
+            padding-left: 10px;
+            padding-top: 5px;
+            position: fixed;
+            -webkit-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+            box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+        }
 
-    ##
-    # Inline scripts
-    JAVASCRIPTS = []
+        .infoline .topic {
+            font-weight: normal;
+            font-size: 100%;
+            color: #7a7d81;
+        }
+
+        .infoline .date {
+            position: absolute;
+            right: 1em;
+            font-weight: normal;
+            font-size: 100%;
+        }
+
+        .infoline .tags {
+            position: absolute;
+            left: 20em;
+        }
+
+        body > section {
+            background: #FFFFFF;
+            padding: 1em;
+            border: 1px solid #d1d2d4;
+            border-radius: 4px;
+        }
+        span.tag {
+            padding-left: 3px;
+            padding-right: 3px;
+            border: 1px solid #ced3d8;
+            background: #e7ecf0;
+            margin-left: 1px;
+            margin-right: 1px;
+            color: #aaadb0;
+            border-radius: 9px;
+            font-size: 75%;
+        }
+
+        em {
+            color: black;
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        em.alternative {
+            color: #A0A0A0;
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        strong {
+            color: black;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        strong.alternative {
+            color: #A0A0A0;
+            font-weight: bold;
+            font-style: italic;
+        }
+
+
+        .ui-widget {
+            font-size: 70%;
+        }
+
+        figcaption {
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        figure.picture {
+            float: left;
+            margin-top: 0;
+            margin-left: 1em;
+            margin-right: 0;
+            page-break-inside: avoid;
+            page-break-before: auto;
+        }
+
+        figure.picture figcaption {
+            clear: both;
+            text-align: left;
+        }
+
+        .comment > figure.picture {
+            float: right;
+        }
+
+        figcaption {
+            font-size: 90%;
+            font-size: 90%;
+            text-align: center;
+            color: #7d7d7d;
+        }
+
+        figure.picture figcaption {
+            counter-increment: figno;
+        }
+
+        figure.source {
+            margin-top: 0;
+            margin-left: 1em;
+            margin-right: 0;
+        }
+
+        figure.source figcaption {
+            counter-increment: srcno;
+        }
+
+        figure.source figcaption:before {
+            content: "Quellcode " counter(honecounter) "." counter(srcno) ": ";
+        }
+
+        .title, .folder_title {
+            font-size: 105%;
+            font-weight: bold;
+        }
+
+        .folder_title {
+
+            color: #2A7F00;
+        }
+
+        abbr {
+            text-decoration: none;
+            color: #2a6207;
+            border-bottom-style: dotted;
+            border-bottom-width: 1px;
+        }
+
+        h1 {
+            clear: both;
+            border-bottom: #A0A0A0 solid 1px;
+            font-size: 130%;
+            color: #5fb336;
+            padding-top: 0;
+            margin-top: 0;
+        }
+
+        h2, h2.title {
+            font-size: 120%;
+            color: #2A7F00;
+            clear: both;
+            font-weight: bold;
+        }
+
+        h3 {
+            font-size: 110%;
+            color: #2A7F00;
+            clear: both;
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        h4 {
+            font-size: 100%;
+            color: #000000;
+            clear: both;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        a, dfn {
+            text-decoration: none;
+            font-weight: normal;
+            color: #4183c4;
+            font-style: normal;
+        }
+
+        a:active, a:hover, dfn:hover {
+            text-decoration: underline;
+            cursor: hand;
+        }
+
+        code.xml {
+            line-height: 105%;
+            font-size: 11pt;
+            background-color: transparent;
+        }
+
+
+        .box {
+            margin-top: 50px;
+            background-color: #515151;
+            background-image: -moz-linear-gradient(#707070, #515151);
+            background-image: -webkit-linear-gradient(#707070, #515151);
+            background-image: linear-gradient(#707070, #515151);
+            background-repeat: repeat-x;
+            border: 1px solid #3a3a3a;
+            border-bottom: 1px solid #2d2d2d;
+            border-radius: 3px;
+            /*text-shadow: 0 1px 0 #383838;*/
+            box-shadow: inset 0 1px 0 #2c2c2c, 0 1px 5px #515151;
+            width: 90%;
+
+        }
+
+        .box h4 {
+            background-size: 32px auto;
+            margin: 0;
+            padding: 10px;
+            border-bottom: 1px solid #646464;
+            color: #ffffff;
+            box-shadow: 0 1px 0 #2c2c2c;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+
+        .box p {
+            margin: 0;
+            padding: 10px;
+            color: #cacaca;
+            text-shadow: none;
+        }
+
+        .comment {
+            font-size: 11pt;
+            line-height: 1.2;
+        }
+
+        hr {
+            clear: both;
+        }
+
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: 1px solid black;
+            padding: 0.2em;
+        }
+
+        table.content {
+            border-top: 2px solid black;
+            border-bottom: 2px solid black;
+            border-collapse: collapse;
+            border-left: 0;
+            border-right: 0;
+        }
+
+        table.content thead > tr,
+        table.content th {
+             border-bottom: 1px solid black;
+        }
+
+        table.content th {
+            text-align: left;
+        }
+
+        table.content td, table.content th {
+            padding-left: 0.8em;
+            padding-right: 0.8em;
+            border: 0;
+        }
+
+        pre {
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgb(165, 165, 165);
+            border-radius: 3px;
+            padding: 1em;
+        }
+        code {
+            font-size: 11pt;
+            background: none;
+        }
+
+        .title_first {
+            font-size: 20pt;
+            font-weight: bold;
+            line-height: 140%;
+        }
+
+        ul.subentry li {
+          font-size: 10pt;
+          line-height: 120%;
+        }
+
+        img {
+            max-width: 100%;
+            float: left;
+        }
+
+        section {
+            clear: both;
+        }
+
+        .output_small {
+            font-family: monospace;
+        }
+
+        .output_small p {
+            padding: 0;
+            margin: 0;
+        }
+
+        a.doclink {
+            text-decoration: none;
+            color: black;
+            font-weight: normal;
+        }
+
+        .file {
+            padding-bottom: 1em;
+            padding-top: 1em;
+            padding-left: 1em;
+            padding-right: 1em;
+            border-top: 1px #D0D0D0 solid;
+            line-height: 1.4em;
+            background: #FFFFFF;
+            font-size: 90%;
+        }
+
+        .folder {
+            padding-bottom: 1em;
+            padding-top: 1em;
+            padding-left: 1em;
+            padding-right: 1em;
+            border-top: 1px #D0D0D0 solid;
+            line-height: 1.4em;
+            background: #FFFFFF;
+            font-size: 90%;
+        }
+
+        .file:hover {
+            background: #ecf0f3;
+        }
+
+        .folder:hover {
+            background: #ecf0f3;
+        }
+
+        .date {
+            color: #4a8db8;
+            font-weight: bold;
+        }
+
+        blockquote {
+            border-left: 3px solid #A0A0A0;
+            margin-left: 0;
+            padding-left: 1em;
+        }
+
+        .quote_source {
+            color: #D0D0D0;
+            font-size: 90%;
+            font-style: italic;
+        }
+
+        li {
+        }
+
+        ul.files {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .folderinfo {
+            color: #505050;
+            padding-bottom: 1em;
+            padding-left: 0;
+            font-size: 80%;
+        }
+
+        h1.files {
+            font-size: 140%;
+            padding-left: 0;
+            padding-top: 0.5em;
+            border: none;
+        }
+
+        h1.files:hover {
+            text-decoration: underline;
+            color: #5fb336;
+        }
+
+        body.files {
+            padding: 0;
+        }
+
+        .filesheader {
+            background: #ffffff;
+            -webkit-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+            box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
+            padding-left: 1em;
+        }
+              </style>
+      </head>
+      <body>
+      |
+
+    ## ERB templates to be used by the renderer
+    TEMPLATES = {
+
+        chapter_start: erb(
+            %q|
+             <section id='<%= id %>' class='chapter'>
+             <div class='infoline'>
+             <% unless topic.nil? %>
+               <a class='topic' href='index.html'><span class='topic'><%= topic %></span></a>
+             <% end %>
+             <span class='tags'>
+             <% for tag in @tags %>
+               <span class='tag'><%= tag %></span>
+             <% end %>
+             </span>
+             <% unless date.nil? %>
+               <span class='date'><%= @date.strftime('%Y-%m-%d') %></span>
+             <% end %>
+             </div>
+             <h1 class='trenner'><%= title %></h1>
+            |
+        ),
+
+        chapter_end: erb(
+            %q|
+            </section>
+            |
+        ),
+
+        toc_start: erb(
+            %q||
+        ),
+
+        toc_entry: erb(
+            %q||
+        ),
+
+        toc_end: erb(
+            %q||
+        ),
+
+        toc_sub_entries_start: erb(
+            %q||
+        ),
+
+        toc_sub_entry: erb(
+            %q||
+        ),
+
+        toc_sub_entries_end: erb(
+            %q||
+        ),
+
+        presentation_start: erb(
+            %q|
+            <!DOCTYPE html>
+            <html lang='de'>
+            <head>
+              <meta charset='utf-8'>
+              <title><%= title1 %>: <%= section_name %></title>
+              <meta name='author' content='<%= author %>'>
+              | + STYLE + %q|
+            </head>
+            <body>
+            |
+        ),
+
+        presentation_end: erb(
+            %q|
+            </div>
+            </body>
+            </html>
+            |
+        ),
+
+        index_folder_entry: erb(
+            %q|
+             <li>
+             <a class='doclink' href='<%= name %>/index.html'>
+             <div class='folder'>
+             <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42mNgGFRgyZIlWkuBYNmyZf+JwAcwDAAKXl2+fHkgMZYB7XmIzYAP6DahycPFRg0YUgYA04U3kD4DSh9kGYANDw4DgPRGbAY8IcKAz8h6ACMeaV1Br1iuAAAAAElFTkSuQmCC'>
+             &nbsp;<span title='<%= description %>' class='folder_title'><%= title %> (<%= count %>)</span>&nbsp;&nbsp;
+             <%= print_tags(tags) %>
+             </div></li>
+            |
+        ),
+
+        index_file_entry: erb(
+            %q|
+              <li>
+              <a class='doclink' href='<%= name %>.html'>
+              <div class='file'><span class='title'><%= title %></span>&nbsp;&nbsp;
+              <%= print_tags(tags) %>
+              <br>
+              <span class='date'><%= date.strftime('%d.%m.%Y') %></span>
+              <span class='digest'><%= digest %></span></a><br>
+              </div></li>
+           |
+        ),
+
+        index_start: erb(
+            %q|
+             <!DOCTYPE html>
+             <html>
+             <head>
+             <meta charset='utf-8'>
+             | + STYLE + %q|
+             </head>
+             <body class='files'>
+             <div class='filesheader'><a href='../index.html'><h1 class='files'><%= title %></h1></a>
+             <div class='folderinfo'><%= description %></div>
+             </div>
+             <ul class='files'>
+            |
+        ),
+
+        index_end: erb(
+            %q|
+             </ul>
+            </html>
+            |
+        ),
+    }
 
     ##
     # Initialize the renderer
@@ -41,87 +576,18 @@ module Rendering
     end
 
     ##
+    # Method returning the templates used by the renderer. Should be overwritten by the
+    # subclasses.
+    # @return [Hash] the templates
+    def all_templates
+      @templates = super.merge(TEMPLATES)
+    end
+
+    ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
     def handles_animation?
       false
-    end
-
-    ##
-    # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start
-      @io << "<hr><div class='comment'>" << nl
-    end
-
-    ##
-    # End of comment section
-    def comment_end
-      @io << '<hr></div>' << nl
-      @dialog_counter += 1
-    end
-
-    ##
-    # Render an image
-    # @param [String] location path to image
-    # @param [Array] formats available file formats
-    # @param [String] alt alt text
-    # @param [String] title title of image
-    # @param [String] width_slide width for slide
-    # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
-
-      chosen_image = choose_image(location, formats)
-
-      width_attr = ''
-
-      if width_plain
-        width_attr = " width='#{width_plain}'"
-      end
-
-      @io << "<figure class='picture'>" << nl
-      @io << "<img alt='#{alt}' src='#{chosen_image}'#{width_attr}>" << nl
-      @io << "<figcaption>#{inline(title)}</figcaption>" << nl
-      @io << '</figure>' << nl
-    end
-
-    ##
-    # Render an UML inline diagram using an external tool
-    # @param [String] picture_name name of the picture
-    # @param [String] contents the embedded UML
-    # @param [String] width_slide width of the diagram on slides
-    # @param [String] width_plain width of the diagram on plain documents
-    def uml(picture_name, contents, width_slide, width_plain)
-      img_path = super(picture_name, contents, width_slide, width_plain, 'svg')
-      @io << "<img src='#{img_path}' width='#{width_plain}'>" << nl
-    end
-
-    ##
-    # Start a chapter
-    # @param [String] title the title of the chapter
-    # @param [String] number the number of the chapter
-    # @param [String] id the uniquie id of the chapter (for references)
-    def chapter_start(title, number, id)
-      @io << "<section id='#{id}' class='chapter'>" << nl
-      @io << "<div class='infoline'>" << nl
-      @io << "<a class='topic' href='index.html'><span class='topic'>#{@topic}</span></a>" << nl  unless @topic.nil?
-
-      @io << "<span class='tags'>" << nl
-      @tags.each { |t|
-        @io << "<span class='tag'>#{t}</span>"
-      }
-
-      @io << '</span>' << nl
-
-      @io << "<span class='date'>#{@date.strftime('%Y-%m-%d')}</span>"  unless @date.nil?
-      @io << '</div>' << nl
-
-      @io << "<h1 class='trenner'>#{title}</h1>" << nl
-    end
-
-    ## End of a chapter
-    def chapter_end
-      @io << '</section>' << nl
     end
 
     ##
@@ -142,106 +608,28 @@ module Rendering
     end
 
     ##
-    # End of slide
-    def slide_end
-      @io << '</section>' << nl << nl
-    end
-
-    ##
-    # Start of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    # @param [String] description additional description
-    # @param [String] term of the lecture
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
-      @io << <<-ENDOFTEXT
-      <!DOCTYPE html>
-      <html lang='de'>
-      <head>
-        <meta charset='utf-8'>
-        <title>#{title1}</title>
-        <meta name='author' content='#{author}'>
-        #{style}
-      </head>
-      <body>
-      ENDOFTEXT
-    end
-
-    ##
-    # End of presentation
-    # @param [String] title1 first title
-    # @param [String] title2 second title
-    # @param [String] section_number number of the section
-    # @param [String] section_name name of the section
-    # @param [String] copyright copyright information
-    # @param [String] author author of the presentation
-    def presentation_end(title1, title2, section_number, section_name, copyright, author)
-      @io << <<-ENDOFTEXT
-      </div>
-      #{scripts(JAVASCRIPTS)}
-      </body>
-      </html>
-      ENDOFTEXT
-    end
-
-    ##
-    # Start of the TOC
-    def toc_start; end
-
-    ##
-    # Start of sub entries in toc
-    def toc_sub_entries_start; end
-
-    ##
-    # End of sub entries
-    def toc_sub_entries_end; end
-
-    ##
-    # Output a toc sub entry
-    # @param [String] name name of the entry
-    # @param [String] anchor anchor of the entry
-    def toc_sub_entry(name, anchor); end
-
-    ##
-    # Output a toc entry
-    # @param [String] name name of the entry
-    # @param [String] anchor anchor of the entry
-    def toc_entry(name, anchor); end
-
-    ##
-    # End of toc
-    def toc_end; end
-
-    ##
     # Start of an index file
     # @param [String] title title of the folder
     # @param [String] description description of the folder
     def index_start(title, description, root = false)
-
-      @io << '<!DOCTYPE html>'
-      @io << '<html>'
-      @io << '<head>'
-      @io << "<meta charset='utf-8'>"
-      @io << style
-      @io << '</head>'
-      @io << "<body class='files'>"
-      @io << "<div class='filesheader'>""<a href='../index.html'><h1 class='files'>#{title}</h1></a>"
-      @io << "<div class='folderinfo'>#{description}</div>"
-      @io << '</div>'
-      @io << "<ul class='files'>"
+      @io << @templates[:index_start].result(binding)
     end
 
+    ##
+    # Print the first 10 tags.
+    # @param [String[]] tags the tags
+    # @return [String] the tags in HTML form
     def print_tags(tags)
+      result = ''
+
       count = 0
       tags.each do |t|
-        @io << "<span class='tag'>#{t}</span>"
+        result << "<span class='tag'>#{t}</span>"
         count = count + 1
         break if count > 10
       end
+
+      result
     end
 
     ##
@@ -252,18 +640,7 @@ module Rendering
     # @param [String[]] tags tags
     # @param [String] digest digest of file content
     def index_file_entry(name, title, date, tags, digest)
-
-      date_print = date.strftime('%d.%m.%Y')
-
-      @io << '<li>'
-      @io << "<a class='doclink' href='#{name}.html'>"
-      @io << "<div class='file'><span class='title'>#{title}</span>&nbsp;&nbsp;"
-      print_tags(tags)
-      @io << '<br>'
-      @io << "<span class='date'>#{date_print}</span>"
-      @io << "<span class='digest'>#{digest}</span></a><br>"
-
-      @io << '</div></li>'
+      @io << @templates[:index_file_entry].result(binding)
     end
 
     ##
@@ -274,450 +651,7 @@ module Rendering
     # @param [Fixnum] count number of contained files
     # @param [String[]] tags the tags
     def index_folder_entry(name, title, description, count, tags)
-      @io << '<li>'
-      @io << "<a class='doclink' href='#{name}/index.html'>"
-      @io << "<div class='folder'>"
-      @io << "<img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42mNgGFRgyZIlWkuBYNmyZf+JwAcwDAAKXl2+fHkgMZYB7XmIzYAP6DahycPFRg0YUgYA04U3kD4DSh9kGYANDw4DgPRGbAY8IcKAz8h6ACMeaV1Br1iuAAAAAElFTkSuQmCC'>"
-      @io << "&nbsp;<span title='#{description}' class='folder_title'>#{title} (#{count})</span>&nbsp;&nbsp;"
-      print_tags(tags)
-      @io << '</div></li>'
-    end
-
-
-    ##
-    # End of index file
-    def index_end
-      @io << '</ul>'
-      @io << '</body>'
-      @io << '</html>'
-    end
-
-    def style
-      return <<-ENDOFTEXT
-      <style>
-
-body {
-    background-color: #ffffff;
-    font-size: 12pt;
-    font-family: Helvetica, arial, freesans, clean, sans-serif, "Segoe UI", "Helvetica Neue";
-    line-height: 150%;
-    margin-left: 0em;
-    margin-right: 0em;
-    margin-top: 0em;
-    padding: 10px;
-    padding-top: 50px;
-    background: #f3f5f7;
-}
-
-.infoline {
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 3.2ex;
-    color: #7a7d81;
-    background: #f3f5f7;
-    margin-bottom: 1em;
-    padding-left: 10px;
-    padding-top: 5px;
-    position: fixed;
-    -webkit-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-    -moz-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-    box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-}
-
-.infoline .topic {
-    font-weight: normal;
-    font-size: 100%;
-    color: #7a7d81;
-}
-
-.infoline .date {
-    position: absolute;
-    right: 1em;
-    font-weight: normal;
-    font-size: 100%;
-}
-
-.infoline .tags {
-    position: absolute;
-    left: 20em;
-}
-
-body > section {
-    background: #FFFFFF;
-    padding: 1em;
-    border: 1px solid #d1d2d4;
-    border-radius: 4px;
-}
-span.tag {
-    padding-left: 3px;
-    padding-right: 3px;
-    border: 1px solid #ced3d8;
-    background: #e7ecf0;
-    margin-left: 1px;
-    margin-right: 1px;
-    color: #aaadb0;
-    border-radius: 9px;
-    font-size: 75%;
-}
-
-em {
-    color: black;
-    font-weight: bold;
-    font-style: normal;
-}
-
-em.alternative {
-    color: #A0A0A0;
-    font-weight: bold;
-    font-style: normal;
-}
-
-strong {
-    color: black;
-    font-weight: bold;
-    font-style: italic;
-}
-
-strong.alternative {
-    color: #A0A0A0;
-    font-weight: bold;
-    font-style: italic;
-}
-
-
-.ui-widget {
-    font-size: 70%;
-}
-
-figcaption {
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-figure.picture {
-    float: left;
-    margin-top: 0;
-    margin-left: 1em;
-    margin-right: 0;
-    page-break-inside: avoid;
-    page-break-before: auto;
-}
-
-figure.picture figcaption {
-    clear: both;
-    text-align: left;
-}
-
-.comment > figure.picture {
-    float: right;
-}
-
-figcaption {
-    font-size: 90%;
-    font-size: 90%;
-    text-align: center;
-    color: #7d7d7d;
-}
-
-figure.picture figcaption {
-    counter-increment: figno;
-}
-
-figure.source {
-    margin-top: 0;
-    margin-left: 1em;
-    margin-right: 0;
-}
-
-figure.source figcaption {
-    counter-increment: srcno;
-}
-
-figure.source figcaption:before {
-    content: "Quellcode " counter(honecounter) "." counter(srcno) ": ";
-}
-
-.title, .folder_title {
-    font-size: 105%;
-    font-weight: bold;
-}
-
-.folder_title {
-
-    color: #2A7F00;
-}
-
-abbr {
-    text-decoration: none;
-    color: #2a6207;
-    border-bottom-style: dotted;
-    border-bottom-width: 1px;
-}
-
-h1 {
-    clear: both;
-    border-bottom: #A0A0A0 solid 1px;
-    font-size: 130%;
-    color: #5fb336;
-    padding-top: 0;
-    margin-top: 0;
-}
-
-h2, h2.title {
-    font-size: 120%;
-    color: #2A7F00;
-    clear: both;
-    font-weight: bold;
-}
-
-h3 {
-    font-size: 110%;
-    color: #2A7F00;
-    clear: both;
-    font-weight: normal;
-    font-style: normal;
-}
-
-h4 {
-    font-size: 100%;
-    color: #000000;
-    clear: both;
-    font-weight: normal;
-    font-style: italic;
-}
-
-a, dfn {
-    text-decoration: none;
-    font-weight: normal;
-    color: #4183c4;
-    font-style: normal;
-}
-
-a:active, a:hover, dfn:hover {
-    text-decoration: underline;
-    cursor: hand;
-}
-
-code.xml {
-    line-height: 105%;
-    font-size: 11pt;
-    background-color: transparent;
-}
-
-
-.box {
-    margin-top: 50px;
-    background-color: #515151;
-    background-image: -moz-linear-gradient(#707070, #515151);
-    background-image: -webkit-linear-gradient(#707070, #515151);
-    background-image: linear-gradient(#707070, #515151);
-    background-repeat: repeat-x;
-    border: 1px solid #3a3a3a;
-    border-bottom: 1px solid #2d2d2d;
-    border-radius: 3px;
-    /*text-shadow: 0 1px 0 #383838;*/
-    box-shadow: inset 0 1px 0 #2c2c2c, 0 1px 5px #515151;
-    width: 90%;
-
-}
-
-.box h4 {
-    background-size: 32px auto;
-    margin: 0;
-    padding: 10px;
-    border-bottom: 1px solid #646464;
-    color: #ffffff;
-    box-shadow: 0 1px 0 #2c2c2c;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-
-.box p {
-    margin: 0;
-    padding: 10px;
-    color: #cacaca;
-    text-shadow: none;
-}
-
-.comment {
-    font-size: 11pt;
-    line-height: 1.2;
-}
-
-hr {
-    clear: both;
-}
-
-table {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-td, th {
-    border: 1px solid black;
-    padding: 0.2em;
-}
-
-table.content {
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
-    border-collapse: collapse;
-    border-left: 0;
-    border-right: 0;
-}
-
-table.content thead > tr,
-table.content th {
-     border-bottom: 1px solid black;
-}
-
-table.content th {
-    text-align: left;
-}
-
-table.content td, table.content th {
-    padding-left: 0.8em;
-    padding-right: 0.8em;
-    border: 0;
-}
-
-pre {
-    border-width: 1px;
-    border-style: solid;
-    border-color: rgb(165, 165, 165);
-    border-radius: 3px;
-    padding: 1em;
-}
-code {
-    font-size: 11pt;
-    background: none;
-}
-
-.title_first {
-    font-size: 20pt;
-    font-weight: bold;
-    line-height: 140%;
-}
-
-ul.subentry li {
-  font-size: 10pt;
-  line-height: 120%;
-}
-
-img {
-    max-width: 100%;
-    float: left;
-}
-
-section {
-    clear: both;
-}
-
-.output_small {
-    font-family: monospace;
-}
-
-.output_small p {
-    padding: 0;
-    margin: 0;
-}
-
-a.doclink {
-    text-decoration: none;
-    color: black;
-    font-weight: normal;
-}
-
-.file {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-    border-top: 1px #D0D0D0 solid;
-    line-height: 1.4em;
-    background: #FFFFFF;
-    font-size: 90%;
-}
-
-.folder {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-    border-top: 1px #D0D0D0 solid;
-    line-height: 1.4em;
-    background: #FFFFFF;
-    font-size: 90%;
-}
-
-.file:hover {
-    background: #ecf0f3;
-}
-
-.folder:hover {
-    background: #ecf0f3;
-}
-
-.date {
-    color: #4a8db8;
-    font-weight: bold;
-}
-
-blockquote {
-    border-left: 3px solid #A0A0A0;
-    margin-left: 0;
-    padding-left: 1em;
-}
-
-.quote_source {
-    color: #D0D0D0;
-    font-size: 90%;
-    font-style: italic;
-}
-
-li {
-}
-
-ul.files {
-    list-style-type: none;
-    padding-left: 0;
-}
-
-.folderinfo {
-    color: #505050;
-    padding-bottom: 1em;
-    padding-left: 0;
-    font-size: 80%;
-}
-
-h1.files {
-    font-size: 140%;
-    padding-left: 0;
-    padding-top: 0.5em;
-    border: none;
-}
-
-h1.files:hover {
-    text-decoration: underline;
-    color: #5fb336;
-}
-
-body.files {
-    padding: 0;
-}
-
-.filesheader {
-    background: #ffffff;
-    -webkit-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-    -moz-box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-    box-shadow: 0px 3px 6px -3px rgba(0,0,0,0.75);
-    padding-left: 1em;
-}
-      </style>
-      ENDOFTEXT
-
+      @io << @templates[:index_folder_entry].result(binding)
     end
   end
 end
