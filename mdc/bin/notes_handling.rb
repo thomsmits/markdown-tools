@@ -44,7 +44,7 @@ class NotesHandling
   # @param [String] target directory for the result files
   def read_files_and_convert(folder, target)
 
-    p = Parsing::Parser.new
+    p = Parsing::Parser.new(0)
 
     folder.files.each do |file|
       src_path = folder.path + '/' + file.name;

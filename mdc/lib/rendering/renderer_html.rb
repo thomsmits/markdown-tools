@@ -225,6 +225,27 @@ module Rendering
         ),
     }
 
+    ## Inline replacements
+    INLINE = [
+        [ / ([A-Za-z0-9])_([A-Za-z0-9]) /,  ' \1<sub>\2</sub> '],
+        [ / ([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> ' ],
+        [ /([A-Za-z0-9])\^([A-Za-z0-9])$/,  ' \1<sup>\2</sup>' ],
+        [ /([A-Za-z0-9])\^([A-Za-z0-9]) /,  ' \1<sup>\2</sup> ' ],
+        [ /__(.+?)__/,                      '<strong>\1</strong>' ],
+        [ /_(.+?)_/,                        '<em>\1</em>' ],
+        [ /\*\*(.+?)\*\*/,                  '<strong class="alternative">\1</strong>' ],
+        [ /\*(.+?)\*/,                      '<em class="alternative">\1</em>' ],
+        [ /~~(.+?)~~/,                      '<del>\1</del>' ],
+        [ /z\.B\./,                         'z.&nbsp;B.' ],
+        [ /d\.h\./,                         'd.&nbsp;h.' ],
+        [ /u\.a\./,                         'u.&nbsp;a.' ],
+        [ / -> /,                           ' &rarr; ' ],
+        [ / => /,                           ' &rArr; ' ],
+        [ /---/,                            '&mdash;' ],
+        [ /--/,                             '&ndash;' ],
+        [ /\.\.\./,                         '&hellip;' ],
+    ]
+
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -242,8 +263,17 @@ module Rendering
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
+    end
+
+    ##
+    # Method returning the inline replacements.Should be overwritten by the
+    # subclasses.
+    # @param [Boolean] alternate should alternate replacements be used
+    # @return [String[]] the templates
+    def all_inline_replacements(alternate = false)
+      INLINE
     end
 
     ##
@@ -252,7 +282,7 @@ module Rendering
     # @param [String] input Text to be replaced
     # @param [boolean] alternate alternate emphasis to be used
     # @return [String] Text with replacements performed
-    def inline(input, alternate = false)
+    def inline(input)
 
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
@@ -261,43 +291,9 @@ module Rendering
         if p.matched
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
         else
-          result << inline_replacements(p.content, alternate)
+          result << replace_inline_content(p.content)
         end
       end
-
-      result
-    end
-
-    ##
-    # Apply regular expressions to replace inline content
-    # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
-    # @return [String] Text with replacements performed
-    def inline_replacements(input, alternate = false)
-
-      return ''  if input.nil?
-
-      result = input
-
-      result.gsub!(/ ([A-Za-z0-9])_([A-Za-z0-9]) /,  ' \1<sub>\2</sub> ')
-      result.gsub!(/ ([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> ')
-      result.gsub!( /([A-Za-z0-9])\^([A-Za-z0-9])$/, ' \1<sup>\2</sup>')
-      result.gsub!( /([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> ')
-      result.gsub!(/__(.+?)__/,           '<strong>\1</strong>')
-      result.gsub!(/_(.+?)_/,             '<em>\1</em>')
-      result.gsub!(/\*\*(.+?)\*\*/,       '<strong class="alternative">\1</strong>')
-      result.gsub!(/\*(.+?)\*/,           '<em class="alternative">\1</em>')
-      result.gsub!(/~~(.+?)~~/,           '<del>\1</del>')
-      #result.gsub!(/s\[(.+?)\]\((.+?)\)/, '<a class="small" href="\2">\1</a>')
-      #result.gsub!(/\[(.+?)\]\((.+?)\)/,  '<a href="\2">\1</a>')
-      result.gsub!(/z\.B\./,              'z.&nbsp;B.')
-      result.gsub!(/d\.h\./,              'd.&nbsp;h.')
-      result.gsub!(/u\.a\./,              'u.&nbsp;a.')
-      result.gsub!(/ -> /,                ' &rarr; ')
-      result.gsub!(/ => /,                ' &rArr; ')
-      result.gsub!(/---/,                 '&mdash;')
-      result.gsub!(/--/,                  '&ndash;')
-      result.gsub!(/\.\.\./,              '&hellip;')
 
       result
     end

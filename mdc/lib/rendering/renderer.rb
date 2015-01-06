@@ -234,6 +234,10 @@ module Rendering
         ),
     }
 
+    ## Inline replacements
+    INLINE = [
+    ]
+
     ##
     # Class representing the parts of a line
     class LinePart
@@ -267,25 +271,53 @@ module Rendering
       @result_dir = result_dir
       @image_dir = image_dir
       @temp_dir = temp_dir
-      @templates = templates
+      @templates = all_templates
       @dialog_counter = 0
       @ol_level = 0
       @ul_level = 0
+      @slide_ended = false
+      @last_title = nil
     end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the
-    # subclasses.
+    # subclasses to provide the correct templates for the type of renderer.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       TEMPLATES
+    end
+
+    ##
+    # Method returning the inline replacements.Should be overwritten by the
+    # subclasses.
+    # @param [Boolean] alternate should alternate replacements be used
+    # @return [String[]] the templates
+    def all_inline_replacements(alternate = false)
+      INLINE
     end
 
     ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
+    end
+
+    ##
+    # Apply regular expressions to replace inline content
+    # @param [String] input Text to be replaced
+    # @param [Boolean] alternate should alternate replacements be used
+    # @return [String] Text with replacements performed
+    def replace_inline_content(input, alternate = false)
+
+      return ''  if input.nil?
+
+      result = input
+
+      all_inline_replacements(alternate).each { |e| result.gsub!(e[0], e[1]) }
+
+      result
     end
 
     ##
@@ -621,6 +653,7 @@ module Rendering
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start
       @io << @templates[:comment_start].result(binding)
+      @slide_ended = true
     end
 
     ##
@@ -681,6 +714,8 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       @io << @templates[:slide_start].result(binding)
+      @slide_ended = false
+      @last_title = title
     end
 
     ##
@@ -714,6 +749,7 @@ module Rendering
       # write uml to file
       File.write(uml_file, contents)
 
+      # TODO: Make path configurable
       # generate image
       %x(ruby ../../../../../Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
 

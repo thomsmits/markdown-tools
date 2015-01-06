@@ -112,20 +112,20 @@ module Rendering
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
       super(io, language, result_dir, image_dir, temp_dir)
-      @last_title = nil
     end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
     end
 
     ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
     end
@@ -138,17 +138,8 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       unless title == @last_title
-        @io << @templates[:slide_start].result(binding)
-        @slide_ended = false
-        @last_title = title
+        super
       end
-    end
-
-    ##
-    # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start
-      @io << @templates[:comment_start].result(binding)
-      @slide_ended = true
     end
 
     ##

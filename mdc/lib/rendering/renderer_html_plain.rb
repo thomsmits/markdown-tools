@@ -165,13 +165,14 @@ module Rendering
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
     end
 
     ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
     end
@@ -218,6 +219,7 @@ module Rendering
     def slide_start(title, number, id, contains_code)
       escaped_title = inline_code(title)
       @io << @templates[:slide_start].result(binding)
+      @slide_ended = false
 
       unless title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl

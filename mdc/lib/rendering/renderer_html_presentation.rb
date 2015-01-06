@@ -215,13 +215,14 @@ module Rendering
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
     end
 
     ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       true
     end

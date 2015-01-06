@@ -116,39 +116,22 @@ module Rendering
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
     end
 
     ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       true
-    end
-
-    ##
-    # Start of slide
-    # @param [String] title the title of the slide
-    # @param [String] number the number of the slide
-    # @param [String] id the unique id of the slide (for references)
-    # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
-      @io << @templates[:slide_start].result(binding)
-      @slide_ended = false
     end
 
     ##
     # End of slide
     def slide_end
       @io << @templates[:slide_end].result(binding)  unless @slide_ended
-    end
-
-    ##
-    # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start
-      @io << @templates[:comment_start].result(binding)
-      @slide_ended = true
     end
 
     ##

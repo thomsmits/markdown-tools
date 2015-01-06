@@ -146,6 +146,67 @@ module Rendering
         )
     }
 
+    ## Inline replacements
+    INLINE_BASIC_BEFORE = [
+        [ /\\/,                  '\textbackslash ' ],
+        [ '{',                   '\{' ],
+        [ '}',                   '\}' ],
+        [ /(^|[ (>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,
+                                 '\1\begin{math}\2\textsubscript{\3}\end{math}\4' ],
+        [ /(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,
+                                 '\1\begin{math}\2\textsuperscript{\3}\end{math}\4' ],
+        [ /"(.*?)"/,             '"`\1"\'' ],
+        [ /~~(.+?)~~/,           '\strikeout{\1}' ],
+    ]
+
+    INLINE_BASIC_AFTER = [
+        [ 'Z.B.',                'Z.\,B.' ],
+        [ 'z.B.',                'z.\,B.' ],
+        [ 'D.h.',                'D.\,h.' ],
+        [ 'd.h.',                'd.\,h.' ],
+        [ 'u.a.',                'u.\,a.' ],
+        [ 's.u.',                's.\,u.' ],
+        [ 's.o.',                's.\,o.' ],
+        [ '$',                   '\$' ],
+        [ '%',                   '\%' ],
+        [ '(-> ',                '($\rightarrow$ ' ],
+        [ '(=> ',                '($\Rightarrow$ ' ],
+        [ '<br>-> ',             '<br>$\rightarrow$ ' ],
+        [ '<br>=> ',             '<br>$\Rightarrow$ ' ],
+        [ ' -> ',                ' $\rightarrow$ ' ],
+        [ ' => ',                ' $\Rightarrow$ ' ],
+        [ ' <- ',                ' $\leftarrow$ ' ],
+        [ ' <= ',                ' $\Leftarrow$ ' ],
+        [ ' <=> ',               ' $\Leftrightarrow$ ' ],
+        [ '<br><=> ',            '<br>$\Leftrightarrow$ ' ],
+        [ /<br>/,                "\\newline\n" ],
+        [ '#',                   '\#' ],
+        [ '&',                   '\\\\&' ],
+        [ '_',                   '\_' ],
+        [ '<<',                  '{\flqq}' ],
+        [ '>>',                  '{\frqq}' ],
+        [ '<',                   '{\textless}' ],
+        [ '>',                   '{\textgreater}' ],
+        [ '~',                   '{\textasciitilde}' ],
+        [ '^',                   '{\textasciicircum}' ],
+        [ '\textsubscript',      '_' ],
+        [ '\textsuperscript',    '^' ],
+    ]
+
+    INLINE_NORMAL = INLINE_BASIC_BEFORE + [
+        [ /__(.+?)__/,           '\term{\1}\index{\1}' ],
+        [ /_(.+?)_/,             '\strong{\1}' ],
+        [ /\*\*(.+?)\*\*/,       '\termenglish{\1}' ],
+        [ /\*(.+?)\*/,           '\strongenglish{\1}' ],
+    ] + INLINE_BASIC_AFTER
+
+    INLINE_ALTERNATE = INLINE_BASIC_BEFORE + [
+        [ /__(.+?)__/,           '\termalt{\1}\index{\1}' ],
+        [ /_(.+?)_/,             '\strongalt{\1}' ],
+        [ /\*\*(.+?)\*\*/,       '\termenglishalt{\1}' ],
+        [ /\*(.+?)\*/,           '\strongenglishalt{\1}' ],
+    ]  + INLINE_BASIC_AFTER
+
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -161,22 +222,23 @@ module Rendering
     # Method returning the templates used by the renderer. Should be overwritten by the
     # subclasses.
     # @return [Hash] the templates
-    def templates
+    def all_templates
       @templates = super.merge(TEMPLATES)
     end
 
     ##
-    # Indicates whether the renderer handles animations or not. false indicates
-    # that slides should not be repeated.
-    def handles_animation?
-      true
+    # Method returning the inline replacements.Should be overwritten by the
+    # subclasses.
+    # @return [String[]] the templates
+    def all_inline_replacements(alternate = false)
+      alternate ? INLINE_ALTERNATE : INLINE_NORMAL
     end
 
     ##
     # Replace inline elements like emphasis (_..._)
     #
     # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
+    # @param [Boolean] alternate should alternate replacements be used
     # @return [String] Text with replacements performed
     def inline(input, alternate = false)
 
@@ -187,7 +249,7 @@ module Rendering
         if p.matched
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}').gsub('_', '\_')
         else
-          result << inline_replacements(p.content, alternate)
+          result << replace_inline_content(p.content, alternate)
         end
       end
 
@@ -195,75 +257,10 @@ module Rendering
     end
 
     ##
-    # Apply regular expressions to replace inline content
-    # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
-    # @return [String] Text with replacements performed
-    def inline_replacements(input, alternate = false)
-      return ''  if input.nil?
-
-      result = input
-
-      result.gsub!(/\\/,                  '\textbackslash ')
-      result.gsub!('{',                   '\{')
-      result.gsub!('}',                   '\}')
-
-      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,  '\1\begin{math}\2\textsubscript{\3}\end{math}\4')
-      result.gsub!(/(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4')
-      result.gsub!(/"(.*?)"/, '"`\1"\'')
-
-      if alternate
-        result.gsub!(/__(.+?)__/,           '\termalt{\1}\index{\1}')
-        result.gsub!(/_(.+?)_/,             '\strongalt{\1}')
-        result.gsub!(/\*\*(.+?)\*\*/,       '\termenglishalt{\1}')
-        result.gsub!(/\*(.+?)\*/,           '\strongenglishalt{\1}')
-      else
-        result.gsub!(/__(.+?)__/,           '\term{\1}\index{\1}')
-        result.gsub!(/_(.+?)_/,             '\strong{\1}')
-        result.gsub!(/\*\*(.+?)\*\*/,       '\termenglish{\1}')
-        result.gsub!(/\*(.+?)\*/,           '\strongenglish{\1}')
-      end
-
-      result.gsub!(/~~(.+?)~~/,           '\strikeout{\1}')
-      result.gsub!('Z.B.',                'Z.\,B.')
-      result.gsub!('z.B.',                'z.\,B.')
-      result.gsub!('D.h.',                'D.\,h.')
-      result.gsub!('d.h.',                'd.\,h.')
-      result.gsub!('u.a.',                'u.\,a.')
-      result.gsub!('s.u.',                's.\,u.')
-      result.gsub!('s.o.',                's.\,o.')
-      result.gsub!('$',                   '\$')
-      result.gsub!('%',                   '\%')
-      result.gsub!('(-> ',                '($\rightarrow$ ')
-      result.gsub!('(=> ',                '($\Rightarrow$ ')
-      result.gsub!('<br>-> ',             '<br>$\rightarrow$ ')
-      result.gsub!('<br>=> ',             '<br>$\Rightarrow$ ')
-      result.gsub!(' -> ',                ' $\rightarrow$ ')
-      result.gsub!(' => ',                ' $\Rightarrow$ ')
-      result.gsub!(' <- ',                ' $\leftarrow$ ')
-      result.gsub!(' <= ',                ' $\Leftarrow$ ')
-      result.gsub!(' <=> ',               ' $\Leftrightarrow$ ')
-      result.gsub!('<br><=> ',            '<br>$\Leftrightarrow$ ')
-      result.gsub!(/<br>/,                "\\newline\n")
-      result.gsub!('#',                   '\#')
-      result.gsub!('&',                   '\\\\&')
-      result.gsub!('_',                   '\_')
-      result.gsub!('<<',                  '{\flqq}')
-      result.gsub!('>>',                  '{\frqq}')
-      result.gsub!('<',                   '{\textless}')
-      result.gsub!('>',                   '{\textgreater}')
-      result.gsub!('~',                   '{\textasciitilde}')
-      result.gsub!('^',                   '{\textasciicircum}')
-      result.gsub!('\textsubscript',      '_')
-      result.gsub!('\textsuperscript',    '^')
-
-      result
-    end
-
-    ##
     # Replace `inline code` in input
     # @param [String] input the input
-    # @param [boolean] alternate alternate emphasis to be used
+    # @param [boolean] table code used in a table
+    # @param [Boolean] alternate should alternate replacements be used
     # @return the input with replaced code fragments
     def inline_code(input, table = false, alternate = false)
       parts = tokenize_line(input, /`(.+?)`/)
@@ -360,7 +357,7 @@ module Rendering
         end
 
         result << text
-        result << ' & ' if k < row.size - 1
+        result << ' & '  if k < row.size - 1
         i += 1
       end
 
