@@ -589,7 +589,7 @@ module Rendering
     # Start a chapter
     # @param [String] title the title of the chapter
     # @param [String] number the number of the chapter
-    # @param [String] id the uniquie id of the chapter (for references)
+    # @param [String] id the unique id of the chapter (for references)
     def chapter_start(title, number, id)
       @io << @templates[:chapter_start].result(binding)
     end
