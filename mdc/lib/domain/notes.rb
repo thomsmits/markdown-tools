@@ -72,6 +72,10 @@ module Notes
         f.tags.each { |t| tags[t] = :present }
       end
 
+      @folders.each do |f|
+        f.all_tags.each { |t| tags[t] = :present }
+      end
+
       result = []
       tags.each_key { |k| result << k }
 
