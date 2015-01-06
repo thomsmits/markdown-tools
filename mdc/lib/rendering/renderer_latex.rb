@@ -21,9 +21,8 @@ module Rendering
 
         equation: erb(
             %q|
-            \begin{align*}'
-            <%= contents %>
-            \end{align*}
+            \begin{align*}
+            <%= contents %>\end{align*}
             |
         ),
 
