@@ -186,7 +186,7 @@ module Rendering
 
       parts.each do |p|
         if p.matched
-          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}')
+          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}').gsub('_', '\_')
         else
           result << inline_replacements(p.content, alternate)
         end
