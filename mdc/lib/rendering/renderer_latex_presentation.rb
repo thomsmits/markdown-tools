@@ -14,7 +14,7 @@ module Rendering
     TEMPLATES = {
         presentation_start: erb(
             %q!
-            \include{preambel}
+            \include{preambel_presentation}
             \include{lst_javascript}
             \include{lst_console}
             \include{lst_css}
