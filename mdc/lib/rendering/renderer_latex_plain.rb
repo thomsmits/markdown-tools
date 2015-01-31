@@ -51,7 +51,7 @@ module Rendering
         ),
 
         chapter_start: erb(
-            %q|\section{<%= title %>}\label{<%= id %>}
+            %q|\Needspace{12\baselineskip}\section{<%= title %>}\label{<%= id %>}
 
             |
         ),
@@ -62,7 +62,7 @@ module Rendering
         ),
 
         slide_start: erb(
-            %q|\subsection{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
+            %q|\Needspace{5\baselineskip}\subsection{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
             |
         ),
 
