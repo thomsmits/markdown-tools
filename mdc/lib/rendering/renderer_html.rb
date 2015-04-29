@@ -191,9 +191,9 @@ module Rendering
             </head>
             <body>
             <div class='title_first'><%= title1 %></div>
-            <div class='title_second'>%= title2 %></div>
-            <div class='copyright'>%= copyright%></div>
-            <div class='description'>%= description%></div>
+            <div class='title_second'><%= title2 %></div>
+            <div class='copyright'><%= copyright%></div>
+            <div class='description'><%= description%></div>
             <br>
             <table>
             <tr><th><%= LOCALIZED_MESSAGES[:chapter] %></th>

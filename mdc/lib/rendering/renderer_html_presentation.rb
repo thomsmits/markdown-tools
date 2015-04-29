@@ -73,7 +73,7 @@ module Rendering
         comment_end: erb(
             %q|
             <p></div>
-            <script>$('#dialog_<%= @dialog_counter %>').dialog( { width: 900, autoOpen: false  %> );</script>
+            <script>$('#dialog_<%= @dialog_counter %>').dialog( { width: 900, autoOpen: false  } );</script>
             |
         ),
 
