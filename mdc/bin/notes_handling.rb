@@ -54,6 +54,8 @@ class NotesHandling
 
       dest_path = dest_dir + '/' + file.name + '.html'
 
+      puts "Compiling #{src_path}"
+
       pres = Domain::Presentation.new('', '', '', '', '', '', '', '', '')
       p.parse(src_path, '', pres)
       pres.title1 = pres.chapters[0].title
