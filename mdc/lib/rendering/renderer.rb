@@ -456,7 +456,7 @@ module Rendering
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
     def code_start(language, caption)
-      @io << @templates[:code_start].result(binding)
+      @io << @templates[:code_start].result(binding).strip
     end
 
     ##
@@ -470,7 +470,7 @@ module Rendering
     # Output code
     # @param [String] content the code content
     def code(content)
-      @io << @templates[:code].result(binding)
+      @io << @templates[:code].result(binding).strip
     end
 
     ##
