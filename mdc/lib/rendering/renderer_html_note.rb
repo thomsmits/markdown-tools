@@ -466,6 +466,10 @@ module Rendering
             |
         ),
 
+        code_start: erb(
+            %q|<pre><code class='<%= language %>'>|
+        ),
+
         toc_start: erb(
             %q||
         ),
