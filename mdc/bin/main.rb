@@ -43,7 +43,7 @@ class Main
 
     dir.each { |file| files << file  if /[0-9][0-9]_.*\.md/ === file }
 
-    files.sort
+    files = files.sort
 
     puts "Directory: #{directory}"
     puts "Type: #{type}"
