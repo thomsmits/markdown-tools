@@ -29,8 +29,8 @@ module Rendering
             \maketitle
             \end{frame}
 
-            \section{<%= LOCALIZED_MESSAGES[:toc] %>}\label{<%= LOCALIZED_MESSAGES[:toc] %>>}
             \begin{frame}
+            \pdfbookmark[2]{<%= LOCALIZED_MESSAGES[:toc] %>}{<%= LOCALIZED_MESSAGES[:toc] %>}
             \separator{<%= LOCALIZED_MESSAGES[:toc] %>}
             \end{frame}
 
