@@ -23,12 +23,13 @@ module Rendering
             \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
             \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
             \author{\small <%= author %>}
-            \date{\color{grau} \small <%= term %>}
+            \date{\color{grau} \small <%= term %>\tiny\vspace{2mm}\\\\ \today}
             \begin{document}
             \begin{frame}
             \maketitle
             \end{frame}
 
+            \section{<%= LOCALIZED_MESSAGES[:toc] %>}\label{<%= LOCALIZED_MESSAGES[:toc] %>>}
             \begin{frame}
             \separator{<%= LOCALIZED_MESSAGES[:toc] %>}
             \end{frame}
