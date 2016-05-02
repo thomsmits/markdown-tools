@@ -24,7 +24,7 @@ To use the tool, you need the following prerequisites
   * LaTeX in case you want to generate PDF slides
   * rsync
 
- A project has this structure
+A project has this structure
 
      _include
          ...
