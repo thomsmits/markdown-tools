@@ -344,6 +344,13 @@ module Domain
     end
 
     ##
+    # Return a string representation of the object
+    # @return [String] a string representation
+    def to_s
+      @content.chomp
+    end
+
+    ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)

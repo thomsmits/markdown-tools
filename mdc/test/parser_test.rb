@@ -183,6 +183,16 @@ M6 : Auto --<<instantiate>>--.> Auto
 \\sum_{i=0}^N{P(X = i)} = 1
 \\]
 
+
+## Slide 2.10
+
+```console
+  0011      3             1101      -3             0111       7
++ 0010    + 2           + 1110    + -2           + 1011    + -5
+------    ---           ------    ----           ------    ----
+= 0101    = 5           = 1011    = -5           = 0010    =  2
+```
+
 ENDOFTEXT
 
 
@@ -374,6 +384,14 @@ ENDOFTEXT
     check_slide(slides[8], 'Slide 2.9', false, false,
                 [ Domain::Equation ],
                 [ '\sum_{i=0}^N{P(X = i)} = 1' ])
+
+    check_slide(slides[9], 'Slide 2.10', true, false,
+                [ Domain::Source ],
+                [ "  0011      3             1101      -3             0111       7\n" +
+                  "+ 0010    + 2           + 1110    + -2           + 1011    + -5\n" +
+                  "------    ---           ------    ----           ------    ----\n" +
+                  '= 0101    = 5           = 1011    = -5           = 0010    =  2' ],
+                false)
   end
 
   private
@@ -387,12 +405,19 @@ ENDOFTEXT
   # @param [Class[]] content_types expected types of content
   # @param [String[]] contents expected Strings of content
   # @param [Proc] checks additional checks to be performed
-  def check_slide(slide, title, code, skipped, content_types = [ ], contents = [ ], &checks)
+  # @param [Boolean] strip strip content before comparison
+  def check_slide(slide, title, code, skipped, content_types = [ ], contents = [ ], strip = true, &checks)
     assert_equal(title, slide.title)
     assert_equal(code, slide.contains_code?)
     assert_equal(skipped, slide.skip)
     content_types.each_with_index { |e, i| assert_kind_of(e, slide.elements[i])  }
-    contents.each_with_index { |e, i| assert_equal(e, slide.elements[i].to_s.strip)  }
+    contents.each_with_index do |e, i|
+      if strip
+        assert_equal(e, slide.elements[i].to_s.strip)
+      else
+        assert_equal(e, slide.elements[i].to_s)
+      end
+    end
     checks.call(slide.elements)  unless checks.nil?
   end
 

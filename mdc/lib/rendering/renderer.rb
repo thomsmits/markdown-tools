@@ -470,7 +470,7 @@ module Rendering
     # Output code
     # @param [String] content the code content
     def code(content)
-      @io << @templates[:code].result(binding).strip
+      @io << @templates[:code].result(binding).chomp
     end
 
     ##
