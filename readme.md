@@ -6,4 +6,4 @@ I am a big fan of Markdown and I am currently changing all my workflows to use m
 
 Due to my job, I am performing lots of lectures regarding programming topics. For these, I need presentation slides and text documents containing the contents of the slides plus additional information.
 
-The the readme files in the sub projects for details.
+See the readme files in the sub projects for details.
