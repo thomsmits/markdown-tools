@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-require_relative 'Renderer'
+require_relative 'renderer'
 
 module Rendering
   class RendererDOT < Renderer
