@@ -32,6 +32,13 @@ class Index
     def puts
       "#{chapter_number} - #{chapter_name}"
     end
+
+    ##
+    # Compares this object with the given one
+    # @param [Entry] other the object to compare with
+    def <=>(other)
+      @chapter_number <=> other.chapter_number
+    end
   end
 
   ##
@@ -82,6 +89,8 @@ class Index
 
     renderer = Rendering::RendererHTML.new(io, '', '', '', '')
     renderer.index_start(title1, title2, copyright, description)
+
+    entries.sort!
 
     entries.each do |e|
       renderer.index_entry(e.chapter_number, e.chapter_name,
