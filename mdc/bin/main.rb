@@ -9,9 +9,15 @@ require_relative '../lib/rendering/renderer_latex_presentation'
 require_relative '../lib/rendering/renderer_latex_plain'
 require 'stringio'
 
+$project_path = ''
+
 class Main
 
   def self.main(directory, type, output_file)
+
+    # Determine my own directory to make invocation of the UML tool
+    # more dynamic
+    $project_path = File.expand_path($0).gsub('\\', '/').gsub('/mdc/bin/main.rb', '')
 
     # Read global properties
     dir = Dir.new(directory)

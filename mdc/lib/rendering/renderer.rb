@@ -749,11 +749,10 @@ module Rendering
       # write uml to file
       File.write(uml_file, contents)
 
-      # TODO: Make path configurable
       # generate image
-      %x(ruby ../../../../../Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
+      puts "#{$project_path}/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
 
-      puts "../../../../../Development/markdown-tools/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
+      %x(ruby #{$project_path}/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
 
       img_file
     end
