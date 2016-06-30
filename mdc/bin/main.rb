@@ -34,7 +34,7 @@ class Main
     term = props.get('term')
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
-    temp_dir  = temp_dir.sub(/\/$/, '')   unless image_dir.nil?
+    temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
 
     result_dir = File.dirname(output_file)
 
