@@ -2,7 +2,7 @@
 
 ## Approach
 
-Using a self made notation and a corresponding tool, UML diagramms can directly be embedded into the source code.
+Using a self made notation and a corresponding tool, UML diagrams can directly be embedded into the source code.
 
 
 ## Class Diagram
