@@ -33,7 +33,7 @@ class Main
     chapter_name     = props.chapter_name
     copyright        = props.copyright
     author           = props.author
-    default_language = props.default_language
+    default_syntax   = props.default_syntax
     image_dir        = props.image_dir
     temp_dir         = props.temp_dir
     description      = props.description
@@ -63,22 +63,22 @@ class Main
 
     p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
     pres = Domain::Presentation.new(title1, title2, chapter_no, chapter_name,
-        copyright, author, default_language, description, term)
+        copyright, author, default_syntax, description, term)
 
     # Parse files in directory
     files.each { |file|
       puts "Parsing: #{file}"
-      p.parse(directory + '/' + file, default_language, pres)
+      p.parse(directory + '/' + file, default_syntax, pres)
     }
 
     io = StringIO.new
     io.set_encoding('UTF-8')
 
     r = case type
-      when 'slide' then Rendering::RendererHTMLPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
-      when 'plain' then Rendering::RendererHTMLPlain.new(io, default_language, result_dir, image_dir, temp_dir)
-      when 'tex-slide' then Rendering::RendererLatexPresentation.new(io, default_language, result_dir, image_dir, temp_dir)
-      when 'tex-plain' then Rendering::RendererLatexPlain.new(io, default_language, result_dir, image_dir, temp_dir)
+      when 'slide' then Rendering::RendererHTMLPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
+      when 'plain' then Rendering::RendererHTMLPlain.new(io, default_syntax, result_dir, image_dir, temp_dir)
+      when 'tex-slide' then Rendering::RendererLatexPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
+      when 'tex-plain' then Rendering::RendererLatexPlain.new(io, default_syntax, result_dir, image_dir, temp_dir)
       else
         puts "Unknown type #{type} for result"
         exit 5

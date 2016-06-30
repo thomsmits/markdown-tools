@@ -93,6 +93,8 @@
 \definecolor{darkgreen}{RGB}{14, 144, 102}
 \definecolor{darkred}{RGB}{128, 0, 0}
 
+\definecolor{questioncolor}{RGB}{178, 96, 0}
+
 \newcommand{\keyword}[1]{\texttt{\color{keyword}{#1}}}
 \newcommand{\console}[1]{\texttt{{#1}}}
 \newcommand{\type}[1]{\texttt{\color{type}{#1}}}
@@ -208,9 +210,11 @@
 
 \newcommand{\important}[1]{%
 \begin{framed}\textcolor{darkred}{#1}\end{framed}%
-
 }
 
+\newcommand{\question}[1]{%
+\begin{framed}\textcolor{questioncolor}{#1}\end{framed}%
+}
   
 \lstset{          
       basicstyle=\small\ttfamily,
