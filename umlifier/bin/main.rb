@@ -5,6 +5,7 @@ require_relative '../lib/rendering/renderer_dot'
 require_relative '../lib/domain/diagram'
 
 require 'stringio'
+require 'fileutils'
 
 class Main
 
@@ -34,6 +35,10 @@ class Main
 
     puts ".dot file written to: #{dot_file}"
 
+    # Create path to output file to avoid errors
+    FileUtils::mkdir_p(File.dirname(output_file))
+
+    # Compile file with graphviz
     puts "Compiling with graphviz to: #{output_file}"
     %x(dot -T#{type} #{dot_file} > #{output_file})
     puts "dot -T#{type} #{dot_file} > #{output_file}"
