@@ -137,7 +137,7 @@ module Rendering
         toc_start: erb(
             %q|
             <section data-number='2'>
-            <h1 class='title toc'><%= LOCALIZED_MESSAGES[:toc] %></h1>
+            <h1 class='title toc'><%= $messages[:toc] %></h1>
             <ul>
             |
         ),
@@ -196,8 +196,8 @@ module Rendering
             <div class='description'><%= description%></div>
             <br>
             <table>
-            <tr><th><%= LOCALIZED_MESSAGES[:chapter] %></th>
-            <th colspan='2'><%= LOCALIZED_MESSAGES[:material] %></th></tr>
+            <tr><th><%= $messages[:chapter] %></th>
+            <th colspan='2'><%= $messages[:material] %></th></tr>
             |
         ),
 

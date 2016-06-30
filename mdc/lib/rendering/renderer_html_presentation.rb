@@ -14,7 +14,7 @@ module Rendering
         button: erb(
             %q|
            <button onclick='executeNew(this);' class='runbutton'>
-           <%= LOCALIZED_MESSAGES[:run] %>
+           <%= $messages[:run] %>
            </button><span style='display: none;' name='log' class='output'>&nbsp;</span>
            |
         ),
@@ -22,7 +22,7 @@ module Rendering
         button_with_log: erb(
             %q|
             <button onclick='executeNew(this);' class='runbutton'>
-            <%= LOCALIZED_MESSAGES[:run] %>
+            <%= $messages[:run] %>
             </button><div name='log' class='output_small'></div>
            |
         ),
@@ -30,7 +30,7 @@ module Rendering
         button_with_log_pre: erb(
             %q|
             <button onclick='executePre(this);' class='runbutton'>
-            <%= LOCALIZED_MESSAGES[:run] %>
+            <%= $messages[:run] %>
             </button><div name='log' class='output_small'></div>
            |
         ),
@@ -66,7 +66,7 @@ module Rendering
         comment_start: erb(
             %q|
             <div class='more'><img src='img/help.png' onclick="$('#dialog_<%= @dialog_counter %>').dialog('open')"></div>
-            <div id='dialog_<%= @dialog_counter %>' title='<%= LOCALIZED_MESSAGES[:more_info] %>'><p>
+            <div id='dialog_<%= @dialog_counter %>' title='<%= $messages[:more_info] %>'><p>
             |
         ),
 
@@ -177,7 +177,7 @@ module Rendering
             </div>
             <div class='menu'>
             <ul id='menu'>
-            <li id='menu-inhalt'><%= LOCALIZED_MESSAGES[:contents] %>
+            <li id='menu-inhalt'><%= $messages[:contents] %>
             <%= toc_menu %>
             </ul>
             </div>

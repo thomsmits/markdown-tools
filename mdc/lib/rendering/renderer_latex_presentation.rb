@@ -30,11 +30,11 @@ module Rendering
             \end{frame}
 
             \begin{frame}
-            \pdfbookmark[2]{<%= LOCALIZED_MESSAGES[:toc] %>}{<%= LOCALIZED_MESSAGES[:toc] %>}
-            \separator{<%= LOCALIZED_MESSAGES[:toc] %>}
+            \pdfbookmark[2]{<%= $messages[:toc] %>}{<%= $messages[:toc] %>}
+            \separator{<%= $messages[:toc] %>}
             \end{frame}
 
-            \begin{frame}\frametitle<presentation>{<%= LOCALIZED_MESSAGES[:toc] %>}
+            \begin{frame}\frametitle<presentation>{<%= $messages[:toc] %>}
             \tableofcontents
             \end{frame}
             !

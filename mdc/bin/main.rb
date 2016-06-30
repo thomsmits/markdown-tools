@@ -32,6 +32,13 @@ class Main
     temp_dir         = props.temp_dir
     description      = props.description
     term             = props.term
+    slide_language   = props.language
+
+    if slide_language == 'DE'
+      $messages = LOCALIZED_MESSAGES_DE
+    elsif slide_language == 'EN'
+      $messages = LOCALIZED_MESSAGES_EN
+    end
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
