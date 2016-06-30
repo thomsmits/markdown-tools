@@ -56,6 +56,15 @@ module Parsing
     end
 
     ##
+    # Catch missing methods to allow simple retrieval of
+    # properties using a method like syntax.
+    # @param [String] name Name of the method
+    def method_missing(name, *args, &block)
+      key = name.to_s
+      get(key)
+    end
+
+    ##
     # Return string representation
     def to_s
       @result.to_s + @defaults.to_s

@@ -30,6 +30,11 @@ class PropertiesReaderTest  < Minitest::Test
     assert_equal('äöüß:;!!!@@',           props.get('special'))
     assert_equal('value_with_underscore', props.get('name_with_underscore'))
 
+    assert_equal('valuea',                props.namea)
+    assert_equal('valueb',                props.nameb)
+    assert_equal('äöüß:;!!!@@',           props.special)
+    assert_equal('value_with_underscore', props.name_with_underscore)
+
     assert_nil(props.get('ignore'))
   end
 
@@ -56,6 +61,11 @@ class PropertiesReaderTest  < Minitest::Test
     assert_equal('äöüß:;!!!@@',           props.get('special'))
     assert_equal('value_with_underscore', props.get('name_with_underscore'))
 
+    assert_equal('valuea',                props.namea)
+    assert_equal('valueb',                props.nameb)
+    assert_equal('äöüß:;!!!@@',           props.special)
+    assert_equal('value_with_underscore', props.name_with_underscore)
+
     assert_nil(props.get('ignore'))
   end
 
@@ -80,5 +90,9 @@ class PropertiesReaderTest  < Minitest::Test
     assert_equal('valuea',                props.get('namea'))
     assert_equal('valueb',                props.get('nameb'))
     assert_equal('valuec_default',        props.get('namec'))
+
+    assert_equal('valuea',                props.namea)
+    assert_equal('valueb',                props.nameb)
+    assert_equal('valuec_default',        props.namec)
   end
 end

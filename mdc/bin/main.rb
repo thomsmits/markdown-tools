@@ -21,17 +21,17 @@ class Main
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
-    title1 = props.get('title_1')
-    title2 = props.get('title_2')
-    chapter_no = props.get('chapter_no')
-    chapter_name = props.get('chapter_name')
-    copyright = props.get('copyright')
-    author = props.get('author')
-    default_language = props.get('default_language')
-    image_dir = props.get('image_dir')
-    temp_dir = props.get('temp_dir')
-    description = props.get('description')
-    term = props.get('term')
+    title1           = props.title_1
+    title2           = props.title_2
+    chapter_no       = props.chapter_no
+    chapter_name     = props.chapter_name
+    copyright        = props.copyright
+    author           = props.author
+    default_language = props.default_language
+    image_dir        = props.image_dir
+    temp_dir         = props.temp_dir
+    description      = props.description
+    term             = props.term
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
