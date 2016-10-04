@@ -76,7 +76,7 @@ module Parsing
     def normal?; /^[^ ].*$/ === @line; end
 
     ## Just text
-    def text?; /^[A-Za-z0-9_ÄÖÜäöüß`*].*$/ === @line; end
+    def text?; /^[=\-A-Za-z0-9_ÄÖÜäöüß`*].*$/ === @line; end
 
     ## HTML code
     def html?; /^<.*$/ === @line; end
