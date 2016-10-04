@@ -387,6 +387,7 @@ module Rendering
         full_title << ', '  if !full_title.nil? && full_title.length > 0
         full_title = "#{full_title}#{$messages[:source]}#{source}"
       end
+
       new_width = width ? calculate_width(width) : '\textwidth'
 
       @io << @templates[:image].result(binding)
