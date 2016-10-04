@@ -193,6 +193,37 @@ M6 : Auto --<<instantiate>>--.> Auto
 = 0101    = 5           = 1011    = -5           = 0010    =  2
 ```
 
+
+## Slide 2.11
+
+  * Item 1
+  * Item 2
+
+Example
+
+  * Item 3
+  * Item 4
+
+
+## Slide 2.12
+
+  1. Item 1
+  2. Item 2
+  3. Item 3
+
+Text
+
+  4. Item 4
+  5. Item 5
+  6. Item 6
+
+
+## Slide 2.13
+
+  4. Item 4
+  5. Item 5
+  6. Item 6
+
 ENDOFTEXT
 
 
@@ -392,6 +423,46 @@ ENDOFTEXT
                   "------    ---           ------    ----           ------    ----\n" +
                   '= 0101    = 5           = 1011    = -5           = 0010    =  2' ],
                 false)
+
+    check_slide(slides[10], 'Slide 2.11', false, false,
+                [ Domain::UnorderedList, Domain::Text, Domain::UnorderedList ]) do |e|
+      assert_equal('Item 1', e[0].entries[0].to_s)
+      assert_equal('Item 2', e[0].entries[1].to_s)
+
+      assert_equal('Example', e[1].to_s)
+
+      assert_equal('Item 3', e[2].entries[0].to_s)
+      assert_equal('Item 4', e[2].entries[1].to_s)
+    end
+
+    check_slide(slides[11], 'Slide 2.12', false, false,
+                [ Domain::OrderedList, Domain::Text, Domain::OrderedList ]) do |e|
+      assert_equal('Item 1', e[0].entries[0].to_s)
+      assert_equal('Item 2', e[0].entries[1].to_s)
+
+      assert_equal(1, e[0].start_number)
+      assert_equal('Item 1', e[0].entries[0].to_s)
+      assert_equal('Item 2', e[0].entries[1].to_s)
+      assert_equal('Item 3', e[0].entries[2].to_s)
+
+      assert_equal('Text', e[1].to_s)
+
+      assert_equal(4, e[2].start_number)
+      assert_equal('Item 4', e[2].entries[0].to_s)
+      assert_equal('Item 5', e[2].entries[1].to_s)
+      assert_equal('Item 6', e[2].entries[2].to_s)
+    end
+
+    check_slide(slides[12], 'Slide 2.13', false, false,
+                [ Domain::OrderedList ]) do |e|
+
+      assert_equal(4, e[0].start_number)
+      assert_equal('Item 4', e[0].entries[0].to_s)
+      assert_equal('Item 5', e[0].entries[1].to_s)
+      assert_equal('Item 6', e[0].entries[2].to_s)
+    end
+
+
   end
 
   private

@@ -123,7 +123,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def ol1(ps, line)
-      start_number = line.ol1_number
+      start_number = line.ol1_number.to_i
 
       if ps.ol2? || ps.ul2? || ps.ol3? || ps.ul3?
         ps.current_list = ps.current_list.parent
