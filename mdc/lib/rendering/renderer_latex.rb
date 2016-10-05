@@ -29,6 +29,7 @@ module Rendering
         ol_start: erb(
             %q|
             \begin{ol<%= @ol_level %>}
+            \setcounter{enumi}{<%= counter %>}
             |
         ),
 
@@ -312,6 +313,15 @@ module Rendering
       end
 
       @io << @templates[:code_start].result(binding)
+    end
+
+    ##
+    # Start of an ordered list
+    # @param [Fixnum] number start number of list
+    def ol_start(number = 1)
+      @ol_level += 1
+      counter = number.to_i - 1
+      @io << @templates[:ol_start].result(binding)
     end
 
     ##
