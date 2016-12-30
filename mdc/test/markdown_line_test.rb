@@ -181,7 +181,7 @@ class MarkdownLineTest < Minitest::Test
     assert_equal('java', line('```java[1]{Example Program}').fenced_code_start)
     assert_equal('java', line('```java[1]{Example Program} ').fenced_code_start)
 
-    assert_equal(nil, line('```java').fenced_code_caption)
+    assert_nil(line('```java').fenced_code_caption)
     assert_equal('Example Program', line('```java{Example Program}').fenced_code_caption)
     assert_equal('Example Program', line('```java{Example Program} ').fenced_code_caption)
     assert_equal('Example Program', line('```java[1]{Example Program}').fenced_code_caption)
