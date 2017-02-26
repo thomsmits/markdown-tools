@@ -21,8 +21,10 @@ module Rendering
 
         equation: erb(
             %q|
+            \abovedisplayskip=0mm
             \begin{align*}
             <%= contents %>\end{align*}
+            \belowdisplayskip=0mm
             |
         ),
 
@@ -152,9 +154,11 @@ module Rendering
         [ /\\/,                  '\textbackslash ' ],
         [ '{',                   '\{' ],
         [ '}',                   '\}' ],
-        [ /(^|[ (>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,
+        [ '∑',                   '\begin{math}\sum\end{math}' ],
+        [ 'ϵ',                   '\begin{math}\epsilon\end{math}' ],
+        [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
                                  '\1\begin{math}\2\textsubscript{\3}\end{math}\4' ],
-        [ /(^|[ (>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([<,.;:!) ]|$)/,
+        [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
                                  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4' ],
         [ /"(.*?)"/,             '"`\1"\'' ],
         [ /~~(.+?)~~/,           '\strikeout{\1}' ],
