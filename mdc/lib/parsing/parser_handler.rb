@@ -307,8 +307,11 @@ module Parsing
         ps.table!
 
       elsif ps.table?
-        # skip separator line
-        return  if line.table_separator?
+
+        if line.table_separator?
+          current_element(ps.slide, ps.comment_mode).add_separator
+          return
+        end
 
         # Split columns and add them to the table
         columns = cleaned_line.split('|')

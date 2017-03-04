@@ -490,6 +490,13 @@ module Rendering
     end
 
     ##
+    # Separator in the table
+    # @param [Array] headers the headers
+    def table_separator(headers)
+      @io << @templates[:table_separator].result(binding)
+    end
+
+    ##
     # End of the table
     def table_end
       @io << @templates[:table_end].result(binding)

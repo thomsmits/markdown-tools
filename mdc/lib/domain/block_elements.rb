@@ -250,7 +250,7 @@ module Domain
     ## Header of the tabke
     class TableHeader
 
-      attr_accessor :name, :alignment
+      attr_accessor :name, :alignment, :separator
 
       ##
       # Create a new header
@@ -287,6 +287,12 @@ module Domain
     end
 
     ##
+    # Add a separator line to the table
+    def add_separator
+      @rows << nil
+    end
+
+    ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
@@ -299,7 +305,13 @@ module Domain
       }
 
       renderer.table_start(titles, alignment)
-      @rows.each { |r| renderer.table_row(r, alignment) }
+      @rows.each do |r|
+        if r.nil?
+          renderer.table_separator(@headers)
+        else
+          renderer.table_row(r, alignment)
+        end
+      end
       renderer.table_end
     end
   end

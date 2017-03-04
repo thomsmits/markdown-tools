@@ -115,6 +115,11 @@ module Rendering
             |
         ),
 
+        table_separator: erb(
+            %q|
+            |
+        ),
+
         table_end: erb(
             %q|
             </tbody></table>
@@ -395,12 +400,21 @@ module Rendering
 
         css_class = class_for_constant(alignment[i])
 
-        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl if alignment[i] != Constants::SEPARATOR
-        @io << "<th#{css_class}></th>" << nl if alignment[i] == Constants::SEPARATOR
+        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl  if alignment[i] != Constants::SEPARATOR
+        @io << "<th#{css_class}></th>" << nl  if alignment[i] == Constants::SEPARATOR
       end
 
       @io << '</tr></thead><tbody>' << nl
     end
+
+    ##
+    # Separator in the table
+    # @param [Array] headers the headers
+    def table_separator(headers)
+      colspan = headers.count
+      @io << @templates[:table_separator].result(binding)
+    end
+
 
     ##
     # Row of the table

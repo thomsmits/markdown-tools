@@ -121,6 +121,12 @@ module Rendering
             |
         ),
 
+        table_separator: erb(
+            %q|
+            \midrule
+            |
+        ),
+
         table_end: erb(
             %q|
             \bottomrule
@@ -393,7 +399,6 @@ module Rendering
       end
 
       @io << "#{result} \\\\" << nl
-      @io << '\midrule' << nl
     end
 
     ##
