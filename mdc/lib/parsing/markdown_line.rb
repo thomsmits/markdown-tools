@@ -120,7 +120,7 @@ module Parsing
     ## Separator of slide and comment
     def separator?; /^---.*/ === @line; end
 
-    ## Separator of tables
+    ## Separator of table headers
     def table_separator?; /^\|[-]{2,}\|.*/ === @line.strip; end
 
     ## unordered list, level 1
