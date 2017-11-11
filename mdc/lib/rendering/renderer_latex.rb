@@ -360,7 +360,8 @@ module Rendering
       if caption.nil?
         caption_command = ''
       else
-        caption_command = "title={#{caption}},aboveskip=-0.4 \\baselineskip,"
+        replaced_caption = replace_inline_content(caption)
+        caption_command = "title={#{replaced_caption}},aboveskip=-0.4 \\baselineskip,"
       end
 
       @io << @templates[:code_start].result(binding)
