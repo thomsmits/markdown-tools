@@ -143,9 +143,12 @@ module Rendering
             |
         ),
 
-        # TODO: Handle headings
-        heading: erb(
-            %q||
+        heading_3: erb(
+            %q|\subsubsection*{<%= title %>}|
+        ),
+
+        heading_4: erb(
+            %q|\paragraph{<%= title %>}|
         ),
 
         image: erb(
@@ -374,6 +377,15 @@ module Rendering
       @ol_level += 1
       counter = number.to_i - 1
       @io << @templates[:ol_start].result(binding)
+    end
+
+    ##
+    # Heading of a given level
+    # @param [Fixnum] level heading level
+    # @param [String] title title of the heading
+    def heading(level, title)
+      @io << @templates[:heading_3].result(binding)  if level == 3
+      @io << @templates[:heading_4].result(binding)  if level == 4
     end
 
     ##
