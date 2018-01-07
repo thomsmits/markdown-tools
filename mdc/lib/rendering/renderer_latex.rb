@@ -314,10 +314,12 @@ module Rendering
           # Hyperlink
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}').gsub('_', '\_')
         elsif p.content =~ /\\\[(.*?)\\\]/
-          # Inline code, treat special
-          result << replace_inline_content($`, alternate)
-          result << '\begin{math}' << $1 << '\end{math}'
-          result << replace_inline_content($', alternate)
+          # Inline formula, treat special
+          sub_parts = tokenize_line(p.content, /\\\[(.*?)\\\]/)
+          sub_parts.each do |sp|
+            result << replace_inline_content(sp.content, alternate)  unless sp.matched
+            result << '\begin{math}' << sp.content << '\end{math}'   if sp.matched
+          end
         else
           # No Hyperlink, no inline formula
           result << replace_inline_content(p.content, alternate)
