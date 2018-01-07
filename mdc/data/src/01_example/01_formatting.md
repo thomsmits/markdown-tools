@@ -49,3 +49,5 @@ Latex formula can be directly embedded (requires [MathJax](http://www.mathjax.or
 \[
 \sum_{i=0}^N{P(X = i)} = 1
 \]
+
+It is possible to have formulas inline \[ U = R \cdot I \] without spacing around

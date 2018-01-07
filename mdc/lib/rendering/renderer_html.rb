@@ -307,15 +307,23 @@ module Rendering
     # @param [String] input Text to be replaced
     # @param [boolean] alternate alternate emphasis to be used
     # @return [String] Text with replacements performed
-    def inline(input)
+    def inline(input, alternate = false)
 
+      # Separate Hyperlinks from other contents
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
 
       parts.each do |p|
         if p.matched
+          # Hyperlink
           result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
+        elsif p.content =~ /\\\[(.*?)\\\]/
+          # Inline code, treat special
+          result << replace_inline_content($`, alternate)
+          result << '\(' << $1 << '\)'
+          result << replace_inline_content($', alternate)
         else
+          # No Hyperlink, no inline formula
           result << replace_inline_content(p.content)
         end
       end
