@@ -43,7 +43,7 @@ module Parsing
     ##
     # Create a new parser
     # @param [Fixnum] count_front_matter number of pages of front matter
-    # @param [ParserHandler] handler for parser actions
+    # @param [ParserHandler] parser_handler for parser actions
     def initialize(count_front_matter, parser_handler = ParserHandler.new)
       @last_slide_counter = count_front_matter
       @parser_handler = parser_handler
