@@ -51,7 +51,7 @@ module Rendering
         ),
 
         chapter_start: erb(
-            %q|\Needspace{12\baselineskip}\section{<%= title %>}\label{<%= id %>}
+            %q|\Needspace{12\baselineskip}\section{<%= inline_code(title) %>}\label{<%= id %>}
 
             |
         ),
@@ -172,4 +172,3 @@ module Rendering
     end
   end
 end
-

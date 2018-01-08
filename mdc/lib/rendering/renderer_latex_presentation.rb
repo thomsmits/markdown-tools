@@ -48,7 +48,7 @@ module Rendering
 
         chapter_start: erb(
             %q|
-            \section{<%= title %>}\label{<%= id %>}
+            \section{<%= inline_code(title) %>}\label{<%= id %>}
             \begin{frame}
             \separator{<%= title %>}
             \end{frame}
