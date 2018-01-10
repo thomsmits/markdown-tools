@@ -206,7 +206,8 @@ module Rendering
         [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
                                  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4' ],
         [ /"(.*?)"/,             '"`\1"\'' ],
-        [ /~~(.+?)~~/,           '\strikeout{\1}' ],
+        [ /~~(.+?)~~/,           '\sout{\1}' ],
+        [ /~(.+?)~/,             '\underline{\1}' ],
     ]
 
     INLINE_BASIC_AFTER = [
@@ -438,7 +439,7 @@ module Rendering
 
       row.each_with_index do |e, k|
 
-        next if alignment[k] == Constants::SEPARATOR
+        next  if alignment[k] == Constants::SEPARATOR
 
         text = inline_code(e, true)
 

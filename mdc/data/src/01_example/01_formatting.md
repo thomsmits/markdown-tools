@@ -28,6 +28,11 @@ Explanation not shown on the slide directly goes here. It can again contain all 
   * Second percentage indicates size in plain document
 
 
+## Strikeout and Underline
+
+Text can also be marked for ~~strikeout~~ or ~underlined~  
+
+
 ## Table
 
 HTML Versions
