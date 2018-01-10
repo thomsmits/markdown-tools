@@ -232,6 +232,10 @@ module Rendering
         text: erb(
             %q|<%= inline_code(content) %>|
         ),
+
+        table_row: erb(
+            %q|<%= inline_code(content) %>|
+        ),
     }
 
     ## Inline replacements
@@ -302,6 +306,16 @@ module Rendering
     # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
+    end
+
+    ##
+    # Replace `inline code` in input
+    # @param [String] input the input
+    # @param [boolean] table code used in a table
+    # @param [Boolean] alternate should alternate replacements be used
+    # @return the input with replaced code fragments
+    def inline_code(input, table = false, alternate = false)
+      input
     end
 
     ##
