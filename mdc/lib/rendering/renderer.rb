@@ -719,7 +719,8 @@ module Rendering
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    def presentation_end(title1, title2, section_number, section_name, copyright, author)
+    # @param [Boolean] create_index create an Index at the end of slides?
+    def presentation_end(title1, title2, section_number, section_name, copyright, author, create_index)
       @io << @templates[:presentation_end].result(binding)
     end
 

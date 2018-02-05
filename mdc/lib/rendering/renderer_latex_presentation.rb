@@ -15,6 +15,12 @@ module Rendering
         presentation_start: erb(
             %q!
             \include{preambel_presentation}
+            \newenvironment{theindex}
+             {\let\item\par
+              %definitions for subitem etc
+             }{}
+            \newcommand\indexspace{}
+            \makeindex
             \include{lst_javascript}
             \include{lst_console}
             \include{lst_css}
@@ -42,6 +48,17 @@ module Rendering
 
         presentation_end: erb(
             %q|
+            <% if create_index %>
+            \section{<%= $messages[:index] %>}
+            \begin{frame}
+            \pdfbookmark[2]{<%= $messages[:index] %>}{<%= $messages[:index] %>}
+            \separator{<%= $messages[:index] %>}
+            \end{frame}
+            \begin{frame}[allowframebreaks]{<%= $messages[:index] %>}
+            \footnotesize
+            \printindex
+            \end{frame}
+            <% end %>
             \end{document}
             |
         ),

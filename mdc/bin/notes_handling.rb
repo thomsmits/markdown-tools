@@ -56,7 +56,7 @@ class NotesHandling
 
       puts "Compiling #{src_path}"
 
-      pres = Domain::Presentation.new('', '', '', '', '', '', '', '', '')
+      pres = Domain::Presentation.new('', '', '', '', '', '', '', '', '', false)
       p.parse(src_path, '', pres)
       pres.title1 = pres.chapters[0].title
       file.title = pres.title1
@@ -76,7 +76,7 @@ class NotesHandling
 
     folder.folders.each { |dir| read_files_and_convert(dir, target + '/' + folder.name) }
 
-    dest_dir = target + '/' + folder.name;
+    dest_dir = target + '/' + folder.name
     make_index(dest_dir, folder)
   end
 

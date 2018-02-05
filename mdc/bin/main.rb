@@ -40,6 +40,7 @@ class Main
     description      = props.description
     term             = props.term
     slide_language   = props.language
+    create_index     = props.create_index || false
 
     if slide_language == 'DE'
       $messages = LOCALIZED_MESSAGES_DE
@@ -64,7 +65,7 @@ class Main
 
     p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
     pres = Domain::Presentation.new(title1, title2, chapter_no, chapter_name,
-        copyright, author, default_syntax, description, term)
+        copyright, author, default_syntax, description, term, create_index)
 
     # Parse files in directory
     files.each { |file|
