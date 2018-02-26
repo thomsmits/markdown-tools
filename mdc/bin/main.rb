@@ -40,7 +40,7 @@ class Main
     description      = props.description
     term             = props.term
     slide_language   = props.language
-    create_index     = props.create_index || false
+    create_index     = (props.create_index || 'false') == 'true'
 
     if slide_language == 'DE'
       $messages = LOCALIZED_MESSAGES_DE
