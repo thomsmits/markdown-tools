@@ -9,11 +9,12 @@ module Domain
   # Representation of the whole presentation
   class Presentation
 
-    attr_accessor :title1, :title2, :section_number, :section_name, :author, :copyright, :default_language,
-                  :chapters, :toc, :description, :term, :comments, :create_index
+    attr_accessor :slide_language, :title1, :title2, :section_number, :section_name, :author, :copyright,
+                  :default_language, :chapters, :toc, :description, :term, :comments, :create_index, :bibliography
 
     ##
     # Create a new presentation
+    # @param [String] slide_language the language
     # @param [String] title1 first title
     # @param [String] title2 second title
     # @param [String] section_number number of the section
@@ -21,11 +22,19 @@ module Domain
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] default_language default programming language
-    def initialize(title1, title2, section_number, section_name, copyright, author, default_language, description, term, create_index)
+    # @param [String] description
+    # @param [String] term Term of the presentation
+    # @param [Boolean] create_index Should the document contain an index at the end
+    # @param [String] bibliography File with bibliography information
+    #
+    def initialize(slide_language, title1, title2, section_number, section_name, copyright, author, default_language, description,
+                   term, create_index, bibliography)
+      @slide_language = slide_language
       @title1, @title2, @section_number, @section_name = title1, title2, section_number, section_name
       @copyright, @author, @default_language = copyright, author, default_language
       @description, @term = description, term
       @create_index = create_index
+      @bibliography = bibliography
 
       @chapters = [ ]
       @comments = [ ]
@@ -72,10 +81,10 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
       build_toc
-      renderer.presentation_start(@title1, @title2, @section_number, @section_name, @copyright, @author, @description, @term)
+      renderer.presentation_start(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @description, @term, @bibliography)
       renderer.render_toc(@toc)
       @chapters.each { |chapter| chapter.render(renderer) }
-      renderer.presentation_end(@title1, @title2, @section_number, @section_name, @copyright, @author, @create_index)
+      renderer.presentation_end(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @create_index, @bibliography)
     end
   end
 end

@@ -15,6 +15,7 @@ LOCALIZED_MESSAGES_EN = {
     source:'Source: ',
     output:'Output',
     index: 'Index',
+    literature: 'References',
 }
 
 LOCALIZED_MESSAGES_DE = {
@@ -29,7 +30,8 @@ LOCALIZED_MESSAGES_DE = {
     toc:'Inhaltsverzeichnis',
     source:'Quelle: ',
     output:'Ausgabe',
-    index: 'Index'
+    index: 'Index',
+    literature: 'Quellen',
 }
 
 $messages = LOCALIZED_MESSAGES_DE

@@ -41,6 +41,7 @@ class Main
     term             = props.term
     slide_language   = props.language
     create_index     = (props.create_index || 'false') == 'true'
+    bibliography     = props.bibliography
 
     if slide_language == 'DE'
       $messages = LOCALIZED_MESSAGES_DE
@@ -64,8 +65,8 @@ class Main
     puts "Type: #{type}"
 
     p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
-    pres = Domain::Presentation.new(title1, title2, chapter_no, chapter_name,
-        copyright, author, default_syntax, description, term, create_index)
+    pres = Domain::Presentation.new(slide_language, title1, title2, chapter_no, chapter_name,
+        copyright, author, default_syntax, description, term, create_index, bibliography)
 
     # Parse files in directory
     files.each { |file|

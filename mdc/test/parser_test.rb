@@ -231,14 +231,16 @@ ENDOFTEXT
   # Test parsing of slides from text into objects
   def test_slide_parsing
 
-    presentation = Domain::Presentation.new('Title1', 'Title2', 3, 'Section 3', '(c) 2014',
-                                            'Thomas Smits', 'java', 'Test Presentation', 'WS2014')
+    presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
+                                            'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
+                                            false, nil)
 
     parser =  Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
 
 
     parser.parse_lines(lines(TEST_1), 'testfile.md', 'java', presentation)
 
+    assert_equal('DE',                presentation.slide_language)
     assert_equal('Thomas Smits',      presentation.author)
     assert_equal('Title1',            presentation.title1)
     assert_equal('Title2',            presentation.title2)

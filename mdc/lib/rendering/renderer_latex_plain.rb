@@ -27,6 +27,30 @@ module Rendering
             \title{\vspace{3cm}<%= section_name  %>}
             \author{\small \sffamily <%= author %>}
             \date{\vspace{1cm}\color{grau} \Large\sffamily <%= term %>\\\\ \scriptsize\vspace{2mm}\today}
+
+            <% if slide_language == 'DE' %>
+              \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen
+              \selectlanguage{ngerman}
+              <% locale = 'de_DE' %>
+            <% else %>
+              \usepackage[main=english, ngerman]{babel}       % Deutsch und Englisch unterstützen
+              \selectlanguage{english}
+              <% locale = 'de_DE' %>
+            <% end %>
+
+            <% unless bibliography.nil? %>
+              \usepackage[backend=biber,
+                isbn=false,                     % ISBN nicht anzeigen, gleiches geht mit nahezu allen anderen Feldern
+                sortlocale=<%= locale %>,
+                autocite=inline,                % regelt Aussehen für \autocite (inline=\parancite)
+                hyperref=true,                  % Hyperlinks für Ziate
+                %style=ieee                     % Zitate als Zahlen [1]
+                %style=alphabetic               % Zitate als Kürzel und Jahr [Ein05]
+                style=authoryear                % Zitate Author und Jahr [Einstein (1905)]
+              ]{biblatex}                       % Literaturverwaltung mit BibLaTeX
+              \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
+            <% end %>
+
             \begin{document}
             \pagenumbering{roman}
             \dedication{\vspace{7cm} \sffamily \small \textit{<%= description %>}}
@@ -43,9 +67,18 @@ module Rendering
 
         presentation_end: erb(
             %q|
-            \clearpage
-            \pagenumbering{roman}
-            \printindex
+            <% unless bibliography.nil? %>
+              \clearpage
+              \pagenumbering{roman}
+              \begin{flushleft}
+              \printbibliography[heading=bibintoc]
+              \end{flushleft}
+            <% end %>
+
+            <% if create_index %>
+              \printindex
+            <% end %>
+
             \end{document}
             |
         ),

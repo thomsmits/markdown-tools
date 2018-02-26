@@ -3,11 +3,12 @@
 
 CHAPTER := $(shell grep "resultfile" ./metadata.properties | sed -E "s/resultfile=//g")
 TEMP_DIR = $(shell grep "temp_dir" ./metadata.properties | sed -E "s/temp_dir=//g")
-
+LITERATURE := $(shell grep "bibliography" ./metadata.properties | sed -E "s/bibliography=//g")
 
 OUTPUT_DIR = ../../result
 COMPILE = ../compile.sh
 LATEX = pdflatex
+BIBTEX = biber
 MAKEINDEX = makeindex
 RENDER = phantomjs ../render_slide.js
 TEX = ../_include/tex/*.tex
@@ -38,6 +39,10 @@ $(OUTPUT_DIR)/$(CHAPTER).pdf: *.md metadata.properties img/* $(TEMP_DIR) $(TEX)
 	cp ../_include/tex/* $(TEMP_DIR)
 	rsync -a img/* $(TEMP_DIR)/img/
 	cd $(TEMP_DIR) ; $(LATEX) -draftmode $(CHAPTER).tex
+ifneq ($(LITERATURE),)
+	cp $(LITERATURE) $(TEMP_DIR)
+	cd $(TEMP_DIR) ; $(BIBTEX) $(CHAPTER)
+endif
 	cd $(TEMP_DIR) ; $(LATEX) $(CHAPTER).tex
 	cat $(TEMP_DIR)/$(CHAPTER).pdf > $(OUTPUT_DIR)/$(CHAPTER).pdf
 
@@ -46,6 +51,10 @@ $(OUTPUT_DIR)/$(CHAPTER)-Skript.pdf: *.md metadata.properties img/* $(TEMP_DIR) 
 	cp ../_include/tex/* $(TEMP_DIR)
 	rsync -a img/* $(TEMP_DIR)/img/
 	cd $(TEMP_DIR) ; $(LATEX) -draftmode $(CHAPTER)-Skript.tex
+ifneq ($(LITERATURE),)
+	cp $(LITERATURE) $(TEMP_DIR)
+	cd $(TEMP_DIR) ; $(BIBTEX) $(CHAPTER)-Skript
+endif
 	cd $(TEMP_DIR) ; $(MAKEINDEX) $(CHAPTER)-Skript.idx
 	cd $(TEMP_DIR) ; $(LATEX) -draftmode $(CHAPTER)-Skript.tex
 	cd $(TEMP_DIR) ; $(LATEX) $(CHAPTER)-Skript.tex

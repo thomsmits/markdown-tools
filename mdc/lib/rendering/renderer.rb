@@ -699,6 +699,7 @@ module Rendering
 
     ##
     # Start of presentation
+    # @param [String] slide_language the language
     # @param [String] title1 first title
     # @param [String] title2 second title
     # @param [String] section_number number of the section
@@ -707,12 +708,14 @@ module Rendering
     # @param [String] author author of the presentation
     # @param [String] description additional description
     # @param [String] term of the lecture
-    def presentation_start(title1, title2, section_number, section_name, copyright, author, description, term = '')
+    # @param [String] bibliography File with bibliography
+    def presentation_start(slide_language, title1, title2, section_number, section_name, copyright, author, description, term = '', bibliography = nil)
       @io << @templates[:presentation_start].result(binding)
     end
 
     ##
     # End of presentation
+    # @param [String] slide_language the language
     # @param [String] title1 first title
     # @param [String] title2 second title
     # @param [String] section_number number of the section
@@ -720,7 +723,8 @@ module Rendering
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [Boolean] create_index create an Index at the end of slides?
-    def presentation_end(title1, title2, section_number, section_name, copyright, author, create_index)
+    # @param [String] bibliography File with bibliography
+    def presentation_end(slide_language, title1, title2, section_number, section_name, copyright, author, create_index, bibliography = nil)
       @io << @templates[:presentation_end].result(binding)
     end
 

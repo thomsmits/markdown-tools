@@ -208,6 +208,7 @@ module Rendering
         [ /"(.*?)"/,             '"`\1"\'' ],
         [ /~~(.+?)~~/,           '\sout{\1}' ],
         [ /~(.+?)~/,             '\underline{\1}' ],
+        [ /\[(.*?)\]/,           '[\cite{\1}]' ],
     ]
 
     INLINE_BASIC_AFTER = [

@@ -56,3 +56,8 @@ Latex formula can be directly embedded (requires [MathJax](http://www.mathjax.or
 \]
 
 It is possible to have formulas inline \[ U = R \cdot I \] without spacing around
+
+
+## Citations and References
+
+If you specify a bibliography file in BibLaTeX format in the `metadata.properties` using the `bibliography` key, you can use references to sources in your test [Cooper2007en] or [Dobelli2013en].

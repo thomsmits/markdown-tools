@@ -25,6 +25,33 @@ module Rendering
             \include{lst_console}
             \include{lst_css}
             \include{lst_html}
+
+            <% if slide_language == 'DE' %>
+              \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen
+              \selectlanguage{ngerman}
+              <% locale = 'de_DE' %>
+            <% else %>
+              \usepackage[main=english, ngerman]{babel}       % Deutsch und Englisch unterstützen
+              \selectlanguage{english}
+              <% locale = 'de_DE' %>
+            <% end %>
+
+            <% unless bibliography.nil? %>
+              \setbeamertemplate{bibliography item}{}
+
+              \usepackage[backend=biber,
+                isbn=false,                     % ISBN nicht anzeigen, gleiches geht mit nahezu allen anderen Feldern
+                sortlocale=<%= locale %>,
+                autocite=inline,                % regelt Aussehen für \autocite (inline=\parancite)
+                hyperref=true,                  % Hyperlinks für Ziate
+                %style=ieee                     % Zitate als Zahlen [1]
+                %style=alphabetic               % Zitate als Kürzel und Jahr [Ein05]
+                style=authoryear                % Zitate Author und Jahr [Einstein (1905)]
+              ]{biblatex}                       % Literaturverwaltung mit BibLaTeX
+              \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
+            <% end %>
+
+
             \mode<presentation>{\input{beamer-template}}
             \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
             \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
@@ -48,16 +75,31 @@ module Rendering
 
         presentation_end: erb(
             %q|
+
+            <% unless bibliography.nil? %>
+
+                \section{<%= $messages[:literature] %>}
+                \begin{frame}
+                \pdfbookmark[2]{<%= $messages[:literature] %>}{<%= $messages[:literature] %>}
+                \separator{<%= $messages[:literature] %>}
+                \end{frame}
+
+                \begin{frame}[allowframebreaks]{<%= $messages[:literature] %>}
+                \printbibliography
+                \end{frame}
+            <% end %>
+
+
             <% if create_index %>
-            \section{<%= $messages[:index] %>}
-            \begin{frame}
-            \pdfbookmark[2]{<%= $messages[:index] %>}{<%= $messages[:index] %>}
-            \separator{<%= $messages[:index] %>}
-            \end{frame}
-            \begin{frame}[allowframebreaks]{<%= $messages[:index] %>}
-            \footnotesize
-            \printindex
-            \end{frame}
+              \section{<%= $messages[:index] %>}
+              \begin{frame}
+              \pdfbookmark[2]{<%= $messages[:index] %>}{<%= $messages[:index] %>}
+              \separator{<%= $messages[:index] %>}
+              \end{frame}
+              \begin{frame}[allowframebreaks]{<%= $messages[:index] %>}
+              \footnotesize
+              \printindex
+              \end{frame}
             <% end %>
             \end{document}
             |
