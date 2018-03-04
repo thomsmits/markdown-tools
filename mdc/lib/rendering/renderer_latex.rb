@@ -31,7 +31,9 @@ module Rendering
         ol_start: erb(
             %q|
             \begin{ol<%= @ol_level %>}
-            \setcounter{enumi}{<%= counter %>}
+            <% if counter > 0 %>
+              \setcounter{enumi}{<%= counter %>}
+            <% end %>
             |
         ),
 
