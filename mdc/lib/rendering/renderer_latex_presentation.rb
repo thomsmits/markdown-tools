@@ -15,6 +15,7 @@ module Rendering
         presentation_start: erb(
             %q!
             \include{preambel_presentation}
+            \usepackage{csquotes}
             \newenvironment{theindex}
              {\let\item\par
               %definitions for subitem etc

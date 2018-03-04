@@ -205,7 +205,7 @@ module Rendering
                                  '\1\begin{math}\2\textsubscript{\3}\end{math}\4' ],
         [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
                                  '\1\begin{math}\2\textsuperscript{\3}\end{math}\4' ],
-        [ /"(.*?)"/,             '"`\1"\'' ],
+        [ /"(.*?)"/,             '\enquote{\1}' ],
         [ /~~(.+?)~~/,           '\sout{\1}' ],
         [ /~(.+?)~/,             '\underline{\1}' ],
         [ /\[(.*?)\]/,           '[\cite{\1}]' ],
