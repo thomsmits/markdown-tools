@@ -142,7 +142,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def ol2(ps, line)
 
-      start_number = line.ol2_number
+      start_number = line.ol2_number.to_i
 
       if ps.ol3? || ps.ul3?
         ps.current_list = ps.current_list.parent

@@ -224,6 +224,15 @@ Text
   5. Item 5
   6. Item 6
 
+## Slide 2.14
+
+  1. Item 1
+  2. Item 2
+    1. Item 2.1
+    2. Item 2.2
+  3. Item 3
+  4. Item 4
+
 ENDOFTEXT
 
 
@@ -462,6 +471,19 @@ ENDOFTEXT
       assert_equal('Item 4', e[0].entries[0].to_s)
       assert_equal('Item 5', e[0].entries[1].to_s)
       assert_equal('Item 6', e[0].entries[2].to_s)
+    end
+
+    check_slide(slides[13], 'Slide 2.14', false, false,
+                [ Domain::OrderedList ]) do |e|
+
+      assert_equal(1, e[0].start_number)
+      assert_equal('Item 1', e[0].entries[0].to_s)
+      assert_equal('Item 2', e[0].entries[1].to_s)
+      assert_equal('Item 2.1', e[0].entries[2].entries[0].to_s)
+      assert_equal(1, e[0].entries[2].start_number)
+      assert_equal('Item 2.2', e[0].entries[2].entries[1].to_s)
+      assert_equal('Item 3', e[0].entries[3].to_s)
+      assert_equal('Item 4', e[0].entries[4].to_s)
     end
 
 
