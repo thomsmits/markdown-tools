@@ -269,6 +269,8 @@ module Rendering
         [ '{<-> ',               '{$\leftrightarrow$ ' ],
         [ ' <-> ',               ' $\leftrightarrow$ ' ],
         [ '<br><-> ',            '<br>$\leftrightarrow$ ' ],
+
+        [ /^<br>/,                "\\ \\newline\n" ],
         [ /<br>/,                "\\newline\n" ],
         [ '#',                   '\#' ],
         [ '&',                   '\\\\&' ],
