@@ -62,6 +62,8 @@ module Rendering
             \newpage
             \changefont{ptm}{m}{n}  % Times New Roman
             \tableofcontents
+            \newcounter{frontmatterpage}
+            \setcounter{frontmatterpage}{\value{page}}
             \newpage
             \pagenumbering{arabic}
             |
@@ -69,17 +71,19 @@ module Rendering
 
         presentation_end: erb(
             %q|
+            \cleardoublepage
+            \pagenumbering{roman}
+            \setcounter{page}{\value{frontmatterpage}}
             <% unless bibliography.nil? %>
-              \clearpage
-              \pagenumbering{roman}
               \begin{flushleft}
               \printbibliography[heading=bibintoc]
               \end{flushleft}
             <% end %>
 
-            <% if create_index %>
-              \printindex
-            <% end %>
+            \cleardoublepage
+            \phantomsection
+            \addcontentsline{toc}{section}{Index}
+            \printindex
 
             \end{document}
             |
