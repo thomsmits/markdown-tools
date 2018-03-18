@@ -192,7 +192,7 @@ module Rendering
     def image(location, formats, alt, title, width_slide, width_plain, source = nil)
 
       # Skip images with width 0
-      unless /^0$/ === width_plain
+      unless /^0$/ === width_plain || /^0%$/ === width_plain
         image_latex(location, title, width_plain, source)
       end
     end

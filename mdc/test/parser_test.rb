@@ -125,6 +125,12 @@ int k = 17;
 
 ![](img/file.png)
 
+![](img/file.png)/10%//0%/
+
+![](img/file.png)/10%//0/
+
+
+
 
 ## Slide 2.5
 
@@ -358,6 +364,12 @@ ENDOFTEXT
       assert_nil(e[2].width_plain)
       assert_equal('', e[2].alt)
       assert_equal('', e[2].title)
+
+      assert_equal('10%', e[3].width_slide)
+      assert_equal('0%', e[3].width_plain)
+
+      assert_equal('10%', e[4].width_slide)
+      assert_equal('0', e[4].width_plain)
     end
 
     check_slide(slides[4], 'Slide 2.5', false, false,
