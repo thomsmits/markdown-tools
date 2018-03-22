@@ -69,6 +69,9 @@ module Parsing
     ## A box for a question
     def question?; /^>\? (.*)$/ === @line; end
 
+    ## A generic box
+    def box?; /^>: (.*)$/ === @line; end
+
     ## An empty line
     def empty?; /^$/ === @line.strip; end
 

@@ -86,6 +86,11 @@ module Rendering
             |
         ),
 
+        box: erb(
+            %q|>: <%= inline_code(content) %>
+            |
+        ),
+
         script: erb(
             %q|<script><%= content %></script>|
         ),
@@ -456,6 +461,13 @@ module Rendering
     # @param [String] content the box
     def question(content)
       @io << @templates[:question].result(binding)
+    end
+
+    ##
+    # Box
+    # @param [String] content the box
+    def box(content)
+      @io << @templates[:box].result(binding)
     end
 
     ##

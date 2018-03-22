@@ -90,6 +90,13 @@ module Rendering
             |
         ),
 
+        box: erb(
+            %q|
+            <blockquote class='box'><%= inline_code(content) %>
+            </blockquote>
+            |
+        ),
+
         script: erb(
             %q|
             <script><%= content %></script>

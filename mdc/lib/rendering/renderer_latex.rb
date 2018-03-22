@@ -89,6 +89,12 @@ module Rendering
             |
         ),
 
+        box: erb(
+            %q|
+            \mybox{<%= inline_code(content, false, true) %>}
+            |
+        ),
+
         script: erb(
             %q||
         ),

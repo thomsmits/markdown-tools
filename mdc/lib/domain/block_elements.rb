@@ -225,6 +225,26 @@ module Domain
   end
 
   ##
+  # Box
+  class Box < BlockElement
+
+    ##
+    # Create a box
+    # @param [String] content content of the box
+    def initialize(content = '')
+      super(content)
+      @source = nil
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.box(@content)
+    end
+  end
+
+  ##
   # Script
   class Script < BlockElement
 

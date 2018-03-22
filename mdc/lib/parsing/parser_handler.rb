@@ -274,6 +274,22 @@ module Parsing
     end
 
     ##
+    # Question section ">| Text"
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def box(ps, line)
+      if !ps.box?
+        element = Domain::Box.new
+        element.append(line.sub(/>: /, ''))
+        add_to_slide(ps.slide, element, ps.comment_mode)
+        ps.box!
+      elsif ps.box?
+        element = current_element(ps.slide, ps.comment_mode)
+        element.append(line.sub(/>: /, ''))
+      end
+    end
+
+    ##
     # Table "| a | b | c |"
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input

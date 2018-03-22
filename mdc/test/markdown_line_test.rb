@@ -81,6 +81,7 @@ class MarkdownLineTest < Minitest::Test
     assert(line('>> Quelle').quote_source?)
     assert(line('>? Question').question?)
     assert(line('>! Important').important?)
+    assert(line('>: Important').box?)
 
     assert(!line(' > Zitat').quote?)
     assert(!line(' >> Quote').quote_source?)

@@ -75,7 +75,8 @@ module Parsing
                               :QUOTE,
                               :UML,
                               :IMPORTANT,
-                              :QUESTION)
+                              :QUESTION,
+                              :BOX)
 
         ps.language = default_language
         ps.comment_mode = false
@@ -195,6 +196,10 @@ module Parsing
           elsif line.question?
             # >? Question text
             handler.question(ps, line)
+
+          elsif line.box?
+            # >: Generic box
+            handler.box(ps, line)
 
           elsif line.table_row?
             # | Table | Table |
