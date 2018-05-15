@@ -530,6 +530,9 @@ module Parsing
       extensions = [ ]
 
       dirname, basename = get_path_and_name(file)
+
+      throw "File #{file} does not exist"  unless Dir.exist?(dirname)
+
       dir = Dir.new(dirname)
 
       dir.each do |f|
