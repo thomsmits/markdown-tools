@@ -60,6 +60,10 @@ module Rendering
             \maketitle
             \thispagestyle{empty}
             \newpage
+            \thispagestyle{empty}
+            \mbox{}
+            \cleardoublepage
+            \newpage
             \changefont{ptm}{m}{n}  % Times New Roman
             \tableofcontents
             \newcounter{frontmatterpage}
