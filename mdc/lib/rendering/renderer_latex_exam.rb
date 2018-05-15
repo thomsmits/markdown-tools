@@ -115,9 +115,11 @@ module Rendering
     # @param [String] source source of the image
     def image(location, formats, alt, title, width_slide, width_plain, source = nil)
 
+      width = width_plain || width_slide
+
       # Skip images with width 0
       unless /^0$/ === width_plain || /^0%$/ === width_plain
-        image_latex(location, title, width_plain, source)
+        image_latex(location, title, width, source)
       end
     end
 
