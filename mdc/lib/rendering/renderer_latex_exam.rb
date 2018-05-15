@@ -40,7 +40,7 @@ module Rendering
 
         comment_start: erb(
             %q|
-            \begin{solution}
+            \begin{solution}[<%= spacing %>mm]
             |
         ),
 

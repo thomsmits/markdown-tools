@@ -205,6 +205,10 @@ module Parsing
             # | Table | Table |
             handler.table(ps, line)
 
+          elsif line.space_comment?
+            # <!-- Spacing: xx -->
+            handler.space_comment(ps, line)
+
           elsif line.comment?
             # <!-- -->
             handler.comment(ps, line)

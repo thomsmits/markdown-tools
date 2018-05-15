@@ -48,6 +48,16 @@ module Parsing
     ## HTML comment
     def comment?; !!comment; end
 
+    ## Special Space comment
+    def space_comment
+      /<!-- Spacing: ([0-9]*) -->/ =~ @line.strip
+      $1
+    end
+
+    ## Special Space comment
+    def space_comment?; !!space_comment; end
+
+
     ## Vertical space
     def vspace?; /^<br>$/ === @line.strip; end
 

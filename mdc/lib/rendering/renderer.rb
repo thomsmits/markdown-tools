@@ -684,7 +684,7 @@ module Rendering
 
     ##
     # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start
+    def comment_start(spacing = 0)
       @io << @templates[:comment_start].result(binding)
       @slide_ended = true
     end

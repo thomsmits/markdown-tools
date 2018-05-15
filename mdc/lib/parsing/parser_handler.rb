@@ -459,6 +459,15 @@ module Parsing
       ps.presentation.comments << line.comment.strip
     end
 
+    ##
+    # HTML-Comment in the page
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def space_comment(ps, line)
+      ps.slide.current_element.spacing = line.space_comment.to_i
+    end
+
+
     private
 
 
