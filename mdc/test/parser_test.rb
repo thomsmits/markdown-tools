@@ -497,8 +497,6 @@ ENDOFTEXT
       assert_equal('Item 3', e[0].entries[3].to_s)
       assert_equal('Item 4', e[0].entries[4].to_s)
     end
-
-
   end
 
   private
