@@ -16,12 +16,13 @@ class Exam
   # @param src String source directory
   # @param dest String target directory
   # @param file_name String the file to be converted
-  def self.convert(src, dest, file_name)
+  # @param language String the default programming language
+  def self.convert(src, dest, file_name, language)
 
     p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
 
     pres = Domain::Presentation.new('DE', '', '', '', '',
-                                    '', '', 'Java', '', '', false, nil)
+                                    '', '', language, '', '', false, nil)
 
 
     lines = File.readlines(src + '/' + file_name, "\n", encoding: 'UTF-8')
@@ -41,7 +42,7 @@ class Exam
 
     target_name = file_name.gsub('.md', '.tex')
     io = File.open("#{dest}/#{target_name}", 'w')
-    renderer = Rendering::RendererLatexExam.new(io, 'console', dest, 'img', '../temp')
+    renderer = Rendering::RendererLatexExam.new(io, language, dest, 'img', '../temp')
     pres.render(renderer)
     io.close
   end
@@ -50,13 +51,14 @@ class Exam
   # Main entry point
   # @param src String directory with source files
   # @param dest String directory to store results in
-  def self.main(src, dest)
+
+  def self.main(src, dest, language = '')
     files = Dir.new(src).entries.reject { |f| !(/^.*\.md$/ =~ f) }
 
     files.each do |file|
-      convert(src, dest, file)
+      convert(src, dest, file, language)
     end
   end
 end
 
-Exam::main(ARGV[0], ARGV[1])
+Exam::main(ARGV[0], ARGV[1], ARGV[2])
