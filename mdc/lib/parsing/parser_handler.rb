@@ -98,6 +98,29 @@ module Parsing
     end
 
     ##
+    # Include code from an external file and transform
+    # it to a fenced code block
+    #
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def code_include(ps, line)
+
+      path = line.code_include[0]
+      first_line = line.code_include[1]
+      language_hint = line.code_include[2] || ''
+
+      source = File.readlines(path, "\n", :encoding => 'UTF-8')
+      caption = ''
+      order = 0
+
+      add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
+
+      source.each_with_index do |src_line, i|
+        current_element(ps.slide, ps.comment_mode).append(src_line)  if i + 1 >= first_line
+      end
+    end
+
+    ##
     # Beginning of a fenced (GitHub style) code block "```language"
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input

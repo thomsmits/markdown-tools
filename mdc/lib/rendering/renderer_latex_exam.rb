@@ -56,12 +56,18 @@ module Rendering
             |
         ),
 
-        ul_start: erb(
+        code_start: erb(
             %q|
-            <% if @ul_level == 1 %>
-            <% elsif @ul_level == 2 %>
-            <% end %>
-            \begin{ul<%= @ul_level %>}
+            \vspace{5mm}
+            \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\small\ttfamily]|
+        ),
+
+        code: erb(
+            %q|<%= content %>|
+        ),
+
+        code_end: erb(
+            %q|\end{lstlisting}
             |
         ),
     }

@@ -351,6 +351,31 @@ class MarkdownLineTest < Minitest::Test
   end
 
   ##
+  # Source includes
+  def test_include_src
+    assert(line('!INCLUDESRC[4] "path/to/file"').code_include?)
+    assert(line('!INCLUDESRC "path/to/file"').code_include?)
+    assert(!line('!INCLUDESRC[4] path/to/file').code_include?)
+    assert(!line('!INCLUDESRC path/to/file').code_include?)
+    assert(line('!INCLUDESRC[4] "path/to/file" Java').code_include?)
+    assert(line('!INCLUDESRC "path/to/file" Pascal').code_include?)
+    assert(!line('!INCLUDESRC[4] path/to/file').code_include?)
+    assert(!line('!INCLUDESRC path/to/file').code_include?)
+
+    assert_equal("path/to/file", line('!INCLUDESRC[4] "path/to/file"').code_include[0])
+    assert_equal(4, line('!INCLUDESRC[4] "path/to/file"').code_include[1])
+    assert_equal("path/to/file", line('!INCLUDESRC "path/to/file"').code_include[0])
+    assert_equal("path/to/file", line('!INCLUDESRC "path/to/file" Java').code_include[0])
+    assert_equal(0, line('!INCLUDESRC "path/to/file" Java').code_include[1])
+    assert_equal("Java", line('!INCLUDESRC "path/to/file" Java').code_include[2])
+    assert_equal("path/to/file", line('!INCLUDESRC[4] "path/to/file" Java').code_include[0])
+    assert_equal(4, line('!INCLUDESRC[4] "path/to/file" Java').code_include[1])
+    assert_equal("Java", line('!INCLUDESRC[4] "path/to/file" Java').code_include[2])
+
+
+  end
+
+  ##
   # Test the other methods of the class
   def test_other_methods
     assert_equal('Testline', line('Testline').to_s)

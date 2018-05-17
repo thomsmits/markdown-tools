@@ -11,7 +11,8 @@ require_relative '../lib/domain/line_elements'
 #
 class ParserTest < Minitest::Test
 
-TEST_1 = <<-ENDOFTEXT
+def test_text
+<<-ENDOFTEXT
 
 # Chapter 1
 
@@ -239,8 +240,29 @@ Text
   3. Item 3
   4. Item 4
 
-ENDOFTEXT
+## Slide 3.1
 
+!INCLUDESRC "#{@temp_file.path}"
+!INCLUDESRC[2] "#{@temp_file.path}"
+!INCLUDESRC "#{@temp_file.path}" Java
+!INCLUDESRC[2] "#{@temp_file.path}" Java
+
+ENDOFTEXT
+end
+
+  ##
+  # Setup test environment
+  def setup
+    @temp_file = Tempfile.new('src.java')
+    @temp_file.write("THIS IS SOURCE CODE\nAT LEAST SOME")
+    @temp_file.close
+  end
+
+  ##
+  # Clear test environment
+  def teardown
+    @temp_file.unlink
+  end
 
   ##
   # Test parsing of slides from text into objects
@@ -253,7 +275,7 @@ ENDOFTEXT
     parser =  Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
 
 
-    parser.parse_lines(lines(TEST_1), 'testfile.md', 'java', presentation)
+    parser.parse_lines(lines(test_text), 'testfile.md', 'java', presentation)
 
     assert_equal('DE',                presentation.slide_language)
     assert_equal('Thomas Smits',      presentation.author)
@@ -496,6 +518,19 @@ ENDOFTEXT
       assert_equal('Item 2.2', e[0].entries[2].entries[1].to_s)
       assert_equal('Item 3', e[0].entries[3].to_s)
       assert_equal('Item 4', e[0].entries[4].to_s)
+    end
+
+    check_slide(slides[14], 'Slide 3.1', true, false,
+                [ Domain::Source ],
+                [ "THIS IS SOURCE CODE\nAT LEAST SOME" ],
+                false) do |e|
+
+      assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[0].to_s)
+      assert_equal("AT LEAST SOME", e[1].to_s)
+      assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[2].to_s)
+      assert_equal("Java", e[2].language)
+      assert_equal("AT LEAST SOME", e[3].to_s)
+      assert_equal("Java", e[3].language)
     end
   end
 

@@ -89,7 +89,11 @@ module Parsing
           line = MarkdownLine.new(raw_line)
           ps.line_counter = ps.line_counter + 1
 
-          if line.separator? && !ps.code_or_code_fenced?
+          if line.code_include? && !ps.code_or_code_fenced?
+            # !INCLUDESRC[x] "path" Language
+            handler.code_include(ps, line)
+
+          elsif line.separator? && !ps.code_or_code_fenced?
             # ---
             handler.separator(ps, line)
 

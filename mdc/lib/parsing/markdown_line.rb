@@ -214,6 +214,24 @@ module Parsing
     ## End of UML block
     def uml_end?; /^@enduml$/ === @line.strip; end
 
+    ## Include of sources
+    def code_include
+      if /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/ =~ @line.strip
+        [$2, $1.to_i, $3]
+      elsif /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/ =~ @line.strip
+        [$2, $1.to_i, nil]
+      elsif /^!INCLUDESRC "(.*?)" (.*?)$/ =~ @line.strip
+        [$1, 0, $2]
+      elsif /^!INCLUDESRC "(.*?)"$/ =~ @line.strip
+        [$1, 0, nil]
+      else
+        nil
+      end
+    end
+
+    ## Include of sources
+    def code_include?; !!code_include; end
+
     ## Forwarding of String's sub method
     def sub(pattern, replacement)
       @line.sub(pattern, replacement)
