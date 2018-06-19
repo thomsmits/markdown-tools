@@ -723,13 +723,15 @@ module Rendering
 
     ##
     # Render start of multiple choice questions
-    def multiple_choice_start
+    # @param [bool] inline should we use inline checkboxes
+    def multiple_choice_start(inline = false)
       @io << @templates[:multiple_choice_start].result(binding)
     end
 
     ##
     # Render end of multiple choice questions
-    def multiple_choice_end
+    # @param [bool] inline should we use inline checkboxes
+    def multiple_choice_end(inline = false)
       @io << @templates[:multiple_choice_end].result(binding)
     end
 

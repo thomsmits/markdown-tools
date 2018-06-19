@@ -92,8 +92,8 @@ module Parsing
 
     ## Multiple choice
     def multiple_choice
-      if /^\[([ Xx*])\] (.*)/ =~ @line
-        [$1 != ' ', $2]
+      if /^\[([ Xx*])\](\.?) (.*)/ =~ @line
+        [$1 != ' ', $2 == '.', $3]
       end
     end
 

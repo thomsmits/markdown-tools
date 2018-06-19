@@ -166,12 +166,20 @@ module Rendering
         ),
 
         multiple_choice_start: erb(
-            %q|\begin{checkboxes}
+            %q|<% if inline then %>
+              \begin{oneparcheckboxes}
+            <% else %>
+              \begin{checkboxes}
+            <% end %>
             |
         ),
 
             multiple_choice_end: erb(
-            %q|\end{checkboxes}
+            %q|<% if inline then %>
+              \end{oneparcheckboxes}
+            <% else %>
+              \end{checkboxes}
+            <% end %>
             |
         ),
 

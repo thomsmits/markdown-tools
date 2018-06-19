@@ -487,7 +487,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def multiple_choice(ps, line)
-      correct, text = line.multiple_choice
+      correct, inline, text = line.multiple_choice
       element = current_element(ps.slide, ps.comment_mode)
       question = Domain::MultipleChoice.new(text, correct)
 
@@ -496,7 +496,7 @@ module Parsing
         element.add(question)
       else
         # We are the first question, start a new section
-        element = Domain::MultipleChoiceQuestions.new
+        element = Domain::MultipleChoiceQuestions.new(inline)
         element.add(question)
         add_to_slide(ps.slide, element, ps.comment_mode)
       end

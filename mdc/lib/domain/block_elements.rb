@@ -416,10 +416,12 @@ module Domain
   class MultipleChoiceQuestions < BlockElement
 
     attr_reader :questions
+    attr_accessor :inline
 
-    def initialize
+    def initialize(inline = false)
       super('')
       @questions = []
+      @inline = inline
     end
 
     ##
@@ -433,11 +435,11 @@ module Domain
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def render(renderer)
-      renderer.multiple_choice_start
+      renderer.multiple_choice_start(@inline)
       @questions.each do |e|
         renderer.multiple_choice(e)
       end
-      renderer.multiple_choice_end
+      renderer.multiple_choice_end(@inline)
     end
   end
 

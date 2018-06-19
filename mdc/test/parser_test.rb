@@ -256,6 +256,16 @@ Some text
 [ ] A question
 
 Some text at the end
+
+## Slide 4.2
+
+Some text
+
+[ ]. A question
+[*]. A correct question
+[ ]. A question
+
+Some text at the end
 ENDOFTEXT
 end
 
@@ -543,9 +553,28 @@ end
     end
 
     check_slide(slides[15], 'Slide 4.1', false, false,
+                   [ Domain::Text, Domain::MultipleChoiceQuestions ],
+                   [],
+                   false) do |e|
+
+      assert_equal(false, e[1].inline)
+
+      assert_equal("Some text", e[0].to_s)
+      assert_equal("A question", e[1].questions[0].text)
+      assert_equal(false, e[1].questions[0].correct)
+      assert_equal("A correct question", e[1].questions[1].text)
+      assert_equal(true, e[1].questions[1].correct)
+      assert_equal("A question", e[1].questions[2].text)
+      assert_equal(false, e[1].questions[2].correct)
+      assert_equal("Some text at the end", e[2].to_s)
+    end
+
+    check_slide(slides[16], 'Slide 4.2', false, false,
                 [ Domain::Text, Domain::MultipleChoiceQuestions ],
                 [],
                 false) do |e|
+
+      assert_equal(true, e[1].inline)
 
       assert_equal("Some text", e[0].to_s)
       assert_equal("A question", e[1].questions[0].text)
