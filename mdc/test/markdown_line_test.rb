@@ -371,8 +371,6 @@ class MarkdownLineTest < Minitest::Test
     assert_equal("path/to/file", line('!INCLUDESRC[4] "path/to/file" Java').code_include[0])
     assert_equal(4, line('!INCLUDESRC[4] "path/to/file" Java').code_include[1])
     assert_equal("Java", line('!INCLUDESRC[4] "path/to/file" Java').code_include[2])
-
-
   end
 
   ##

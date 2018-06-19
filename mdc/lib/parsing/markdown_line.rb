@@ -57,7 +57,6 @@ module Parsing
     ## Special Space comment
     def space_comment?; !!space_comment; end
 
-
     ## Vertical space
     def vspace?; /^<br>$/ === @line.strip; end
 
