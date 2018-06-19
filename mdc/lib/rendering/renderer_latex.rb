@@ -163,7 +163,22 @@ module Rendering
             %q!
             \bild{<%= stripped_location %>}{<%= new_width %>}{<%= full_title %>}
             !
-        )
+        ),
+
+        multiple_choice_start: erb(
+            %q|\begin{checkboxes}
+            |
+        ),
+
+            multiple_choice_end: erb(
+            %q|\end{checkboxes}
+            |
+        ),
+
+            multiple_choice: erb(
+            %q|<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
+            |
+        ),
     }
 
     ## Inline replacements

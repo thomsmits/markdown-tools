@@ -241,6 +241,18 @@ module Rendering
         table_row: erb(
             %q|<%= inline_code(content) %>|
         ),
+
+        multiple_choice_start: erb(
+          %q||
+        ),
+
+        multiple_choice_end: erb(
+            %q||
+        ),
+
+        multiple_choice: erb(
+            %q|[<%= if correct then 'X' else ' ' end %>] <%= text %>|
+        ),
     }
 
     ## Inline replacements
@@ -707,6 +719,28 @@ module Rendering
     # @param [String] source source of the image
     def image(location, formats, alt, title, width_slide, width_plain, source = nil)
       @io << @templates[:image].result(binding)
+    end
+
+    ##
+    # Render start of multiple choice questions
+    def multiple_choice_start
+      @io << @templates[:multiple_choice_start].result(binding)
+    end
+
+    ##
+    # Render end of multiple choice questions
+    def multiple_choice_end
+      @io << @templates[:multiple_choice_end].result(binding)
+    end
+
+    ##
+    # Render multiple choice question
+    # @param [Domain::MultipleChoice] question the question
+    def multiple_choice(question)
+      correct = question.correct
+      text = inline_code(question.text)
+
+      @io << @templates[:multiple_choice].result(binding)
     end
 
     ##

@@ -93,6 +93,10 @@ module Parsing
             # !INCLUDESRC[x] "path" Language
             handler.code_include(ps, line)
 
+          elsif line.multiple_choice?
+            # [ ] Question 1
+            handler.multiple_choice(ps, line)
+
           elsif line.separator? && !ps.code_or_code_fenced?
             # ---
             handler.separator(ps, line)

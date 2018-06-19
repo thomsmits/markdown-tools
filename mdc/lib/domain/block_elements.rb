@@ -412,6 +412,36 @@ module Domain
   end
 
   ##
+  # Group of multiple choice questions
+  class MultipleChoiceQuestions < BlockElement
+
+    attr_reader :questions
+
+    def initialize
+      super('')
+      @questions = []
+    end
+
+    ##
+    # Add a new question to the group
+    # @param [Domain::MultipleChoice] question the question to be added
+    def add(question)
+      @questions << question
+    end
+
+    ##
+    # Render the element
+    # @param [Rendering::Renderer] renderer to be used
+    def render(renderer)
+      renderer.multiple_choice_start
+      @questions.each do |e|
+        renderer.multiple_choice(e)
+      end
+      renderer.multiple_choice_end
+    end
+  end
+
+  ##
   # Inline UML, embedded in the slide and compiled to a graphic
   class UML < BlockElement
 

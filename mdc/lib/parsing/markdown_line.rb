@@ -90,6 +90,16 @@ module Parsing
     ## Just text
     def text?; /^[=\-A-Za-z0-9_ÄÖÜäöüß`*"].*$/ === @line; end
 
+    ## Multiple choice
+    def multiple_choice
+      if /^\[([ Xx*])\] (.*)/ =~ @line
+        [$1 != ' ', $2]
+      end
+    end
+
+    ## Multiple choice
+    def multiple_choice?; !!multiple_choice; end
+
     ## HTML code
     def html?; /^<.*$/ === @line; end
 

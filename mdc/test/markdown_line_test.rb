@@ -374,6 +374,25 @@ class MarkdownLineTest < Minitest::Test
   end
 
   ##
+  # Multiple choice questions
+  def test_multiple_choice
+    assert(line("[ ] Frage 1").multiple_choice?)
+    assert(line("[X] Frage 1").multiple_choice?)
+    assert(line("[x] Frage 1").multiple_choice?)
+    assert(line("[*] Frage 1").multiple_choice?)
+
+    assert_equal("Frage 1", line("[ ] Frage 1").multiple_choice[1])
+    assert_equal("Frage 1", line("[X] Frage 1").multiple_choice[1])
+    assert_equal("Frage 1", line("[x] Frage 1").multiple_choice[1])
+    assert_equal("Frage 1", line("[*] Frage 1").multiple_choice[1])
+
+    assert_equal(false, line("[ ] Frage 1").multiple_choice[0])
+    assert_equal(true, line("[X] Frage 1").multiple_choice[0])
+    assert_equal(true, line("[x] Frage 1").multiple_choice[0])
+    assert_equal(true, line("[*] Frage 1").multiple_choice[0])
+  end
+
+  ##
   # Test the other methods of the class
   def test_other_methods
     assert_equal('Testline', line('Testline').to_s)
