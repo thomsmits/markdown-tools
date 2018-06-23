@@ -94,7 +94,7 @@ module Parsing
             handler.code_include(ps, line)
 
           elsif line.multiple_choice?
-            # [ ] Question 1
+            # [ ] Question 1 or [X] Question
             handler.multiple_choice(ps, line)
 
           elsif line.separator? && !ps.code_or_code_fenced?
