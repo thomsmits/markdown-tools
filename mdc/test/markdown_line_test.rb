@@ -391,10 +391,10 @@ class MarkdownLineTest < Minitest::Test
     assert_equal(false, line("[x] Frage 1").multiple_choice[1])
     assert_equal(false, line("[*] Frage 1").multiple_choice[1])
 
-    assert_equal(true, line("[ ]: Frage 1").multiple_choice[1])
-    assert_equal(true, line("[X]: Frage 1").multiple_choice[1])
-    assert_equal(true, line("[x]: Frage 1").multiple_choice[1])
-    assert_equal(true, line("[*]: Frage 1").multiple_choice[1])
+    assert_equal(true, line("[ ]. Frage 1").multiple_choice[1])
+    assert_equal(true, line("[X]. Frage 1").multiple_choice[1])
+    assert_equal(true, line("[x]. Frage 1").multiple_choice[1])
+    assert_equal(true, line("[*]. Frage 1").multiple_choice[1])
 
     assert_equal(false, line("[ ] Frage 1").multiple_choice[0])
     assert_equal(true, line("[X] Frage 1").multiple_choice[0])
