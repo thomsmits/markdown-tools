@@ -39,7 +39,7 @@ module Parsing
     # method, which allows intercepting calls to non-existing methods.
     # @param [String] name Name of the method
     def method_missing(name, *args, &block)
-      state = name.to_s.upcase.gsub(/\?|!/, '')
+      state = name.to_s.upcase.gsub(/[?!]/, '')
       symbol = state.to_sym
 
       raise "Unknown Method #{name}"  unless @possible_states.include?(symbol)

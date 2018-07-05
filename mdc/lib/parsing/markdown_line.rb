@@ -61,7 +61,7 @@ module Parsing
     def vspace?; /^<br>$/ === @line.strip; end
 
     ## Source code prefixed by four blanks
-    def source?; /^ {4}[^\*\-](.*)/ === @line; end
+    def source?; /^ {4}[^*\-](.*)/ === @line; end
 
     ## Row of a table
     def table_row?; /^\|(.*)\| *$/ === @line; end
@@ -107,19 +107,19 @@ module Parsing
     def image?; /!\[.*\]\(.+\)/ === @line; end
 
     ## Beginning of a fenced code block
-    def fenced_code_start; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?(\{.*?\})?/, 1]; end
+    def fenced_code_start; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?({.*?})?/, 1]; end
 
     ## Beginning of a fenced code block
     def fenced_code_start?; !!fenced_code_start; end
 
     ## Beginning of a fenced code block with order mark
-    def fenced_code_order; @line.strip[/^```[a-zA-Z0-9]*\[([1-9])\](\{.*?\})?/, 1]; end
+    def fenced_code_order; @line.strip[/^```[a-zA-Z0-9]*\[([1-9])\]({.*?})?/, 1]; end
 
     ## Beginning of a fenced code block with order mark
     def fenced_code_order?; !!fenced_code_order; end
 
     ## Caption annotated for a fenced code block
-    def fenced_code_caption; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?\{(.*?)\}/, 3]; end
+    def fenced_code_caption; @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?{(.*?)}/, 3]; end
 
     ## End of a fenced code block
     def fenced_code_end?; /^```$/ === @line.strip; end
@@ -146,19 +146,19 @@ module Parsing
     def table_separator?; /^\|[-]{2,}\|.*/ === @line.strip; end
 
     ## unordered list, level 1
-    def ul1; @line[/^ {2}[\*\-] (.*)/, 1]; end
+    def ul1; @line[/^ {2}[*\-] (.*)/, 1]; end
 
     ## unordered list, level 1
     def ul1?; !!ul1; end
 
     ## unordered list, level 2
-    def ul2; @line[/^ {4}[\*\-] (.*)/, 1]; end
+    def ul2; @line[/^ {4}[*\-] (.*)/, 1]; end
 
     ## unordered list, level 2
     def ul2?; !!ul2; end
 
     ## unordered list, level 3
-    def ul3; @line[/^ {6}[\*\-] (.*)/, 1]; end
+    def ul3; @line[/^ {6}[*\-] (.*)/, 1]; end
 
     ## unordered list, level 3
     def ul3?; !!ul3; end

@@ -55,9 +55,8 @@ module Notes
 
     ##
     # Return the number of files in the folder
-    # @param [Fixnum] num already counted files for recursive calls
     # @return [Fixnum] total number of files found
-    def count(num = 0)
+    def count
       num = @files.count
       @folders.each { |f| num += f.count }
       num

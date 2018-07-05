@@ -285,7 +285,7 @@ module Rendering
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
     # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (realtive to result_dir)
+    # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
       @io, @language = io, language
