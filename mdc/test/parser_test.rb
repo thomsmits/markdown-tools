@@ -3,8 +3,35 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
-require_relative '../lib/domain/block_elements'
-require_relative '../lib/domain/line_elements'
+require_relative '../lib/domain/block_element'
+require_relative '../lib/domain/box'
+require_relative '../lib/domain/equation'
+require_relative '../lib/domain/html'
+require_relative '../lib/domain/important'
+require_relative '../lib/domain/multiple_choice_question'
+require_relative '../lib/domain/ordered_list'
+require_relative '../lib/domain/ordered_list_item'
+require_relative '../lib/domain/question'
+require_relative '../lib/domain/quote'
+require_relative '../lib/domain/script'
+require_relative '../lib/domain/source'
+require_relative '../lib/domain/table'
+require_relative '../lib/domain/text'
+require_relative '../lib/domain/uml'
+require_relative '../lib/domain/unordered_list'
+require_relative '../lib/domain/unordered_list_item'
+require_relative '../lib/domain/line_element'
+require_relative '../lib/domain/button'
+require_relative '../lib/domain/button_with_log'
+require_relative '../lib/domain/button_with_log_pre'
+require_relative '../lib/domain/button_link_previous'
+require_relative '../lib/domain/button_live_css'
+require_relative '../lib/domain/button_live_preview'
+require_relative '../lib/domain/button_live_preview_float'
+require_relative '../lib/domain/heading'
+require_relative '../lib/domain/image'
+require_relative '../lib/domain/multiple_choice'
+require_relative '../lib/domain/vertical_space'
 
 ##
 # Test the parser
@@ -377,8 +404,13 @@ end
                 [ '<b>Bold</b>' ])
 
     check_slide(slides[1], 'Slide 2.2', false, false,
-                [ Domain::LinkPrevious, Domain::LiveCSS, Domain::LivePreview, Domain::LivePreviewFloat,
-                  Domain::Button, Domain::ButtonWithLog, Domain::ButtonWithLogPre ])
+                [ Domain::ButtonLinkPrevious,
+                  Domain::ButtonLiveCSS,
+                  Domain::ButtonLivePreview,
+                  Domain::ButtonLivePreviewFloat,
+                  Domain::Button,
+                  Domain::ButtonWithLog,
+                  Domain::ButtonWithLogPre ])
 
     check_slide(slides[2], 'Slide 2.3', false, false,
                 [ Domain::Heading, Domain::Heading, Domain::Heading ],

@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 
-require_relative '../../lib/domain/line_elements'
+require_relative '../../lib/domain/line_element'
+require_relative '../../lib/domain/button'
+require_relative '../../lib/domain/button_with_log'
+require_relative '../../lib/domain/button_with_log_pre'
+require_relative '../../lib/domain/heading'
+require_relative '../../lib/domain/image'
+require_relative '../../lib/domain/button_link_previous'
+require_relative '../../lib/domain/button_live_css'
+require_relative '../../lib/domain/button_live_preview'
+require_relative '../../lib/domain/button_live_preview_float'
+require_relative '../../lib/domain/multiple_choice'
+require_relative '../../lib/domain/vertical_space'
 
 module Parsing
 
@@ -23,16 +34,16 @@ module Parsing
             { |line, line_id| Domain::HTML.new(line) },
 
         LineMatcher.new(/\(\(Link-Previous\)\)/) \
-            { |line, line_id| Domain::LinkPrevious.new(line_id) },
+            { |line, line_id| Domain::ButtonLinkPrevious.new(line_id) },
 
         LineMatcher.new(/\(\(Live-CSS (.*)\)\)/) \
-            { |line, line_id, fragment| Domain::LiveCSS.new(line_id, fragment) },
+            { |line, line_id, fragment| Domain::ButtonLiveCSS.new(line_id, fragment) },
 
         LineMatcher.new(/\(\(Live-Preview\)\)/)  \
-            { |line, line_id| Domain::LivePreview.new(line_id) },
+            { |line, line_id| Domain::ButtonLivePreview.new(line_id) },
 
         LineMatcher.new(/\(\(Live-Preview-Float\)\)/)  \
-            { |line, line_id| Domain::LivePreviewFloat.new(line_id) },
+            { |line, line_id| Domain::ButtonLivePreviewFloat.new(line_id) },
 
         LineMatcher.new(/\(\(Button\)\)/) \
             { |line, line_id| Domain::Button.new(line_id) },
@@ -98,4 +109,3 @@ module Parsing
     end
   end
 end
-

@@ -54,7 +54,7 @@ module Domain
     # Indicate whether the slide contains code
     # @return [Boolean] true if slide contains code, otherwise false
     def contains_code?
-      @elements.each { |e| return true  if e.instance_of?(Source) }
+      @elements.each { |e| return true  if e.instance_of?(Domain::Source) }
       false
     end
 
