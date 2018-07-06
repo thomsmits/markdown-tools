@@ -288,7 +288,6 @@ module Parsing
         quote << line.sub(/> /, '')
         slide(ps) << quote
         ps.quote!
-
       end
     end
 
