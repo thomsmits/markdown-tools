@@ -24,18 +24,18 @@ class PropertiesReaderTest  < Minitest::Test
 
     props = Parsing::PropertiesReader.new(contents, '=')
 
-    assert_equal('valuea',                props.get('namea'))
-    assert_equal('valueb',                props.get('nameb'))
-    assert_equal('value with blank',      props.get('name.with.dot'))
-    assert_equal('äöüß:;!!!@@',           props.get('special'))
-    assert_equal('value_with_underscore', props.get('name_with_underscore'))
+    assert_equal('valuea',                props['namea'])
+    assert_equal('valueb',                props['nameb'])
+    assert_equal('value with blank',      props['name.with.dot'])
+    assert_equal('äöüß:;!!!@@',           props['special'])
+    assert_equal('value_with_underscore', props['name_with_underscore'])
 
     assert_equal('valuea',                props.namea)
     assert_equal('valueb',                props.nameb)
     assert_equal('äöüß:;!!!@@',           props.special)
     assert_equal('value_with_underscore', props.name_with_underscore)
 
-    assert_nil(props.get('ignore'))
+    assert_nil(props['ignore'])
   end
 
   ##
@@ -55,18 +55,18 @@ class PropertiesReaderTest  < Minitest::Test
 
     props = Parsing::PropertiesReader.new(contents, ':')
 
-    assert_equal('valuea',                props.get('namea'))
-    assert_equal('valueb',                props.get('nameb'))
-    assert_equal('value with blank',      props.get('name.with.dot'))
-    assert_equal('äöüß:;!!!@@',           props.get('special'))
-    assert_equal('value_with_underscore', props.get('name_with_underscore'))
+    assert_equal('valuea',                props['namea'])
+    assert_equal('valueb',                props['nameb'])
+    assert_equal('value with blank',      props['name.with.dot'])
+    assert_equal('äöüß:;!!!@@',           props['special'])
+    assert_equal('value_with_underscore', props['name_with_underscore'])
 
     assert_equal('valuea',                props.namea)
     assert_equal('valueb',                props.nameb)
     assert_equal('äöüß:;!!!@@',           props.special)
     assert_equal('value_with_underscore', props.name_with_underscore)
 
-    assert_nil(props.get('ignore'))
+    assert_nil(props['ignore'])
   end
 
   ##
@@ -87,9 +87,9 @@ class PropertiesReaderTest  < Minitest::Test
 
     props = Parsing::PropertiesReader.new(contents, '=', defaults)
 
-    assert_equal('valuea',                props.get('namea'))
-    assert_equal('valueb',                props.get('nameb'))
-    assert_equal('valuec_default',        props.get('namec'))
+    assert_equal('valuea',                props['namea'])
+    assert_equal('valueb',                props['nameb'])
+    assert_equal('valuec_default',        props['namec'])
 
     assert_equal('valuea',                props.namea)
     assert_equal('valueb',                props.nameb)

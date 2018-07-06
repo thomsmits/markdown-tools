@@ -110,8 +110,8 @@ class NotesHandling
     # Check for properties
     if File.exist?("#{directory}/folder.properties")
       props = Parsing::PropertiesReader.new("#{directory}/folder.properties")
-      folder.title = props.get('title')
-      folder.description = props.get('description')
+      folder.title = props['title']
+      folder.description = props['description']
     else
       folder.title = folder.name
       folder.description = ''

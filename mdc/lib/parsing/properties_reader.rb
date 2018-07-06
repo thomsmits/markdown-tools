@@ -51,7 +51,7 @@ module Parsing
     # Read the value for the given properties key
     # @param [String] key the key to look up
     # @return [String] the value for the key
-    def get(key)
+    def [](key)
       @result[key] || @defaults[key]
     end
 
@@ -61,7 +61,7 @@ module Parsing
     # @param [String] name Name of the method
     def method_missing(name, *args, &block)
       key = name.to_s
-      get(key)
+      self[key]
     end
 
     ##

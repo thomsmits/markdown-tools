@@ -55,10 +55,10 @@ class Index
     postfix_slide = '-Folien.html'
     postfix_plain = '-Skript.html'
 
-    title1           = main_props.get('title_1')
-    title2           = main_props.get('title_2')
-    copyright        = main_props.get('copyright')
-    description      = main_props.get('description')
+    title1           = main_props['title_1']
+    title2           = main_props['title_2']
+    copyright        = main_props['copyright']
+    description      = main_props['description']
 
     dirs = [ ]
 
@@ -74,12 +74,12 @@ class Index
 
       chapter_props = Parsing::PropertiesReader.new(prop_file)
 
-      chapter_file = chapter_props.get('resultfile')
+      chapter_file = chapter_props['resultfile']
       slide_file = chapter_file + postfix_slide
       plain_file = chapter_file + postfix_plain
 
-      entries << Entry.new(chapter_props.get('chapter_no'),
-                           chapter_props.get('chapter_name'),
+      entries << Entry.new(chapter_props['chapter_no'],
+                           chapter_props['chapter_name'],
                            slide_file,
                            plain_file)
     end

@@ -26,13 +26,13 @@ module Domain
     # Create license from properties
     # @param [Parsing::PropertiesReader] props properties to be used
     def self.create_from_props(props)
-      License.new(props.get('URL'),
-                  props.get('Downloaded'),
-                  props.get('Date'),
-                  props.get('License'),
-                  props.get('Creator'),
-                  props.get('Title'),
-                  props.get('Source'))
+      License.new(props['URL'],
+                  props['Downloaded'],
+                  props['Date'],
+                  props['License'],
+                  props['Creator'],
+                  props['Title'],
+                  props['Source'])
     end
   end
 end
