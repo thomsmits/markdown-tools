@@ -145,7 +145,7 @@ module Parsing
       add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
 
       source.each_with_index do |src_line, i|
-        current_element(ps.slide, ps.comment_mode).append(src_line)  if i + 1 >= first_line
+        current_element(ps.slide, ps.comment_mode) << src_line  if i + 1 >= first_line
       end
     end
 
@@ -184,7 +184,7 @@ module Parsing
         add_to_slide(ps.slide, ps.current_list, ps.comment_mode)
       end
 
-      ps.current_list.append(line.ol1)
+      ps.current_list << line.ol1
       ps.ol1!
     end
 
@@ -204,7 +204,7 @@ module Parsing
         ps.current_list = list
       end
 
-      ps.current_list.append(line.ol2)
+      ps.current_list << line.ol2
       ps.ol2!
     end
 
@@ -219,7 +219,7 @@ module Parsing
         ps.current_list = list
       end
 
-      ps.current_list.append(line.ol3)
+      ps.current_list << line.ol3
       ps.ol3!
     end
 
@@ -235,7 +235,7 @@ module Parsing
         add_to_slide(ps.slide, ps.current_list, ps.comment_mode)
       end
 
-      ps.current_list.append(line.ul1)
+      ps.current_list << line.ul1
       ps.ul1!
     end
 
@@ -252,7 +252,7 @@ module Parsing
         ps.current_list = list
       end
 
-      ps.current_list.append(line.ul2)
+      ps.current_list << line.ul2
       ps.ul2!
     end
 
@@ -267,7 +267,7 @@ module Parsing
         ps.current_list = list
       end
 
-      ps.current_list.append(line.ul3)
+      ps.current_list << line.ul3
       ps.ul3!
     end
 
@@ -282,11 +282,11 @@ module Parsing
         if line.quote_source?
           quote.source = line.sub(/>> /, '')
         else
-          quote.append(line.sub(/> /, ''))
+          quote << line.sub(/> /, '')
         end
       else
         quote = Domain::Quote.new
-        quote.append(line.sub(/> /, ''))
+        quote << line.sub(/> /, '')
         add_to_slide(ps.slide, quote, ps.comment_mode)
         ps.quote!
 
@@ -300,12 +300,12 @@ module Parsing
     def important(ps, line)
       if !ps.important?
         element = Domain::Important.new
-        element.append(line.sub(/>! /, ''))
+        element << line.sub(/>! /, '')
         add_to_slide(ps.slide, element, ps.comment_mode)
         ps.important!
       elsif ps.important?
         element = current_element(ps.slide, ps.comment_mode)
-        element.append(line.sub(/>! /, ''))
+        element << line.sub(/>! /, '')
       end
     end
 
@@ -316,12 +316,12 @@ module Parsing
     def question(ps, line)
       if !ps.question?
         element = Domain::Question.new
-        element.append(line.sub(/>\? /, ''))
+        element << line.sub(/>\? /, '')
         add_to_slide(ps.slide, element, ps.comment_mode)
         ps.question!
       elsif ps.question?
         element = current_element(ps.slide, ps.comment_mode)
-        element.append(line.sub(/>\? /, ''))
+        element << line.sub(/>\? /, '')
       end
     end
 
@@ -332,12 +332,12 @@ module Parsing
     def box(ps, line)
       if !ps.box?
         element = Domain::Box.new
-        element.append(line.sub(/>: /, ''))
+        element << line.sub(/>: /, '')
         add_to_slide(ps.slide, element, ps.comment_mode)
         ps.box!
       elsif ps.box?
         element = current_element(ps.slide, ps.comment_mode)
-        element.append(line.sub(/>: /, ''))
+        element << line.sub(/>: /, '')
       end
     end
 
@@ -570,7 +570,7 @@ module Parsing
     # @param [Parser::MarkdownLine] line to be added
     # @param [Boolean] comment_mode indicator for comment mode
     def append(slide, line, comment_mode)
-      current_element(slide, comment_mode).append(line.string)
+      current_element(slide, comment_mode) << line.string
     end
 
     ##

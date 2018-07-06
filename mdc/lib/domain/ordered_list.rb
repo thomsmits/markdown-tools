@@ -21,7 +21,7 @@ module Domain
     ##
     # Append a line to the list
     # @param [String] line the line to be added
-    def append(line)
+    def <<(line)
       self.add(OrderedListItem.new(line))
     end
 
