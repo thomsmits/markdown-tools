@@ -23,8 +23,10 @@ module Domain
     ##
     # Append a single line to the element
     # @param [String] line to be appended
+    # @return self
     def <<(line)
       @content << line
+      self
     end
 
     ##

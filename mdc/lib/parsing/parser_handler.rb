@@ -60,7 +60,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def copy_line_to_document(ps, line)
-      append(ps.slide, line, ps.comment_mode)
+      element(ps) << line.string
     end
 
     alias script_line copy_line_to_document
@@ -73,7 +73,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def script_start(ps, line)
-      add_to_slide(ps.slide, Domain::Script.new, ps.comment_mode)
+      slide(ps) << Domain::Script.new
       ps.script!
     end
 
@@ -82,7 +82,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def vspace(ps, line)
-      add_to_slide(ps.slide, Domain::VerticalSpace.new, ps.comment_mode)
+      slide(ps) << Domain::VerticalSpace.new
     end
 
     ##
@@ -91,8 +91,8 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def separator(ps, line)
+      slide(ps) << Domain::Comment.new
       ps.comment_mode = true
-      ps.slide.add(Domain::Comment.new)
     end
 
     ##
@@ -104,10 +104,9 @@ module Parsing
       id = "chap_#{ps.chapter_counter}"
       ps.slide_counter += 1
       ps.chapter = Domain::Chapter.new(line.chapter_title.gsub('#', ''), id)
-      ps.presentation.add(ps.chapter)
+      ps.presentation << ps.chapter
       ps.normal!
       ps.comment_mode = false
-      # puts line.chapter_title + " #{ps.slide_counter}"
     end
 
     ##
@@ -120,10 +119,9 @@ module Parsing
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
                                    line.slide_title.gsub('#', '').gsub('--skip--', '').strip,
                                    ps.slide_counter, skip)
-      ps.chapter.add_slide(ps.slide)
+      ps.chapter << ps.slide
       ps.normal!
       ps.comment_mode = false
-      # puts line.slide_title + " #{ps.slide_counter}"
     end
 
     ##
@@ -142,10 +140,10 @@ module Parsing
       caption = ''
       order = 0
 
-      add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
+      slide(ps) << Domain::Source.new(language_hint, caption, order)
 
       source.each_with_index do |src_line, i|
-        current_element(ps.slide, ps.comment_mode) << src_line  if i + 1 >= first_line
+        element(ps) << src_line  if i + 1 >= first_line
       end
     end
 
@@ -162,7 +160,8 @@ module Parsing
         order = line.fenced_code_order.to_i
       end
 
-      add_to_slide(ps.slide, Domain::Source.new(language_hint, caption, order), ps.comment_mode)
+      slide(ps) << Domain::Source.new(language_hint, caption, order)
+
       ps.code_fenced!
 
       # increase slide counter to account for additional slide numbers generated
@@ -181,7 +180,7 @@ module Parsing
         ps.current_list = ps.current_list.parent
       elsif !ps.ol1?
         ps.current_list = Domain::OrderedList.new(start_number)
-        add_to_slide(ps.slide, ps.current_list, ps.comment_mode)
+        slide(ps) << ps.current_list
       end
 
       ps.current_list << line.ol1
@@ -232,7 +231,7 @@ module Parsing
         ps.current_list = ps.current_list.parent
       elsif !ps.ul1?
         ps.current_list = Domain::UnorderedList.new
-        add_to_slide(ps.slide, ps.current_list, ps.comment_mode)
+        slide(ps) << ps.current_list
       end
 
       ps.current_list << line.ul1
@@ -277,7 +276,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def quote(ps, line)
       if ps.quote?
-        quote = current_element(ps.slide, ps.comment_mode)
+        quote = element(ps)
 
         if line.quote_source?
           quote.source = line.sub(/>> /, '')
@@ -287,7 +286,7 @@ module Parsing
       else
         quote = Domain::Quote.new
         quote << line.sub(/> /, '')
-        add_to_slide(ps.slide, quote, ps.comment_mode)
+        slide(ps) << quote
         ps.quote!
 
       end
@@ -301,11 +300,10 @@ module Parsing
       if !ps.important?
         element = Domain::Important.new
         element << line.sub(/>! /, '')
-        add_to_slide(ps.slide, element, ps.comment_mode)
+        slide(ps) << element
         ps.important!
       elsif ps.important?
-        element = current_element(ps.slide, ps.comment_mode)
-        element << line.sub(/>! /, '')
+        element(ps) << line.sub(/>! /, '')
       end
     end
 
@@ -317,11 +315,10 @@ module Parsing
       if !ps.question?
         element = Domain::Question.new
         element << line.sub(/>\? /, '')
-        add_to_slide(ps.slide, element, ps.comment_mode)
+        slide(ps) << element
         ps.question!
       elsif ps.question?
-        element = current_element(ps.slide, ps.comment_mode)
-        element << line.sub(/>\? /, '')
+        element(ps) << line.sub(/>\? /, '')
       end
     end
 
@@ -333,11 +330,10 @@ module Parsing
       if !ps.box?
         element = Domain::Box.new
         element << line.sub(/>: /, '')
-        add_to_slide(ps.slide, element, ps.comment_mode)
+        slide(ps) << element
         ps.box!
       elsif ps.box?
-        element = current_element(ps.slide, ps.comment_mode)
-        element << line.sub(/>: /, '')
+        element(ps) << line.sub(/>: /, '')
       end
     end
 
@@ -371,13 +367,13 @@ module Parsing
           table.add_header(e.strip.gsub('~~pipe~~', '|') , alignment)  if e.strip.length > 0
         }
 
-        add_to_slide(ps.slide, table, ps.comment_mode)
+        slide(ps) << table
         ps.table!
 
       elsif ps.table?
 
         if line.table_separator?
-          current_element(ps.slide, ps.comment_mode).add_separator
+          element(ps).add_separator
           return
         end
 
@@ -385,7 +381,7 @@ module Parsing
         columns = cleaned_line.split('|')
         row = [ ]
         columns.each { |e| row << e.gsub('~~pipe~~', '|')  if e.strip.length > 0 }
-        current_element(ps.slide, ps.comment_mode).add_row(row)
+        element(ps).add_row(row)
       end
     end
 
@@ -394,7 +390,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def equation_start(ps, line)
-      add_to_slide(ps.slide, Domain::Equation.new, ps.comment_mode)
+      slide(ps) << Domain::Equation.new
       ps.equation!
     end
 
@@ -405,7 +401,7 @@ module Parsing
     def uml_start(ps, line)
       picture_name = "uml_#{ps.line_id}"
       width_slide, width_plain = line.uml_start
-      add_to_slide(ps.slide, Domain::UML.new(picture_name, width_slide, width_plain), ps.comment_mode)
+      slide(ps) << Domain::UML.new(picture_name, width_slide, width_plain)
       ps.uml!
     end
 
@@ -414,9 +410,9 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def source_start(ps, line)
-      add_to_slide(ps.slide, Domain::Source.new(ps.language), ps.comment_mode)
+      slide(ps) << Domain::Source.new(ps.language)
       line.trim_code_prefix!
-      append(ps.slide, line, ps.comment_mode)
+      element(ps) << line.string
       ps.code!
     end
 
@@ -426,7 +422,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def source_line(ps, line)
       line.trim_code_prefix!
-      append(ps.slide, line, ps.comment_mode)
+      element(ps) << line.string
     end
 
     ##
@@ -454,7 +450,7 @@ module Parsing
       if no_more_source
         ps.normal!
       else
-        append(ps.slide, MarkdownLine.new("\n"), ps.comment_mode)
+        element(ps) << "\n"
       end
     end
 
@@ -469,7 +465,7 @@ module Parsing
       if e.nil?
         if line.normal?
           if line.text?
-            add_to_slide(ps.slide, Domain::Text.new(line.string), ps.comment_mode)
+            slide(ps) << Domain::Text.new(line.string)
           end
           ps.normal!
         elsif line.empty?
@@ -481,7 +477,7 @@ module Parsing
           raise Exception, "#{ps.file_name} [#{ps.line_counter}], #{ps}, #{line}"
         end
       else
-        add_to_slide(ps.slide, e, ps.comment_mode)
+        slide(ps) << e
 
         if e.instance_of?(Domain::Image) && !@test_mode
           # for image, read available extensions
@@ -500,7 +496,7 @@ module Parsing
     def code_with_stars(ps, line)
       str_line = line.string
       str_line = str_line[4..-1]  if str_line.length > 4
-      append(ps.slide, MarkdownLine.new(str_line), ps.comment_mode)
+      element(ps) << str_line
     end
 
     ##
@@ -517,7 +513,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def multiple_choice(ps, line)
       correct, inline, text = line.multiple_choice
-      element = current_element(ps.slide, ps.comment_mode)
+      element = element(ps)
       question = Domain::MultipleChoice.new(text, correct)
 
       if element.is_a?(Domain::MultipleChoiceQuestions)
@@ -527,7 +523,7 @@ module Parsing
         # We are the first question, start a new section
         element = Domain::MultipleChoiceQuestions.new(inline)
         element.add(question)
-        add_to_slide(ps.slide, element, ps.comment_mode)
+        slide(ps) << element
       end
     end
 
@@ -552,40 +548,28 @@ module Parsing
     end
 
     ##
-    # Adds an element to the given slide.
-    # @param [Domain::Slide] slide the slide to be used
-    # @param [Domain::Element] element element to be added to slide
-    # @param [Boolean] comment_mode indicator for comment mode
-    def add_to_slide(slide, element, comment_mode)
-      if comment_mode
-        slide.current_element.add(element)
+    # Returns the current slide.
+    # @param [Parsing::ParserState] ps state of the parser
+    # @return [Domain:Slide] the slide
+    def slide(ps)
+      if ps.comment_mode
+        ps.slide.current_element
       else
-        slide.add(element)
+        ps.slide
       end
-    end
-
-    ##
-    # Adds a text line to the given slide.
-    # @param [Domain::Slide] slide the slide to be used
-    # @param [Parser::MarkdownLine] line to be added
-    # @param [Boolean] comment_mode indicator for comment mode
-    def append(slide, line, comment_mode)
-      current_element(slide, comment_mode) << line.string
     end
 
     ##
     # Returns the active element of the slide.
-    # @param [Domain::Slide] slide the slide to be used
-    # @param [Boolean] comment_mode indicator for comment mode
+    # @param [Parsing::ParserState] ps state of the parser
     # @return [Domain::Element] the active element
-    def current_element(slide, comment_mode)
-      if comment_mode
-        slide.current_element.current_element
+    def element(ps)
+      if ps.comment_mode
+        ps.slide.current_element.current_element
       else
-        slide.current_element
+        ps.slide.current_element
       end
     end
-
 
     ##
     # Return a filename without extension
@@ -599,7 +583,7 @@ module Parsing
 
       dirname = File.dirname(file)
 
-      return dirname, basename
+      [ dirname, basename ]
     end
 
     ##

@@ -44,8 +44,10 @@ module Domain
     ##
     # Add a chapter to the presentation
     # @param [Domain::Chapter] chapter the chapter to add
-    def add(chapter)
+    # @return self
+    def <<(chapter)
       @chapters << chapter
+      self
     end
 
     ##

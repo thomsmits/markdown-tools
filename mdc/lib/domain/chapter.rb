@@ -20,8 +20,10 @@ module Domain
 
     # Add a slide to the presentation
     # @param [Slide] slide the slide to be added
-    def add_slide(slide)
+    # @return self
+    def <<(slide)
       @slides << slide
+      self
     end
 
     ##

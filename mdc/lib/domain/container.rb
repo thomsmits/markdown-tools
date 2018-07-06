@@ -20,8 +20,10 @@ module Domain
     ##
     # Add an element to the container
     # @param [Element] element element to be added
-    def add(element)
+    # @return self
+    def <<(element)
       @elements << element
+      self
     end
 
     ##
