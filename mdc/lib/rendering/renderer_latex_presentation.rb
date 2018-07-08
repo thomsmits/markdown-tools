@@ -52,7 +52,6 @@ module Rendering
               \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
             <% end %>
 
-
             \mode<presentation>{\input{beamer-template}}
             \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
             \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
@@ -113,7 +112,7 @@ module Rendering
             \separator{<%= title %>}
             \end{frame}
             |
-            ),
+        ),
 
         chapter_end: erb(
             %q|

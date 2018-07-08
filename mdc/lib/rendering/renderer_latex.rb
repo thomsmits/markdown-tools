@@ -174,7 +174,7 @@ module Rendering
             |
         ),
 
-            multiple_choice_end: erb(
+        multiple_choice_end: erb(
             %q|<% if inline then %>
               \end{oneparcheckboxes}
             <% else %>
@@ -183,7 +183,7 @@ module Rendering
             |
         ),
 
-            multiple_choice: erb(
+        multiple_choice: erb(
             %q|<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
             |
         ),

@@ -133,7 +133,6 @@ module Rendering
             |
         ),
 
-
         text: erb(
             %q|
             <p><%= inline_code(content) %></p>

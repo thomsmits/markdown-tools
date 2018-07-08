@@ -102,7 +102,6 @@ module Rendering
             font-style: italic;
         }
 
-
         .ui-widget {
             font-size: 70%;
         }
@@ -222,7 +221,6 @@ module Rendering
             background-color: transparent;
         }
 
-
         .box {
             margin-top: 50px;
             background-color: #515151;
@@ -236,7 +234,6 @@ module Rendering
             /*text-shadow: 0 1px 0 #383838;*/
             box-shadow: inset 0 1px 0 #2c2c2c, 0 1px 5px #515151;
             width: 90%;
-
         }
 
         .box h4 {
@@ -249,7 +246,6 @@ module Rendering
             font-size: 14px;
             font-weight: bold;
         }
-
 
         .box p {
             margin: 0;
