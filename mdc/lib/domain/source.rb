@@ -31,7 +31,7 @@ module Domain
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       renderer.code_start(@language, @caption)
       renderer.code(@content)
       renderer.code_end(@caption)

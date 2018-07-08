@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
 # -*- coding: utf-8 -*-
 
+require 'stringio'
+
 require_relative '../lib/parsing/properties_reader'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
@@ -8,7 +10,6 @@ require_relative '../lib/rendering/renderer_html_presentation'
 require_relative '../lib/rendering/renderer_html_plain'
 require_relative '../lib/rendering/renderer_latex_presentation'
 require_relative '../lib/rendering/renderer_latex_plain'
-require 'stringio'
 
 $project_path = ''
 
@@ -28,20 +29,20 @@ class Main
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
-    title1           = props.title_1
-    title2           = props.title_2
-    chapter_no       = props.chapter_no
-    chapter_name     = props.chapter_name
-    copyright        = props.copyright
-    author           = props.author
-    default_syntax   = props.default_syntax
-    image_dir        = props.image_dir
-    temp_dir         = props.temp_dir
-    description      = props.description
-    term             = props.term
-    slide_language   = props.language
-    create_index     = (props.create_index || 'false') == 'true'
-    bibliography     = props.bibliography
+    title1           = props['title_1']
+    title2           = props['title_2']
+    chapter_no       = props['chapter_no']
+    chapter_name     = props['chapter_name']
+    copyright        = props['copyright']
+    author           = props['author']
+    default_syntax   = props['default_syntax']
+    image_dir        = props['image_dir']
+    temp_dir         = props['temp_dir']
+    description      = props['description']
+    term             = props['term']
+    slide_language   = props['language']
+    bibliography     = props['bibliography']
+    create_index     = (props['create_index'] || 'false') == 'true'
 
     if slide_language == 'DE'
       $messages = LOCALIZED_MESSAGES_DE
@@ -64,20 +65,20 @@ class Main
     puts "Directory: #{directory}"
     puts "Type: #{type}"
 
-    p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
-    pres = Domain::Presentation.new(slide_language, title1, title2, chapter_no, chapter_name,
+    parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
+    presentation = Domain::Presentation.new(slide_language, title1, title2, chapter_no, chapter_name,
         copyright, author, default_syntax, description, term, create_index, bibliography)
 
     # Parse files in directory
-    files.each { |file|
+    files.each do |file|
       puts "Parsing: #{file}"
-      p.parse(directory + '/' + file, default_syntax, pres)
-    }
+      parser.parse(directory + '/' + file, default_syntax, presentation)
+    end
 
     io = StringIO.new
     io.set_encoding('UTF-8')
 
-    r = case type
+    renderer = case type
       when 'slide' then Rendering::RendererHTMLPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
       when 'plain' then Rendering::RendererHTMLPlain.new(io, default_syntax, result_dir, image_dir, temp_dir)
       when 'tex-slide' then Rendering::RendererLatexPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
@@ -89,7 +90,7 @@ class Main
 
     puts "Result written to: #{output_file}"
 
-    pres.render(r)
+    presentation >> renderer
 
     File.open(output_file, 'w', :encoding => 'UTF-8') { |f| f << io.string }
   end

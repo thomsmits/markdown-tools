@@ -46,10 +46,10 @@ module Notes
     ##
     # Render contents
     # @param [Rendering::RendererHTMLNote] renderer Rendering class used for generation
-    def render(renderer)
+    def >>(renderer)
       renderer.index_start(@title, @description)
       @folders.each { |f| renderer.index_folder_entry(f.name, f.title, f.description, f.count, f.all_tags) }
-      @files.each { |f| f.render(renderer) }
+      @files.each { |f| f >> renderer }
       renderer.index_end
     end
 
@@ -104,7 +104,7 @@ module Notes
     ##
     # Render contents
     # @param [Rendering::RendererHTMLNote] renderer Rendering class used for generation
-    def render(renderer)
+    def >>(renderer)
       renderer.index_file_entry(@name, @title, @date, @tags, @digest)
     end
   end

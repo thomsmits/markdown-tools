@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+require 'stringio'
+
 require_relative '../../lib/domain/chapter'
 require_relative '../../lib/domain/slide'
 require_relative '../../lib/domain/comment'
@@ -14,8 +16,6 @@ require_relative 'line_matcher'
 require_relative 'properties_reader'
 require_relative 'parser_state'
 require_relative 'parser_handler'
-
-require 'stringio'
 
 module Parsing
 

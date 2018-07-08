@@ -101,10 +101,10 @@ module Parsing
     # @param [String] line_id id of the current line
     # @return [Domain::Element] the matching element or nil
     def LineMatcher.match(line, line_id)
-      MATCHERS.each { |m|
+      MATCHERS.each do |m|
         r = m.match_single(line, line_id)
         return r  if r != nil
-      }
+      end
       nil
     end
   end

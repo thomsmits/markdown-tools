@@ -28,9 +28,9 @@ module Domain
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       renderer.ol_start(@start_number)
-      @entries.each { |e| e.render(renderer) }
+      @entries.each { |e| e >> renderer }
       renderer.ol_end
     end
   end

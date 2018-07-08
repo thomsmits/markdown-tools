@@ -81,11 +81,11 @@ module Domain
     ##
     # Render the presentation
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       build_toc
       renderer.presentation_start(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @description, @term, @bibliography)
       renderer.render_toc(@toc)
-      @chapters.each { |chapter| chapter.render(renderer) }
+      @chapters.each { |chapter| chapter >> renderer }
       renderer.presentation_end(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @create_index, @bibliography)
     end
   end

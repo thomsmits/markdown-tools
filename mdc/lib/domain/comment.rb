@@ -20,9 +20,9 @@ module Domain
     ##
     # Render contents
     # @param [Renderer] renderer Rendering class used for generation
-    def render(renderer)
+    def >>(renderer)
       renderer.comment_start(spacing)
-      elements.each { |e| e.render(renderer) }
+      elements.each { |e| e >> renderer }
       renderer.comment_end
     end
   end

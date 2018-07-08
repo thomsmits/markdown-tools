@@ -34,18 +34,18 @@ module Domain
     ##
     # Render the Slide
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       return  if @skip
 
       if renderer.handles_animation?
         (0...max_order + 1).each do |order|
           renderer.slide_start(@title, @number, @id, contains_code?)
-          @elements.each { |e| e.render(renderer)  if !e.order.nil? && e.order <= order }
+          @elements.each { |e| e >> renderer  if !e.order.nil? && e.order <= order }
           renderer.slide_end
         end
       else
         renderer.slide_start(@title, @number, @id, contains_code?)
-        @elements.each { |e| e.render(renderer) }
+        @elements.each { |e| e >> renderer }
         renderer.slide_end
       end
     end

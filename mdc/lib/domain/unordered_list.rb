@@ -36,9 +36,9 @@ module Domain
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       renderer.ul_start
-      @entries.each { |e| e.render(renderer) }
+      @entries.each { |e| e >> renderer }
       renderer.ul_end
     end
 

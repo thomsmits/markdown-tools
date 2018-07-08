@@ -21,7 +21,7 @@ module Domain
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       renderer.uml(@picture_name, @content, @width_slide, @width_plain)
     end
   end

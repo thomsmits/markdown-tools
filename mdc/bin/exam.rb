@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
+require 'stringio'
+
 require_relative '../lib/parsing/properties_reader'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
 require_relative '../lib/rendering/renderer_latex_exam'
-require 'stringio'
 
 ##
 # Create TeX snippets to be used in an exam from Markdown files
@@ -19,9 +20,9 @@ class Exam
   # @param language String the default programming language
   def self.convert(src, dest, file_name, language)
 
-    p = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
+    parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
 
-    pres = Domain::Presentation.new('DE', '', '', '', '',
+    presentation = Domain::Presentation.new('DE', '', '', '', '',
                                     '', '', language, '', '', false, nil)
 
 
@@ -37,13 +38,13 @@ class Exam
       # Change working directory during parsing to ensure
       # that relative paths in the document are handled
       # correctly
-      p.parse_lines(lines, file_name, 'Java', pres)
+      parser.parse_lines(lines, file_name, 'Java', presentation)
     end
 
     target_name = file_name.gsub('.md', '.tex')
     io = File.open("#{dest}/#{target_name}", 'w')
     renderer = Rendering::RendererLatexExam.new(io, language, dest, 'img', '../temp')
-    pres.render(renderer)
+    presentation >> renderer
     io.close
   end
 

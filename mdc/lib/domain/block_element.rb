@@ -47,8 +47,8 @@ module Domain
     # Add the correct rendering method to the class
     # @param [Symbol] name name of the render method
     def self.render_method(name)
-      # Inject a new method 'render' to the class
-      define_method(:render) do |renderer|
+      # Inject a new method '>>' to the class
+      define_method(:>>) do |renderer|
         renderer.send(name, @content)
       end
     end

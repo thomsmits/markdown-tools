@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
+require 'stringio'
+
 require_relative '../lib/parsing/properties_reader'
 require_relative '../lib/rendering/renderer_html'
 require_relative '../lib/messages'
-require 'stringio'
 
 ##
 # Generate an overview file for the generated files
@@ -37,7 +38,7 @@ class Index
     # Compares this object with the given one
     # @param [Entry] other the object to compare with
     def <=>(other)
-      @chapter_number <=> other.chapter_number
+      chapter_number <=> other.chapter_number
     end
   end
 

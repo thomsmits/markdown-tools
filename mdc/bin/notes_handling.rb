@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
+require 'date'
+require 'fileutils'
+
 require_relative '../lib/parsing/properties_reader'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
 require_relative '../lib/rendering/renderer_html_note'
-require 'date'
 require_relative '../lib/domain/notes'
-require 'fileutils'
 
 ##
 # Generate a set of html files from a set of markdown notes
@@ -44,11 +45,11 @@ class NotesHandling
   # @param [String] target directory for the result files
   def read_files_and_convert(folder, target)
 
-    p = Parsing::Parser.new(0)
+    parser = Parsing::Parser.new(0)
 
     folder.files.each do |file|
-      src_path = folder.path + '/' + file.name;
-      dest_dir = target + '/' + folder.name;
+      src_path = folder.path + '/' + file.name
+      dest_dir = target + '/' + folder.name
 
       FileUtils.mkdir_p(dest_dir)  unless Dir.exist?(dest_dir)
 
@@ -56,21 +57,21 @@ class NotesHandling
 
       puts "Compiling #{src_path}"
 
-      pres = Domain::Presentation.new('', '', '', '', '', '', '', '', '', false)
-      p.parse(src_path, '', pres)
-      pres.title1 = pres.chapters[0].title
-      file.title = pres.title1
-      file.digest = pres.digest(180) + '...'
+      presentation = Domain::Presentation.new('', '', '', '', '', '', '', '', '', false)
+      parser.parse(src_path, '', presentation)
+      presentation.title1 = presentation.chapters[0].title
+      file.title = presentation.title1
+      file.digest = presentation.digest(180) + '...'
       file.date = File.mtime(src_path)
 
-      metadata = strings_to_hash(pres.comments)
+      metadata = strings_to_hash(presentation.comments)
 
       file.date = Date.parse(metadata['date'])  unless metadata['date'].nil?
       file.tags = metadata['tags'].split(/, ?/)  unless metadata['tags'].nil?
 
       io = File.new(dest_path, 'w', :encoding => 'UTF-8')
       renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', file.tags, file.date, folder.title)
-      pres.render(renderer)
+      presentation >> renderer
       io.close
     end
 
@@ -88,7 +89,7 @@ class NotesHandling
     Dir.mkdir(dest_dir)  unless Dir.exist?(dest_dir)
     io = File.new(dest_dir + '/' + 'index.html', 'w')
     renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', [], [], folder.title)
-    folder.render(renderer)
+    folder >> renderer
     io.close
   end
 

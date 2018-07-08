@@ -30,7 +30,7 @@ module Domain
     ##
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
-    def render(renderer)
+    def >>(renderer)
       renderer.multiple_choice_start(@inline)
       @questions.each do |e|
         renderer.multiple_choice(e)
