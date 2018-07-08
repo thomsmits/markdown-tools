@@ -228,11 +228,11 @@ module Parsing
       if /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/ =~ @line.strip
         [$2, $1.to_i, $3]
       elsif /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/ =~ @line.strip
-        [$2, $1.to_i, nil]
+        [$2, $1.to_i, '']
       elsif /^!INCLUDESRC "(.*?)" (.*?)$/ =~ @line.strip
         [$1, 0, $2]
       elsif /^!INCLUDESRC "(.*?)"$/ =~ @line.strip
-        [$1, 0, nil]
+        [$1, 0, '']
       else
         nil
       end

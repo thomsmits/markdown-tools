@@ -23,7 +23,7 @@ module Domain
     ##
     # Add a new question to the group
     # @param [Domain::MultipleChoice] question the question to be added
-    def add(question)
+    def <<(question)
       @questions << question
     end
 

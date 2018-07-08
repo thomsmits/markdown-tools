@@ -115,10 +115,10 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def slide_title(ps, line)
       skip = line.skipped_slide?
-      ps.slide_counter += 1 unless skip
+      ps.slide_counter += 1  unless skip
+      title = line.slide_title.gsub('#', '').gsub('--skip--', '').strip
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
-                                   line.slide_title.gsub('#', '').gsub('--skip--', '').strip,
-                                   ps.slide_counter, skip)
+                                   title, ps.slide_counter, skip)
       ps.chapter << ps.slide
       ps.normal!
       ps.comment_mode = false
@@ -131,10 +131,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def code_include(ps, line)
-
-      path = line.code_include[0]
-      first_line = line.code_include[1]
-      language_hint = line.code_include[2] || ''
+      path, first_line, language_hint = line.code_include
 
       source = File.readlines(path, "\n", :encoding => 'UTF-8')
       caption = ''
@@ -142,6 +139,7 @@ module Parsing
 
       slide(ps) << Domain::Source.new(language_hint, caption, order)
 
+      ## Add the included source to the slide
       source.each_with_index do |src_line, i|
         element(ps) << src_line  if i + 1 >= first_line
       end
@@ -351,17 +349,19 @@ module Parsing
         columns = cleaned_line.split('|')
 
         columns.each { |e|
-          if /^[ ]{2,}.*[ ]{2,}$/ === e
-            alignment = Constants::CENTER
-          elsif /^[ ]{2,}.*[ ]$/ === e
-            alignment = Constants::RIGHT
-          elsif /^[ ]{1}.*[ ]+$/ === e
-            alignment = Constants::LEFT
-          elsif /^!$/ === e
-            alignment = Constants::SEPARATOR
-          else
-            alignment = Constants::LEFT
-          end
+          alignment =
+              case e
+                when /^[ ]{2,}.*[ ]{2,}$/
+                  Constants::CENTER
+                when /^[ ]{2,}.*[ ]$/
+                  Constants::RIGHT
+                when /^[ ]{1}.*[ ]+$/
+                  Constants::LEFT
+                when /^!$/
+                  Constants::SEPARATOR
+                else
+                  Constants::LEFT
+                end
 
           table.add_header(e.strip.gsub('~~pipe~~', '|') , alignment)  if e.strip.length > 0
         }
@@ -517,11 +517,11 @@ module Parsing
 
       if element.is_a?(Domain::MultipleChoiceQuestions)
         # We are already in a question section
-        element.add(question)
+        element << question
       else
         # We are the first question, start a new section
         element = Domain::MultipleChoiceQuestions.new(inline)
-        element.add(question)
+        element << question
         slide(ps) << element
       end
     end
@@ -573,7 +573,6 @@ module Parsing
     ##
     # Return a filename without extension
     def get_path_and_name(file)
-
       basename = File.basename(file)
 
       if /.*?(\.[a-zA-Z]{3,4})/ =~ basename
@@ -590,7 +589,6 @@ module Parsing
     # @param [String] file the name of the file (with or without extensions)
     # @return [Array] all found extensions for the name
     def get_extensions(file)
-
       extensions = [ ]
 
       dirname, basename = get_path_and_name(file)
@@ -614,7 +612,6 @@ module Parsing
     # @param [String] file the name of the file (with or without extensions)
     # @return [Domain::License] license of the image
     def get_license(file)
-
       dirname, basename = get_path_and_name(file)
       license_file = "#{dirname}/#{basename}.txt"
 

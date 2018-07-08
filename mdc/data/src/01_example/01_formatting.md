@@ -47,6 +47,17 @@ HTML Versions
 | XHTML 1.1 | Nov 10 | Recommend. 2nd Ed.                             |
 | HTML5     | Mai 11 | Working Draft                                  |
 
+
+## Table Alignment
+
+HTML Versions
+
+| Left   |  Right |  Center  |
+|--------|--------|----------|
+| aaa    | aaa    | aaa      |
+| bbbbb  | bbbbb  | bbbbb    |
+
+
 ## Mathematical Typesetting
 
 Latex formula can be directly embedded (requires [MathJax](http://www.mathjax.org/) to be included into the project if HTML slides are generated. LaTeX slides will handle formula automatically.)
