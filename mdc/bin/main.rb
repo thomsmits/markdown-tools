@@ -3,6 +3,7 @@
 
 require 'stringio'
 
+require_relative '../lib/messages'
 require_relative '../lib/parsing/properties_reader'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
@@ -44,11 +45,7 @@ class Main
     bibliography     = props['bibliography']
     create_index     = (props['create_index'] || 'false') == 'true'
 
-    if slide_language == 'DE'
-      $messages = LOCALIZED_MESSAGES_DE
-    elsif slide_language == 'EN'
-      $messages = LOCALIZED_MESSAGES_EN
-    end
+    set_language(slide_language.downcase)
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?

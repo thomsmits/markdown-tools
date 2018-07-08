@@ -20,14 +20,14 @@ module Rendering
 
         button_with_log: erb(
             %q|
-            <p class='ausgabe'><%= $messages[:output] %>:</p><div name='log' class='output_small'></div>
+            <p class='ausgabe'><%= translate(:output) %>:</p><div name='log' class='output_small'></div>
             <script id='<%= line_id %>'>executeNew($('#<%= line_id %>'));</script>
             |
         ),
 
         button_with_log_pre: erb(
             %q|
-            <p class='ausgabe'><%= $messages[:output] %></p><div name='log' class='output_small'></div>
+            <p class='ausgabe'><%= translate(:output) %></p><div name='log' class='output_small'></div>
             <script id='<%= line_id %>'>executePre($('#<%= line_id %>'));</script>
             |
         ),

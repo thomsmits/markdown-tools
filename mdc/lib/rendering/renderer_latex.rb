@@ -526,7 +526,7 @@ module Rendering
 
       unless source.nil?
         full_title << ', '  if !full_title.nil? && full_title.length > 0
-        full_title = "#{full_title}#{$messages[:source]}#{source}"
+        full_title = "#{full_title}#{translate(:source)}#{source}"
       end
 
       new_width = width ? calculate_width(width) : '\textwidth'

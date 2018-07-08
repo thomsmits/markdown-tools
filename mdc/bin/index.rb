@@ -95,8 +95,8 @@ class Index
 
     entries.each do |e|
       renderer.index_entry(e.chapter_number, e.chapter_name,
-                           e.slide_file, $messages[:presentation],
-                           e.plain_file, $messages[:plain])
+                           e.slide_file, translate(:presentation),
+                           e.plain_file, translate(:plain))
     end
 
     renderer.index_end

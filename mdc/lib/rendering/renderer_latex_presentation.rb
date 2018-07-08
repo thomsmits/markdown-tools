@@ -64,11 +64,11 @@ module Rendering
             \end{frame}
 
             \begin{frame}
-            \pdfbookmark[2]{<%= $messages[:toc] %>}{<%= $messages[:toc] %>}
-            \separator{<%= $messages[:toc] %>}
+            \pdfbookmark[2]{<%= translate(:toc) %>}{<%= translate(:toc) %>}
+            \separator{<%= translate(:toc) %>}
             \end{frame}
 
-            \begin{frame}\frametitle<presentation>{<%= $messages[:toc] %>}
+            \begin{frame}\frametitle<presentation>{<%= translate(:toc) %>}
             \tableofcontents
             \end{frame}
             !
@@ -79,25 +79,25 @@ module Rendering
 
             <% unless bibliography.nil? %>
 
-                \section{<%= $messages[:literature] %>}
+                \section{<%= translate(:literature) %>}
                 \begin{frame}
-                \pdfbookmark[2]{<%= $messages[:literature] %>}{<%= $messages[:literature] %>}
-                \separator{<%= $messages[:literature] %>}
+                \pdfbookmark[2]{<%= translate(:literature) %>}{<%= translate(:literature) %>}
+                \separator{<%= translate(:literature) %>}
                 \end{frame}
 
-                \begin{frame}[allowframebreaks]{<%= $messages[:literature] %>}
+                \begin{frame}[allowframebreaks]{<%= translate(:literature) %>}
                 \printbibliography
                 \end{frame}
             <% end %>
 
 
             <% if create_index %>
-              \section{<%= $messages[:index] %>}
+              \section{<%= translate(:index) %>}
               \begin{frame}
-              \pdfbookmark[2]{<%= $messages[:index] %>}{<%= $messages[:index] %>}
-              \separator{<%= $messages[:index] %>}
+              \pdfbookmark[2]{<%= translate(:index) %>}{<%= translate(:index) %>}
+              \separator{<%= translate(:index) %>}
               \end{frame}
-              \begin{frame}[allowframebreaks]{<%= $messages[:index] %>}
+              \begin{frame}[allowframebreaks]{<%= translate(:index) %>}
               \footnotesize
               \printindex
               \end{frame}

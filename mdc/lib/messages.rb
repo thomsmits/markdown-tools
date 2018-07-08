@@ -1,37 +1,24 @@
 # -*- coding: utf-8 -*-
 
-# Messages used by the tool to ease localization.
+require 'yaml'
 
-LOCALIZED_MESSAGES_EN = {
-    contents:'Contents',
-    chapter:'Chapter',
-    slide:'Slide',
-    plain:'Plain Document',
-    presentation:'Slides',
-    material:'Material',
-    run:'Run',
-    more_info:'More Information',
-    toc:'Table of Contents',
-    source:'Source: ',
-    output:'Output',
-    index: 'Index',
-    literature: 'References',
-}
+$messages = YAML.load_file(File.dirname(__FILE__) + '/messages.yml')
+$language = 'en'
 
-LOCALIZED_MESSAGES_DE = {
-    contents:'Inhalt',
-    chapter:'Kapitel',
-    slide:'Folie',
-    plain:'Skript',
-    presentation:'Folien',
-    material:'Material',
-    run:'Los',
-    more_info:'Mehr Information',
-    toc:'Inhaltsverzeichnis',
-    source:'Quelle: ',
-    output:'Ausgabe',
-    index: 'Index',
-    literature: 'Quellen',
-}
+public
 
-$messages = LOCALIZED_MESSAGES_DE
+##
+# Translate the given key with the default language
+# @param [Symbol|String] key the key
+# @return the translated text
+def translate(key)
+  $messages[$language][key.to_s]
+end
+
+##
+# Set the language to be used
+# @param [String] language the language
+def set_language(language)
+  $language = language
+end
+
