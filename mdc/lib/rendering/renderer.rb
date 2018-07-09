@@ -284,10 +284,12 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
-      @io, @language = io, language
+      @io = io
+      @language = language
       @result_dir = result_dir
       @image_dir = image_dir
       @temp_dir = temp_dir
+
       @templates = all_templates
       @dialog_counter = 0
       @ol_level = 0
