@@ -6,10 +6,6 @@ module Rendering
   # Base class for all renderer used by the markdown compiler
   class Renderer
 
-    LEFT = 1
-    RIGHT = 2
-    CENTER = 3
-
     ##
     # Remove all trailing spaces on all lines of the string
     # @param [String] input the input string
@@ -707,7 +703,7 @@ module Rendering
       @io << @templates[:comment_end].result(binding)
       @dialog_counter += 1
     end
-    
+
     ##
     # Render an image
     # @param [String] location path to image
