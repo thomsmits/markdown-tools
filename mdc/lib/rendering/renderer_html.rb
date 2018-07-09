@@ -360,13 +360,13 @@ module Rendering
       parts = tokenize_line(input, /`(.+?)`/)
       result = ''
 
-      parts.each { |p|
+      parts.each do |p|
         if p.matched
           result << "<code class='inline #{@language}'>#{entities(p.content)}</code>"
         else
           result << inline(p.content)
         end
-      }
+      end
 
       result
     end
@@ -456,9 +456,9 @@ module Rendering
     # @return the most preferred image filen ame
     def choose_image(file_name, formats)
 
-      format = formats.each { |f|
+      format = formats.each do |f|
         break f  if PREFERRED_IMAGE_FORMATS.include?(f)
-      }
+      end
 
       if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name
         "#{$1}.#{format}"
