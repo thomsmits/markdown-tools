@@ -58,7 +58,7 @@ module Parsing
     def space_comment?; !!space_comment; end
 
     ## Vertical space
-    def vspace?; /^<br>$/ === @line.strip; end
+    def vertical_space?; /^<br>$/ === @line.strip; end
 
     ## Source code prefixed by four blanks
     def source?; /^ {4}[^*\-](.*)/ === @line; end

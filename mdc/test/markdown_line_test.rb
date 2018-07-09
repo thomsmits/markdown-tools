@@ -33,15 +33,15 @@ class MarkdownLineTest < Minitest::Test
   ##
   # Test parsing of vertical spaces
   def test_vspace
-    assert(line('<br>').vspace?)
-    assert(line(' <br>').vspace?)
-    assert(line('<br> ').vspace?)
-    assert(line('  <br>  ').vspace?)
+    assert(line('<br>').vertical_space?)
+    assert(line(' <br>').vertical_space?)
+    assert(line('<br> ').vertical_space?)
+    assert(line('  <br>  ').vertical_space?)
 
-    assert(!line('x<br>').vspace?)
-    assert(!line('<br> x').vspace?)
-    assert(!line('x <br>').vspace?)
-    assert(!line('x  <br>  x').vspace?)
+    assert(!line('x<br>').vertical_space?)
+    assert(!line('<br> x').vertical_space?)
+    assert(!line('x <br>').vertical_space?)
+    assert(!line('x  <br>  x').vertical_space?)
   end
 
   ##

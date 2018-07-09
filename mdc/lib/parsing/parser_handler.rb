@@ -81,7 +81,7 @@ module Parsing
     # Insert a vertical space into the document
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
-    def vspace(ps, line)
+    def vertical_space?(ps, line)
       slide(ps) << Domain::VerticalSpace.new
     end
 

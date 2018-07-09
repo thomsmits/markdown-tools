@@ -100,9 +100,9 @@ module Parsing
             # ---
             handler.separator(ps, line)
 
-          elsif line.vspace? && !ps.code_or_code_fenced?
+          elsif line.vertical_space? && !ps.code_or_code_fenced?
             # <br>
-            handler.vspace(ps, line)
+            handler.vertical_space?(ps, line)
 
           elsif line.chapter_title? && !ps.code_or_code_fenced?
             # # Chapter Title
