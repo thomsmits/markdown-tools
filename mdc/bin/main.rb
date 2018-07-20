@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 require 'stringio'
+require 'tmpdir'
 
 require_relative '../lib/messages'
 require_relative '../lib/parsing/properties_reader'
@@ -49,6 +50,10 @@ class Main
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
+
+    unless temp_dir
+      temp_dir = Dir.tmpdir
+    end
 
     result_dir = File.dirname(output_file)
 
