@@ -47,6 +47,7 @@ class Main
     create_index     = (props['create_index'] || 'false') == 'true'
 
     temp_dir ||= Dir.tmpdir
+    slide_language ||= 'DE'
 
     set_language(slide_language.downcase)
 
