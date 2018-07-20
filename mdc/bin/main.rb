@@ -46,14 +46,12 @@ class Main
     bibliography     = props['bibliography']
     create_index     = (props['create_index'] || 'false') == 'true'
 
+    temp_dir ||= Dir.tmpdir
+
     set_language(slide_language.downcase)
 
     image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
     temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
-
-    unless temp_dir
-      temp_dir = Dir.tmpdir
-    end
 
     result_dir = File.dirname(output_file)
 
