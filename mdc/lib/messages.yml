@@ -11,7 +11,7 @@ en:
   source: "Source: "
   output: "Output"
   index: "'Index"
-  literature: "'References"
+  literature: "References"
 
 de:
   contents: "Inhalt"
