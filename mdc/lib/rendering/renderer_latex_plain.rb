@@ -55,7 +55,7 @@ module Rendering
 
             \begin{document}
             \pagenumbering{roman}
-            \dedication{\vspace{7cm} \sffamily \small \textit{<%= description %>}}
+            \dedication{\vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>}}
             %\publishers{Herausgeber}
             \maketitle
             \thispagestyle{empty}

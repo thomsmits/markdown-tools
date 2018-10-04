@@ -152,11 +152,11 @@ module Rendering
         ),
 
         heading_3: erb(
-            %q|\subsubsection*{<%= title %>}|
+            %q|\subsubsection*{<%= inline_code(title) %>}|
         ),
 
         heading_4: erb(
-            %q|\paragraph{<%= title %>}|
+            %q|\paragraph{<%= inline_code(title) %>}|
         ),
 
         image: erb(

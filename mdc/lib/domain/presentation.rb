@@ -22,7 +22,7 @@ module Domain
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] default_language default programming language
-    # @param [String] description
+    # @param [String] description additional description, e.g. copyright information
     # @param [String] term Term of the presentation
     # @param [Boolean] create_index Should the document contain an index at the end
     # @param [String] bibliography File with bibliography information
