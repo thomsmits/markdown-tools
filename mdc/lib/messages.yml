@@ -10,7 +10,7 @@ en:
   toc: "Table of Contents"
   source: "Source: "
   output: "Output"
-  index: "'Index"
+  index: "Index"
   literature: "References"
 
 de:
@@ -25,5 +25,5 @@ de:
   toc: "Inhaltsverzeichnis"
   source: "Quelle: "
   output: "Ausgabe"
-  index: "'Index"
-  literature: "'Quellen"
+  index: "Index"
+  literature: "Quellen"
