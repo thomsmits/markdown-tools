@@ -58,7 +58,9 @@ module Rendering
             \author{\small <%= author %>}
             \date{\color{grau} \small <%= term %>\tiny\vspace{2mm}\\\\ \today}
             \begin{document}
-            \begin{frame}
+            <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
+            \begin{frame}\label{<%= section_id %>}
+            \pdfbookmark[1]{<%= section_name %>}{<%= section_id %>}
             \maketitle
             \end{frame}
 
@@ -77,7 +79,6 @@ module Rendering
             %q|
 
             <% unless bibliography.nil? %>
-
                 \section{<%= translate(:literature) %>}
                 \begin{frame}
                 \pdfbookmark[2]{<%= translate(:literature) %>}{<%= translate(:literature) %>}
