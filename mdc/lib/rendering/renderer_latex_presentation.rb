@@ -94,7 +94,6 @@ module Rendering
             <% if create_index %>
               \section{<%= translate(:index) %>}
               \begin{frame}
-              \pdfbookmark[2]{<%= translate(:index) %>}{<%= translate(:index) %>}
               \separator{<%= translate(:index) %>}
               \end{frame}
               \begin{frame}[allowframebreaks]{<%= translate(:index) %>}
