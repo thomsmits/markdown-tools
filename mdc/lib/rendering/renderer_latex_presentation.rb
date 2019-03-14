@@ -52,6 +52,12 @@ module Rendering
               \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
             <% end %>
 
+            \hypersetup{
+                pdftitle={<%= title1 %>: <%= section_name %>},
+                pdfauthor={<%= author %>},
+                pdfsubject={<%= title2 %>}
+            }
+
             \mode<presentation>{\input{beamer-template}}
             \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
             \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
