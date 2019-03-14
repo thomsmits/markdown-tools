@@ -53,6 +53,12 @@ module Rendering
               \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
             <% end %>
 
+            \hypersetup{
+                pdftitle={<%= title1 %>: <%= section_name %>},
+                pdfauthor={<%= author %>},
+                pdfsubject={<%= title2 %>}
+            }
+
             \begin{document}
             \pagenumbering{roman}
             \dedication{\vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>}}
