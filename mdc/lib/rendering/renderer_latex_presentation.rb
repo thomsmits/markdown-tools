@@ -87,7 +87,6 @@ module Rendering
             <% unless bibliography.nil? %>
                 \section{<%= translate(:literature) %>}
                 \begin{frame}
-                \pdfbookmark[2]{<%= translate(:literature) %>}{<%= translate(:literature) %>}
                 \separator{<%= translate(:literature) %>}
                 \end{frame}
 
