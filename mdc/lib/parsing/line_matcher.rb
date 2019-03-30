@@ -60,16 +60,16 @@ module Parsing
       LineMatcher.new(/### (.*)/) \
           { |_line, _line_id, title| Domain::Heading.new(3, title.delete('#')) },
 
-      LineMatcher.new(/!\[(.*)\]\((.*) "(.*)"\)\/(.*)\/\/(.*)\//) \
+      LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)/(.*)//(.*)/}) \
           { |_line, _line_id, alt, location, title, width_slide, width_plain| Domain::Image.new(location, alt, title, width_slide, width_plain) },
 
-      LineMatcher.new(/!\[(.*)\]\((.*) "(.*)"\)\/(.*)\//) \
+      LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)/(.*)/}) \
           { |_line, _line_id, alt, location, title, width_slide| Domain::Image.new(location, alt, title, width_slide, nil) },
 
-      LineMatcher.new(/!\[(.*)\]\((.*)\)\/(.*)\/\/(.*)\//) \
+      LineMatcher.new(%r{!\[(.*)\]\((.*)\)/(.*)//(.*)/}) \
           { |_line, _line_id, alt, location, width_slide, width_plain| Domain::Image.new(location, alt, alt, width_slide, width_plain) },
 
-      LineMatcher.new(/!\[(.*)\]\((.*?)\)\/(.*?)\//) \
+      LineMatcher.new(%r{!\[(.*)\]\((.*?)\)/(.*?)/}) \
           { |_line, _line_id, alt, location, width_slide| Domain::Image.new(location, alt, alt, width_slide, nil) },
 
       LineMatcher.new(/!\[(.*)\]\((.*) "(.*)"\)/) \

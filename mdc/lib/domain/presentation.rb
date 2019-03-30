@@ -21,9 +21,11 @@ module Domain
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
     # @param [String] default_language default programming language
-    # @param [String] description additional description, e.g. copyright information
+    # @param [String] description additional description, e.g.
+    #                 copyright information
     # @param [String] term Term of the presentation
-    # @param [Boolean] create_index Should the document contain an index at the end
+    # @param [Boolean] create_index Should the document
+    #                  contain an index at the end
     # @param [String] bibliography File with bibliography information
     #
     def initialize(slide_language, title1, title2, section_number, section_name,
@@ -89,15 +91,13 @@ module Domain
     def >>(renderer)
       build_toc
       renderer.presentation_start(@slide_language, @title1,
-        @title2, @section_number, @section_name,
-        @copyright, @author, @description, @term, @bibliography
-      )
+                                  @title2, @section_number, @section_name,
+                                  @copyright, @author, @description, @term, @bibliography)
       renderer.render_toc(@toc)
       @chapters.each { |chapter| chapter >> renderer }
       renderer.presentation_end(@slide_language, @title1,
-        @title2, @section_number, @section_name,
-        @copyright, @author, @create_index, @bibliography
-      )
+                                @title2, @section_number, @section_name,
+                                @copyright, @author, @create_index, @bibliography)
     end
   end
 end

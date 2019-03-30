@@ -1,4 +1,4 @@
-require_relative '../domain_element'
+require_relative '../domain/element'
 
 module Transformer
   class InlineUML
