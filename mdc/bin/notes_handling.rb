@@ -70,8 +70,9 @@ class NotesHandling
 
       io = File.new(dest_path, 'w', encoding: 'UTF-8')
       renderer = Rendering::RendererHTMLNote.new(
-          io, '', '', '',
-          '', file.tags, file.date, folder.title)
+	      io, '', '', '',
+        '', file.tags, file.date, folder.title
+      )
       presentation >> renderer
       io.close
     end
