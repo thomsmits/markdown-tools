@@ -1,16 +1,13 @@
-# -*- coding: utf-8 -*-
-
 require 'minitest/autorun'
 require_relative '../lib/parsing/properties_reader'
 
 ##
 # Tests for the class Parsing::PropertiesReader
-class PropertiesReaderTest  < Minitest::Test
-
+class PropertiesReaderTest < Minitest::Test
   ##
   # Test properties without a defaults file
   def test_without_defaults
-    contents = StringIO.new(%q{
+    contents = StringIO.new('
       # comment 1
       namea=valuea
       nameb = valueb
@@ -20,7 +17,7 @@ class PropertiesReaderTest  < Minitest::Test
       # ignore = invisible
       special = äöüß:;!!!@@
       name_with_underscore=value_with_underscore
-    })
+    ')
 
     props = Parsing::PropertiesReader.new(contents, '=')
 
@@ -41,7 +38,7 @@ class PropertiesReaderTest  < Minitest::Test
   ##
   # Test properties without a defaults file
   def test_with_different_separator
-    contents = StringIO.new(%q{
+    contents = StringIO.new('
       # comment 1
       namea:valuea
       nameb : valueb
@@ -51,7 +48,7 @@ class PropertiesReaderTest  < Minitest::Test
       # ignore : invisible
       special : äöüß:;!!!@@
       name_with_underscore:value_with_underscore
-    })
+    ')
 
     props = Parsing::PropertiesReader.new(contents, ':')
 
@@ -72,18 +69,18 @@ class PropertiesReaderTest  < Minitest::Test
   ##
   # Test properties with a defaults file
   def test_with_defaults
-    contents = StringIO.new(%q{
+    contents = StringIO.new('
       # comment 1
       namea = valuea
       nameb = valueb
 
-    })
+    ')
 
-    defaults = StringIO.new(%q{
+    defaults = StringIO.new('
       # comment 1
       namea = valuea_default
       namec = valuec_default
-    })
+    ')
 
     props = Parsing::PropertiesReader.new(contents, '=', defaults)
 

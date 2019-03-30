@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 module Notes
-
   ##
   # Class representing a folder containing notes
   class Folder
@@ -14,7 +11,12 @@ module Notes
     # @param [String] title title of the folder
     # @param [String] description description of the
     def initialize(path, name, title, description)
-      @path, @name, @title, @description, @files, @folders = path, name, title, description, [], []
+      @path = path
+      @name = name
+      @title = title
+      @description = description
+      @files = []
+      @folders = []
     end
 
     ##
@@ -45,10 +47,15 @@ module Notes
 
     ##
     # Render contents
-    # @param [Rendering::RendererHTMLNote] renderer Rendering class used for generation
+    # @param [Rendering::RendererHTMLNote] renderer renderer
+    #         used for generation
     def >>(renderer)
       renderer.index_start(@title, @description)
-      @folders.each { |f| renderer.index_folder_entry(f.name, f.title, f.description, f.count, f.all_tags) }
+      @folders.each do |f|
+        renderer.index_folder_entry(
+          f.name, f.title, f.description, f.count, f.all_tags
+        )
+      end
       @files.each { |f| f >> renderer }
       renderer.index_end
     end
@@ -91,7 +98,10 @@ module Notes
     # Create a new instance
     # @param [String] name name of the file
     def initialize(name)
-      @name, @title, @digest, @tags = name, '', '', []
+      @name = name
+      @title = ''
+      @digest = ''
+      @tags = []
     end
 
     ##
@@ -103,7 +113,7 @@ module Notes
 
     ##
     # Render contents
-    # @param [Rendering::RendererHTMLNote] renderer Rendering class used for generation
+    # @param [Rendering::RendererHTMLNote] renderer renderer used for generation
     def >>(renderer)
       renderer.index_file_entry(@name, @title, @date, @tags, @digest)
     end

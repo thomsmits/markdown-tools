@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require 'yaml'
 
 $messages = YAML.load_file(File.dirname(__FILE__) + '/messages.yml')
@@ -21,4 +19,3 @@ end
 def set_language(language)
   $language = language
 end
-

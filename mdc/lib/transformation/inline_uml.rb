@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
 require_relative '../domain_element'
 
 module Transformer
-
   class InlineUML
-
     def initialize(temp_dir)
       @temp_dir = temp_dir
     end
@@ -17,8 +13,6 @@ module Transformer
       uml = element.content
     end
 
-    def execute_plant_uml(file)
-
-    end
+    def execute_plant_uml(file); end
   end
 end

@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-
 module Rendering
-
   ##
   # Base class for all renderer used by the markdown compiler
   class Renderer
-
     ##
     # Remove all trailing spaces on all lines of the string
     # @param [String] input the input string
@@ -25,248 +21,248 @@ module Rendering
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
-        vertical_space: erb(
-            %q|<br>
-            |
-        ),
+      vertical_space: erb(
+        '<br>
+          '
+      ),
 
-        equation: erb(
-            %q|
-            \[
-            <%= contents %>
-            \]
-            |
-        ),
+      equation: erb(
+        %q(
+        \[
+        <%= contents %>
+        \]
+        )
+      ),
 
-        ol_start: erb(
-            %q|<%= number %> |
-        ),
+      ol_start: erb(
+        '<%= number %> '
+      ),
 
-        ol_item: erb(
-            %q|<%= inline_code(content) %>|
-        ),
+      ol_item: erb(
+        '<%= inline_code(content) %>'
+      ),
 
-        ol_end: erb(
-            %q|
-            |
-        ),
+      ol_end: erb(
+        '
+        '
+      ),
 
-        ul_start: erb(
-            %q|  * |
-        ),
+      ul_start: erb(
+        '  * '
+      ),
 
-        ul_item: erb(
-            %q|<%= inline_code(content) %>|
-        ),
+      ul_item: erb(
+        '<%= inline_code(content) %>'
+      ),
 
-        ul_end: erb(
-            %q|
-            |
-        ),
+      ul_end: erb(
+        '
+        '
+      ),
 
-        quote: erb(
-            %q|> <%= inline_code(content) %>
-            <% if !source.nil? %>
-            >> <%= source %>
-            <% end %>
-            |
-        ),
+      quote: erb(
+        '> <%= inline_code(content) %>
+        <% if !source.nil? %>
+        >> <%= source %>
+        <% end %>
+        '
+      ),
 
-        important: erb(
-            %q|>!<%= inline_code(content) %>
-            |
-        ),
+      important: erb(
+        '>!<%= inline_code(content) %>
+        '
+      ),
 
-        question: erb(
-            %q|>? <%= inline_code(content) %>
-            |
-        ),
+      question: erb(
+        '>? <%= inline_code(content) %>
+        '
+      ),
 
-        box: erb(
-            %q|>: <%= inline_code(content) %>
-            |
-        ),
+      box: erb(
+        '>: <%= inline_code(content) %>
+        '
+      ),
 
-        script: erb(
-            %q|<script><%= content %></script>|
-        ),
+      script: erb(
+        '<script><%= content %></script>'
+      ),
 
-        code_start: erb(
-            %q|```<%= language %>|
-        ),
+      code_start: erb(
+        '```<%= language %>'
+      ),
 
-        code: erb(
-            %q|<%= content %>|
-        ),
+      code: erb(
+        '<%= content %>'
+      ),
 
-        code_end: erb(
-            %q|```
-            |
-        ),
+      code_end: erb(
+        '```
+        '
+      ),
 
-        table_start: erb(
-            %q||
-        ),
+      table_start: erb(
+        ''
+      ),
 
-        table_end: erb(
-            %q||
-        ),
+      table_end: erb(
+        ''
+      ),
 
-        heading: erb(
-            %q|# <%= title %>
-            |
-        ),
+      heading: erb(
+        '# <%= title %>
+        '
+      ),
 
-        toc_start: erb(
-            %q||
-        ),
+      toc_start: erb(
+        ''
+      ),
 
-        toc_entry: erb(
-            %q||
-        ),
+      toc_entry: erb(
+        ''
+      ),
 
-        toc_end: erb(
-            %q||
-        ),
+      toc_end: erb(
+        ''
+      ),
 
-        toc_sub_entries_start: erb(
-            %q||
-        ),
+      toc_sub_entries_start: erb(
+        ''
+      ),
 
-        toc_sub_entry: erb(
-            %q||
-        ),
+      toc_sub_entry: erb(
+        ''
+      ),
 
-        toc_sub_entries_end: erb(
-            %q||
-        ),
+      toc_sub_entries_end: erb(
+        ''
+      ),
 
-        index_start: erb(
-            %q||
-        ),
+      index_start: erb(
+        ''
+      ),
 
-        index_entry: erb(
-            %q|<%= chapter_name %>
-            |
-        ),
+      index_entry: erb(
+        '<%= chapter_name %>
+        '
+      ),
 
-        index_end: erb(
-            %q||
-        ),
+      index_end: erb(
+        ''
+      ),
 
-        html: erb(
-            %q|<%= content %>|
-        ),
+      html: erb(
+        '<%= content %>'
+      ),
 
-        css: erb(
-            %q|<%= css %>|
-        ),
+      css: erb(
+        '<%= css %>'
+      ),
 
-        js: erb(
-            %q|<%= js %>|
-        ),
+      js: erb(
+        '<%= js %>'
+      ),
 
-        button: erb(
-            %q|((Button))
-            |
-        ),
+      button: erb(
+        '((Button))
+        '
+      ),
 
-        button_with_log: erb(
-            %q|((Button-With-Log))
-            |
-        ),
+      button_with_log: erb(
+        '((Button-With-Log))
+        '
+      ),
 
-        button_with_log_pre: erb(
-            %q|((Button-With-Log-Pre))
-            |
-        ),
+      button_with_log_pre: erb(
+        '((Button-With-Log-Pre))
+        '
+      ),
 
-        link_previous: erb(
-            %q|((Link-Previous))
-            |
-        ),
+      link_previous: erb(
+        '((Link-Previous))
+        '
+      ),
 
-        live_css: erb(
-            %q|((Live-CSS))
-            |
-        ),
+      live_css: erb(
+        '((Live-CSS))
+        '
+      ),
 
-        live_preview: erb(
-            %q|((Live-Preview))
-            |
-        ),
+      live_preview: erb(
+        '((Live-Preview))
+        '
+      ),
 
-        live_preview_float: erb(
-            %q|((Live-Preview-Float))
-            |
-        ),
+      live_preview_float: erb(
+        '((Live-Preview-Float))
+        '
+      ),
 
-        comment_start: erb(
-            %q||
-        ),
+      comment_start: erb(
+        ''
+      ),
 
-        comment_end: erb(
-            %q||
-        ),
+      comment_end: erb(
+        ''
+      ),
 
-        image: erb(
-            %q|<%= chosen_image %>|
-        ),
+      image: erb(
+        '<%= chosen_image %>'
+      ),
 
-        slide_start: erb(
-            %q||
-        ),
+      slide_start: erb(
+        ''
+      ),
 
-        slide_end: erb(
-            %q||
-        ),
+      slide_end: erb(
+        ''
+      ),
 
-        presentation_start: erb(
-            %q||
-        ),
+      presentation_start: erb(
+        ''
+      ),
 
-        presentation_end: erb(
-            %q|
-            |
-        ),
+      presentation_end: erb(
+        '
+        '
+      ),
 
-        text: erb(
-            %q|<%= inline_code(content) %>|
-        ),
+      text: erb(
+        '<%= inline_code(content) %>'
+      ),
 
-        table_row: erb(
-            %q|<%= inline_code(content) %>|
-        ),
+      table_row: erb(
+        '<%= inline_code(content) %>'
+      ),
 
-        multiple_choice_start: erb(
-          %q||
-        ),
+      multiple_choice_start: erb(
+        ''
+      ),
 
-        multiple_choice_end: erb(
-            %q||
-        ),
+      multiple_choice_end: erb(
+        ''
+      ),
 
-        multiple_choice: erb(
-            %q|[<%= if correct then 'X' else ' ' end %>] <%= text %>|
-        ),
-    }
+      multiple_choice: erb(
+        "[<%= if correct then 'X' else ' ' end %>] <%= text %>"
+      )
+    }.freeze
 
     ## Inline replacements
-    INLINE = [
-    ]
+    INLINE = [].freeze
 
     ##
     # Class representing the parts of a line
     class LinePart
-
       attr_accessor :matched, :content
 
       ##
       # Create a new instance
       # @param [String] content content of the part
-      # @param [Boolean] matched indicates whether we have a match or normal text
+      # @param [Boolean] matched indicates whether we have a match
+      #                  or normal text
       def initialize(content, matched)
-        @matched, @content = matched, content
+        @matched = matched
+        @content = content
       end
 
       ##
@@ -281,7 +277,8 @@ module Rendering
     # @param [IO] io target of output operations
     # @param [String] language the default language for code snippets
     # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (relative to result_dir)
+    # @param [String] image_dir location for generated images
+    #                 (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
       @io = io
@@ -299,8 +296,9 @@ module Rendering
     end
 
     ##
-    # Method returning the templates used by the renderer. Should be overwritten by the
-    # subclasses to provide the correct templates for the type of renderer.
+    # Method returning the templates used by the renderer.
+    # Should be overwritten by the subclasses to provide
+    # the correct templates for the type of renderer.
     # @return [Hash] the templates
     def all_templates
       TEMPLATES
@@ -309,9 +307,9 @@ module Rendering
     ##
     # Method returning the inline replacements.Should be overwritten by the
     # subclasses.
-    # @param [Boolean] alternate should alternate replacements be used
+    # @param [Boolean] _alternate should alternate replacements be used
     # @return [String[]] the templates
-    def all_inline_replacements(alternate = false)
+    def all_inline_replacements(_alternate = false)
       INLINE
     end
 
@@ -326,10 +324,10 @@ module Rendering
     ##
     # Replace `inline code` in input
     # @param [String] input the input
-    # @param [boolean] table code used in a table
-    # @param [Boolean] alternate should alternate replacements be used
+    # @param [boolean] _table code used in a table
+    # @param [Boolean] _alternate should alternate replacements be used
     # @return the input with replaced code fragments
-    def inline_code(input, table = false, alternate = false)
+    def inline_code(input, _table = false, _alternate = false)
       input
     end
 
@@ -339,8 +337,7 @@ module Rendering
     # @param [Boolean] alternate should alternate replacements be used
     # @return [String] Text with replacements performed
     def replace_inline_content(input, alternate = false)
-
-      return ''  if input.nil?
+      return '' if input.nil?
 
       result = input
 
@@ -356,12 +353,12 @@ module Rendering
     # @param [Pattern] expression regex used for tokenizing
     # @return [Renderer::LinePart[]] the input tokenized
     def tokenize_line(input, expression)
-      parts = [ ]
+      parts = []
       remainder = input
 
       while expression =~ remainder
         parts << LinePart.new($`, false)
-        parts << LinePart.new($1, true)
+        parts << LinePart.new(Regexp.last_match(1), true)
         remainder = $'
       end
 
@@ -426,7 +423,7 @@ module Rendering
     # Indent output
     # @param [Fixnum] level the indentation
     def indent(level)
-      [0..level].each { @io << ' '}
+      [0..level].each { @io << ' ' }
     end
 
     ##
@@ -455,7 +452,7 @@ module Rendering
     # @param [String] content the content
     # @param [String] source the source of the quote
     def quote(content, source)
-      with_source = !source.nil? && source.length > 0
+      with_source = !source.nil? && !source.empty?
       @io << @templates[:quote].result(binding)
     end
 
@@ -576,7 +573,8 @@ module Rendering
     # @param [String] name name of the entry
     # @param [String] anchor anchor of the entry
     def toc_sub_entry(name, anchor)
-      return  if name == @last_toc_name
+      return if name == @last_toc_name
+
       @last_toc_name = name
       @io << @templates[:toc_sub_entry].result(binding)
     end
@@ -617,7 +615,8 @@ module Rendering
     # @param [String] chapter_name name of chapter
     # @param [String] slide_file file containing the slides
     # @param [String] plain_file file containing the plain version
-    def index_entry(chapter_number, chapter_name, slide_file, slide_name, plain_file, plain_name)
+    def index_entry(chapter_number, chapter_name, slide_file,
+                    slide_name, plain_file, plain_name)
       @io << @templates[:index_entry].result(binding)
     end
 
@@ -715,7 +714,8 @@ module Rendering
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
     # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+    def image(location, formats, alt, title, width_slide,
+              width_plain, source = nil)
       @io << @templates[:image].result(binding)
     end
 
@@ -755,7 +755,10 @@ module Rendering
     # @param [String] description additional description
     # @param [String] term of the lecture
     # @param [String] bibliography File with bibliography
-    def presentation_start(slide_language, title1, title2, section_number, section_name, copyright, author, description, term = '', bibliography = nil)
+    def presentation_start(slide_language, title1, title2,
+                           section_number, section_name,
+                           copyright, author, description,
+                           term = '', bibliography = nil)
       @io << @templates[:presentation_start].result(binding)
     end
 
@@ -770,7 +773,10 @@ module Rendering
     # @param [String] author author of the presentation
     # @param [Boolean] create_index create an Index at the end of slides?
     # @param [String] bibliography File with bibliography
-    def presentation_end(slide_language, title1, title2, section_number, section_name, copyright, author, create_index, bibliography = nil)
+    def presentation_end(slide_language, title1, title2,
+                         section_number, section_name,
+                         copyright, author, create_index,
+                         bibliography = nil)
       @io << @templates[:presentation_end].result(binding)
     end
 
@@ -801,17 +807,16 @@ module Rendering
     # @param [String] picture_name name of the picture
     # @param [String] contents the embedded UML
     # @param [String] type the generated file type (svg, pdf, png)
-    # @param [String] width_slide width of the diagram on slides
-    # @param [String] width_plain width of the diagram on plain documents
-    def uml(picture_name, contents, width_slide, width_plain, type = 'pdf')
-
+    # @param [String] _width_slide width of the diagram on slides
+    # @param [String] _width_plain width of the diagram on plain documents
+    def uml(picture_name, contents, _width_slide, _width_plain, type = 'pdf')
       begin
         Dir.mkdir(@temp_dir)
-      rescue
+      rescue StandardError
         # ignored
       end
 
-      base_name = picture_name.gsub(/ /, '_').downcase
+      base_name = picture_name.tr(' ', '_').downcase
 
       img_file    = "#{@image_dir}/#{base_name}.#{type}"
       uml_file    = "#{@temp_dir}/#{base_name}.uml"
@@ -824,7 +829,7 @@ module Rendering
       # generate image
       puts "#{$project_path}/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}"
 
-      %x(ruby #{$project_path}/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type})
+      `ruby #{$project_path}/umlifier/bin/main.rb #{uml_file} #{dot_file} #{result_file} #{type}`
 
       img_file
     end

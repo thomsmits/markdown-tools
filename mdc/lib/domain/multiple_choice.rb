@@ -1,21 +1,18 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 require_relative 'line_element'
 
 module Domain
-
   ##
   # A multiple choice element
   class MultipleChoice < LineElement
-
     attr_accessor :text, :correct
 
     ##
     # Create a new object
     def initialize(text, correct)
       super()
-      @text, @correct = text, correct
+      @text = text
+      @correct = correct
     end
 
     ##

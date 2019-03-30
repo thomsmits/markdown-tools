@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Group of multiple choice questions
   class MultipleChoiceQuestions < BlockElement
-
     attr_reader :questions
     attr_accessor :inline
 
@@ -16,7 +12,7 @@ module Domain
     # @param [Boolean] inline true if all checkboxes should be in one line
     def initialize(inline = false)
       super('')
-      @questions = [ ]
+      @questions = []
       @inline = inline
     end
 

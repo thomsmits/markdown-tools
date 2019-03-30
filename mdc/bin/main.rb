@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-# -*- coding: utf-8 -*-
-
 require 'stringio'
 require 'tmpdir'
 
@@ -15,13 +13,17 @@ require_relative '../lib/rendering/renderer_latex_plain'
 
 $project_path = ''
 
+##
+# Main entry point into the markdown compiler.
+# The +self.main+ method is called with the command
+# line parameters.
 class Main
-
   def self.main(directory, type, output_file)
-
     # Determine my own directory to make invocation of the UML tool
     # more dynamic
-    $project_path = File.expand_path($0).gsub('\\', '/').gsub('/mdc/bin/main.rb', '')
+    $project_path = File.expand_path($PROGRAM_NAME)
+                        .tr('\\', '/')
+                        .gsub('/mdc/bin/main.rb', '')
 
     # Read global properties
     dir = Dir.new(directory)
@@ -51,15 +53,15 @@ class Main
 
     set_language(slide_language.downcase)
 
-    image_dir = image_dir.sub(/\/$/, '')  unless image_dir.nil?
-    temp_dir  = temp_dir.sub(/\/$/, '')   unless temp_dir.nil?
+    image_dir = image_dir.sub(%r{/$}, '')  unless image_dir.nil?
+    temp_dir  = temp_dir.sub(%r{/$}, '')   unless temp_dir.nil?
 
     result_dir = File.dirname(output_file)
 
     # Scan files matching the pattern 01_...
-    files = [ ]
+    files = []
 
-    dir.each { |file| files << file  if /[0-9][0-9]_.*\.md/ === file }
+    dir.each { |file| files << file if /[0-9][0-9]_.*\.md/ =~ file }
 
     files = files.sort
 
@@ -67,8 +69,11 @@ class Main
     puts "Type: #{type}"
 
     parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
-    presentation = Domain::Presentation.new(slide_language, title1, title2, chapter_no, chapter_name,
-        copyright, author, default_syntax, description, term, create_index, bibliography)
+    presentation = Domain::Presentation.new(
+      slide_language, title1, title2, chapter_no, chapter_name,
+      copyright, author, default_syntax, description,
+      term, create_index, bibliography
+    )
 
     # Parse files in directory
     files.each do |file|
@@ -80,23 +85,40 @@ class Main
     io.set_encoding('UTF-8')
 
     renderer = case type
-      when 'slide' then Rendering::RendererHTMLPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
-      when 'plain' then Rendering::RendererHTMLPlain.new(io, default_syntax, result_dir, image_dir, temp_dir)
-      when 'tex-slide' then Rendering::RendererLatexPresentation.new(io, default_syntax, result_dir, image_dir, temp_dir)
-      when 'tex-plain' then Rendering::RendererLatexPlain.new(io, default_syntax, result_dir, image_dir, temp_dir)
-      else
-        puts "Unknown type #{type} for result"
-        exit 5
-    end
+               when 'slide' then
+                 Rendering::RendererHTMLPresentation.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               when 'plain' then
+                 Rendering::RendererHTMLPlain.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               when 'tex-slide' then
+                 Rendering::RendererLatexPresentation.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               when 'tex-plain' then
+                 Rendering::RendererLatexPlain.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               else
+                 puts "Unknown type #{type} for result"
+                 exit 5
+               end
 
     puts "Result written to: #{output_file}"
 
     presentation >> renderer
 
-    File.open(output_file, 'w', :encoding => 'UTF-8') { |f| f << io.string }
+    File.open(output_file, 'w', encoding: 'UTF-8') { |f| f << io.string }
   end
 end
 
-Main::main(ARGV[0], ARGV[1], ARGV[2])
+Main.main(ARGV[0], ARGV[1], ARGV[2])
 
-#Main::main('/Users/thomas/Documents/Work/Vorlesungen/GDI/03_Folien/src/06_oo', 'tex-plain', '/Users/thomas/Temp/06_oo/06_oo.tex')
+# Main::main('/Users/thomas/Documents/Work/Vorlesungen/GDI/03_Folien/src/06_oo',
+# 'tex-plain', '/Users/thomas/Temp/06_oo/06_oo.tex')

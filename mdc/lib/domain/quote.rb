@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Quote
   class Quote < BlockElement
-
     attr_accessor :source
 
     ##

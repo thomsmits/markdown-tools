@@ -1,332 +1,328 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'renderer'
 require_relative '../messages'
 require_relative '../constants'
 
 module Rendering
-
   ##
   # Render the presentation into a latex file for further processing
   # using LaTeX
   class RendererLatex < Renderer
-
     ## ERB templates to be used by the renderer
     TEMPLATES = {
-        vertical_space: erb(
-          %q|
-          \vspace{4mm}
-         |
-        ),
+      vertical_space: erb(
+        %q(
+        \vspace{4mm}
+       )
+      ),
 
-        equation: erb(
-            %q|
-            \abovedisplayskip=0mm
-            \begin{align*}
-            <%= contents %>\end{align*}
-            \belowdisplayskip=0mm
-            |
-        ),
+      equation: erb(
+        %q(
+        \abovedisplayskip=0mm
+        \begin{align*}
+        <%= contents %>\end{align*}
+        \belowdisplayskip=0mm
+        )
+      ),
 
-        ol_start: erb(
-            %q|
-            \begin{ol<%= @ol_level %>}
-            <% if counter > 0 %>
-              \setcounter{enumi}{<%= counter %>}
-            <% end %>
-            |
-        ),
+      ol_start: erb(
+        %q(
+        \begin{ol<%= @ol_level %>}
+        <% if counter > 0 %>
+          \setcounter{enumi}{<%= counter %>}
+        <% end %>
+        )
+      ),
 
-        ol_item: erb(
-            %q|
-            \item <%= inline_code(content) %>
-            |
-        ),
+      ol_item: erb(
+        %q|
+        \item <%= inline_code(content) %>
+        |
+      ),
 
-        ol_end: erb(
-            %q|
-            \end{ol<%= @ol_level %>}
-            |
-        ),
+      ol_end: erb(
+        %q(
+        \end{ol<%= @ol_level %>}
+        )
+      ),
 
-        ul_start: erb(
-            %q|
-            \begin{ul<%= @ul_level %>}
-            |
-        ),
+      ul_start: erb(
+        %q(
+        \begin{ul<%= @ul_level %>}
+        )
+      ),
 
-        ul_item: erb(
-            %q|
-            \item <%= inline_code(content) %>
-            |
-        ),
+      ul_item: erb(
+        %q|
+        \item <%= inline_code(content) %>
+        |
+      ),
 
-        ul_end: erb(
-            %q|
-            \end{ul<%= @ul_level %>}
-            |
-        ),
+      ul_end: erb(
+        %q(
+        \end{ul<%= @ul_level %>}
+        )
+      ),
 
-        quote: erb(
-            %q|
-            <% if with_source %>
-              \quoted{<%= inline_code(content) %>}{<%= inline(source) %>}
-            <% else %>
-              \quotedns{<%= inline_code(content) %>}
-            <% end %>
-            |
-        ),
+      quote: erb(
+        %q|
+        <% if with_source %>
+          \quoted{<%= inline_code(content) %>}{<%= inline(source) %>}
+        <% else %>
+          \quotedns{<%= inline_code(content) %>}
+        <% end %>
+        |
+      ),
 
-        important: erb(
-            %q|
-            \important{<%= inline_code(content, false, true) %>}
-            |
-        ),
+      important: erb(
+        %q|
+        \important{<%= inline_code(content, false, true) %>}
+        |
+      ),
 
-        question: erb(
-            %q|
-            \question{<%= inline_code(content, false, true) %>}
-            |
-        ),
+      question: erb(
+        %q|
+        \question{<%= inline_code(content, false, true) %>}
+        |
+      ),
 
-        box: erb(
-            %q|
-            \mybox{<%= inline_code(content, false, true) %>}
-            |
-        ),
+      box: erb(
+        %q|
+        \mybox{<%= inline_code(content, false, true) %>}
+        |
+      ),
 
-        script: erb(
-            %q||
-        ),
+      script: erb(
+        ''
+      ),
 
-        code_start: erb(
-            %q|
-            \begin{lstblock}
-            {\setstretch{1.3}\small
-            \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily]|
-        ),
+      code_start: erb(
+        %q(
+        \begin{lstblock}
+        {\setstretch{1.3}\small
+        \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily])
+      ),
 
-        code: erb(
-            %q|<%= content %>|
-        ),
+      code: erb(
+        '<%= content %>'
+      ),
 
-        code_end: erb(
-            %q|
-            \end{lstlisting}}
-            \end{lstblock}
-            |
-        ),
+      code_end: erb(
+        %q(
+        \end{lstlisting}}
+        \end{lstblock}
+        )
+      ),
 
-        table_start: erb(
-            %q|
-            \begin{center}
-            \vspace{2mm}
-            \renewcommand{\arraystretch}{1.1}
-            {\sffamily
-            \begin{footnotesize}\tablefont
-            \begin{tabular}{<%= column_line %>}
-            \toprule
-            |
-        ),
+      table_start: erb(
+        %q(
+        \begin{center}
+        \vspace{2mm}
+        \renewcommand{\arraystretch}{1.1}
+        {\sffamily
+        \begin{footnotesize}\tablefont
+        \begin{tabular}{<%= column_line %>}
+        \toprule
+        )
+      ),
 
-        table_separator: erb(
-            %q|
-            \midrule
-            |
-        ),
+      table_separator: erb(
+        %q(
+        \midrule
+        )
+      ),
 
-        table_end: erb(
-            %q|
-            \bottomrule
-            \end{tabular}
-            \end{footnotesize}}
-            \end{center}
-            |
-        ),
+      table_end: erb(
+        %q(
+        \bottomrule
+        \end{tabular}
+        \end{footnotesize}}
+        \end{center}
+        )
+      ),
 
-        text: erb(
-            %q|
-            <%= inline_code(cleaned_content) %>
-            \vspace{0.1mm}
-            |
-        ),
+      text: erb(
+        %q|
+        <%= inline_code(cleaned_content) %>
+        \vspace{0.1mm}
+        |
+      ),
 
-        heading_3: erb(
-            %q|\subsubsection*{<%= inline_code(title) %>}|
-        ),
+      heading_3: erb(
+        %q|\subsubsection*{<%= inline_code(title) %>}|
+      ),
 
-        heading_4: erb(
-            %q|\paragraph{<%= inline_code(title) %>}|
-        ),
+      heading_4: erb(
+        %q|\paragraph{<%= inline_code(title) %>}|
+      ),
 
-        image: erb(
-            %q!
-            \bild{<%= stripped_location %>}{<%= new_width %>}{<%= full_title %>}
-            !
-        ),
+      image: erb(
+        %q(
+        \bild{<%= stripped_location %>}{<%= new_width %>}{<%= full_title %>}
+        )
+      ),
 
-        multiple_choice_start: erb(
-            %q|<% if inline then %>
-              \begin{oneparcheckboxes}
-            <% else %>
-              \begin{checkboxes}
-            <% end %>
-            |
-        ),
+      multiple_choice_start: erb(
+        %q(<% if inline then %>
+          \begin{oneparcheckboxes}
+        <% else %>
+          \begin{checkboxes}
+        <% end %>
+        )
+      ),
 
-        multiple_choice_end: erb(
-            %q|<% if inline then %>
-              \end{oneparcheckboxes}
-            <% else %>
-              \end{checkboxes}
-            <% end %>
-            |
-        ),
+      multiple_choice_end: erb(
+        %q(<% if inline then %>
+          \end{oneparcheckboxes}
+        <% else %>
+          \end{checkboxes}
+        <% end %>
+        )
+      ),
 
-        multiple_choice: erb(
-            %q|<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
-            |
-        ),
-    }
+      multiple_choice: erb(
+        %q(<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
+        )
+      )
+    }.freeze
 
     ## Inline replacements
     INLINE_BASIC_BEFORE = [
-        [ /\\/,                  '\textbackslash ' ],
-        [ '{',                   '\{' ],
-        [ '}',                   '\}' ],
-        [ 'α',                   '\begin{math}\alpha\end{math}' ],
-        [ 'β',                   '\begin{math}\beta\end{math}' ],
-        [ 'Γ',                   '\begin{math}\Gamma\end{math}' ],
-        [ 'γ',                   '\begin{math}\gamma\end{math}' ],
-        [ 'Δ',                   '\begin{math}\Delta\end{math}' ],
-        [ 'δ',                   '\begin{math}\delta\end{math}' ],
-        [ 'ϵ',                   '\begin{math}\epsilon\end{math}' ],
-        [ 'ζ',                   '\begin{math}\zeta\end{math}' ],
-        [ 'η',                   '\begin{math}\eta\end{math}' ],
-        [ 'Θ',                   '\begin{math}\Theta\end{math}' ],
-        [ 'θ',                   '\begin{math}\theta\end{math}' ],
-        [ 'ι',                   '\begin{math}\iota\end{math}' ],
-        [ 'κ',                   '\begin{math}\kappa\end{math}' ],
-        [ 'Λ',                   '\begin{math}\Lambda\end{math}' ],
-        [ 'λ',                   '\begin{math}\lambda\end{math}' ],
-        [ 'μ',                   '\begin{math}\mu\end{math}' ],
-        [ 'ν',                   '\begin{math}\nu\end{math}' ],
-        [ 'Ξ',                   '\begin{math}\Xi\end{math}' ],
-        [ 'ξ',                   '\begin{math}\xi\end{math}' ],
-        [ 'Π',                   '\begin{math}\Pi\end{math}' ],
-        [ 'π',                   '\begin{math}\pi\end{math}' ],
-        [ 'ρ',                   '\begin{math}\rho\end{math}' ],
-        [ '∑',                   '\begin{math}\Sigma\end{math}' ],
-        [ 'σ^2',                 '\begin{math}\sigma\textsuperscript{2}\end{math}' ],
-        [ 'σ',                   '\begin{math}\sigma\end{math}' ],
-        [ 'τ',                   '\begin{math}\tau\end{math}' ],
-        [ 'Υ',                   '\begin{math}\Upsilon\end{math}' ],
-        [ 'υ',                   '\begin{math}\upsilon\end{math}' ],
-        [ 'Φ',                   '\begin{math}\Phi\end{math}' ],
-        [ 'ϕ',                   '\begin{math}\phi\end{math}' ],
-        [ 'φ',                   '\begin{math}\varphi\end{math}' ],
-        [ 'χ',                   '\begin{math}\chi\end{math}' ],
-        [ 'Ψ',                   '\begin{math}\Psi\end{math}' ],
-        [ 'ψ',                   '\begin{math}\psi\end{math}' ],
-        [ 'Ω',                   '\begin{math}\Omega\end{math}' ],
-        [ 'ω',                  '\begin{math}\omega\end{math}' ],
-        [ '≤',                   '\begin{math}\le\end{math}' ],
-        [ '≥',                   '\begin{math}\ge\end{math}' ],
-        [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-                                 '\1\begin{math}\2\textsubscript{\3}\end{math}\4' ],
-        [ /(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-                                 '\1\begin{math}\2\textsuperscript{\3}\end{math}\4' ],
-        [ /"(.*?)"/,             '\enquote{\1}' ],
-        [ /~~(.+?)~~/,           '\sout{\1}' ],
-        [ /~(.+?)~/,             '\underline{\1}' ],
-        [ /\[\[(.*?)\]\]/,       '[\cite{\1}]' ],
-    ]
+      [/\\/,                  '\textbackslash '],
+      ['{',                   '\{'],
+      ['}',                   '\}'],
+      ['α',                   '\begin{math}\alpha\end{math}'],
+      ['β',                   '\begin{math}\beta\end{math}'],
+      ['Γ',                   '\begin{math}\Gamma\end{math}'],
+      ['γ',                   '\begin{math}\gamma\end{math}'],
+      ['Δ',                   '\begin{math}\Delta\end{math}'],
+      ['δ',                   '\begin{math}\delta\end{math}'],
+      ['ϵ',                   '\begin{math}\epsilon\end{math}'],
+      ['ζ',                   '\begin{math}\zeta\end{math}'],
+      ['η',                   '\begin{math}\eta\end{math}'],
+      ['Θ',                   '\begin{math}\Theta\end{math}'],
+      ['θ',                   '\begin{math}\theta\end{math}'],
+      ['ι',                   '\begin{math}\iota\end{math}'],
+      ['κ',                   '\begin{math}\kappa\end{math}'],
+      ['Λ',                   '\begin{math}\Lambda\end{math}'],
+      ['λ',                   '\begin{math}\lambda\end{math}'],
+      ['μ',                   '\begin{math}\mu\end{math}'],
+      ['ν',                   '\begin{math}\nu\end{math}'],
+      ['Ξ',                   '\begin{math}\Xi\end{math}'],
+      ['ξ',                   '\begin{math}\xi\end{math}'],
+      ['Π',                   '\begin{math}\Pi\end{math}'],
+      ['π',                   '\begin{math}\pi\end{math}'],
+      ['ρ',                   '\begin{math}\rho\end{math}'],
+      ['∑',                   '\begin{math}\Sigma\end{math}'],
+      ['σ^2',                 '\begin{math}\sigma\textsuperscript{2}\end{math}'],
+      ['σ',                   '\begin{math}\sigma\end{math}'],
+      ['τ',                   '\begin{math}\tau\end{math}'],
+      ['Υ',                   '\begin{math}\Upsilon\end{math}'],
+      ['υ',                   '\begin{math}\upsilon\end{math}'],
+      ['Φ',                   '\begin{math}\Phi\end{math}'],
+      ['ϕ',                   '\begin{math}\phi\end{math}'],
+      ['φ',                   '\begin{math}\varphi\end{math}'],
+      ['χ',                   '\begin{math}\chi\end{math}'],
+      ['Ψ',                   '\begin{math}\Psi\end{math}'],
+      ['ψ',                   '\begin{math}\psi\end{math}'],
+      ['Ω',                   '\begin{math}\Omega\end{math}'],
+      ['ω', '\begin{math}\omega\end{math}'],
+      ['≤',                   '\begin{math}\le\end{math}'],
+      ['≥',                   '\begin{math}\ge\end{math}'],
+      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
+       '\1\begin{math}\2\textsubscript{\3}\end{math}\4'],
+      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
+       '\1\begin{math}\2\textsuperscript{\3}\end{math}\4'],
+      [/"(.*?)"/,             '\enquote{\1}'],
+      [/~~(.+?)~~/,           '\sout{\1}'],
+      [/~(.+?)~/,             '\underline{\1}'],
+      [/\[\[(.*?)\]\]/,       '[\cite{\1}]']
+    ].freeze
 
     INLINE_BASIC_AFTER = [
-        [ 'Z.B.',                'Z.\,B.' ],
-        [ 'z.B.',                'z.\,B.' ],
-        [ 'D.h.',                'D.\,h.' ],
-        [ 'd.h.',                'd.\,h.' ],
-        [ 'u.a.',                'u.\,a.' ],
-        [ 's.u.',                's.\,u.' ],
-        [ 's.o.',                's.\,o.' ],
-        [ 'u.U.',                'u.\,U.' ],
-        [ 'i.e.',                'i.\,e.' ],
-        [ 'e.g.',                'e.\,g.' ],
-        [ 'o.O.',                'o.\,O.' ],
-        [ 'o.J.',                'o.\,J.' ],
-        [ '$',                   '\$' ],
-        [ '%',                   '\%' ],
-        [ /^-> /,                '$\rightarrow$ ' ],
-        [ '(-> ',                '($\rightarrow$ ' ],
-        [ '(->)',                '($\rightarrow$)' ],
-        [ '{-> ',                '{$\rightarrow$ ' ],
-        [ ' -> ',                ' $\rightarrow$ ' ],
-        [ '<br>-> ',             '<br>$\rightarrow$ ' ],
+      ['Z.B.',                'Z.\,B.'],
+      ['z.B.',                'z.\,B.'],
+      ['D.h.',                'D.\,h.'],
+      ['d.h.',                'd.\,h.'],
+      ['u.a.',                'u.\,a.'],
+      ['s.u.',                's.\,u.'],
+      ['s.o.',                's.\,o.'],
+      ['u.U.',                'u.\,U.'],
+      ['i.e.',                'i.\,e.'],
+      ['e.g.',                'e.\,g.'],
+      ['o.O.',                'o.\,O.'],
+      ['o.J.',                'o.\,J.'],
+      ['$',                   '\$'],
+      ['%',                   '\%'],
+      [/^-> /,                '$\rightarrow$ '],
+      ['(-> ',                '($\rightarrow$ '],
+      ['(->)',                '($\rightarrow$)'],
+      ['{-> ',                '{$\rightarrow$ '],
+      [' -> ',                ' $\rightarrow$ '],
+      ['<br>-> ',             '<br>$\rightarrow$ '],
 
-        [ /^=> /,                '$\Rightarrow$ ' ],
-        [ '(=> ',                '($\Rightarrow$ ' ],
-        [ '(=>)',                '($\Rightarrow$)' ],
-        [ '{=> ',                '{$\Rightarrow$ ' ],
-        [ ' => ',                ' $\Rightarrow$ ' ],
-        [ '<br>=> ',             '<br>$\Rightarrow$ ' ],
+      [/^=> /,                '$\Rightarrow$ '],
+      ['(=> ',                '($\Rightarrow$ '],
+      ['(=>)',                '($\Rightarrow$)'],
+      ['{=> ',                '{$\Rightarrow$ '],
+      [' => ',                ' $\Rightarrow$ '],
+      ['<br>=> ',             '<br>$\Rightarrow$ '],
 
-        [ /^<- /,                '$\leftarrow$ ' ],
-        [ '(<- ',                '($\leftarrow$ ' ],
-        [ '(<-)',                '($\leftarrow$)' ],
-        [ ' <- ',                ' $\leftarrow$ ' ],
-        [ '{<- ',                '{$\leftarrow$ ' ],
-        [ '<br><- ',             '<br>$\leftarrow$ ' ],
+      [/^<- /,                '$\leftarrow$ '],
+      ['(<- ',                '($\leftarrow$ '],
+      ['(<-)',                '($\leftarrow$)'],
+      [' <- ',                ' $\leftarrow$ '],
+      ['{<- ',                '{$\leftarrow$ '],
+      ['<br><- ',             '<br>$\leftarrow$ '],
 
-        [ /^<= /,                '$\Leftarrow$ ' ],
-        [ '(<= ',                '($\Leftarrow$ ' ],
-        [ '(<=)',                '($\Leftarrow$)' ],
-        [ '{<= ',                '{$\Leftarrow$ ' ],
-        [ ' <= ',                ' $\Leftarrow$ ' ],
-        [ '<br><= ',             '<br>$\Leftarrow$ ' ],
+      [/^<= /,                '$\Leftarrow$ '],
+      ['(<= ',                '($\Leftarrow$ '],
+      ['(<=)',                '($\Leftarrow$)'],
+      ['{<= ',                '{$\Leftarrow$ '],
+      [' <= ',                ' $\Leftarrow$ '],
+      ['<br><= ',             '<br>$\Leftarrow$ '],
 
-        [ /^<=> /,               '$\Leftrightarrow$ ' ],
-        [ '(<=> ',               '($\Leftrightarrow$ ' ],
-        [ '(<=>)',               '($\Leftrightarrow$)' ],
-        [ '{<=> ',               '{$\Leftrightarrow$ ' ],
-        [ ' <=> ',               ' $\Leftrightarrow$ ' ],
-        [ '<br><=> ',            '<br>$\Leftrightarrow$ ' ],
+      [/^<=> /,               '$\Leftrightarrow$ '],
+      ['(<=> ',               '($\Leftrightarrow$ '],
+      ['(<=>)',               '($\Leftrightarrow$)'],
+      ['{<=> ',               '{$\Leftrightarrow$ '],
+      [' <=> ',               ' $\Leftrightarrow$ '],
+      ['<br><=> ',            '<br>$\Leftrightarrow$ '],
 
-        [ /^<-> /,               '$\leftrightarrow$ ' ],
-        [ '(<-> ',               '($\leftrightarrow$ ' ],
-        [ '(<->)',               '($\leftrightarrow$)' ],
-        [ '{<-> ',               '{$\leftrightarrow$ ' ],
-        [ ' <-> ',               ' $\leftrightarrow$ ' ],
-        [ '<br><-> ',            '<br>$\leftrightarrow$ ' ],
+      [/^<-> /,               '$\leftrightarrow$ '],
+      ['(<-> ',               '($\leftrightarrow$ '],
+      ['(<->)',               '($\leftrightarrow$)'],
+      ['{<-> ',               '{$\leftrightarrow$ '],
+      [' <-> ',               ' $\leftrightarrow$ '],
+      ['<br><-> ',            '<br>$\leftrightarrow$ '],
 
-        [ /^<br>/,                "\\ \\newline\n" ],
-        [ /<br>/,                "\\newline\n" ],
-        [ '#',                   '\#' ],
-        [ '&',                   '\\\\&' ],
-        [ '_',                   '\_' ],
-        [ '<<',                  '{\flqq}' ],
-        [ '>>',                  '{\frqq}' ],
-        [ '<',                   '{\textless}' ],
-        [ '>',                   '{\textgreater}' ],
-        [ '~',                   '{\textasciitilde}' ],
-        [ '^',                   '{\textasciicircum}' ],
-        [ '\textsubscript',      '_' ],
-        [ '\textsuperscript',    '^' ],
-    ]
+      [/^<br>/, "\\ \\newline\n"],
+      [/<br>/,                "\\newline\n"],
+      ['#',                   '\#'],
+      ['&',                   '\\\\&'],
+      ['_',                   '\_'],
+      ['<<',                  '{\flqq}'],
+      ['>>',                  '{\frqq}'],
+      ['<',                   '{\textless}'],
+      ['>',                   '{\textgreater}'],
+      ['~',                   '{\textasciitilde}'],
+      ['^',                   '{\textasciicircum}'],
+      ['\textsubscript',      '_'],
+      ['\textsuperscript',    '^']
+    ].freeze
 
     INLINE_NORMAL = INLINE_BASIC_BEFORE + [
-        [ /__(.+?)__/,           '\term{\1}\index{\1}' ],
-        [ /_(.+?)_/,             '\strong{\1}' ],
-        [ /\*\*(.+?)\*\*/,       '\termenglish{\1}' ],
-        [ /\*(.+?)\*/,           '\strongenglish{\1}' ],
+      [/__(.+?)__/,           '\term{\1}\index{\1}'],
+      [/_(.+?)_/,             '\strong{\1}'],
+      [/\*\*(.+?)\*\*/,       '\termenglish{\1}'],
+      [/\*(.+?)\*/,           '\strongenglish{\1}']
     ] + INLINE_BASIC_AFTER
 
     INLINE_ALTERNATE = INLINE_BASIC_BEFORE + [
-        [ /__(.+?)__/,           '\termalt{\1}\index{\1}' ],
-        [ /_(.+?)_/,             '\strongalt{\1}' ],
-        [ /\*\*(.+?)\*\*/,       '\termenglishalt{\1}' ],
-        [ /\*(.+?)\*/,           '\strongenglishalt{\1}' ],
-    ]  + INLINE_BASIC_AFTER
+      [/__(.+?)__/,           '\termalt{\1}\index{\1}'],
+      [/_(.+?)_/,             '\strongalt{\1}'],
+      [/\*\*(.+?)\*\*/,       '\termenglishalt{\1}'],
+      [/\*(.+?)\*/,           '\strongenglishalt{\1}']
+    ] + INLINE_BASIC_AFTER
 
     ##
     # Initialize the renderer
@@ -362,7 +358,6 @@ module Rendering
     # @param [Boolean] alternate should alternate replacements be used
     # @return [String] Text with replacements performed
     def inline(input, alternate = false)
-
       # Separate Hyperlinks from other contents
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
@@ -401,17 +396,17 @@ module Rendering
 
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
 
-      parts.each { |p|
+      parts.each do |p|
         if p.matched
-          if p.content.include?('|')
-            result << "\\lstinline[#{options}language=#{@language}#{size}]+#{p.content}+"
-          else
-            result << "\\lstinline[#{options}language=#{@language}#{size}]|#{p.content}|"
-          end
+          result << if p.content.include?('|')
+                      "\\lstinline[#{options}language=#{@language}#{size}]+#{p.content}+"
+                    else
+                      "\\lstinline[#{options}language=#{@language}#{size}]|#{p.content}|"
+                    end
         else
           result << inline(p.content, alternate)
         end
-      }
+      end
 
       result
     end
@@ -421,12 +416,11 @@ module Rendering
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
     def code_start(language, caption)
-
-      if language == 'console'
-        column_style = 'columns=fixed,'
-      else
-        column_style = ''
-      end
+      column_style = if language == 'console'
+                       'columns=fixed,'
+                     else
+                       ''
+                     end
 
       if caption.nil?
         caption_command = ''
@@ -461,7 +455,6 @@ module Rendering
     # @param [Array] headers the headers
     # @param [Array] alignment alignments of the cells
     def table_start(headers, alignment)
-
       column_line = ''
 
       alignment.each do |a|
@@ -477,8 +470,8 @@ module Rendering
       i = 0
 
       headers.each_with_index do |e, k|
-        result << "\\textbf{#{inline_code(e)}} "  if alignment[k] != Constants::SEPARATOR
-        result << ' & '  if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
+        result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
+        result << ' & ' if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
       end
 
@@ -490,13 +483,11 @@ module Rendering
     # @param [Array] row row of the table
     # @param [Array] alignment alignments of the cells
     def table_row(row, alignment)
-
       result = ''
       i = 0
 
       row.each_with_index do |e, k|
-
-        next  if alignment[k] == Constants::SEPARATOR
+        next if alignment[k] == Constants::SEPARATOR
 
         text = inline_code(e, true)
 
@@ -506,7 +497,7 @@ module Rendering
         end
 
         result << text
-        result << ' & '  if k < row.size - 1
+        result << ' & ' if k < row.size - 1
         i += 1
       end
 
@@ -525,7 +516,7 @@ module Rendering
       full_title = title
 
       unless source.nil?
-        full_title << ', '  if !full_title.nil? && full_title.length > 0
+        full_title << ', ' if !full_title.nil? && !full_title.empty?
         full_title = "#{full_title}#{translate(:source)}#{source}"
       end
 
@@ -538,17 +529,15 @@ module Rendering
     # Transform width given in % into a latex compatible format
     # @param [String] width width in %, e.g. "80%"
     def calculate_width(width)
-
       new_width = width
 
       if /%/ === new_width
-        new_width.gsub!(/%/, '')
+        new_width.delete!('%')
         width_num = new_width.to_i / 100.0
-        new_width = "#{width_num.to_s}\\textwidth"
+        new_width = "#{width_num}\\textwidth"
       end
 
       new_width
     end
   end
 end
-

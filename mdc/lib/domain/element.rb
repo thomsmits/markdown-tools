@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 module Domain
-
   ##
   # Element of the presentation
   class Element
@@ -18,7 +15,7 @@ module Domain
     # Create a digest of the content
     # @return [String] a digest of the slide
     def digest
-     ''
+      ''
     end
   end
 end

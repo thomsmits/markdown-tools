@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require 'minitest/autorun'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
@@ -37,9 +35,8 @@ require_relative '../lib/domain/vertical_space'
 # Test the parser
 #
 class ParserTest < Minitest::Test
-
-def test_text
-<<-ENDOFTEXT
+  def test_text
+    <<-ENDOFTEXT
 
 # Chapter 1
 
@@ -293,8 +290,8 @@ Some text
 [ ]. A question
 
 Some text at the end
-ENDOFTEXT
-end
+    ENDOFTEXT
+  end
 
   ##
   # Setup test environment
@@ -313,13 +310,11 @@ end
   ##
   # Test parsing of slides from text into objects
   def test_slide_parsing
-
     presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
                                             'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
                                             false, nil)
 
-    parser =  Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
-
+    parser = Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
 
     parser.parse_lines(lines(test_text), 'testfile.md', 'java', presentation)
 
@@ -340,8 +335,8 @@ end
     slides = chapter1.slides
 
     check_slide(slides[0], 'Slide 1.1', false, false,
-                [ Domain::Text, Domain::UnorderedList, Domain::Text ],
-                [ 'Text before the list', '', 'Text after the list' ] ) do |e|
+                [Domain::Text, Domain::UnorderedList, Domain::Text],
+                ['Text before the list', '', 'Text after the list']) do |e|
 
       assert_equal('Item 1', e[1].entries[0].to_s)
       assert_equal('Item 2', e[1].entries[1].to_s)
@@ -350,38 +345,38 @@ end
     end
 
     check_slide(slides[1], 'Slide 1.2', true, false,
-                [ Domain::Source ],
-                [ "int i = 7;\ni++;" ]) { |e| assert_equal('java', e[0].language) }
+                [Domain::Source],
+                ["int i = 7;\ni++;"]) { |e| assert_equal('java', e[0].language) }
 
     check_slide(slides[2], 'Slide 1.3', true, false,
-                [ Domain::Source ],
-                [ "int k = 9;\nk++;" ]) { |e| assert_equal('java', e[0].language) }
+                [Domain::Source],
+                ["int k = 9;\nk++;"]) { |e| assert_equal('java', e[0].language) }
 
     check_slide(slides[3], 'Slide 1.4', false, true)
 
     check_slide(slides[4], 'Slide 1.5', false, false,
-                [ Domain::Quote ],
-                [ "Quote Line 1\nQuote Line 2" ])
+                [Domain::Quote],
+                ["Quote Line 1\nQuote Line 2"])
 
     check_slide(slides[5], 'Slide 1.6', false, false,
-                [ Domain::Important,
-                  Domain::Question ],
-                [ "Important Line 1\nImportant Line 2",
-                  "Question Line 1\nQuestion Line 2" ])
+                [Domain::Important,
+                 Domain::Question],
+                ["Important Line 1\nImportant Line 2",
+                 "Question Line 1\nQuestion Line 2"])
 
     check_slide(slides[6], 'Slide 1.7', false, false,
-                [ Domain::Text,
-                  Domain::Comment ],
-                [ 'Some text' ]) { |e| assert_equal('Comment line', e[1].elements[0].to_s) }
+                [Domain::Text,
+                 Domain::Comment],
+                ['Some text']) { |e| assert_equal('Comment line', e[1].elements[0].to_s) }
 
     check_slide(slides[7], 'Slide 1.8', true, false,
-                [ Domain::Source,
-                  Domain::VerticalSpace,
-                  Domain::Source ],
-                [ 'int i = 0;', '', 'int k = 17;' ])
+                [Domain::Source,
+                 Domain::VerticalSpace,
+                 Domain::Source],
+                ['int i = 0;', '', 'int k = 17;'])
 
     check_slide(slides[8], 'Slide 1.9', false, false,
-                [ Domain::OrderedList ]) do |e|
+                [Domain::OrderedList]) do |e|
 
       assert_equal('Item 1', e[0].entries[0].to_s)
       assert_equal('Item 2', e[0].entries[1].to_s)
@@ -390,8 +385,8 @@ end
     end
 
     check_slide(slides[9], 'Slide 1.10', false, false,
-                [ Domain::Script ],
-                [ "alert('Javascript goes here!');" ])
+                [Domain::Script],
+                ["alert('Javascript goes here!');"])
 
     chapter2 = presentation.chapters[1]
 
@@ -400,29 +395,29 @@ end
     assert_equal('Chapter 2', chapter2.title)
 
     check_slide(slides[0], 'Slide 2.1', false, false,
-                [ Domain::HTML ],
-                [ '<b>Bold</b>' ])
+                [Domain::HTML],
+                ['<b>Bold</b>'])
 
     check_slide(slides[1], 'Slide 2.2', false, false,
-                [ Domain::ButtonLinkPrevious,
-                  Domain::ButtonLiveCSS,
-                  Domain::ButtonLivePreview,
-                  Domain::ButtonLivePreviewFloat,
-                  Domain::Button,
-                  Domain::ButtonWithLog,
-                  Domain::ButtonWithLogPre ])
+                [Domain::ButtonLinkPrevious,
+                 Domain::ButtonLiveCSS,
+                 Domain::ButtonLivePreview,
+                 Domain::ButtonLivePreviewFloat,
+                 Domain::Button,
+                 Domain::ButtonWithLog,
+                 Domain::ButtonWithLogPre])
 
     check_slide(slides[2], 'Slide 2.3', false, false,
-                [ Domain::Heading, Domain::Heading, Domain::Heading ],
-                [ 'Heading 3', 'Heading 4', 'Heading 5' ]) do |e|
+                [Domain::Heading, Domain::Heading, Domain::Heading],
+                ['Heading 3', 'Heading 4', 'Heading 5']) do |e|
       assert_equal(3, e[0].level)
       assert_equal(4, e[1].level)
       assert_equal(5, e[2].level)
     end
 
     check_slide(slides[3], 'Slide 2.4', false, false,
-                [ Domain::Image, Domain::Image, Domain::Image ],
-                %w(img/file.png img/file.png img/file.png )) do |e|
+                [Domain::Image, Domain::Image, Domain::Image],
+                %w[img/file.png img/file.png img/file.png]) do |e|
       assert_equal('10%', e[0].width_slide)
       assert_equal('30%', e[0].width_plain)
       assert_equal('', e[0].alt)
@@ -446,8 +441,8 @@ end
     end
 
     check_slide(slides[4], 'Slide 2.5', false, false,
-                [ Domain::Image, Domain::Image, Domain::Image ],
-                %w(img/file.png img/file.png img/file.png )) do |e|
+                [Domain::Image, Domain::Image, Domain::Image],
+                %w[img/file.png img/file.png img/file.png]) do |e|
       assert_equal('10%', e[0].width_slide)
       assert_equal('30%', e[0].width_plain)
       assert_equal('', e[0].alt)
@@ -465,8 +460,8 @@ end
     end
 
     check_slide(slides[5], 'Slide 2.6', false, false,
-                [ Domain::Image, Domain::Image, Domain::Image ],
-                %w(img/file.png img/file.png img/file.png )) do |e|
+                [Domain::Image, Domain::Image, Domain::Image],
+                %w[img/file.png img/file.png img/file.png]) do |e|
       assert_equal('10%', e[0].width_slide)
       assert_equal('30%', e[0].width_plain)
       assert_equal('Alt title of image', e[0].alt)
@@ -484,8 +479,8 @@ end
     end
 
     check_slide(slides[6], 'Slide 2.7', false, false,
-                [ Domain::Image, Domain::Image, Domain::Image ],
-                %w(img/file.png img/file.png img/file.png )) do |e|
+                [Domain::Image, Domain::Image, Domain::Image],
+                %w[img/file.png img/file.png img/file.png]) do |e|
       assert_equal('10%', e[0].width_slide)
       assert_equal('30%', e[0].width_plain)
       assert_equal('Alt title of image', e[0].alt)
@@ -503,25 +498,25 @@ end
     end
 
     check_slide(slides[7], 'Slide 2.8', false, false,
-                [ Domain::UML ]) do |e|
+                [Domain::UML]) do |e|
       assert_equal('100%', e[0].width_slide)
       assert_equal('70%', e[0].width_plain)
     end
 
     check_slide(slides[8], 'Slide 2.9', false, false,
-                [ Domain::Equation ],
-                [ '\sum_{i=0}^N{P(X = i)} = 1' ])
+                [Domain::Equation],
+                ['\sum_{i=0}^N{P(X = i)} = 1'])
 
     check_slide(slides[9], 'Slide 2.10', true, false,
-                [ Domain::Source ],
-                [ "  0011      3             1101      -3             0111       7\n" +
-                  "+ 0010    + 2           + 1110    + -2           + 1011    + -5\n" +
-                  "------    ---           ------    ----           ------    ----\n" +
-                  '= 0101    = 5           = 1011    = -5           = 0010    =  2' ],
+                [Domain::Source],
+                ["  0011      3             1101      -3             0111       7\n" \
+                  "+ 0010    + 2           + 1110    + -2           + 1011    + -5\n" \
+                  "------    ---           ------    ----           ------    ----\n" \
+                  '= 0101    = 5           = 1011    = -5           = 0010    =  2'],
                 false)
 
     check_slide(slides[10], 'Slide 2.11', false, false,
-                [ Domain::UnorderedList, Domain::Text, Domain::UnorderedList ]) do |e|
+                [Domain::UnorderedList, Domain::Text, Domain::UnorderedList]) do |e|
       assert_equal('Item 1', e[0].entries[0].to_s)
       assert_equal('Item 2', e[0].entries[1].to_s)
 
@@ -532,7 +527,7 @@ end
     end
 
     check_slide(slides[11], 'Slide 2.12', false, false,
-                [ Domain::OrderedList, Domain::Text, Domain::OrderedList ]) do |e|
+                [Domain::OrderedList, Domain::Text, Domain::OrderedList]) do |e|
       assert_equal('Item 1', e[0].entries[0].to_s)
       assert_equal('Item 2', e[0].entries[1].to_s)
 
@@ -550,7 +545,7 @@ end
     end
 
     check_slide(slides[12], 'Slide 2.13', false, false,
-                [ Domain::OrderedList ]) do |e|
+                [Domain::OrderedList]) do |e|
 
       assert_equal(4, e[0].start_number)
       assert_equal('Item 4', e[0].entries[0].to_s)
@@ -559,7 +554,7 @@ end
     end
 
     check_slide(slides[13], 'Slide 2.14', false, false,
-                [ Domain::OrderedList ]) do |e|
+                [Domain::OrderedList]) do |e|
 
       assert_equal(1, e[0].start_number)
       assert_equal('Item 1', e[0].entries[0].to_s)
@@ -572,50 +567,50 @@ end
     end
 
     check_slide(slides[14], 'Slide 3.1', true, false,
-                [ Domain::Source ],
-                [ "THIS IS SOURCE CODE\nAT LEAST SOME" ],
+                [Domain::Source],
+                ["THIS IS SOURCE CODE\nAT LEAST SOME"],
                 false) do |e|
 
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[0].to_s)
-      assert_equal("AT LEAST SOME", e[1].to_s)
+      assert_equal('AT LEAST SOME', e[1].to_s)
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[2].to_s)
-      assert_equal("Java", e[2].language)
-      assert_equal("AT LEAST SOME", e[3].to_s)
-      assert_equal("Java", e[3].language)
+      assert_equal('Java', e[2].language)
+      assert_equal('AT LEAST SOME', e[3].to_s)
+      assert_equal('Java', e[3].language)
     end
 
     check_slide(slides[15], 'Slide 4.1', false, false,
-                   [ Domain::Text, Domain::MultipleChoiceQuestions ],
-                   [],
-                   false) do |e|
+                [Domain::Text, Domain::MultipleChoiceQuestions],
+                [],
+                false) do |e|
 
       assert_equal(false, e[1].inline)
 
-      assert_equal("Some text", e[0].to_s)
-      assert_equal("A question", e[1].questions[0].text)
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].text)
       assert_equal(false, e[1].questions[0].correct)
-      assert_equal("A correct question", e[1].questions[1].text)
+      assert_equal('A correct question', e[1].questions[1].text)
       assert_equal(true, e[1].questions[1].correct)
-      assert_equal("A question", e[1].questions[2].text)
+      assert_equal('A question', e[1].questions[2].text)
       assert_equal(false, e[1].questions[2].correct)
-      assert_equal("Some text at the end", e[2].to_s)
+      assert_equal('Some text at the end', e[2].to_s)
     end
 
     check_slide(slides[16], 'Slide 4.2', false, false,
-                [ Domain::Text, Domain::MultipleChoiceQuestions ],
+                [Domain::Text, Domain::MultipleChoiceQuestions],
                 [],
                 false) do |e|
 
       assert_equal(true, e[1].inline)
 
-      assert_equal("Some text", e[0].to_s)
-      assert_equal("A question", e[1].questions[0].text)
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].text)
       assert_equal(false, e[1].questions[0].correct)
-      assert_equal("A correct question", e[1].questions[1].text)
+      assert_equal('A correct question', e[1].questions[1].text)
       assert_equal(true, e[1].questions[1].correct)
-      assert_equal("A question", e[1].questions[2].text)
+      assert_equal('A question', e[1].questions[2].text)
       assert_equal(false, e[1].questions[2].correct)
-      assert_equal("Some text at the end", e[2].to_s)
+      assert_equal('Some text at the end', e[2].to_s)
     end
   end
 
@@ -631,11 +626,11 @@ end
   # @param [String[]] contents expected Strings of content
   # @param [Proc] checks additional checks to be performed
   # @param [Boolean] strip strip content before comparison
-  def check_slide(slide, title, code, skipped, content_types = [ ], contents = [ ], strip = true, &checks)
+  def check_slide(slide, title, code, skipped, content_types = [], contents = [], strip = true, &checks)
     assert_equal(title, slide.title)
     assert_equal(code, slide.contains_code?)
     assert_equal(skipped, slide.skip)
-    content_types.each_with_index { |e, i| assert_kind_of(e, slide.elements[i])  }
+    content_types.each_with_index { |e, i| assert_kind_of(e, slide.elements[i]) }
     contents.each_with_index do |e, i|
       if strip
         assert_equal(e, slide.elements[i].to_s.strip)
@@ -643,7 +638,7 @@ end
         assert_equal(e, slide.elements[i].to_s)
       end
     end
-    checks.call(slide.elements)  unless checks.nil?
+    yield(slide.elements) unless checks.nil?
   end
 
   ##

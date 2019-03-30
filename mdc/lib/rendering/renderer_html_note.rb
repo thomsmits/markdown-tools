@@ -1,17 +1,13 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'renderer_html_plain'
 require_relative '../messages'
 
 module Rendering
-
   ##
   # Renderer to HTML for plain (book) like output
   class RendererHTMLNote < RendererHTMLPlain
-
     attr_accessor :tags, :date, :topic
 
-    STYLE = %q|
+    STYLE = '
         <style>
         body {
             background-color: #ffffff;
@@ -431,135 +427,135 @@ module Rendering
               </style>
       </head>
       <body>
-      |
+      '.freeze
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
 
-        chapter_start: erb(
-            %q|
-             <section id='<%= id %>' class='chapter'>
-             <div class='infoline'>
-             <% unless topic.nil? %>
-               <a class='topic' href='index.html'><span class='topic'><%= topic %></span></a>
-             <% end %>
-             <span class='tags'>
-             <% for tag in @tags %>
-               <span class='tag'><%= tag %></span>
-             <% end %>
-             </span>
-             <% unless date.nil? %>
-               <span class='date'><%= @date.strftime('%Y-%m-%d') %></span>
-             <% end %>
-             </div>
-             <h1 class='trenner'><%= title %></h1>
-            |
-        ),
+      chapter_start: erb(
+        "
+           <section id='<%= id %>' class='chapter'>
+           <div class='infoline'>
+           <% unless topic.nil? %>
+             <a class='topic' href='index.html'><span class='topic'><%= topic %></span></a>
+           <% end %>
+           <span class='tags'>
+           <% for tag in @tags %>
+             <span class='tag'><%= tag %></span>
+           <% end %>
+           </span>
+           <% unless date.nil? %>
+             <span class='date'><%= @date.strftime('%Y-%m-%d') %></span>
+           <% end %>
+           </div>
+           <h1 class='trenner'><%= title %></h1>
+          "
+      ),
 
-        chapter_end: erb(
-            %q|
-            </section>
-            |
-        ),
+      chapter_end: erb(
+        '
+        </section>
+        '
+      ),
 
-        code_start: erb(
-            %q|<pre><code class='<%= language %>'>|
-        ),
+      code_start: erb(
+        "<pre><code class='<%= language %>'>"
+      ),
 
-        toc_start: erb(
-            %q||
-        ),
+      toc_start: erb(
+        ''
+      ),
 
-        toc_entry: erb(
-            %q||
-        ),
+      toc_entry: erb(
+        ''
+      ),
 
-        toc_end: erb(
-            %q||
-        ),
+      toc_end: erb(
+        ''
+      ),
 
-        toc_sub_entries_start: erb(
-            %q||
-        ),
+      toc_sub_entries_start: erb(
+        ''
+      ),
 
-        toc_sub_entry: erb(
-            %q||
-        ),
+      toc_sub_entry: erb(
+        ''
+      ),
 
-        toc_sub_entries_end: erb(
-            %q||
-        ),
+      toc_sub_entries_end: erb(
+        ''
+      ),
 
-        presentation_start: erb(
-            %q|
-            <!DOCTYPE html>
-            <html lang='de'>
-            <head>
-              <meta charset='utf-8'>
-              <title><%= title1 %>: <%= section_name %></title>
-              <meta name='author' content='<%= author %>'>
-              | + STYLE + %q|
-            </head>
-            <body>
-            |
-        ),
+      presentation_start: erb(
+        "
+        <!DOCTYPE html>
+        <html lang='de'>
+        <head>
+          <meta charset='utf-8'>
+          <title><%= title1 %>: <%= section_name %></title>
+          <meta name='author' content='<%= author %>'>
+          " + STYLE + '
+        </head>
+        <body>
+        '
+      ),
 
-        presentation_end: erb(
-            %q|
-            </div>
-            </body>
-            </html>
-            |
-        ),
+      presentation_end: erb(
+        '
+        </div>
+        </body>
+        </html>
+        '
+      ),
 
-        index_folder_entry: erb(
-            %q|
-             <li>
-             <a class='doclink' href='<%= name %>/index.html'>
-             <div class='folder'>
-             <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42mNgGFRgyZIlWkuBYNmyZf+JwAcwDAAKXl2+fHkgMZYB7XmIzYAP6DahycPFRg0YUgYA04U3kD4DSh9kGYANDw4DgPRGbAY8IcKAz8h6ACMeaV1Br1iuAAAAAElFTkSuQmCC'>
-             &nbsp;<span title='<%= description %>' class='folder_title'><%= title %> (<%= count %>)</span>&nbsp;&nbsp;
-             <%= print_tags(tags) %>
-             </div></li>
-            |
-        ),
+      index_folder_entry: erb(
+        "
+         <li>
+         <a class='doclink' href='<%= name %>/index.html'>
+         <div class='folder'>
+         <img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVElEQVR42mNgGFRgyZIlWkuBYNmyZf+JwAcwDAAKXl2+fHkgMZYB7XmIzYAP6DahycPFRg0YUgYA04U3kD4DSh9kGYANDw4DgPRGbAY8IcKAz8h6ACMeaV1Br1iuAAAAAElFTkSuQmCC'>
+         &nbsp;<span title='<%= description %>' class='folder_title'><%= title %> (<%= count %>)</span>&nbsp;&nbsp;
+         <%= print_tags(tags) %>
+         </div></li>
+        "
+      ),
 
-        index_file_entry: erb(
-            %q|
-              <li>
-              <a class='doclink' href='<%= name %>.html'>
-              <div class='file'><span class='title'><%= title %></span>&nbsp;&nbsp;
-              <%= print_tags(tags) %>
-              <br>
-              <span class='date'><%= date.strftime('%d.%m.%Y') %></span>
-              <span class='digest'><%= digest %></span></a><br>
-              </div></li>
-           |
-        ),
+      index_file_entry: erb(
+        "
+          <li>
+          <a class='doclink' href='<%= name %>.html'>
+          <div class='file'><span class='title'><%= title %></span>&nbsp;&nbsp;
+          <%= print_tags(tags) %>
+          <br>
+          <span class='date'><%= date.strftime('%d.%m.%Y') %></span>
+          <span class='digest'><%= digest %></span></a><br>
+          </div></li>
+       "
+      ),
 
-        index_start: erb(
-            %q|
-             <!DOCTYPE html>
-             <html>
-             <head>
-             <meta charset='utf-8'>
-             | + STYLE + %q|
-             </head>
-             <body class='files'>
-             <div class='filesheader'><a href='../index.html'><h1 class='files'><%= title %></h1></a>
-             <div class='folderinfo'><%= description %></div>
-             </div>
-             <ul class='files'>
-            |
-        ),
+      index_start: erb(
+        "
+         <!DOCTYPE html>
+         <html>
+         <head>
+         <meta charset='utf-8'>
+         " + STYLE + "
+         </head>
+         <body class='files'>
+         <div class='filesheader'><a href='../index.html'><h1 class='files'><%= title %></h1></a>
+         <div class='folderinfo'><%= description %></div>
+         </div>
+         <ul class='files'>
+        "
+      ),
 
-        index_end: erb(
-            %q|
-             </ul>
-            </html>
-            |
-        ),
-    }
+      index_end: erb(
+        '
+         </ul>
+        </html>
+        '
+      )
+    }.freeze
 
     ##
     # Initialize the renderer
@@ -572,7 +568,9 @@ module Rendering
       super(io, language, result_dir, image_dir, temp_dir)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
-      @tags, @date, @topic = tags, date, topic
+      @tags = tags
+      @date = date
+      @topic = topic
     end
 
     ##
@@ -593,10 +591,10 @@ module Rendering
     ##
     # Start of slide
     # @param [String] title the title of the slide
-    # @param [String] number the number of the slide
+    # @param [String] _number the number of the slide
     # @param [String] id the unique id of the slide (for references)
-    # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
+    # @param [Boolean] _contains_code indicates whether the slide contains code fragments
+    def slide_start(title, _number, id, _contains_code)
       escaped_title = inline_code(title)
 
       @io << "<section id='#{id}' class='slide'>" << nl
@@ -625,7 +623,7 @@ module Rendering
       count = 0
       tags.each do |t|
         result << "<span class='tag'>#{t}</span>"
-        count = count + 1
+        count += 1
         break if count > 10
       end
 

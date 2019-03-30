@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'container'
 
 module Domain
-
   ##
   # Comment area of a slide (used for speaker notes or additional explanations)
   class Comment < Container
-
     attr_accessor :spacing
 
     ##
@@ -19,7 +15,7 @@ module Domain
 
     ##
     # Render contents
-    # @param [Renderer] renderer Rendering class used for generation
+    # @param [Renderer] renderer renderer used for generation
     def >>(renderer)
       renderer.comment_start(spacing)
       elements.each { |e| e >> renderer }

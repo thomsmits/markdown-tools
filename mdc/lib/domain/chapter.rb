@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 
 module Domain
-
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
-
     attr_accessor :title, :id, :slides
 
     ##
@@ -15,7 +11,9 @@ module Domain
     # @param [String] title title of the chapter
     # @param [String] id chapter id for references
     def initialize(title, id = '')
-      @title, @id, @slides = title, id, [ ]
+      @title = title
+      @id = id
+      @slides = []
     end
 
     # Add a slide to the presentation
@@ -29,7 +27,7 @@ module Domain
     ##
     # Return string representation
     def to_s
-      "#{@title}"
+      @title.to_s
     end
 
     ##
@@ -49,10 +47,9 @@ module Domain
 
     ##
     # Render contents
-    # @param [Renderer] renderer Rendering class used for generation
+    # @param [Renderer] renderer renderer used for generation
     def >>(renderer)
-
-      page_number = @slides.length > 0 ? @slides[0].number - 1 : 0
+      page_number = !@slides.empty? ? @slides[0].number - 1 : 0
 
       renderer.chapter_start(title, page_number, id)
       @slides.each { |slide| slide >> renderer }

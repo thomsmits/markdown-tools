@@ -1,76 +1,72 @@
-# -*- coding: utf-8 -*-
-
 require 'erb'
 
 require_relative 'renderer_latex'
 require_relative '../messages'
 
 module Rendering
-
   ##
   # Render the presentation into a latex file for further processing
   # using LaTeX
   class RendererLatexExam < RendererLatex
-
     ## ERB templates to be used by the renderer
     TEMPLATES = {
-        presentation_start: erb(
-            %q||
-        ),
+      presentation_start: erb(
+        ''
+      ),
 
-        presentation_end: erb(
-            %q||
-        ),
+      presentation_end: erb(
+        ''
+      ),
 
-        chapter_start: erb(
-            %q||
-        ),
+      chapter_start: erb(
+        ''
+      ),
 
-        chapter_end: erb(
-            %q||
-        ),
+      chapter_end: erb(
+        ''
+      ),
 
-        slide_start: erb(
-            %q||
-        ),
+      slide_start: erb(
+        ''
+      ),
 
-        slide_end: erb(
-            %q||
-        ),
+      slide_end: erb(
+        ''
+      ),
 
-        comment_start: erb(
-            %q|
-            \begin{solution}[<%= spacing %>mm]
-            |
-        ),
+      comment_start: erb(
+        %q(
+        \begin{solution}[<%= spacing %>mm]
+        )
+      ),
 
-        comment_end: erb(
-            %q|
-            \end{solution}
-            |
-        ),
+      comment_end: erb(
+        %q(
+        \end{solution}
+        )
+      ),
 
-        text: erb(
-            %q|
-            <%= inline_code(content) %>
-            |
-        ),
+      text: erb(
+        '
+        <%= inline_code(content) %>
+        '
+      ),
 
-        code_start: erb(
-            %q|
-            \vspace{5mm}
-            \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\small\ttfamily]|
-        ),
+      code_start: erb(
+        %q(
+        \vspace{5mm}
+        \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\small\ttfamily])
+      ),
 
-        code: erb(
-            %q|<%= content %>|
-        ),
+      code: erb(
+        '<%= content %>'
+      ),
 
-        code_end: erb(
-            %q|\end{lstlisting}
-            |
-        ),
-    }
+      code_end: erb(
+        %q(\end{lstlisting}
+        )
+      )
+    }.freeze
 
     ##
     # Initialize the renderer
@@ -106,21 +102,18 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      unless title == @last_title
-        super
-      end
+      super unless title == @last_title
     end
 
     ##
     # Render an image
     # @param [String] location path to image
-    # @param [Array] formats available file formats
-    # @param [String] alt alt text
+    # @param [Array] _formats available file formats
+    # @param [String] _alt alt text
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
-
+    def image(location, _formats, _alt, title, width_slide, width_plain, source = nil)
       width = width_plain || width_slide
 
       # Skip images with width 0
@@ -137,7 +130,7 @@ module Rendering
     # @param [String] width_plain width of the diagram on plain documents
     def uml(picture_name, contents, width_slide, width_plain)
       new_width = calculate_width(width_plain)
-      formats = %w(pdf eps)
+      formats = %w[pdf eps]
       img_path = super(picture_name, contents, width_slide, width_plain, 'pdf')
       image(img_path, formats, '', '', new_width, new_width)
     end

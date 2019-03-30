@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 require_relative 'line_element'
 
 module Domain
-
   ##
   # Heading
   class Heading < LineElement
-
     attr_reader :level, :title
 
     ##
@@ -17,12 +13,13 @@ module Domain
     # @param [String] title title of the heading
     def initialize(level, title)
       super()
-      @level, @title = level, title
+      @level = level
+      @title = title
     end
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
+    # @param [Rendering::Renderer] renderer renderer to be used
     def >>(renderer)
       renderer.heading(@level, @title)
     end

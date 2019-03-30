@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require 'date'
 require 'fileutils'
 
@@ -12,7 +10,6 @@ require_relative '../lib/domain/notes'
 ##
 # Generate a set of html files from a set of markdown notes
 class NotesHandling
-
   ##
   # Parse the given directory and generate html structure
   # @param [String] source the source directory
@@ -31,11 +28,11 @@ class NotesHandling
   def strings_to_hash(comments)
     hash = {}
     comments.each do |c|
-      if /(.*):(.*)/ === c
-        name = $1.strip
-        value = $2.strip
-        hash[name] = value
-      end
+      next unless /(.*):(.*)/ =~ c
+
+      name = Regexp.last_match(1).strip
+      value = Regexp.last_match(2).strip
+      hash[name] = value
     end
     hash
   end
@@ -44,7 +41,6 @@ class NotesHandling
   # @param [Folder] folder
   # @param [String] target directory for the result files
   def read_files_and_convert(folder, target)
-
     parser = Parsing::Parser.new(0)
 
     folder.files.each do |file|
@@ -57,7 +53,10 @@ class NotesHandling
 
       puts "Compiling #{src_path}"
 
-      presentation = Domain::Presentation.new('', '', '', '', '', '', '', '', '', false)
+      presentation = Domain::Presentation.new('', '', '',
+                                              '', '',
+                                              '', '', '',
+                                              '', '', false, nil)
       parser.parse(src_path, '', presentation)
       presentation.title1 = presentation.chapters[0].title
       file.title = presentation.title1
@@ -66,11 +65,13 @@ class NotesHandling
 
       metadata = strings_to_hash(presentation.comments)
 
-      file.date = Date.parse(metadata['date'])  unless metadata['date'].nil?
-      file.tags = metadata['tags'].split(/, ?/)  unless metadata['tags'].nil?
+      file.date = Date.parse(metadata['date']) unless metadata['date'].nil?
+      file.tags = metadata['tags'].split(/, ?/) unless metadata['tags'].nil?
 
-      io = File.new(dest_path, 'w', :encoding => 'UTF-8')
-      renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', file.tags, file.date, folder.title)
+      io = File.new(dest_path, 'w', encoding: 'UTF-8')
+      renderer = Rendering::RendererHTMLNote.new(
+          io, '', '', '',
+          '', file.tags, file.date, folder.title)
       presentation >> renderer
       io.close
     end
@@ -81,32 +82,30 @@ class NotesHandling
     make_index(dest_dir, folder)
   end
 
-
   def make_index(dest_dir, folder)
+    return if folder.folders.count.zero? && folder.files.count.zero?
 
-    return  if folder.folders.count == 0 && folder.files.count == 0
-
-    Dir.mkdir(dest_dir)  unless Dir.exist?(dest_dir)
+    Dir.mkdir(dest_dir) unless Dir.exist?(dest_dir)
     io = File.new(dest_dir + '/' + 'index.html', 'w')
-    renderer = Rendering::RendererHTMLNote.new(io, '', '', '', '', [], [], folder.title)
+    renderer = Rendering::RendererHTMLNote.new(io, '', '', '',
+                                               '', [], [], folder.title)
     folder >> renderer
     io.close
   end
 
   ##
-  # Recursively parse the given folder and return a tree containing all found data
+  # Recursively parse the given folder and return a
+  # tree containing all found data
   # @param [String] directory of the root folder of the notes storage
   # @param [String] folder the folder to add data to
   # @return [Folder] root folder
   def parse_folder(directory, folder, first = false)
-
     # Unify to Unix file separators
-    directory.gsub!('\\', '/')
+    directory.tr!('\\', '/')
 
     # Get last part of the path
-    directory =~ %r!.*/(.*?)$!
-    folder.name = first ? '' : $1
-
+    directory =~ %r{.*/(.*?)$}
+    folder.name = first ? '' : Regexp.last_match(1)
 
     # Check for properties
     if File.exist?("#{directory}/folder.properties")
@@ -120,12 +119,11 @@ class NotesHandling
 
     # Search for files in folder
     Dir.foreach(directory) do |d|
-
       next if d.end_with?('.')
 
       path = "#{directory}/#{d}"
 
-      if File.file?(path) && (d.end_with?('.txt') || d.end_with?('.md'))
+      if File.file?(path) && d.end_with?('.txt', '.md')
         entry = Notes::FolderEntry.new(d)
         folder << entry
       elsif File.directory?(path)
@@ -137,5 +135,6 @@ class NotesHandling
   end
 end
 
-NotesHandling::main(ARGV[0].dup, ARGV[1].dup)
-#NotesHandling::main('/Users/thomas/Dropbox/Notes/', '/Users/thomas/Dropbox/Notes_Html/')
+NotesHandling.main(ARGV[0].dup, ARGV[1].dup)
+# NotesHandling::main('/Users/thomas/Dropbox/Notes/',
+# '/Users/thomas/Dropbox/Notes_Html/')

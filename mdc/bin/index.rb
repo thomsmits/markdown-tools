@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require 'stringio'
 
 require_relative '../lib/parsing/properties_reader'
@@ -9,11 +7,9 @@ require_relative '../lib/messages'
 ##
 # Generate an overview file for the generated files
 class Index
-
   ##
   # One entry for a generated file
   class Entry
-
     attr_accessor :chapter_number, :chapter_name, :slide_file, :plain_file
 
     ##
@@ -23,8 +19,10 @@ class Index
     # @param [String] slide_file file containing the slides
     # @param [String] plain_file file containing the plain data
     def initialize(chapter_number, chapter_name, slide_file, plain_file)
-      @chapter_number, @chapter_name, @slide_file, @plain_file =
-          chapter_number, chapter_name, slide_file, plain_file
+      @chapter_number = chapter_number
+      @chapter_name = chapter_name
+      @slide_file = slide_file
+      @plain_file = plain_file
     end
 
     ##
@@ -46,8 +44,7 @@ class Index
   # Main method
   # @param [String] directory directory containing the source files
   def self.main(directory)
-
-    directory = '.'  if directory.nil?
+    directory = '.' if directory.nil?
 
     dir = Dir.new(directory)
     main_prop_file = directory + '/metadata.properties'
@@ -61,14 +58,13 @@ class Index
     copyright        = main_props['copyright']
     description      = main_props['description']
 
-    dirs = [ ]
+    dirs = []
 
-    dir.each { |f| dirs << f  if /[0-9][0-9]_.*/ === f }
+    dir.each { |f| dirs << f if /[0-9][0-9]_.*/ =~ f }
 
-    entries = [ ]
+    entries = []
 
     dirs.each do |f|
-
       prop_file = "#{directory}/#{f}/metadata.properties"
 
       next unless File.exist?(prop_file)
@@ -105,4 +101,4 @@ class Index
   end
 end
 
-Index::main(ARGV[0])
+Index.main(ARGV[0])

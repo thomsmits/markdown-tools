@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 require_relative 'line_element'
 
 module Domain
-
   ##
   # A vertical space
   class VerticalSpace < LineElement
-
     ##
     # Create a new object
     def initialize

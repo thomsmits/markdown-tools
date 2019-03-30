@@ -1,10 +1,6 @@
-# -*- coding: utf-8 -*-
-
 module Parsing
-
   ## Helper class to read and parse Java like properties files
   class PropertiesReader
-
     ##
     # Create a new instance
     # @param [String|IO] file name of properties file
@@ -13,11 +9,11 @@ module Parsing
     def initialize(file, separator = '=', defaults_file = nil)
       @result = read_file_into_array(file, separator)
 
-      if defaults_file.nil?
-        @defaults = {}
-      else
-        @defaults = read_file_into_array(defaults_file, separator)
-      end
+      @defaults = if defaults_file.nil?
+                    {}
+                  else
+                    read_file_into_array(defaults_file, separator)
+                  end
     end
 
     ##
@@ -25,12 +21,11 @@ module Parsing
     # @param [String|IO] file name of properties file
     # @param [String] separator the separation character
     def read_file_into_array(file, separator)
-
-      if file.respond_to?(:readlines)
-        lines = file.readlines("\n")
-      else
-        lines = File.readlines(file, "\n", :encoding => 'UTF-8')
-      end
+      lines = if file.respond_to?(:readlines)
+                file.readlines("\n")
+              else
+                File.readlines(file, "\n", encoding: 'UTF-8')
+              end
 
       result = {}
 
@@ -38,7 +33,7 @@ module Parsing
 
       lines.each do |line|
         # ignore comments
-        next  if /^[ ]*#.*/ === line
+        next if /^[ ]*#.*/ =~ line
 
         # Add entry to the hash
         regex.match(line) { |m| result[m[1].strip] = m[2].strip }
@@ -59,7 +54,7 @@ module Parsing
     # Catch missing methods to allow simple retrieval of
     # properties using a method like syntax.
     # @param [String] name Name of the method
-    def method_missing(name, *args, &block)
+    def method_missing(name, *_args)
       key = name.to_s
       self[key]
     end
@@ -71,4 +66,3 @@ module Parsing
     end
   end
 end
-

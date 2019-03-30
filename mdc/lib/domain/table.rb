@@ -1,16 +1,11 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Table
   class Table < BlockElement
-
     ## Header of the table
     class TableHeader
-
       attr_accessor :name, :alignment, :separator
 
       ##
@@ -18,7 +13,8 @@ module Domain
       # @param [String] name name of the header
       # @param [Fixnum] alignment alignment of the header cell
       def initialize(name, alignment = Constants::LEFT)
-        @name, @alignment = name, alignment
+        @name = name
+        @alignment = alignment
       end
     end
 
@@ -28,8 +24,8 @@ module Domain
     # Create a new table
     def initialize
       super('')
-      @headers = [ ]
-      @rows = [ ]
+      @headers = []
+      @rows = []
     end
 
     ##
@@ -57,12 +53,11 @@ module Domain
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def >>(renderer)
-
-      alignment = [ ]
-      titles = [ ]
+      alignment = []
+      titles = []
       @headers.each do |h|
         alignment << h.alignment
-        titles  << h.name
+        titles << h.name
       end
 
       renderer.table_start(titles, alignment)

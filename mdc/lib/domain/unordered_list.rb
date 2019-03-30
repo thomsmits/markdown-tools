@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Unordered list
   class UnorderedList < BlockElement
-
     attr_accessor :entries, :parent
 
     ##
@@ -15,7 +11,7 @@ module Domain
     def initialize
       super('')
       @parent = nil
-      @entries = [ ]
+      @entries = []
     end
 
     ##
@@ -30,7 +26,7 @@ module Domain
     # Append a line to the list
     # @param [String] line the line to be added
     def <<(line)
-      self.add(UnorderedListItem.new(line))
+      add(UnorderedListItem.new(line))
     end
 
     ##
@@ -47,7 +43,7 @@ module Domain
     # @return [String] a digest of the slide
     def digest
       digest = ''
-      @entries.each { |entry| digest << entry.digest << ' '}
+      @entries.each { |entry| digest << entry.digest << ' ' }
       digest
     end
   end

@@ -1,17 +1,10 @@
-# -*- coding: utf-8 -*-
-
-
 module Parsing
-
   ##
   # State of the parser
   class ParserState
-
-    public
-
-    attr_accessor :state, :line_counter, :comment_mode, :slide, \
-            :chapter, :language, :current_list, :slide_counter, :presentation, \
-            :file_name, :chapter_counter
+    attr_accessor :state, :line_counter, :comment_mode, :slide,
+                  :chapter, :language, :current_list, :slide_counter,
+                  :presentation, :file_name, :chapter_counter
 
     ##
     # Create a new object
@@ -38,11 +31,11 @@ module Parsing
     # to this class. To avoid this, the methods are created using the +missing_method+
     # method, which allows intercepting calls to non-existing methods.
     # @param [String] name Name of the method
-    def method_missing(name, *args, &block)
+    def method_missing(name, *_args)
       state = name.to_s.upcase.gsub(/[?!]/, '')
       symbol = state.to_sym
 
-      raise "Unknown Method #{name}"  unless @possible_states.include?(symbol)
+      raise "Unknown Method #{name}" unless @possible_states.include?(symbol)
 
       if name.to_s.end_with?('!')
         @state = symbol

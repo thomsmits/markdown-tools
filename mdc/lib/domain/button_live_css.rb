@@ -1,11 +1,8 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 require_relative 'button'
 
 module Domain
-
-    ##
+  ##
   # Link CSS to output
   class ButtonLiveCSS < Button
     ## Create a new button
@@ -18,7 +15,7 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
+    # @param [Rendering::Renderer] renderer renderer to be used
     def >>(renderer)
       renderer.live_css(@line_id, @fragment)
     end

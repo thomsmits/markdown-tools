@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require 'stringio'
 
 require_relative '../lib/parsing/properties_reader'
@@ -10,7 +8,6 @@ require_relative '../lib/rendering/renderer_latex_exam'
 ##
 # Create TeX snippets to be used in an exam from Markdown files
 class Exam
-
   ##
   # Convert the given file from the source to the target directory
   #
@@ -19,12 +16,11 @@ class Exam
   # @param file_name String the file to be converted
   # @param language String the default programming language
   def self.convert(src, dest, file_name, language)
-
     parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
 
     presentation = Domain::Presentation.new('DE', '', '', '', '',
-                                    '', '', language, '', '', false, nil)
-
+                                            '', '', language, '', '',
+                                            false, nil)
 
     lines = File.readlines(src + '/' + file_name, "\n", encoding: 'UTF-8')
     lines.map! { |l| l.gsub('# ', '## ') }
@@ -32,7 +28,6 @@ class Exam
     lines.map! { |l| l.gsub('#### ', '## ') }
 
     lines = ['# Start'] + lines
-
 
     Dir.chdir(src) do
       # Change working directory during parsing to ensure
@@ -43,7 +38,8 @@ class Exam
 
     target_name = file_name.gsub('.md', '.tex')
     io = File.open("#{dest}/#{target_name}", 'w')
-    renderer = Rendering::RendererLatexExam.new(io, language, dest, 'img', '../temp')
+    renderer = Rendering::RendererLatexExam.new(io, language, dest,
+                                                'img', '../temp')
     presentation >> renderer
     io.close
   end
@@ -54,7 +50,7 @@ class Exam
   # @param dest String directory to store results in
 
   def self.main(src, dest, language = '')
-    files = Dir.new(src).entries.reject { |f| !(/^.*\.md$/ =~ f) }
+    files = Dir.new(src).entries.select { |f| (/^.*\.md$/ =~ f) }
 
     files.each do |file|
       convert(src, dest, file, language)
@@ -62,4 +58,4 @@ class Exam
   end
 end
 
-Exam::main(ARGV[0], ARGV[1], ARGV[2])
+Exam.main(ARGV[0], ARGV[1], ARGV[2])

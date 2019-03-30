@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'element'
 require_relative '../constants'
 
 module Domain
-
   ##
   # Base class for all elements that span more than one line
   class BlockElement < Element
-
     attr_accessor :content
 
     ##

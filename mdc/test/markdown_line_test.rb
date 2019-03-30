@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require 'minitest/autorun'
 require_relative '../lib/parsing/markdown_line'
 
 ##
 # Test class for the MarkdownLine class
 class MarkdownLineTest < Minitest::Test
-
   ##
   # Create a line
   # @param [String] contents The contents of the created line
@@ -344,8 +341,8 @@ class MarkdownLineTest < Minitest::Test
     assert(line('@startuml[90%][20%]').uml_start?)
     assert(line('@startuml[20%]').uml_start?)
 
-    assert_equal(%w(90% 90%), line('@startuml[90%]').uml_start)
-    assert_equal(%w(90% 20%), line('@startuml[90%][20%]').uml_start)
+    assert_equal(%w[90% 90%], line('@startuml[90%]').uml_start)
+    assert_equal(%w[90% 20%], line('@startuml[90%][20%]').uml_start)
 
     assert(line('@enduml').uml_end?)
   end
@@ -362,44 +359,44 @@ class MarkdownLineTest < Minitest::Test
     assert(!line('!INCLUDESRC[4] path/to/file').code_include?)
     assert(!line('!INCLUDESRC path/to/file').code_include?)
 
-    assert_equal("path/to/file", line('!INCLUDESRC[4] "path/to/file"').code_include[0])
+    assert_equal('path/to/file', line('!INCLUDESRC[4] "path/to/file"').code_include[0])
     assert_equal(4, line('!INCLUDESRC[4] "path/to/file"').code_include[1])
-    assert_equal("path/to/file", line('!INCLUDESRC "path/to/file"').code_include[0])
-    assert_equal("path/to/file", line('!INCLUDESRC "path/to/file" Java').code_include[0])
+    assert_equal('path/to/file', line('!INCLUDESRC "path/to/file"').code_include[0])
+    assert_equal('path/to/file', line('!INCLUDESRC "path/to/file" Java').code_include[0])
     assert_equal(0, line('!INCLUDESRC "path/to/file" Java').code_include[1])
-    assert_equal("Java", line('!INCLUDESRC "path/to/file" Java').code_include[2])
-    assert_equal("path/to/file", line('!INCLUDESRC[4] "path/to/file" Java').code_include[0])
+    assert_equal('Java', line('!INCLUDESRC "path/to/file" Java').code_include[2])
+    assert_equal('path/to/file', line('!INCLUDESRC[4] "path/to/file" Java').code_include[0])
     assert_equal(4, line('!INCLUDESRC[4] "path/to/file" Java').code_include[1])
-    assert_equal("Java", line('!INCLUDESRC[4] "path/to/file" Java').code_include[2])
+    assert_equal('Java', line('!INCLUDESRC[4] "path/to/file" Java').code_include[2])
   end
 
   ##
   # Multiple choice questions
   def test_multiple_choice
-    assert(line("[ ] Frage 1").multiple_choice?)
-    assert(line("[X] Frage 1").multiple_choice?)
-    assert(line("[x] Frage 1").multiple_choice?)
-    assert(line("[*] Frage 1").multiple_choice?)
+    assert(line('[ ] Frage 1').multiple_choice?)
+    assert(line('[X] Frage 1').multiple_choice?)
+    assert(line('[x] Frage 1').multiple_choice?)
+    assert(line('[*] Frage 1').multiple_choice?)
 
-    assert_equal("Frage 1", line("[ ] Frage 1").multiple_choice[2])
-    assert_equal("Frage 1", line("[X] Frage 1").multiple_choice[2])
-    assert_equal("Frage 1", line("[x] Frage 1").multiple_choice[2])
-    assert_equal("Frage 1", line("[*] Frage 1").multiple_choice[2])
+    assert_equal('Frage 1', line('[ ] Frage 1').multiple_choice[2])
+    assert_equal('Frage 1', line('[X] Frage 1').multiple_choice[2])
+    assert_equal('Frage 1', line('[x] Frage 1').multiple_choice[2])
+    assert_equal('Frage 1', line('[*] Frage 1').multiple_choice[2])
 
-    assert_equal(false, line("[ ] Frage 1").multiple_choice[1])
-    assert_equal(false, line("[X] Frage 1").multiple_choice[1])
-    assert_equal(false, line("[x] Frage 1").multiple_choice[1])
-    assert_equal(false, line("[*] Frage 1").multiple_choice[1])
+    assert_equal(false, line('[ ] Frage 1').multiple_choice[1])
+    assert_equal(false, line('[X] Frage 1').multiple_choice[1])
+    assert_equal(false, line('[x] Frage 1').multiple_choice[1])
+    assert_equal(false, line('[*] Frage 1').multiple_choice[1])
 
-    assert_equal(true, line("[ ]. Frage 1").multiple_choice[1])
-    assert_equal(true, line("[X]. Frage 1").multiple_choice[1])
-    assert_equal(true, line("[x]. Frage 1").multiple_choice[1])
-    assert_equal(true, line("[*]. Frage 1").multiple_choice[1])
+    assert_equal(true, line('[ ]. Frage 1').multiple_choice[1])
+    assert_equal(true, line('[X]. Frage 1').multiple_choice[1])
+    assert_equal(true, line('[x]. Frage 1').multiple_choice[1])
+    assert_equal(true, line('[*]. Frage 1').multiple_choice[1])
 
-    assert_equal(false, line("[ ] Frage 1").multiple_choice[0])
-    assert_equal(true, line("[X] Frage 1").multiple_choice[0])
-    assert_equal(true, line("[x] Frage 1").multiple_choice[0])
-    assert_equal(true, line("[*] Frage 1").multiple_choice[0])
+    assert_equal(false, line('[ ] Frage 1').multiple_choice[0])
+    assert_equal(true, line('[X] Frage 1').multiple_choice[0])
+    assert_equal(true, line('[x] Frage 1').multiple_choice[0])
+    assert_equal(true, line('[*] Frage 1').multiple_choice[0])
   end
 
   ##

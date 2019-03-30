@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Equation
   class Equation < BlockElement

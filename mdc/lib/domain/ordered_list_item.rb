@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'unordered_list'
 
 module Domain
-
   ##
   # Item of an ordered list
   class OrderedListItem < BlockElement
-
     attr_accessor :parent
     render_method :ol_item
 

@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'unordered_list'
 
 module Domain
-
   ##
   # Ordered list
   class OrderedList < UnorderedList
-
     attr_accessor :start_number
 
     ##
@@ -22,7 +18,7 @@ module Domain
     # Append a line to the list
     # @param [String] line the line to be added
     def <<(line)
-      self.add(OrderedListItem.new(line))
+      add(OrderedListItem.new(line))
     end
 
     ##

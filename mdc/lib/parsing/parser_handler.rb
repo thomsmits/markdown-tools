@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 require_relative '../../lib/domain/chapter'
 require_relative '../../lib/domain/slide'
 require_relative '../../lib/domain/comment'
@@ -42,15 +40,13 @@ require_relative '../constants'
 require_relative 'line_matcher'
 
 module Parsing
-
   ##
   # Callback handler for the parser
   class ParserHandler
-
     ##
     # Create a new instance
-    # @param [Bool] test_mode indicates that the handler is tested and should not perform
-    #    any file access
+    # @param [Bool] test_mode indicates that the handler is
+    #    tested and should not perform any file access
     def initialize(test_mode = false)
       @test_mode = test_mode
     end
@@ -71,8 +67,8 @@ module Parsing
     ##
     # Beginning of a script
     # @param [ParserState] ps State of the parser
-    # @param [MarkdownLine] line Line of input
-    def script_start(ps, line)
+    # @param [MarkdownLine] _line Line of input
+    def script_start(ps, _line)
       slide(ps) << Domain::Script.new
       ps.script!
     end
@@ -80,8 +76,8 @@ module Parsing
     ##
     # Insert a vertical space into the document
     # @param [ParserState] ps State of the parser
-    # @param [MarkdownLine] line Line of input
-    def vertical_space?(ps, line)
+    # @param [MarkdownLine] _line Line of input
+    def vertical_space?(ps, _line)
       slide(ps) << Domain::VerticalSpace.new
     end
 
@@ -89,8 +85,8 @@ module Parsing
     # Handle the separator string "---" which indicates the beginning
     # of the comment section of the slide
     # @param [ParserState] ps State of the parser
-    # @param [MarkdownLine] line Line of input
-    def separator(ps, line)
+    # @param [MarkdownLine] _line Line of input
+    def separator(ps, _line)
       slide(ps) << Domain::Comment.new
       ps.comment_mode = true
     end
@@ -103,7 +99,7 @@ module Parsing
       ps.chapter_counter += 1
       id = "chap_#{ps.chapter_counter}"
       ps.slide_counter += 1
-      ps.chapter = Domain::Chapter.new(line.chapter_title.gsub('#', ''), id)
+      ps.chapter = Domain::Chapter.new(line.chapter_title.delete('#'), id)
       ps.presentation << ps.chapter
       ps.normal!
       ps.comment_mode = false
@@ -115,8 +111,8 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def slide_title(ps, line)
       skip = line.skipped_slide?
-      ps.slide_counter += 1  unless skip
-      title = line.slide_title.gsub('#', '').gsub('--skip--', '').strip
+      ps.slide_counter += 1 unless skip
+      title = line.slide_title.delete('#').gsub('--skip--', '').strip
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
                                    title, ps.slide_counter, skip)
       ps.chapter << ps.slide
@@ -133,7 +129,7 @@ module Parsing
     def code_include(ps, line)
       path, first_line, language_hint = line.code_include
 
-      source = File.readlines(path, "\n", :encoding => 'UTF-8')
+      source = File.readlines(path, "\n", encoding: 'UTF-8')
       caption = ''
       order = 0
 
@@ -141,7 +137,7 @@ module Parsing
 
       ## Add the included source to the slide
       source.each_with_index do |src_line, i|
-        element(ps) << src_line  if i + 1 >= first_line
+        element(ps) << src_line if i + 1 >= first_line
       end
     end
 
@@ -154,9 +150,7 @@ module Parsing
       caption = line.fenced_code_caption
       order = 0
 
-      if line.fenced_code_order?
-        order = line.fenced_code_order.to_i
-      end
+      order = line.fenced_code_order.to_i if line.fenced_code_order?
 
       slide(ps) << Domain::Source.new(language_hint, caption, order)
 
@@ -190,7 +184,6 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def ol2(ps, line)
-
       start_number = line.ol2_number.to_i
 
       if ps.ol3? || ps.ul3?
@@ -339,7 +332,6 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def table(ps, line)
-
       # remove quoted table separators
       cleaned_line = line.string.gsub('\|', '~~pipe~~')
 
@@ -348,23 +340,23 @@ module Parsing
 
         columns = cleaned_line.split('|')
 
-        columns.each { |e|
+        columns.each do |e|
           alignment =
-              case e
-                when /^[ ]{2,}.*[ ]{2,}$/
-                  Constants::CENTER
-                when /^[ ]{2,}.*[ ]$/
-                  Constants::RIGHT
-                when /^[ ]{1}.*[ ]+$/
-                  Constants::LEFT
-                when /^!$/
-                  Constants::SEPARATOR
-                else
-                  Constants::LEFT
-                end
+            case e
+            when /^[ ]{2,}.*[ ]{2,}$/
+              Constants::CENTER
+            when /^[ ]{2,}.*[ ]$/
+              Constants::RIGHT
+            when /^[ ]{1}.*[ ]+$/
+              Constants::LEFT
+            when /^!$/
+              Constants::SEPARATOR
+            else
+              Constants::LEFT
+              end
 
-          table.add_header(e.strip.gsub('~~pipe~~', '|') , alignment)  if e.strip.length > 0
-        }
+          table.add_header(e.strip.gsub('~~pipe~~', '|'), alignment) unless e.strip.empty?
+        end
 
         slide(ps) << table
         ps.table!
@@ -378,8 +370,8 @@ module Parsing
 
         # Split columns and add them to the table
         columns = cleaned_line.split('|')
-        row = [ ]
-        columns.each { |e| row << e.gsub('~~pipe~~', '|')  if e.strip.length > 0 }
+        row = []
+        columns.each { |e| row << e.gsub('~~pipe~~', '|') unless e.strip.empty? }
         element(ps).add_row(row)
       end
     end
@@ -387,8 +379,8 @@ module Parsing
     ##
     # Beginning of an equation "\["
     # @param [ParserState] ps State of the parser
-    # @param [MarkdownLine] line Line of input
-    def equation_start(ps, line)
+    # @param [MarkdownLine] _line Line of input
+    def equation_start(ps, _line)
       slide(ps) << Domain::Equation.new
       ps.equation!
     end
@@ -463,14 +455,11 @@ module Parsing
 
       if e.nil?
         if line.normal?
-          if line.text?
-            slide(ps) << Domain::Text.new(line.string)
-          end
+          slide(ps) << Domain::Text.new(line.string) if line.text?
           ps.normal!
         elsif line.empty?
-          if ps.ul1? || ps.ul2?
-            return
-          end
+          return if ps.ul1? || ps.ul2?
+
           ps.normal!
         else
           raise Exception, "#{ps.file_name} [#{ps.line_counter}], #{ps}, #{line}"
@@ -494,7 +483,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def code_with_stars(ps, line)
       str_line = line.string
-      str_line = str_line[4..-1]  if str_line.length > 4
+      str_line = str_line[4..-1] if str_line.length > 4
       element(ps) << str_line
     end
 
@@ -534,9 +523,7 @@ module Parsing
       ps.slide.current_element.spacing = line.space_comment.to_i
     end
 
-
     private
-
 
     ##
     # Generate the id for a slide
@@ -576,12 +563,12 @@ module Parsing
       basename = File.basename(file)
 
       if /.*?(\.[a-zA-Z]{3,4})/ =~ basename
-        basename.gsub!($1, '')
+        basename.gsub!(Regexp.last_match(1), '')
       end
 
       dirname = File.dirname(file)
 
-      [ dirname, basename ]
+      [dirname, basename]
     end
 
     ##
@@ -589,18 +576,18 @@ module Parsing
     # @param [String] file the name of the file (with or without extensions)
     # @return [Array] all found extensions for the name
     def get_extensions(file)
-      extensions = [ ]
+      extensions = []
 
       dirname, basename = get_path_and_name(file)
 
-      throw "File #{file} does not exist"  unless Dir.exist?(dirname)
+      throw "File #{file} does not exist" unless Dir.exist?(dirname)
 
       dir = Dir.new(dirname)
 
       dir.each do |f|
         if f.start_with?(basename)
           /.*?\.([a-zA-Z]{3,4})/ =~ f
-          extensions << $1
+          extensions << Regexp.last_match(1)
         end
       end
 
@@ -623,6 +610,5 @@ module Parsing
 
       license
     end
-
   end
 end

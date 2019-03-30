@@ -1,16 +1,15 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'chapter'
 require_relative 'toc'
 
 module Domain
-
   ##
   # Representation of the whole presentation
   class Presentation
-
-    attr_accessor :slide_language, :title1, :title2, :section_number, :section_name, :author, :copyright,
-                  :default_language, :chapters, :toc, :description, :term, :comments, :create_index, :bibliography
+    attr_accessor :slide_language, :title1, :title2, :section_number,
+                  :section_name, :author, :copyright,
+                  :default_language, :chapters, :toc,
+                  :description, :term, :comments, :create_index,
+                  :bibliography
 
     ##
     # Create a new presentation
@@ -27,17 +26,24 @@ module Domain
     # @param [Boolean] create_index Should the document contain an index at the end
     # @param [String] bibliography File with bibliography information
     #
-    def initialize(slide_language, title1, title2, section_number, section_name, copyright, author, default_language, description,
+    def initialize(slide_language, title1, title2, section_number, section_name,
+                   copyright, author, default_language, description,
                    term, create_index, bibliography)
       @slide_language = slide_language
-      @title1, @title2, @section_number, @section_name = title1, title2, section_number, section_name
-      @copyright, @author, @default_language = copyright, author, default_language
-      @description, @term = description, term
+      @title1 = title1
+      @title2 = title2
+      @section_number = section_number
+      @section_name = section_name
+      @copyright = copyright
+      @author = author
+      @default_language = default_language
+      @description = description
+      @term = term
       @create_index = create_index
       @bibliography = bibliography
 
-      @chapters = [ ]
-      @comments = [ ]
+      @chapters = []
+      @comments = []
       @toc = TOC.new
     end
 
@@ -55,12 +61,11 @@ module Domain
     # called after all slides and chapters have been added to the presentation
     def build_toc
       @chapters.each do |chapter|
-
         @toc.add(chapter.id, chapter.title)
 
-        chapter.each { |slide|
+        chapter.each do |slide|
           toc.add_sub_entry(chapter.id, slide.id, slide.title) unless slide.skip
-        }
+        end
       end
     end
 
@@ -71,9 +76,9 @@ module Domain
     def digest(length)
       digest = ''
       @chapters.each { |chapter| digest << chapter.digest }
-      digest.gsub!("\n", '')
-      digest.gsub!('_', '')
-      digest.gsub!('*', '')
+      digest.delete!("\n")
+      digest.delete!('_')
+      digest.delete!('*')
       digest.squeeze!(' ')
       digest[0...length]
     end
@@ -83,10 +88,16 @@ module Domain
     # @param [Rendering::Renderer] renderer to be used
     def >>(renderer)
       build_toc
-      renderer.presentation_start(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @description, @term, @bibliography)
+      renderer.presentation_start(@slide_language, @title1,
+        @title2, @section_number, @section_name,
+        @copyright, @author, @description, @term, @bibliography
+      )
       renderer.render_toc(@toc)
       @chapters.each { |chapter| chapter >> renderer }
-      renderer.presentation_end(@slide_language, @title1, @title2, @section_number, @section_name, @copyright, @author, @create_index, @bibliography)
+      renderer.presentation_end(@slide_language, @title1,
+        @title2, @section_number, @section_name,
+        @copyright, @author, @create_index, @bibliography
+      )
     end
   end
 end

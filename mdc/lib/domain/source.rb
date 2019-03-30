@@ -1,13 +1,9 @@
-# -*- coding: utf-8 -*-
-
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Source code
   class Source < BlockElement
-
     attr_accessor :language, :caption
 
     ##
