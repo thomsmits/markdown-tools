@@ -21,8 +21,26 @@ class ParserStateTest < Minitest::Test
     assert(!ps.state_2?)
     assert(ps.state_3?)
 
-    assert_raises(RuntimeError) { ps.state_4! }
-    assert_raises(RuntimeError) { ps.state_4? }
-    assert_raises(RuntimeError) { ps.statex }
+    assert_raises(NoMethodError) { ps.state_1 }
+    assert_raises(NoMethodError) { ps.state_2 }
+    assert_raises(NoMethodError) { ps.state_3 }
+    assert_raises(NoMethodError) { ps.state_4! }
+    assert_raises(NoMethodError) { ps.state_4? }
+    assert_raises(NoMethodError) { ps.statex }
+  end
+
+  # Test correct handling of missing methods
+  def test_method_missing
+    ps = Parsing::ParserState.new(nil, '', 1, :STATE_1, :STATE_2, :STATE_3)
+    assert(ps.respond_to? :state_1?)
+    assert(ps.respond_to? :state_2?)
+    assert(ps.respond_to? :state_3?)
+    assert(ps.respond_to? :state_1!)
+    assert(ps.respond_to? :state_2!)
+    assert(ps.respond_to? :state_3!)
+    assert(!(ps.respond_to? :state_1))
+    assert(!(ps.respond_to? :state_2))
+    assert(!(ps.respond_to? :state_3))
+    assert(!(ps.respond_to? :state_ex))
   end
 end

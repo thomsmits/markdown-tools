@@ -28,22 +28,35 @@ module Parsing
     ##
     # Catch missing methods. Due to the fact that the parser can have a large
     # amount of different states, it is cumbersome to add them all as methods
-    # to this class. To avoid this, the methods are created using the +missing_method+
-    # method, which allows intercepting calls to non-existing methods.
+    # to this class. To avoid this, the methods are created using the
+    # +missing_method+ method, which allows intercepting calls to non-existing
+    # methods.
     # @param [String] name Name of the method
     def method_missing(name, *_args)
       state = name.to_s.upcase.gsub(/[?!]/, '')
       symbol = state.to_sym
 
-      raise "Unknown Method #{name}" unless @possible_states.include?(symbol)
+      super unless @possible_states.include?(symbol)
 
       if name.to_s.end_with?('!')
         @state = symbol
       elsif name.to_s.end_with?('?')
         @state == symbol
       else
-        raise "Unknown Method #{name}"
+        super
       end
+    end
+
+    ##
+    # Allow for correct usage of the +respond_to?+ method
+    # by overriding +respond_to_missing?+
+    # @param [String] method name of the method
+    def respond_to_missing?(method, *)
+      return false if /[?!]$/ !~ method.to_s
+
+      state = method.to_s.upcase.gsub(/[?!]/, '')
+      symbol = state.to_sym
+      @possible_states.include?(symbol)
     end
 
     ##
