@@ -27,15 +27,11 @@ module Rendering
       ),
 
       ol_start: erb(
-        "
-        <ol start='<%= number %>'>
-        "
+        "<ol start='<%= number %>'>"
       ),
 
       ol_item: erb(
-        '
-        <li><%= inline_code(content) %>
-        '
+        '  <li><%= inline_code(content) %>'
       ),
 
       ol_end: erb(
@@ -45,21 +41,15 @@ module Rendering
       ),
 
       ul_start: erb(
-        '
-        <ul>
-        '
+        '<ul>'
       ),
 
       ul_item: erb(
-        '
-        <li><%= inline_code(content) %>
-        '
+        '  <li><%= inline_code(content) %>'
       ),
 
       ul_end: erb(
-        '
-        </ul>
-        '
+        '</ul>'
       ),
 
       quote: erb(
@@ -100,7 +90,7 @@ module Rendering
       ),
 
       code_start: erb(
-        "<pre><code class='<%= language %>' contenteditable>"
+        "<figure class='code'><%= caption_command %><pre><code class='<%= language %>' contenteditable>"
       ),
 
       code: erb(
@@ -108,7 +98,7 @@ module Rendering
       ),
 
       code_end: erb(
-        '</code></pre>'
+        '</code></pre></figure>'
       ),
 
       table_start: erb(
@@ -391,6 +381,21 @@ module Rendering
       end
 
       result
+    end
+
+    ##
+    # Start of a code fragment
+    # @param [String] language language of the code fragment
+    # @param [String] caption caption of the sourcecode
+    def code_start(language, caption)
+      if caption.nil?
+        caption_command = ''
+      else
+        replaced_caption = replace_inline_content(caption)
+        caption_command = "<figcaption>#{replaced_caption}</figcaption>"
+      end
+
+      @io << @templates[:code_start].result(binding).chomp
     end
 
     ##

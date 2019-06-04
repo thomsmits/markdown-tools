@@ -58,14 +58,18 @@ module Rendering
 
       comment_start: erb(
         "
-        <hr><div class='comment'>
+        <div class='comment'>
         "
       ),
 
       comment_end: erb(
         '
-        <hr></div>
+        </div>
         '
+      ),
+
+      code_start: erb(
+          "<figure class='code'><%= caption_command %><pre><code class='<%= language %>'>"
       ),
 
       image: erb(
@@ -85,8 +89,7 @@ module Rendering
 
       chapter_start: erb(
         "
-        <section id='<%= id %>' class='chapter'><h1 class='trenner'><%= title %></h1>
-        "
+        <section id='<%= id %>' class='chapter'><h1 class='trenner'><%= title %></h1>"
       ),
 
       chapter_end: erb(
