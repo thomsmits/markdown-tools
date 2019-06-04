@@ -97,7 +97,7 @@ module Rendering
 
       code_start: erb(
         %q(
-        \begin{lstblock}
+        \begin{lstblock}%
         {\setstretch{1.3}\small
         \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily])
       ),

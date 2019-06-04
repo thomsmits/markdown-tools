@@ -59,6 +59,10 @@ module Rendering
           \pagenumbering{roman}
           \dedication{\vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>}}
           %\publishers{Herausgeber}
+          <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
+          \label{<%= section_id %>}
+          \pdfbookmark[\contentsname]{<%= section_name %>}{<%= section_id %>}
+
           \maketitle
           \thispagestyle{empty}
           \newpage
