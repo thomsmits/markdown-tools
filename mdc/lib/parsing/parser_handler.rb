@@ -468,7 +468,8 @@ module Parsing
 
           ps.normal!
         else
-          raise Exception, "#{ps.file_name} [#{ps.line_counter}], #{ps}, #{line}"
+          raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' has a syntax error - " +
+                           "#{ps}, '#{line}'"
         end
       else
         slide(ps) << e
