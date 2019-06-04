@@ -115,6 +115,12 @@ module Parsing
       title = line.slide_title.delete('#').gsub('--skip--', '').strip
       ps.slide = Domain::Slide.new(slide_id(ps.slide_counter),
                                    title, ps.slide_counter, skip)
+
+      unless ps.chapter
+        raise "No chapter here to add '#{title}'. Maybe the " +
+              "#-Heading is missing at beginning of file '#{ps.file_name}'."
+      end
+
       ps.chapter << ps.slide
       ps.normal!
       ps.comment_mode = false
