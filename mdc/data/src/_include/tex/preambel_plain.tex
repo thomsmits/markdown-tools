@@ -1,5 +1,5 @@
 \documentclass[openany,DIV=13,paper=A4,a4paper,11pt,headings=small,headsepline=true,footsepline=false,twoside=off]{scrartcl}
-\usepackage{ifxetex} 
+\usepackage{ifxetex}
 
 % XeLaTeX
 \ifxetex
@@ -15,7 +15,7 @@
   %\usepackage{inconsolata}
   %\usepackage{DejaVuSansMono}
   %\usepackage{gillius}
-  \usepackage[scaled=1.0]{beramono}  
+  \usepackage[scaled=1.0]{beramono}
 \fi
 % PDFLaTeX
 
@@ -35,7 +35,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-%\usepackage{picinpar}             % 
+%\usepackage{picinpar}             %
 %\usepackage{booktabs}
 %\usepackage{xtab}
 %\usepackage{eurosym}
@@ -56,7 +56,7 @@
 
 \renewcommand{\dateseparator}{-}
 \yyyymmdddate
- 
+
 \ifxetex
   \setmainfont[Scale=1.2]{Gill Sans}
   \setromanfont{Palatino}
@@ -188,7 +188,7 @@
 \begin{enumerate} %
     \setlength{\itemsep}{1.8mm}\small}
 {\end{enumerate}}
-    
+
 \newcommand{\bild}[3]{
   \includegraphics[width=#2]{#1}\\
   \textcolor{grau}{\sffamily\tiny #3}\label{#1}}
@@ -214,13 +214,13 @@
 \newcommand{\question}[1]{%
 \begin{framed}\textcolor{questioncolor}{#1}\end{framed}%
 }
-  
-\lstset{          
+
+\lstset{
       basicstyle=\small\ttfamily,
       keywordstyle=\color{keyword},
       stringstyle=\color{literal},
-      identifierstyle = \color{variable},      
-      commentstyle=\color{comment}, 
+      identifierstyle = \color{variable},
+      commentstyle=\color{comment},
       showstringspaces=false,
       columns=flexible,
       inputencoding=utf8/latin1,
@@ -234,13 +234,13 @@
       framexbottommargin=4pt,
       extendedchars=true,
       captionpos=t,
-	  literate={Ö}{{\"O}}1 
-	           {Ä}{{\"A}}1 
-	           {Ü}{{\"U}}1 
-	           {ß}{{\ss}}2 
-	           {ü}{{\"u}}1 
-	           {ä}{{\"a}}1 
-	           {ö}{{\"o}}1,    
+	  literate={Ö}{{\"O}}1
+	           {Ä}{{\"A}}1
+	           {Ü}{{\"U}}1
+	           {ß}{{\ss}}2
+	           {ü}{{\"u}}1
+	           {ä}{{\"a}}1
+	           {ö}{{\"o}}1,
 	 emphstyle={\color{keyword}}
 }
 
@@ -262,3 +262,14 @@
 \newcommand{\mybox}[1]{%
 \begin{framed}{#1}\end{framed}%
 }
+
+\input{lst_clojure.sty}
+\input{lst_console.sty}
+\input{lst_css.sty}
+\input{lst_elixir.sty}
+\input{lst_golang.sty}
+\input{lst_haskell.sty}
+\input{lst_html.sty}
+\input{lst_javascript.sty}
+\input{lst_swift.sty}
+\input{lst_typescript.sty}

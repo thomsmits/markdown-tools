@@ -2,7 +2,7 @@
 %\documentclass[a4paper]{article}
 %\usepackage{beamerarticle}
 
-\usepackage{ifxetex} 
+\usepackage{ifxetex}
 
 % XeLaTeX
 \ifxetex
@@ -20,7 +20,7 @@
   %\usepackage{gillius}
   \usepackage[scaled=1.0]{beramono}
   \usepackage{scalefnt}
-  
+
 \fi
 % PDFLaTeX
 \usepackage{framed}
@@ -30,7 +30,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-%\usepackage{picinpar}             % 
+%\usepackage{picinpar}             %
 %\usepackage{booktabs}
 %\usepackage{xtab}
 %\usepackage{eurosym}
@@ -201,7 +201,7 @@
 \begin{enumerate} %
     \setlength{\itemsep}{1.8mm}\small}
 {\end{enumerate}}
-    
+
 \newcommand{\bild}[3]{
 \begin{figure}[h]
   \centering
@@ -233,13 +233,13 @@
 }
 
 \newenvironment{lstblock}{}{}
-  
-\lstset{          
+
+\lstset{
       basicstyle=\small\ttfamily,
       keywordstyle=\color{keyword},
       stringstyle=\color{literal},
-      identifierstyle = \color{variable},      
-      commentstyle=\color{comment}, 
+      identifierstyle = \color{variable},
+      commentstyle=\color{comment},
       showstringspaces=false,
       columns=flexible,
       inputencoding=utf8/latin1,
@@ -253,12 +253,12 @@
       framexbottommargin=4pt,
       extendedchars=true,
       captionpos=t,
-	  literate={Ö}{{\"O}}1 
-	           {Ä}{{\"A}}1 
-	           {Ü}{{\"U}}1 
-	           {ß}{{\ss}}2 
-	           {ü}{{\"u}}1 
-	           {ä}{{\"a}}1 
+	  literate={Ö}{{\"O}}1
+	           {Ä}{{\"A}}1
+	           {Ü}{{\"U}}1
+	           {ß}{{\ss}}2
+	           {ü}{{\"u}}1
+	           {ä}{{\"a}}1
 	           {ö}{{\"o}}1
 }
 
@@ -276,3 +276,14 @@
 
 \setlength{\leftmargini}{14pt}
 \setlength{\leftmarginii}{10pt}
+
+\input{lst_clojure.sty}
+\input{lst_console.sty}
+\input{lst_css.sty}
+\input{lst_elixir.sty}
+\input{lst_golang.sty}
+\input{lst_haskell.sty}
+\input{lst_html.sty}
+\input{lst_javascript.sty}
+\input{lst_swift.sty}
+\input{lst_typescript.sty}

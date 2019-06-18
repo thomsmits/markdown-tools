@@ -18,10 +18,6 @@ module Rendering
            }{}
           \newcommand\indexspace{}
           \makeindex
-          \include{lst_javascript}
-          \include{lst_console}
-          \include{lst_css}
-          \include{lst_html}
 
           <% if slide_language == 'DE' %>
             \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen

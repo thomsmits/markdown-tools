@@ -14,10 +14,6 @@ module Rendering
         %q|
           \include{preambel_plain}
           \usepackage{csquotes}
-          \include{lst_javascript}
-          \include{lst_console}
-          \include{lst_html}
-          \include{lst_css}
 
           \makeindex
           \titlehead{\vspace{-2cm}\bfseries\sffamily\titlelogo\\\\ \large <%= title1 %>\\\\ \vspace{2mm}\normalsize <%= title2 %>}
