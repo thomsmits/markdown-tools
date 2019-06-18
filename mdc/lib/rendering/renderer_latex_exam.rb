@@ -54,7 +54,7 @@ module Rendering
 
       code_start: erb(
         %q(
-        \vspace{5mm}
+        \vspace{-2mm}
         \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\small\ttfamily])
       ),
 
@@ -63,7 +63,7 @@ module Rendering
       ),
 
       code_end: erb(
-        %q(\end{lstlisting}
+        %q(\end{lstlisting}\vspace{2mm}
         )
       )
     }.freeze
