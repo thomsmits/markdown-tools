@@ -459,6 +459,14 @@ module Parsing
     def inline(ps, line)
       e = LineMatcher.match(line.string, ps.line_id)
 
+      # Catch malformed documents with missing sections
+      if slide(ps).nil? && !line.empty?
+        raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+                         'contains content outside of a subsection. Maybe you ' \
+                         "forgot to start the subsection with '## TITLE'? " \
+                         "#{ps}, '#{line}'"
+      end
+
       if e.nil?
         if line.normal?
           slide(ps) << Domain::Text.new(line.string) if line.text?
