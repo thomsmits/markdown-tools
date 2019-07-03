@@ -117,7 +117,7 @@ module Parsing
                                    title, ps.slide_counter, skip)
 
       unless ps.chapter
-        raise "No chapter here to add '#{title}'. Maybe the " +
+        raise "No chapter here to add '#{title}'. Maybe the " \
               "#-Heading is missing at beginning of file '#{ps.file_name}'."
       end
 
@@ -359,7 +359,7 @@ module Parsing
               Constants::SEPARATOR
             else
               Constants::LEFT
-              end
+            end
 
           table.add_header(e.strip.gsub('~~pipe~~', '|'), alignment) unless e.strip.empty?
         end
@@ -476,8 +476,8 @@ module Parsing
 
           ps.normal!
         else
-          raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' has a syntax error - " +
-                           "#{ps}, '#{line}'"
+          raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+                           "has a syntax error - #{ps}, '#{line}'"
         end
       else
         slide(ps) << e
