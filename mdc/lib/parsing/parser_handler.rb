@@ -375,9 +375,14 @@ module Parsing
         end
 
         # Split columns and add them to the table
-        columns = cleaned_line.split('|')
+        # First we strip away all leading whitespaces to get the pure table
+        columns = cleaned_line.strip.split('|')
         row = []
-        columns.each { |e| row << e.gsub('~~pipe~~', '|') unless e.strip.empty? }
+        columns.each_with_index do |e, i|
+          # The first | in the table will give us an empty element
+          # therefore we ignore it (index == 0)
+          row << e.gsub('~~pipe~~', '|').strip if i > 0
+        end
         element(ps).add_row(row)
       end
     end
