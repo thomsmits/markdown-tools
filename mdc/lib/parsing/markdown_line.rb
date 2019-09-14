@@ -166,7 +166,7 @@ module Parsing
 
     ## Slide to be skipped
     def skipped_slide?
-      /.*--skip--.*/ =~ @line.strip
+      !!(/.*--skip--.*/ =~ @line.strip)
     end
 
     ## Start of a script
