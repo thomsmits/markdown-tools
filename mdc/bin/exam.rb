@@ -1,59 +1,25 @@
-require 'stringio'
-
-require_relative '../lib/parsing/properties_reader'
-require_relative '../lib/parsing/parser'
-require_relative '../lib/domain/presentation'
+require_relative 'custom_handler'
 require_relative '../lib/rendering/renderer_latex_exam'
 
 ##
-# Create TeX snippets to be used in an exam from Markdown files
+# Create TeX snippets to be used in an exam from Markdown files.
+# This covers a very special use case. For more generic use cases
+# use the fle `main.rb`
 class Exam
   ##
-  # Convert the given file from the source to the target directory
-  #
-  # @param src String source directory
-  # @param dest String target directory
-  # @param file_name String the file to be converted
-  # @param language String the default programming language
-  def self.convert(src, dest, file_name, language)
-    parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
-
-    presentation = Domain::Presentation.new('DE', '', '', '', '',
-                                            '', '', language, '', '',
-                                            false, nil)
-
-    lines = File.readlines(src + '/' + file_name, "\n", encoding: 'UTF-8')
-    lines.map! { |l| l.gsub('# ', '## ') }
-    lines.map! { |l| l.gsub('### ', '## ') }
-    lines.map! { |l| l.gsub('#### ', '## ') }
-
-    lines = ['# Start'] + lines
-
-    Dir.chdir(src) do
-      # Change working directory during parsing to ensure
-      # that relative paths in the document are handled
-      # correctly
-      parser.parse_lines(lines, file_name, 'Java', presentation)
-    end
-
-    target_name = file_name.gsub('.md', '.tex')
-    io = File.open("#{dest}/#{target_name}", 'w')
-    renderer = Rendering::RendererLatexExam.new(io, language, dest,
-                                                'img', '../temp')
-    presentation >> renderer
-    io.close
-  end
-
-  ##
   # Main entry point
-  # @param src String directory with source files
-  # @param dest String directory to store results in
+  # @param src_dir String directory with source files
+  # @param dest_dir String directory to store results in
+  # @param language String default programming language
+  def self.main(src_dir, dest_dir, language = '')
 
-  def self.main(src, dest, language = '')
-    files = Dir.new(src).entries.select { |f| (/^.*\.md$/ =~ f) }
+    # Get all files in the directory
+    files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 
     files.each do |file|
-      convert(src, dest, file, language)
+      target_name = file.gsub('.md', '.tex')
+      CustomHandler.convert_file(src_dir, dest_dir, file, target_name, language,
+                                 'Rendering::RendererLatexExam')
     end
   end
 end
