@@ -143,6 +143,22 @@ class MarkdownLineTest < Minitest::Test
     assert(!line('![Royal Baby]()').image?)
     assert(!line('!(img/royal-baby)').image?)
     assert(!line('![]').image?)
+
+    assert(line('![](img/royal-baby)/40%/').image?)
+    assert(line('![Royal Baby](img/royal-baby)/40%/').image?)
+    assert(line('![Royal Baby](img/royal-baby "The Royal Baby")/40%/').image?)
+
+    assert(line('![](img/royal-baby)/40%//30%/').image?)
+    assert(line('![Royal Baby](img/royal-baby)/40%//30%/').image?)
+    assert(line('![Royal Baby](img/royal-baby "The Royal Baby")/40%//30%/').image?)
+
+    assert(line('![](img/royal-baby)<!-- /40%/ -->').image?)
+    assert(line('![Royal Baby](img/royal-baby)<!-- /40%/ -->').image?)
+    assert(line('![Royal Baby](img/royal-baby "The Royal Baby")<!-- /40%/ -->').image?)
+
+    assert(line('![](img/royal-baby)<!-- /40%//40%/ -->').image?)
+    assert(line('![Royal Baby](img/royal-baby)<!-- /40%//40%/ -->').image?)
+    assert(line('![Royal Baby](img/royal-baby "The Royal Baby")<!-- /40%//40%/ -->').image?)
   end
 
   ##

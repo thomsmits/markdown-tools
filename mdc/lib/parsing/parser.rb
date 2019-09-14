@@ -207,8 +207,9 @@ module Parsing
           # <!-- Spacing: xx -->
           handler.space_comment(ps, line)
 
-        elsif line.comment?
-          # <!-- -->
+        elsif line.comment? & !line.image?
+          # <!-- --> but not after an image, to allow image dimensions
+          # in comments.
           handler.comment(ps, line)
 
         else

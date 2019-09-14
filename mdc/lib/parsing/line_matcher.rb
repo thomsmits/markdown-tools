@@ -63,13 +63,25 @@ module Parsing
       LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)/(.*)//(.*)/}) \
           { |_line, _line_id, alt, location, title, width_slide, width_plain| Domain::Image.new(location, alt, title, width_slide, width_plain) },
 
+      LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)<!-- /(.*)//(.*)/ -->}) \
+          { |_line, _line_id, alt, location, title, width_slide, width_plain| Domain::Image.new(location, alt, title, width_slide, width_plain) },
+
       LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)/(.*)/}) \
           { |_line, _line_id, alt, location, title, width_slide| Domain::Image.new(location, alt, title, width_slide, nil) },
 
-      LineMatcher.new(%r{!\[(.*)\]\((.*)\)/(.*)//(.*)/}) \
+      LineMatcher.new(%r{!\[(.*)\]\((.*) "(.*)"\)<!-- /(.*)/ -->}) \
+          { |_line, _line_id, alt, location, title, width_slide| Domain::Image.new(location, alt, title, width_slide, nil) },
+
+      LineMatcher.new(%r{!\[(.*)\]\((.*?)\)/(.*)//(.*)/}) \
+          { |_line, _line_id, alt, location, width_slide, width_plain| Domain::Image.new(location, alt, alt, width_slide, width_plain) },
+
+      LineMatcher.new(%r{!\[(.*)\]\((.*?)\)<!-- /(.*)//(.*)/ -->}) \
           { |_line, _line_id, alt, location, width_slide, width_plain| Domain::Image.new(location, alt, alt, width_slide, width_plain) },
 
       LineMatcher.new(%r{!\[(.*)\]\((.*?)\)/(.*?)/}) \
+          { |_line, _line_id, alt, location, width_slide| Domain::Image.new(location, alt, alt, width_slide, nil) },
+
+      LineMatcher.new(%r{!\[(.*)\]\((.*?)\)<!-- /(.*?)/ -->}) \
           { |_line, _line_id, alt, location, width_slide| Domain::Image.new(location, alt, alt, width_slide, nil) },
 
       LineMatcher.new(/!\[(.*)\]\((.*) "(.*)"\)/) \
@@ -86,7 +98,8 @@ module Parsing
     # @return [Domain::Element] the matching element or nil
     def match_single(line, line_id)
       if @pattern =~ line
-        @function.call(line, line_id, Regexp.last_match(1), Regexp.last_match(2), Regexp.last_match(3), Regexp.last_match(4), Regexp.last_match(5))
+        @function.call(line, line_id, Regexp.last_match(1), Regexp.last_match(2), Regexp.last_match(3),
+                       Regexp.last_match(4), Regexp.last_match(5))
       end
     end
 
