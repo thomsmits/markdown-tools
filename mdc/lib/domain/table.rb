@@ -16,6 +16,13 @@ module Domain
         @name = name
         @alignment = alignment
       end
+
+      ##
+      # Return the header's name
+      # @return String the name of the header
+      def to_s
+        @name
+      end
     end
 
     attr_accessor :headers, :rows
