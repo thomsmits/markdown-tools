@@ -114,8 +114,8 @@ module Parsing
 
     ## Multiple choice
     def multiple_choice
-      if /\[([ Xx*])\](\.?) (.*)/ =~ @line
-        [Regexp.last_match(1) != ' ', Regexp.last_match(2) == '.', Regexp.last_match(3)]
+      if /^(  \* |)\[([ Xx*])\](\.?) (.*)/ =~ @line
+        [Regexp.last_match(2) != ' ', Regexp.last_match(3) == '.', Regexp.last_match(4)]
       end
     end
 
