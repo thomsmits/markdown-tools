@@ -22,6 +22,21 @@ class Exam
                                  'Rendering::RendererLatexExam')
     end
   end
+
+  ##
+  # Parse lines containing a markdown file and return the rendered result.
+  # @param src_dir String directory with source files
+  # @param dest_dir String target directory
+  # @param prog_language String the default programming language
+  # @param renderer_class String name of class used for rendering
+  # @param lines String[] text to be parsed
+  # @return String the rendered contents as
+  def self.parse_file_and_render(src_dir, dest_dir, prog_language, lines)
+    CustomHandler.convert_stream(src_dir, dest_dir, prog_language,
+                                 'Rendering::RendererLatexExam', lines)
+  end
 end
 
-Exam.main(ARGV[0], ARGV[1], ARGV[2])
+if $0 == __FILE__
+  Exam.main(ARGV[0], ARGV[1], ARGV[2])
+end
