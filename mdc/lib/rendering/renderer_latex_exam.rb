@@ -54,7 +54,7 @@ module Rendering
 
       code_start: erb(
         %q(
-        \vspace{-2mm}
+        \vspace{4mm}
         \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\small\ttfamily])
       ),
 
