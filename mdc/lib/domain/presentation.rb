@@ -2,6 +2,10 @@ require_relative 'chapter'
 require_relative 'toc'
 
 module Domain
+
+  # Mix in the enumerable mixin
+  include Enumerable
+
   ##
   # Representation of the whole presentation
   class Presentation
@@ -98,6 +102,12 @@ module Domain
       renderer.presentation_end(@slide_language, @title1,
                                 @title2, @section_number, @section_name,
                                 @copyright, @author, @create_index, @bibliography)
+    end
+
+    ##
+    # Iterate over all chapters.
+    def each
+      @chapters.each { |e| yield e }
     end
   end
 end

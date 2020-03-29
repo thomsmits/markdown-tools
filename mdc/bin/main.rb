@@ -79,6 +79,7 @@ class Main
     files.each do |file|
       puts "Parsing: #{file}"
       parser.parse(directory + '/' + file, default_syntax, presentation)
+      parser.second_pass(presentation)
     end
 
     io = StringIO.new

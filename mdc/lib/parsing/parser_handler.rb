@@ -485,7 +485,12 @@ module Parsing
                            "has a syntax error - #{ps}, '#{line}'"
         end
       else
-        slide(ps) << e
+        if e.instance_of?(Domain::Footnote)
+          # This is the footnote text, not the reference in the text
+          ps.chapter.add_footnote(e)
+        else
+          slide(ps) << e
+        end
 
         if e.instance_of?(Domain::Image) && !@test_mode
           # for image, read available extensions

@@ -241,5 +241,38 @@ module Parsing
       lines = File.readlines(file_name, "\n", encoding: 'UTF-8')
       parse_lines(lines, file_name, default_language, presentation)
     end
+
+    ##
+    # Perform a second pass to replace links and footnotes in the reference
+    # Format (i.e. [...] and [^...]) with inline versions.
+    # @param [Domain::Presentation] presentation Storage of results
+    def second_pass(presentation)
+
+      presentation.each do |chapter|
+        chapter.each do |slide|
+
+          replacer = ->(element) do
+            chapter.footnotes.each do |footnote|
+              ref, inline = MarkdownLine.footnote_ref_to_inline(footnote)
+              element.content.gsub!(/#{ref}/, inline)
+            end
+          end
+
+          # Loop over footnotes and replace the reference to them with
+          # the inline version in the text
+          slide.each do |element|
+            if element.instance_of? Domain::Text
+              replacer.call element
+            elsif element.instance_of? Domain::Comment
+              element.each do |sub_element|
+                if sub_element.instance_of? Domain::Text
+                  replacer.call sub_element
+                end
+              end
+            end
+          end
+        end
+      end
+    end
   end
 end

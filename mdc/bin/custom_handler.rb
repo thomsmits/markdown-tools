@@ -50,6 +50,7 @@ class CustomHandler
       # that relative paths in the document are handled
       # correctly
       parser.parse_lines(lines, location, 'Java', presentation)
+      parser.second_pass(presentation)
     end
 
     # Render the data

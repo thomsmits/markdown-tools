@@ -235,7 +235,8 @@ module Rendering
       [/"(.*?)"/,             '\enquote{\1}'],
       [/~~(.+?)~~/,           '\sout{\1}'],
       [/~(.+?)~/,             '\underline{\1}'],
-      [/\[\[(.*?)\]\]/,       '[\cite{\1}]']
+      [/\[\[(.*?)\]\]/,       '[\cite{\1}]'],
+      [/\[\^(.*?)\]/,         '\footnote{\1}'],
     ].freeze
 
     INLINE_BASIC_AFTER = [

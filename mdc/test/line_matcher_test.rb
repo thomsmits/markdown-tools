@@ -10,7 +10,16 @@ include Domain
 ##
 # Test class for the MarkdownLine class
 class LineMatcherTest < Minitest::Test
-  
+
+  ##
+  # Test the detection of footnotes
+  def test_footnote
+    assert_instance_of(Footnote, Parsing::LineMatcher.match('[^1]: Footnote text', ''))
+    assert_instance_of(Footnote, Parsing::LineMatcher.match('[^bla]: Footnote text', ''))
+    assert_nil(Parsing::LineMatcher.match('[1]: Footnote text', ''))
+    assert_nil(Parsing::LineMatcher.match('[bla]: Footnote text', ''))
+  end
+
   ##
   # Test detection of HTML inserts
   def test_html

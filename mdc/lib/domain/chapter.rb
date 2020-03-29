@@ -1,10 +1,15 @@
 require_relative 'element'
+require_relative 'footnote'
 
 module Domain
+
+  # Mix in the enumerable mixin
+  include Enumerable
+
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
-    attr_accessor :title, :id, :slides
+    attr_accessor :title, :id, :slides, :footnotes
 
     ##
     # Create a new chapter
@@ -14,6 +19,7 @@ module Domain
       @title = title
       @id = id
       @slides = []
+      @footnotes = []
     end
 
     # Add a slide to the presentation
@@ -22,6 +28,13 @@ module Domain
     def <<(slide)
       @slides << slide
       self
+    end
+
+    ##
+    # Add a footnote to the presentation
+    # @param [Footnote] footnote the footnote to be added
+    def add_footnote(footnote)
+      @footnotes << footnote
     end
 
     ##

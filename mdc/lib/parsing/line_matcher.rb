@@ -10,6 +10,7 @@ require_relative '../../lib/domain/button_live_preview'
 require_relative '../../lib/domain/button_live_preview_float'
 require_relative '../../lib/domain/multiple_choice'
 require_relative '../../lib/domain/vertical_space'
+require_relative '../../lib/domain/footnote'
 
 module Parsing
   ##
@@ -88,7 +89,10 @@ module Parsing
           { |_line, _line_id, alt, location, title| Domain::Image.new(location, alt, title, nil, nil) },
 
       LineMatcher.new(/!\[(.*)\]\((.*)\)/) \
-          { |_line, _line_id, alt, location| Domain::Image.new(location, alt, alt, nil, nil) }
+          { |_line, _line_id, alt, location| Domain::Image.new(location, alt, alt, nil, nil) },
+
+      LineMatcher.new(/^\[\^(.*?)\]:(.*)/) \
+          { |_line, _line_id, _key, _text| Domain::Footnote.new( _key, _text.strip ) },
     ].freeze
 
     ##

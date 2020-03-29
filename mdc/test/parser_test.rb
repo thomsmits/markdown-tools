@@ -326,6 +326,22 @@ Some text at the end
 |   11,75   |        1011,11  |    13,6 |    B,C        |
 |   13,875  |        1101,111 |    15,7 |    D,E        |
 |  172,5    |    10101100,1   |   254,4 |   AC,8        |
+
+## Slide 6.1
+
+Text using a footnote[^1] and another one[^label].
+
+[^1]: Footnote with number.
+[^label]: Footnote with label.
+
+## Slide 6.2
+
+Text using a footnote[^2] and another one[^label2].
+
+---
+[^2]: Footnote with number.
+[^label2]: Footnote with label.
+
     ENDOFTEXT
   end
 
@@ -353,6 +369,8 @@ Some text at the end
     parser = Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
 
     parser.parse_lines(lines(test_text), 'testfile.md', 'java', presentation)
+
+    parser.second_pass(presentation)
 
     assert_equal('DE',                presentation.slide_language)
     assert_equal('Thomas Smits',      presentation.author)
@@ -781,6 +799,25 @@ Some text at the end
       assert_equal('10101100,1', row[4][1].strip)
       assert_equal('254,4', row[4][2].strip)
       assert_equal('AC,8', row[4][3].strip)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.1', false, false,
+    [Domain::Text],
+        [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
+                false) do |e|
+      assert_equal([ Footnote.new("1", "Footnote with number."),
+                     Footnote.new("label", "Footnote with label."),
+                     Footnote.new("2", "Footnote with number."),
+                     Footnote.new("label2", "Footnote with label.") ],
+      chapter2.footnotes)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.2', false, false,
+                [Domain::Text],
+                [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
+                false) do |e|
     end
   end
 

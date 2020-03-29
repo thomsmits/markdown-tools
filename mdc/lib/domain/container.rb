@@ -4,6 +4,9 @@ module Domain
   ##
   # Base class for all presentation elements that can contain other elements
   class Container < Element
+    # Mix in the enumerable mixin
+    include Enumerable
+
     attr_accessor :elements
 
     ##
@@ -36,6 +39,12 @@ module Domain
       digest = ''
       @elements.each { |element| digest << element.digest << ' ' }
       digest
+    end
+
+    ##
+    # Iterate over all contained elements.
+    def each
+      @elements.each { |e| yield e }
     end
   end
 end

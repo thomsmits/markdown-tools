@@ -338,6 +338,15 @@ module Parsing
       @line.sub(pattern, replacement)
     end
 
+    ##
+    # Return the representation of a footnote as ref and as
+    # inline version
+    # @param [Domain::Footnote] footnote the footnote to transform
+    # @return [[Regexp, String]] ref and inline version
+    def self.footnote_ref_to_inline(footnote)
+      [ /\[\^#{footnote.key}\]/, "[^#{footnote.text}]" ]
+    end
+
     ## String representation
     def to_s
       @line
