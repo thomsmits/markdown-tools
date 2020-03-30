@@ -254,7 +254,7 @@ module Parsing
           replacer = ->(element) do
             chapter.footnotes.each do |footnote|
               ref, inline = MarkdownLine.footnote_ref_to_inline(footnote)
-              element.content.gsub!(/#{ref}/, inline)
+              element.content.gsub!(ref, inline)
             end
           end
 
