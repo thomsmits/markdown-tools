@@ -50,8 +50,8 @@ class Index
     main_prop_file = directory + '/metadata.properties'
     main_props = Parsing::PropertiesReader.new(main_prop_file)
 
-    postfix_slide = '-Folien.html'
-    postfix_plain = '-Skript.html'
+    postfix_slide = '-slides.html'
+    postfix_plain = '-script.html'
 
     title1           = main_props['title_1']
     title2           = main_props['title_2']
