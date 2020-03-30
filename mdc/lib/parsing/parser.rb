@@ -263,6 +263,10 @@ module Parsing
           slide.each do |element|
             if element.instance_of? Domain::Text
               replacer.call element
+            elsif (element.instance_of? Domain::OrderedList) || (element.instance_of? Domain::UnorderedList)
+              element.entries.each do |entry|
+                replacer.call entry
+              end
             elsif element.instance_of? Domain::Comment
               element.each do |sub_element|
                 if sub_element.instance_of? Domain::Text
