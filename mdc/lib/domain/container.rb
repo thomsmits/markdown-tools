@@ -46,5 +46,11 @@ module Domain
     def each
       @elements.each { |e| yield e }
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      @elements.each { |e| e.each_content_element(&block) }
+    end
   end
 end

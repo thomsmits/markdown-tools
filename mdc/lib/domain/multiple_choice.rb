@@ -22,5 +22,11 @@ module Domain
       "[X] #{@text}"  if @correct
       "[ ] #{@text}"  unless @correct
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      block.call(self.class, @text)
+    end
   end
 end

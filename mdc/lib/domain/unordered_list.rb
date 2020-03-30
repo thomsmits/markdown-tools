@@ -46,5 +46,11 @@ module Domain
       @entries.each { |entry| digest << entry.digest << ' ' }
       digest
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      @entries.each { |e| e.each_content_element(&block) }
+    end
   end
 end

@@ -17,5 +17,11 @@ module Domain
     def digest
       ''
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      # Do nothing
+    end
   end
 end

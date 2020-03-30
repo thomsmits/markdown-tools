@@ -33,5 +33,11 @@ module Domain
       end
       renderer.multiple_choice_end(@inline)
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      @questions.each { |e| e.each_content_element(&block) }
+    end
   end
 end

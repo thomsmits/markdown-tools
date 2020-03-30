@@ -48,5 +48,11 @@ module Domain
         renderer.send(name, @content)
       end
     end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      block.call(self.class, @content)
+    end
   end
 end

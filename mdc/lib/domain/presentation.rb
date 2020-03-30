@@ -3,9 +3,6 @@ require_relative 'toc'
 
 module Domain
 
-  # Mix in the enumerable mixin
-  include Enumerable
-
   ##
   # Representation of the whole presentation
   class Presentation

@@ -249,30 +249,20 @@ module Parsing
     def second_pass(presentation)
 
       presentation.each do |chapter|
-        chapter.each do |slide|
+        footnotes = chapter.footnotes
+        chapter.each_content_element do |type, content|
+          # Types of content to do the footnote replacement with
+          if [ Domain::Text,
+               Domain::OrderedListItem,
+               Domain::UnorderedListItem,
+               Domain::Quote,
+               Domain::Question,
+               Domain::Important ].include? type
 
-          replacer = ->(element) do
-            chapter.footnotes.each do |footnote|
+            footnotes.each do |footnote|
+              # Replace the footnote references with the footnote
               ref, inline = MarkdownLine.footnote_ref_to_inline(footnote)
-              element.content.gsub!(ref, inline)
-            end
-          end
-
-          # Loop over footnotes and replace the reference to them with
-          # the inline version in the text
-          slide.each do |element|
-            if element.instance_of? Domain::Text
-              replacer.call element
-            elsif (element.instance_of? Domain::OrderedList) || (element.instance_of? Domain::UnorderedList)
-              element.entries.each do |entry|
-                replacer.call entry
-              end
-            elsif element.instance_of? Domain::Comment
-              element.each do |sub_element|
-                if sub_element.instance_of? Domain::Text
-                  replacer.call sub_element
-                end
-              end
+              content.gsub!(ref, inline)
             end
           end
         end

@@ -3,9 +3,6 @@ require_relative 'footnote'
 
 module Domain
 
-  # Mix in the enumerable mixin
-  include Enumerable
-
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
@@ -44,9 +41,15 @@ module Domain
     end
 
     ##
-    # Return all slides in the chapter
+    # Iterate over all slides of the chapter
     def each
       @slides.each { |s| yield s }
+    end
+
+    ##
+    # Call the provided block on each content element.
+    def each_content_element(&block)
+      @slides.each { |s| s.each_content_element(&block) }
     end
 
     ##

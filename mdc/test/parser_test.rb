@@ -331,6 +331,14 @@ Some text at the end
 
 Text using a footnote[^1] and another one[^label].
 
+  * In a list[^1]
+
+> Or a quote[^1]
+
+>! Or Important[^1]
+
+>? Or Question[^1]
+
 [^1]: Footnote with number.
 [^label]: Footnote with label.
 
@@ -803,14 +811,19 @@ Text using a footnote[^2] and another one[^label2].
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 6.1', false, false,
-    [Domain::Text],
+    [Domain::Text, Domain::UnorderedList, Domain::Quote, Domain::Important, Domain::Question],
         [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
                 false) do |e|
       assert_equal([ Footnote.new("1", "Footnote with number."),
                      Footnote.new("label", "Footnote with label."),
                      Footnote.new("2", "Footnote with number."),
                      Footnote.new("label2", "Footnote with label.") ],
-      chapter2.footnotes)
+                   chapter2.footnotes)
+
+      assert_equal('In a list[^Footnote with number.]', e[1].entries[0].to_s)
+      assert_equal('Or a quote[^Footnote with number.]', e[2].to_s)
+      assert_equal('Or Important[^Footnote with number.]', e[3].to_s)
+      assert_equal('Or Question[^Footnote with number.]', e[4].to_s)
     end
 
     slide_index += 1
