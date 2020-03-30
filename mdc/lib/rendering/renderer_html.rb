@@ -246,6 +246,8 @@ module Rendering
       [/--/,                             '&ndash;'],
       [/\.\.\./,                         '&hellip;'],
 
+      [/\[\^(.*?)\]/,         '<sup><span title=\'\1\'>*</span></sup>'],
+
       [/^-> /,                '&rarr; '],
       ['(-> ',                '(&rarr; '],
       ['(->)',                '(&rarr;)'],
