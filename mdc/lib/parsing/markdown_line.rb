@@ -1,3 +1,6 @@
+require_relative '../domain/footnote'
+require_relative '../domain/link'
+
 module Parsing
   ##
   # Wrapper around a single line to ease matching of special elements that
@@ -345,6 +348,19 @@ module Parsing
     # @return [[Regexp, String]] ref and inline version
     def self.footnote_ref_to_inline(footnote)
       [ /\[\^#{footnote.key}\]/, "[^#{footnote.text}]" ]
+    end
+
+    ##
+    # Return the representation of a footnote as ref and as
+    # inline version
+    # @param [Domain::Link] link the link to transform
+    # @return [[Regexp, String]] ref and inline version
+    def self.link_ref_to_inline(link)
+      if link.title
+        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target} \"#{link.title}\")" ]
+      else
+        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target})" ]
+      end
     end
 
     ## String representation

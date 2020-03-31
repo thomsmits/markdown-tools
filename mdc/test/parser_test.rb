@@ -350,6 +350,30 @@ Text using a footnote[^2] and another one[^label2].
 [^2]: Footnote with number.
 [^label2]: Footnote with label.
 
+## Slide 6.3
+
+Text with a [one][1] and another [two][2]
+
+  * [three][3]
+  * [four][4]
+
+> Quote [five][5]
+
+>! Important [six][6]
+
+>? Question [seven][7]
+
+>? Question [eight][8]
+
+[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle
+[2]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"
+[3]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle 'Hobbit lifestyles'
+[4]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle (Hobbit lifestyles)
+[5]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> "Hobbit lifestyles"
+[6]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> 'Hobbit lifestyles'
+[7]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> (Hobbit lifestyles)
+[8]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle>
+
     ENDOFTEXT
   end
 
@@ -831,6 +855,21 @@ Text using a footnote[^2] and another one[^label2].
                 [Domain::Text],
                 [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
                 false) do |e|
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.3', false, false,
+                [Domain::Text, Domain::UnorderedList, Domain::Quote, Domain::Important, Domain::Question],
+                [],
+                false) do |e|
+
+      assert_equal('Text with a [one](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) and another [two](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[0].to_s)
+      assert_equal('[three](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[1].entries[0].to_s)
+      assert_equal('[four](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[1].entries[1].to_s)
+      assert_equal('Quote [five](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[2].to_s)
+      assert_equal('Important [six](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[3].to_s)
+      assert_equal('Question [seven](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[4].to_s)
+      assert_equal('Question [eight](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)', e[5].to_s)
     end
   end
 

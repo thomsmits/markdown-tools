@@ -250,6 +250,8 @@ module Parsing
 
       presentation.each do |chapter|
         footnotes = chapter.footnotes
+        links = chapter.links
+
         chapter.each_content_element do |type, content|
           # Types of content to do the footnote replacement with
           if [ Domain::Text,
@@ -262,6 +264,11 @@ module Parsing
             footnotes.each do |footnote|
               # Replace the footnote references with the footnote
               ref, inline = MarkdownLine.footnote_ref_to_inline(footnote)
+              content.gsub!(ref, inline)
+            end
+
+            links.each do |link|
+              ref, inline = MarkdownLine.link_ref_to_inline(link)
               content.gsub!(ref, inline)
             end
           end

@@ -91,8 +91,32 @@ module Parsing
       LineMatcher.new(/!\[(.*)\]\((.*)\)/) \
           { |_line, _line_id, alt, location| Domain::Image.new(location, alt, alt, nil, nil) },
 
-      LineMatcher.new(/^\[\^(.*?)\]:(.*)/) \
-          { |_line, _line_id, _key, _text| Domain::Footnote.new( _key, _text.strip ) },
+      LineMatcher.new(/^\[\^(.*?)\]: (.*)/) \
+          { |_line, _line_id, key, text| Domain::Footnote.new(key, text.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: <(.*?)> '(.*?)'/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: <(.*?)> "(.*?)"/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: <(.*?)> \((.*?)\)/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: (.*?) '(.*?)'/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: (.*?) "(.*?)"/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: (.*?) \((.*?)\)/) \
+          { |_line, _line_id, key, target, title| Domain::Link.new(key, target.strip, title.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: <(.*?)>/) \
+          { |_line, _line_id, key, target| Domain::Link.new(key, target.strip) },
+
+      LineMatcher.new(/^\[(.*?)\]: (.*)/) \
+          { |_line, _line_id, key, target| Domain::Link.new(key, target.strip) },
     ].freeze
 
     ##

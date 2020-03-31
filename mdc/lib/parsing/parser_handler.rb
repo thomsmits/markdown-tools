@@ -35,6 +35,8 @@ require_relative '../../lib/domain/uml'
 require_relative '../../lib/domain/unordered_list'
 require_relative '../../lib/domain/unordered_list_item'
 require_relative '../../lib/domain/license'
+require_relative '../../lib/domain/footnote'
+require_relative '../../lib/domain/link'
 require_relative '../constants'
 
 require_relative 'line_matcher'
@@ -488,6 +490,9 @@ module Parsing
         if e.instance_of?(Domain::Footnote)
           # This is the footnote text, not the reference in the text
           ps.chapter.add_footnote(e)
+        elsif e.instance_of?(Domain::Link)
+          # This is a reference style link, not the reference in ths text
+          ps.chapter.add_link(e)
         else
           slide(ps) << e
         end

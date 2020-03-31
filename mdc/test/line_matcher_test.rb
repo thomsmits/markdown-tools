@@ -1,6 +1,7 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/line_matcher'
 require_relative '../lib/domain/footnote'
+require_relative '../lib/domain/link'
 require_relative '../lib/domain/html'
 require_relative '../lib/domain/heading'
 require_relative '../lib/domain/image'
@@ -16,10 +17,19 @@ class LineMatcherTest < Minitest::Test
   def test_footnote
     assert_instance_of(Footnote, Parsing::LineMatcher.match('[^1]: Footnote text', ''))
     assert_instance_of(Footnote, Parsing::LineMatcher.match('[^bla]: Footnote text', ''))
-    assert_nil(Parsing::LineMatcher.match('[1]: Footnote text', ''))
-    assert_nil(Parsing::LineMatcher.match('[bla]: Footnote text', ''))
   end
 
+  ##
+  # Test the detection of links
+  def test_link
+    assert_instance_of(Link, Parsing::LineMatcher.match('[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle', ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match('[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"', ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match("[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle 'Hobbit lifestyles'", ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match('[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle (Hobbit lifestyles)', ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match('[1]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> "Hobbit lifestyles"', ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match("[1]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> 'Hobbit lifestyles'", ''))
+    assert_instance_of(Link, Parsing::LineMatcher.match('[1]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> (Hobbit lifestyles)', ''))
+  end
   ##
   # Test detection of HTML inserts
   def test_html
