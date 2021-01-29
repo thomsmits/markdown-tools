@@ -16,9 +16,13 @@ module Rendering
           \usepackage{csquotes}
 
           \makeindex
-          \titlehead{\vspace{-2cm}\bfseries\sffamily\titlelogo\\\\ \large <%= title1 %>\\\\ \vspace{2mm}\normalsize <%= title2 %>}
+          \renewcommand{\maketitlehooka}{%
+              \vspace{-3.5cm}\bfseries\sffamily\titlelogo\\\\
+              \large <%= title1 %>\\\\ \vspace{2mm}\normalsize <%= title2 %>
+              \vspace{5cm}
+          }
           %\titlehead{\vspace{3cm}\sffamily <%= title1 %>\\\\ \vspace{2mm} \small<%= title2 %>}
-          \title{\vspace{3cm}<%= section_name  %>}
+          \title{<%= section_name  %>}
           \author{\small \sffamily <%= author %>}
           \date{\vspace{1cm}\color{grau} \Large\sffamily <%= term %>\\\\ \scriptsize\vspace{2mm}\today}
 
@@ -52,21 +56,21 @@ module Rendering
           }
 
           \begin{document}
+          \pagestyle{headings}
           \pagenumbering{roman}
-          \dedication{\vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>}}
+          \renewcommand{\maketitlehookd}{%
+            \vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>} %
+          }
           %\publishers{Herausgeber}
           <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
           \label{<%= section_id %>}
           \pdfbookmark[\contentsname]{<%= section_name %>}{<%= section_id %>}
 
+          \thispagestyle{empty}
+          \vspace{3cm}
           \maketitle
-          \thispagestyle{empty}
           \newpage
-          \thispagestyle{empty}
-          \mbox{}
-          \cleardoublepage
-          \newpage
-          \changefont{ptm}{m}{n}  % Times New Roman
+          \clearpage
           \tableofcontents
           \newcounter{frontmatterpage}
           \setcounter{frontmatterpage}{\value{page}}
@@ -96,7 +100,7 @@ module Rendering
       ),
 
       chapter_start: erb(
-        %q|\Needspace{12\baselineskip}\section{<%= inline_code(title) %>}\label{<%= id %>}
+        %q|\Needspace{12\baselineskip}\chapter{<%= inline_code(title) %>}\label{<%= id %>}
 
         |
       ),
@@ -107,7 +111,7 @@ module Rendering
       ),
 
       slide_start: erb(
-        %q|\Needspace{5\baselineskip}\subsection{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
+        %q|\Needspace{5\baselineskip}\section{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
         |
       ),
 

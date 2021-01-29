@@ -427,7 +427,7 @@ module Rendering
         caption_command = ''
       else
         replaced_caption = replace_inline_content(caption)
-        caption_command = "title={#{replaced_caption}},aboveskip=-0.4 \\baselineskip,"
+        caption_command = "title={\\fontfamily{phv}\\selectfont\\textbf{#{replaced_caption}}},aboveskip=-0.4 \\baselineskip,"
       end
 
       @io << @templates[:code_start].result(binding)
