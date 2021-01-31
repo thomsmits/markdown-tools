@@ -27,9 +27,9 @@ module Rendering
       ol_start: erb(
         %q(
         \begin{ol<%= @ol_level %>}
-        <% if counter > 0 %>
+        <%- if counter > 0 -%>
           \setcounter{enumi}{<%= counter %>}
-        <% end %>
+        <%- end -%>
         )
       ),
 
@@ -47,29 +47,24 @@ module Rendering
 
       ul_start: erb(
         %q(
-        \begin{ul<%= @ul_level %>}
-        )
+        \begin{ul<%= @ul_level %>})
       ),
 
       ul_item: erb(
-        %q|
-        \item <%= inline_code(content) %>
-        |
+        %q|\item <%= inline_code(content) %>|
       ),
 
       ul_end: erb(
-        %q(
-        \end{ul<%= @ul_level %>}
-        )
+        %q|\end{ul<%= @ul_level %>}|
       ),
 
       quote: erb(
         %q|
-        <% if with_source %>
+        <%- if with_source -%>
           \quoted{<%= inline_code(content) %>}{<%= inline(source) %>}
-        <% else %>
+        <%- else -%>
           \quotedns{<%= inline_code(content) %>}
-        <% end %>
+        <%- end -%>
         |
       ),
 
@@ -96,8 +91,7 @@ module Rendering
       ),
 
       code_start: erb(
-        %q(
-        \begin{lstblock}%
+        %q(\begin{lstblock}%
         {\setstretch{1.3}\small
         \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily])
       ),
@@ -107,8 +101,7 @@ module Rendering
       ),
 
       code_end: erb(
-        %q(
-        \end{lstlisting}}
+        %q(\end{lstlisting}}
         \end{lstblock}
         )
       ),
@@ -143,8 +136,7 @@ module Rendering
       text: erb(
         %q|
         <%= inline_code(cleaned_content) %>
-        \vspace{0.1mm}
-        |
+        \vspace{0.1mm}|
       ),
 
       heading_3: erb(
@@ -162,21 +154,19 @@ module Rendering
       ),
 
       multiple_choice_start: erb(
-        %q(<% if inline then %>
+        %q(<%- if inline then -%>
           \begin{oneparcheckboxes}
-        <% else %>
+        <%- else -%>
           \begin{checkboxes}
-        <% end %>
-        )
+        <%- end -%>)
       ),
 
       multiple_choice_end: erb(
-        %q(<% if inline then %>
+        %q(<%- if inline then -%>
           \end{oneparcheckboxes}
-        <% else %>
+        <%- else -%>
           \end{checkboxes}
-        <% end %>
-        )
+        <%- end -%>)
       ),
 
       multiple_choice: erb(

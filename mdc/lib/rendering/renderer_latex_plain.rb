@@ -100,7 +100,9 @@ module Rendering
       ),
 
       chapter_start: erb(
-        %q|\Needspace{12\baselineskip}\chapter{<%= inline_code(title) %>}\label{<%= id %>}
+        %q|
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        \Needspace{12\baselineskip}\chapter{<%= inline_code(title) %>}\label{<%= id %>}
 
         |
       ),
@@ -111,7 +113,9 @@ module Rendering
       ),
 
       slide_start: erb(
-        %q|\Needspace{5\baselineskip}\section{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
+        %q|
+        % ********************************************************************************************
+        \Needspace{5\baselineskip}\section{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
         |
       ),
 
@@ -121,23 +125,16 @@ module Rendering
       ),
 
       comment_start: erb(
-        %q(
-        \begin{comment}
-
-        )
+        %q(\begin{comment})
       ),
 
       comment_end: erb(
-        %q(
-        \end{comment}
-        )
+        %q(\end{comment})
       ),
 
       text: erb(
-        %q|
-        <%= inline_code(content) %>
-        \vspace{0.1mm}
-        |
+        %q|<%= inline_code(content) %>
+        \vspace{0.1mm}|
       ),
 
       ul_start: erb(

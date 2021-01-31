@@ -76,7 +76,7 @@ module Rendering
       presentation_end: erb(
         %q|
 
-        <% unless bibliography.nil? %>
+        <%- unless bibliography.nil? -%>
             \section{<%= translate(:literature) %>}
             \begin{frame}
             \separator{<%= translate(:literature) %>}
@@ -85,10 +85,9 @@ module Rendering
             \begin{frame}[allowframebreaks]{<%= translate(:literature) %>}
             \printbibliography
             \end{frame}
-        <% end %>
+        <%- end -%>
 
-
-        <% if create_index %>
+        <%- if create_index -%>
           \section{<%= translate(:index) %>}
           \begin{frame}
           \separator{<%= translate(:index) %>}
@@ -97,18 +96,18 @@ module Rendering
           \footnotesize
           \printindex
           \end{frame}
-        <% end %>
+        <%- end -%>
         \end{document}
         |
       ),
 
       chapter_start: erb(
         %q|
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         \section{<%= inline_code(title) %>}\label{<%= id %>}
         \begin{frame}
         \separator{<%= title %>}
-        \end{frame}
-        |
+        \end{frame}|
       ),
 
       chapter_end: erb(
@@ -118,25 +117,22 @@ module Rendering
 
       slide_start: erb(
         %q|
+        % ********************************************************************************************
         \begin{frame}[fragile]{<%= inline_code(title) %>}\label{<%= id %>}
         |
       ),
 
       slide_end: erb(
         %q(
-        \end{frame}
-        )
+        \end{frame})
       ),
 
       comment_start: erb(
-        %q(
-        \end{frame}
-        )
+        %q|\iffalse|
       ),
 
       comment_end: erb(
-        '
-        '
+        '\fi'
       ),
 
       text: erb(
@@ -148,13 +144,12 @@ module Rendering
 
       ul_start: erb(
         %q(
-        <% if @ul_level == 1 %>
+        <%- if @ul_level == 1 -%>
           \vspace{0.2mm}
-        <% elsif @ul_level == 2 %>
+        <%- elsif @ul_level == 2 -%>
           \vspace{0.2mm}
-        <% end %>
-        \begin{ul<%= @ul_level %>}
-        )
+        <%- end -%>
+        \begin{ul<%= @ul_level %>})
       )
     }.freeze
 
@@ -188,7 +183,7 @@ module Rendering
     ##
     # End of slide
     def slide_end
-      @io << @templates[:slide_end].result(binding) unless @slide_ended
+      @io << @templates[:slide_end].result(binding)
     end
 
     ##

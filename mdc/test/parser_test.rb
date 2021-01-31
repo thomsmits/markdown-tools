@@ -3,6 +3,7 @@ require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
 require_relative '../lib/domain/block_element'
 require_relative '../lib/domain/box'
+require_relative '../lib/domain/footnote'
 require_relative '../lib/domain/equation'
 require_relative '../lib/domain/html'
 require_relative '../lib/domain/important'
@@ -373,6 +374,31 @@ Text with a [one][1] and another [two][2]
 [6]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> 'Hobbit lifestyles'
 [7]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> (Hobbit lifestyles)
 [8]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle>
+
+## Slide 6.4 Comment before slide
+
+---
+This is a comment before the actual slide
+
+  * BC1
+  * BC2
+---
+
+Slide Text
+
+  * BS1
+  * BS2
+
+---
+End Comment
+
+  * BE1
+  * BE2
+
+## Slide 6.5 Just a plain slide
+
+With some text
+
 
     ENDOFTEXT
   end
@@ -838,10 +864,10 @@ Text with a [one][1] and another [two][2]
     [Domain::Text, Domain::UnorderedList, Domain::Quote, Domain::Important, Domain::Question],
         [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
                 false) do |e|
-      assert_equal([ Footnote.new("1", "Footnote with number."),
-                     Footnote.new("label", "Footnote with label."),
-                     Footnote.new("2", "Footnote with number."),
-                     Footnote.new("label2", "Footnote with label.") ],
+      assert_equal([ Domain::Footnote.new("1", "Footnote with number."),
+                     Domain::Footnote.new("label", "Footnote with label."),
+                     Domain::Footnote.new("2", "Footnote with number."),
+                     Domain::Footnote.new("label2", "Footnote with label.") ],
                    chapter2.footnotes)
 
       assert_equal('In a list[^Footnote with number.]', e[1].entries[0].to_s)
@@ -870,6 +896,32 @@ Text with a [one][1] and another [two][2]
       assert_equal('Important [six](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[3].to_s)
       assert_equal('Question [seven](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")', e[4].to_s)
       assert_equal('Question [eight](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)', e[5].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.4 Comment before slide', false, false,
+                [Domain::Comment, Domain::Text, Domain::UnorderedList, Domain::Comment],
+                [],
+                false) do |e|
+
+      assert_equal('This is a comment before the actual slide', e[0].elements[0].to_s)
+      assert_equal('BC1', e[0].elements[1].entries[0].to_s)
+      assert_equal('BC2', e[0].elements[1].entries[1].to_s)
+      assert_equal('Slide Text', e[1].to_s)
+      assert_equal('BS1', e[2].entries[0].to_s)
+      assert_equal('BS2', e[2].entries[1].to_s)
+      assert_equal('End Comment', e[3].elements[0].to_s)
+      assert_equal('BE1', e[3].elements[1].entries[0].to_s)
+      assert_equal('BE2', e[3].elements[1].entries[1].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.5 Just a plain slide', false, false,
+                [Domain::Text],
+                [],
+                false) do |e|
+
+      assert_equal('With some text', e[0].to_s)
     end
   end
 

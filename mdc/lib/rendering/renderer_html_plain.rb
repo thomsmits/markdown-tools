@@ -215,7 +215,6 @@ module Rendering
     def slide_start(title, number, id, contains_code)
       escaped_title = inline_code(title)
       @io << @templates[:slide_start].result(binding)
-      @slide_ended = false
 
       unless title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl

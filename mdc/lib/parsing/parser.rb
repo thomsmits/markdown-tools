@@ -87,9 +87,13 @@ module Parsing
           # [ ] Question 1 or [X] Question
           handler.multiple_choice(ps, line)
 
-        elsif line.separator? && !ps.code_or_code_fenced?
+        elsif line.separator? && !ps.code_or_code_fenced? && !ps.comment_mode
           # ---
           handler.separator(ps, line)
+
+        elsif line.separator? && !ps.code_or_code_fenced? && ps.comment_mode
+          # ---
+          ps.comment_mode = false
 
         elsif line.vertical_space? && !ps.code_or_code_fenced?
           # <br>

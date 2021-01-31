@@ -16,7 +16,7 @@ module Rendering
     # and trailing spaces before
     # @param [String] input the input string for the template
     def self.erb(input)
-      ERB.new(clean(input))
+      ERB.new(clean(input), nil, '-')
     end
 
     ## ERB templates to be used by the renderer
@@ -291,7 +291,6 @@ module Rendering
       @dialog_counter = 0
       @ol_level = 0
       @ul_level = 0
-      @slide_ended = false
       @last_title = nil
     end
 
@@ -695,7 +694,6 @@ module Rendering
     # Beginning of a comment section, i.e. explanations to the current slide
     def comment_start(spacing = 0)
       @io << @templates[:comment_start].result(binding)
-      @slide_ended = true
     end
 
     ##
@@ -792,7 +790,6 @@ module Rendering
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
       @io << @templates[:slide_start].result(binding)
-      @slide_ended = false
       @last_title = title
     end
 
