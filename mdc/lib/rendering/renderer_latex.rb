@@ -59,13 +59,11 @@ module Rendering
       ),
 
       quote: erb(
-        %q|
-        <%- if with_source -%>
-          \quoted{<%= inline_code(content) %>}{<%= inline(source) %>}
+        %q|<%- if with_source -%>
+          \quoted{<%= inline_code(content) %>}{<%= inline(source.strip) %>}
         <%- else -%>
           \quotedns{<%= inline_code(content) %>}
-        <%- end -%>
-        |
+        <%- end -%>|
       ),
 
       important: erb(

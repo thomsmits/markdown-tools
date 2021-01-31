@@ -26,17 +26,17 @@ module Rendering
           \author{\small \sffamily <%= author %>}
           \date{\vspace{1cm}\color{grau} \Large\sffamily <%= term %>\\\\ \scriptsize\vspace{2mm}\today}
 
-          <% if slide_language == 'DE' %>
+          <%- if slide_language == 'DE' -%>
             \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen
             \selectlanguage{ngerman}
             <% locale = 'de_DE' %>
-          <% else %>
+          <%- else -%>
             \usepackage[main=english, ngerman]{babel}       % Deutsch und Englisch unterstützen
             \selectlanguage{english}
             <% locale = 'de_DE' %>
-          <% end %>
+          <%- end -%>
 
-          <% unless bibliography.nil? %>
+          <%- unless bibliography.nil? -%>
             \usepackage[backend=biber,
               isbn=false,                     % ISBN nicht anzeigen, gleiches geht mit nahezu allen anderen Feldern
               sortlocale=<%= locale %>,
@@ -47,7 +47,7 @@ module Rendering
               style=authoryear                % Zitate Author und Jahr [Einstein (1905)]
             ]{biblatex}                       % Literaturverwaltung mit BibLaTeX
             \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
-          <% end %>
+          <%- end -%>
 
           \hypersetup{
               pdftitle={<%= title1 %>: <%= section_name %>},
@@ -139,13 +139,12 @@ module Rendering
 
       ul_start: erb(
         %q(
-        <% if @ul_level == 1 %>
+        <%- if @ul_level == 1 -%>
           \vspace{0.1mm}
-        <% elsif @ul_level == 2 %>
+        <%- elsif @ul_level == 2 -%>
           \vspace{0.1mm}
-        <% end %>
-        \begin{ul<%= @ul_level %>}
-        )
+        <%- end -%>
+        \begin{ul<%= @ul_level %>})
       )
     }.freeze
 
