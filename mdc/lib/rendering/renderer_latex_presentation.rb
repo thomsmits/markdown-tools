@@ -11,7 +11,6 @@ module Rendering
       presentation_start: erb(
         %q!
           \include{preambel_presentation}
-          \usepackage{csquotes}
           \newenvironment{theindex}
            {\let\item\par
             %definitions for subitem etc
@@ -19,17 +18,17 @@ module Rendering
           \newcommand\indexspace{}
           \makeindex
 
-          <% if slide_language == 'DE' %>
+          <%- if slide_language == 'DE' -%>
             \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen
             \selectlanguage{ngerman}
             <% locale = 'de_DE' %>
-          <% else %>
+          <%- else -%>
             \usepackage[main=english, ngerman]{babel}       % Deutsch und Englisch unterstützen
             \selectlanguage{english}
             <% locale = 'de_DE' %>
-          <% end %>
+          <%- end -%>
 
-          <% unless bibliography.nil? %>
+          <%- unless bibliography.nil? -%>
             \setbeamertemplate{bibliography item}{}
 
             \usepackage[backend=biber,
@@ -42,7 +41,7 @@ module Rendering
               style=authoryear                % Zitate Author und Jahr [Einstein (1905)]
             ]{biblatex}                       % Literaturverwaltung mit BibLaTeX
             \addbibresource{<%= bibliography %>}   % BibLaTeX-Datei mit Literaturquellen einbinden
-          <% end %>
+          <%- end -%>
 
           \hypersetup{
               pdftitle={<%= title1 %>: <%= section_name %>},

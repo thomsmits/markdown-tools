@@ -19,7 +19,7 @@ module Rendering
          fontsize = 8
          rankdir = BT
          ranksep = 0.35
-         size = "25.7,8.3!"
+         #size = "25.7,8.3!"
 
         node [
           fontname  = "Helvetica"

@@ -340,8 +340,11 @@ Text using a footnote[^1] and another one[^label].
 
 >? Or Question[^1]
 
+Text using a footnote[^withquote] with a quote inside.
+
 [^1]: Footnote with number.
 [^label]: Footnote with label.
+[^withquote]: Footnote containing a "quote"
 
 ## Slide 6.2
 
@@ -866,6 +869,7 @@ With some text
                 false) do |e|
       assert_equal([ Domain::Footnote.new("1", "Footnote with number."),
                      Domain::Footnote.new("label", "Footnote with label."),
+                     Domain::Footnote.new("withquote", 'Footnote containing a "quote"'),
                      Domain::Footnote.new("2", "Footnote with number."),
                      Domain::Footnote.new("label2", "Footnote with label.") ],
                    chapter2.footnotes)
@@ -874,6 +878,7 @@ With some text
       assert_equal('Or a quote[^Footnote with number.]', e[2].to_s)
       assert_equal('Or Important[^Footnote with number.]', e[3].to_s)
       assert_equal('Or Question[^Footnote with number.]', e[4].to_s)
+      assert_equal('Text using a footnote[^Footnote containing a "quote"] with a quote inside.', e[5].to_s)
     end
 
     slide_index += 1

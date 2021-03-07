@@ -13,8 +13,6 @@ module Rendering
       presentation_start: erb(
         %q|
           \include{preambel_plain}
-          \usepackage{csquotes}
-
           \makeindex
           \renewcommand{\maketitlehooka}{%
               \vspace{-3.5cm}\bfseries\sffamily\titlelogo\\\\

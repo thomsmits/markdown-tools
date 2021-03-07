@@ -314,7 +314,7 @@ module Rendering
     end
 
     ##
-    # Method returning the inline replacements.Should be overwritten by the
+    # Method returning the inline replacements. Should be overwritten by the
     # subclasses.
     # @param [Boolean] _alternate should alternate replacements be used
     # @return [String[]] the templates
@@ -478,10 +478,20 @@ module Rendering
     # Return the most suitable image file for the given
     # @param [String] file_name name of the image
     # @param [Array] formats available file formats
-    # @return the most preferred image filen ame
+    # @return the most preferred image file name
     def choose_image(file_name, formats)
-      format = formats.each do |f|
-        break f if PREFERRED_IMAGE_FORMATS.include?(f)
+
+      format = nil
+
+      formats.each do |f|
+        if PREFERRED_IMAGE_FORMATS.include?(f)
+          format = f
+          break
+        end
+      end
+
+      if format.nil?
+        raise Exception, "No suitable format found for image #{file_name}; Found: #{formats}; Supported: #{PREFERRED_IMAGE_FORMATS}"
       end
 
       if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name
