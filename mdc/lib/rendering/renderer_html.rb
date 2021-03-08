@@ -8,7 +8,7 @@ module Rendering
   ##
   # Base class for rendering slides to HTML
   class RendererHTML < Renderer
-    PREFERRED_IMAGE_FORMATS = %w[svg png jpg].freeze
+    PREFERRED_IMAGE_FORMATS = %w[svg png jpg jpeg].freeze
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
