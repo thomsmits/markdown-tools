@@ -52,5 +52,14 @@ module Domain
     def each_content_element(&block)
       @entries.each { |e| e.each_content_element(&block) }
     end
+
+    ##
+    # Return a string representation of this object.
+    # @return [String] the content of the object
+    def to_s
+      result = ''
+      @entries.each { |entry| result << entry.to_s << ' ' }
+      result
+    end
   end
 end
