@@ -19,6 +19,34 @@ $project_path = ''
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
+
+  def self.check_element(container)
+    result = false
+    container.each do |element|
+      if element.is_a?(Domain::Comment)
+        result |= check_element(element)
+      end
+      if element.is_a?(Domain::Equation)
+        return true
+      end
+      if element.to_s =~ /\\\[(.*?)\\\]/
+        return true
+      end
+    end
+    result
+  end
+
+  def self.has_equation(chapters)
+    chapters.each do |chapter|
+      chapter.each do |slides|
+        slides.each do |slide|
+          return true if check_element(slide)
+        end
+      end
+    end
+    false
+  end
+
   def self.main(directory, result_dir)
 
     # Determine my own directory to make invocation of the UML tool
@@ -83,6 +111,8 @@ class Main
       parser.parse(directory + '/' + file, default_syntax, presentation)
       parser.second_pass(presentation)
 
+      has_equation = has_equation(chapters)
+
       io = StringIO.new
       io.set_encoding('UTF-8')
 
@@ -90,7 +120,7 @@ class Main
 
       renderer = Rendering::RendererJekyll.new(
                      io, default_syntax, result_dir,
-                     image_dir, temp_dir, nav_order + 1)
+                     image_dir, temp_dir, nav_order + 1, has_equation)
 
       puts "Result written to: #{output_file}"
 
@@ -119,12 +149,12 @@ class Main
       f << %Q|layout: home| << nl
       f << %Q|---| << nl
       f << %Q|| << nl
-      f << %Q|<div class="text-blue-200 fs-6 fw-700">#{title1}</div>| << nl
+      f << %Q|<div class="text-purple-200 fs-6 fw-700">#{title1}</div>| << nl
       f << %Q|<div class="fs-4 fw-700">#{title2}</div>| << nl
       f << %Q|<div>#{term}</div>| << nl
-      f << %Q|<div class="fs-3 fw-300">Stand: #{Time.new.strftime("%Y-%m-%d")}</div>| << nl
-      f << %Q|<br>| << nl
-      f << %Q|<div class="fs-4 fw-500">#{copyright}</div>| << nl
+      f << %Q|<div class="fs-3 fw-300">Stand: #{Time.new.strftime("%d.%m.%Y")}</div>| << nl
+      #f << %Q|<br>| << nl
+      #f << %Q|<div class="fs-4 fw-500">#{copyright}</div>| << nl
       f << %Q|<br>| << nl
       f << %Q|<div class="text-grey-dk-000 fs-2 fw-300">#{description}</div>| << nl
     end

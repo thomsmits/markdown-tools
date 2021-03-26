@@ -120,8 +120,7 @@ module Rendering
       ),
 
       text: erb(
-        '
-        <p><%= inline_code(content) %></p>
+        '<p><%= inline_code(content) %></p>
         '
       ),
 
@@ -328,7 +327,7 @@ module Rendering
     # @param [String] input Text to be replaced
     # @param [boolean] alternate alternate emphasis to be used
     # @return [String] Text with replacements performed
-    def inline(input, alternate = false)
+    def inline(input, alternate = false, inline_math_start = '\(', inline_math_end = '\)')
       # Separate Hyperlinks from other contents
       parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
       result = ''
@@ -342,7 +341,7 @@ module Rendering
           sub_parts = tokenize_line(p.content, /\\\[(.*?)\\\]/)
           sub_parts.each do |sp|
             result << replace_inline_content(sp.content, alternate) unless sp.matched
-            result << '\(' << sp.content << '\)' if sp.matched
+            result << inline_math_start << sp.content << inline_math_end if sp.matched
           end
         else
           # No Hyperlink, no inline formula
@@ -472,6 +471,34 @@ module Rendering
       end
 
       @io << '</tr>' << nl
+    end
+
+    ##
+    # Render an image
+    # @param [String] location path to image
+    # @param [Array] formats available file formats
+    # @param [String] alt alt text
+    # @param [String] title title of image
+    # @param [String] width_slide width for slide
+    # @param [String] width_plain width for plain text
+    # @param [String] source source of the image
+    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
+      chosen_image = choose_image(location, formats)
+
+      width_attr_plain = ''
+      width_attr_plain = " width='#{width_plain}'" if width_plain
+
+      width_attr_slide = ''
+      width_attr_slide = " width='#{width_slide}'" if width_slide
+
+      full_title = title
+
+      unless source.nil?
+        full_title << ', ' if !full_title.nil? && !full_title.empty?
+        full_title = "#{full_title}#{translate(:source)}#{source}"
+      end
+
+      @io << @templates[:image].result(binding)
     end
 
     ##

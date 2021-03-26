@@ -75,8 +75,8 @@ module Rendering
       image: erb(
         "
         <figure class='picture'>
-        <img alt='<%= alt %>' src='<%= chosen_image %>'<%= width_attr %>>
-        <figcaption><%= inline(title) %></figcaption>
+        <img alt='<%= alt %>' src='<%= chosen_image %>'<%= width_attr_plain %>>
+        <figcaption><%= inline(full_title) %></figcaption>
         </figure>
         "
       ),
@@ -174,25 +174,6 @@ module Rendering
     # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
-    end
-
-    ##
-    # Render an image
-    # @param [String] location path to image
-    # @param [Array] formats available file formats
-    # @param [String] alt alt text
-    # @param [String] title title of image
-    # @param [String] width_slide width for slide
-    # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
-      chosen_image = choose_image(location, formats)
-
-      width_attr = ''
-
-      width_attr = " width='#{width_plain}'" if width_plain
-
-      @io << @templates[:image].result(binding)
     end
 
     ##

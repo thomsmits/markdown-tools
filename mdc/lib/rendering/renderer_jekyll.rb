@@ -66,10 +66,12 @@ module Rendering
 
       image: erb(
         %q{
+        <%- unless /^0$/ === width_plain || /^0%$/ === width_plain -%>
         <figure class="picture">
-        <img alt="<%= alt %>" src="<%= chosen_image %>"<%= width_attr %>>
-        <figcaption class="fs-2"><%= inline(title) %></figcaption>
+        <img alt="<%= alt %>" src="<%= chosen_image %>"<%= width_attr_plain %>>
+        <figcaption class="fs-2"><%= inline(full_title) %></figcaption>
         </figure>
+        <%- end -%>
         }
       ),
 
@@ -83,6 +85,10 @@ module Rendering
       %q|title: <%= title %>
           nav_order: <%= nav_order %>
           ---
+        <%- if @has_equation -%>
+          <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+          <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <%- end -%>
         <h1 class="fw-700 text-purple-300"><%= title %></h1>|
       ),
 
@@ -117,9 +123,13 @@ module Rendering
 
       equation: erb(
       %q(
+        <div>
         \[
+        \begin{align*}
         <%= contents %>
+        \end{align*}
         \]
+        </div>
         )
       ),
 
@@ -211,7 +221,7 @@ module Rendering
 
       text: erb(
       '
-        <%= inline_code(content) %>
+        <p><%= inline_code(content) %></p>
         '
     ),
 
@@ -264,15 +274,18 @@ module Rendering
 
     ## Inline replacements
     INLINE = [
-      [/ ([A-Za-z0-9])_([A-Za-z0-9]) /, ' \1<sub>\2</sub> '],
-      [/ ([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> '],
-      [/([A-Za-z0-9])\^([A-Za-z0-9])$/,  ' \1<sup>\2</sup>'],
-      [/([A-Za-z0-9])\^([A-Za-z0-9]) /,  ' \1<sup>\2</sup> '],
+      [/"(.*?)"/,                        '&bdquo;\1&ldquo;'],
+      [/\[\^(.*?)\]/,                    '<sup><span title=\'\1\'>&#x22C6;</span></sup>'],
+      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
+       '\1\2<sub>\3</sub>\4'],
+      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
+       '\1\2<sup>\3</sup>\4'],
       [/__(.+?)__/,                      '<em class="text-purple-100 fw-500">\1</em>'],
-      [/_(.+?)_/,                        '<strong class="text-purple-100 fw-300">\1</strong>'],
+      [/_(.+?)_/,                        '<strong class="text-purple-100 fw-500">\1</strong>'],
       [/\*\*(.+?)\*\*/,                  '<em class="text-grey-dk-000 fw-500">\1</em>'],
       [/\*(.+?)\*/,                      '<strong class="text-grey-dk-000 fw-300">\1</strong>'],
       [/~~(.+?)~~/,                      '<del>\1</del>'],
+      [/~(.+?)~/,                        '<u>\1</u>'],
       [/Z\.B\./,                         'Z.&nbsp;B.'],
       [/z\.B\./,                         'z.&nbsp;B.'],
       [/D\.h\./,                         'D.&nbsp;h.'],
@@ -285,8 +298,6 @@ module Rendering
       [/---/,                            '&mdash;'],
       [/--/,                             '&ndash;'],
       [/\.\.\./,                         '&hellip;'],
-
-      [/\[\^(.*?)\]/,         '<sup><span title=\'\1\'>*</span></sup>'],
 
       [/^-> /,                '&rarr; '],
       ['(-> ',                '(&rarr; '],
@@ -349,11 +360,13 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     # @param [Numeric] nav_order navigation order of the page
-    def initialize(io, language, result_dir, image_dir, temp_dir, nav_order)
+    # @param [Boolean] has_equation indicates that the presentation contains an equation
+    def initialize(io, language, result_dir, image_dir, temp_dir, nav_order, has_equation)
       super(io, language, result_dir, image_dir, temp_dir)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
       @nav_order = nav_order
+      @has_equation = has_equation
     end
 
     ##
@@ -370,25 +383,6 @@ module Rendering
     # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
-    end
-
-    ##
-    # Render an image
-    # @param [String] location path to image
-    # @param [Array] formats available file formats
-    # @param [String] alt alt text
-    # @param [String] title title of image
-    # @param [String] width_slide width for slide
-    # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
-      chosen_image = choose_image(location, formats)
-
-      width_attr = ''
-
-      width_attr = " width='#{width_plain}'" if width_plain
-
-      @io << @templates[:image].result(binding)
     end
 
     ##
@@ -426,6 +420,16 @@ module Rendering
     def chapter_start(title, number, id)
       nav_order = @nav_order
       @io << @templates[:chapter_start].result(binding)
+    end
+
+    ##
+    # Replace inline elements like emphasis (_..._)
+    #
+    # @param [String] input Text to be replaced
+    # @param [boolean] alternate alternate emphasis to be used
+    # @return [String] Text with replacements performed
+    def inline(input, alternate = false, inline_math_start = '\(', inline_math_end = '\)')
+      super(input, alternate, '<span>\(', '\)</span>')
     end
   end
 end
