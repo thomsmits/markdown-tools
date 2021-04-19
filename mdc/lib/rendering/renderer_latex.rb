@@ -91,7 +91,7 @@ module Rendering
       code_start: erb(
         %q(\begin{lstblock}%
         {\setstretch{1.3}\small
-        \begin{lstlisting}[language=<%= language %>,<%= caption_command %><%= column_style %>basicstyle=\scriptsize\ttfamily])
+        \begin{lstlisting}[language=<%= language %>,<%= caption_command %>,basicstyle=\scriptsize\ttfamily])
       ),
 
       code: erb(
@@ -405,12 +405,6 @@ module Rendering
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
     def code_start(language, caption)
-      column_style = if language == 'console'
-                       'columns=fixed,'
-                     else
-                       ''
-                     end
-
       if caption.nil?
         caption_command = ''
       else
