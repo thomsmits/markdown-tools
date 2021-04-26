@@ -230,4 +230,3 @@ class LineParser3
   end
 end
 
-
