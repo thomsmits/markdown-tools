@@ -453,7 +453,7 @@ With some text
 
     check_slide(slides[slide_index], 'Slide 1.1', false, false,
                 [Domain::Text, Domain::UnorderedList, Domain::Text],
-                ['Text before the list', '', 'Text after the list']) do |e|
+                ['Text before the list', 'Item 1 Item 2 Item 2.1 Item 2.2', 'Text after the list']) do |e|
 
       assert_equal('Item 1', e[1].entries[0].to_s)
       assert_equal('Item 2', e[1].entries[1].to_s)
