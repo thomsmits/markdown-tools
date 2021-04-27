@@ -4,31 +4,6 @@ require_relative '../domain/line_nodes'
 module Parsing
 
   ##
-  # One line of input.
-  class Line
-    attr_accessor :elements
-
-    ##
-    # Create a new object for the given String
-    # @param [String] line
-    def initialize(line)
-      @elements = [ UnparsedNode.new(line) ]
-    end
-
-    ##
-    # Renders the line, using the given renderer. Before calling
-    # this method, the line's content should be parsed to avoid
-    # getting unparsed nodes as output.
-    # @para [LineRenderer] renderer the renderer to be used
-    # @return [String] the result of the rendering
-    def render(renderer)
-      result = ''
-      @elements.each { |e| result << e.render(renderer) }
-      result
-    end
-  end
-
-  ##
   # Helper class for the matchers used to parse the line into nodes
   class MatcherForLineElements
 
@@ -243,14 +218,14 @@ module Parsing
         node.children = result.flatten
         result = [ node ]
       else
-        if node.is_a? UnparsedNode
+        if node.is_a? Domain::UnparsedNode
           # Node has not been parsed
           touched, result = apply_parsers(node)
           unless touched
-            result << TextNode.new(node.content)
+            result << Domain::TextNode.new(node.content)
           end
           changed = true
-        elsif node.class != TextNode && node.class != CodeNode && node.respond_to?(:content)
+        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
           _, result = apply_parsers(node)
           if result.length > 1
@@ -269,10 +244,10 @@ module Parsing
     ##
     # Parse the given line of text
     # @param [String] line_text The line to be parsed
-    # @return [Line] the resulting line object
+    # @return [Domain::LineNodes] the resulting line object
     def parse(line_text)
 
-      line = Line.new(line_text)
+      line = Domain::LineNodes.new(line_text)
       changed = true
 
       while changed

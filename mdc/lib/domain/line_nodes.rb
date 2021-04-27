@@ -1,6 +1,31 @@
 module Domain
 
   ##
+  # One line of input.
+  class LineNodes
+    attr_accessor :elements
+
+    ##
+    # Create a new object for the given String
+    # @param [String] line
+    def initialize(line)
+      @elements = [ UnparsedNode.new(line) ]
+    end
+
+    ##
+    # Renders the line, using the given renderer. Before calling
+    # this method, the line's content should be parsed to avoid
+    # getting unparsed nodes as output.
+    # @para [LineRenderer] renderer the renderer to be used
+    # @return [String] the result of the rendering
+    def render(renderer)
+      result = ''
+      @elements.each { |e| result << e.render(renderer) }
+      result
+    end
+  end
+
+  ##
   # Node with simple text in it. Base class for all other
   # nodes.
   class TextNode
