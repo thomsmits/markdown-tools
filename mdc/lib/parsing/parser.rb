@@ -44,7 +44,7 @@ module Parsing
 
     ##
     # Parse the given string or file into the given presentation.
-    # @param [String] lines input to be parsed
+    # @param [Array<String>] lines input to be parsed
     # @param [String] file_name File to be parsed
     # @param [String] default_language language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
