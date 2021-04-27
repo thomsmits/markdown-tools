@@ -65,9 +65,9 @@ module Domain
       define_method(:render) do |renderer|
         sub_content = render_children(renderer)
         if sub_content
-          renderer.method(method_name).call(sub_content)
+          renderer.send(method_name, sub_content)
         else
-          renderer.method(method_name).call(@content)
+          renderer.send(method_name, @content)
         end
       end
     end
