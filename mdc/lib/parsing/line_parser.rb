@@ -1,362 +1,352 @@
-require 'strscan'
+require 'stringio'
+require_relative '../domain/line_nodes'
 
-require 'minitest/autorun'
+##
+# One line of input.
+class Line
+  attr_accessor :elements
 
-require_relative 'delimiter'
-require_relative 'delimiter_stack'
-require_relative 'node_list'
-require_relative 'nodes'
-require_relative 'line'
+  ##
+  #  Create a new object for the given String
+  # @param [String] line
+  def initialize(line)
+    @elements = [ UnparsedNode.new(line) ]
+  end
 
+  ##
+  # Are there any unparsed nodes present in the line
+  # @return [Boolean] true if all nodes have been processes, otherwise false
+  def complete?
+    unparsed = false
+    @elements.each { |e| result ||= e.is_a? UnparsedNode }
+    !unparsed
+  end
+
+  ##
+  # Renders the line, using the given renderer
+  # @para [LineRenderer] renderer the renderer to be used
+  # @return [String] the result of the rendering
+  def render(renderer)
+    result = ''
+    @elements.each { |e| result << e.render(renderer) }
+    result
+  end
+
+  ##
+  # Process the next unparsed node
+  # @return [Boolean] returns true if the operation has changed the list of nodes
+  # @yield [e] calls the provided block with the unparsed nodes of the line, the result replaces the node
+  def next_unparsed_node
+    result = []
+    @elements.each do |e|
+      if e.is_a? UnparsedNode
+        replacement = yield(e)
+        result << replacement
+      else
+        result << e
+      end
+    end
+    changed = result != @elements
+    @elements = result.flatten
+    changed
+  end
+
+  def compare(elements)
+    @elements.each_with_index do |e, i|
+      if e.class != elements[i].class
+        return false
+      elsif e.children.length != elements[i].children.length
+        return false
+      elsif e.children != elements[i].children
+        return false
+      end
+    end
+    true
+  end
+end
+
+##
+# Helper class for the matchers used to parse the line into nodes
+class MatcherForLineElements
+
+  ##
+  # Create a new instance
+  # @param [Array<Regexp>] regex Regular expression used
+  # @param [Proc] proc Lambda to be called if one of the expression matches
+  def initialize(regex, proc)
+    @regex = regex
+    @proc = proc
+  end
+
+  ##
+  # Executes the matcher
+  # @param [String] text Text to be parsed
+  # @param [Array<TextNode>] elements Array of already parsed nodes
+  # @return [Boolean] true, if a match was found, otherwise false
+  def execute(text, elements)
+    md = test_for_match(text)
+    if md
+      @proc.call(elements, md)
+    end
+    !!md
+  end
+
+  ##
+  # Test if any of the matchers may fit
+  # @param [String] text Text to be parsed
+  # @return [MatchData, nil] the match or nil, if no match was found
+  def test_for_match(text)
+    @regex.each do |regex|
+      md = regex.match(text)
+
+      if md
+        return md
+      end
+    end
+    nil
+  end
+
+private
+
+  ##
+  # Helper function to extract matches from the provided object
+  # @param [MatchData] md Match data
+  # @return [Array<String, String>] pre and post data
+  def self.pre_post(md)
+    pre = ''
+    post = ''
+    pre << md.pre_match   if md.pre_match != ''
+    pre << md[:pre]       if md.names.include?("pre")
+
+    post << md[:post]     if md.names.include?("post")
+    post << md.post_match if md.post_match != ''
+
+    [ pre, post ]
+  end
+
+  ##
+  # Helper method to add elements to the collection
+  # @param [Array<TextNode>] elements The elements
+  # @param [MatchData] md Match data
+  # @param [TextNode] newNode node to be added
+  def self.add_elements(elements, md, newNode)
+    pre, post = MatcherForLineElements.pre_post(md)
+    elements << UnparsedNode.new(pre)  if pre != ''
+    elements << newNode
+    elements << UnparsedNode.new(post) if post != ''
+  end
+end
+
+##
+# Class to parse a line of string into the nodes, representing the elements
+# of that line
 class LineParser
 
-  def parse_images(line)
-    if %r{!\[(.*)\]\((.*) "(.*)"\)/(.*)//(.*)/} =~ line
-      [ ImageNode.new(line.pos, $2, $3, $1, $4, $5), $&.length ]
-    elsif %r{!\[(.*)\]\((.*) "(.*)"\)<!-- /(.*)//(.*)/ -->} =~ line
-      [ ImageNode.new(line.pos, $2, $3, $1, $4, $5), $&.length ]
-    elsif %r{!\[(.*)\]\((.*) "(.*)"\)/(.*)/} =~ line
-      [ ImageNode.new(line.pos, $2, $3, $1, $4, $4), $&.length ]
-    elsif %r{!\[(.*)\]\((.*) "(.*)"\)<!-- /(.*)/ -->} =~ line
-      [ ImageNode.new(line.pos, $2, $3, $1, $4, $4), $&.length ]
-    elsif %r{!\[(.*)\]\((.*?)\)/(.*)//(.*)/} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, $3, $4), $&.length ]
-    elsif %r{!\[(.*)\]\((.*?)\)<!-- /(.*)//(.*)/ -->} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, $3, $4), $&.length ]
-    elsif %r{!\[(.*)\]\((.*?)\)/(.*?)/} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, '', ''), $&.length ]
-    elsif %r{!\[(.*)\]\((.*?)\)<!-- /(.*?)/ -->} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, $3, $3), $&.length ]
-    elsif %r{!\[(.*)\]\((.*?) "(.*?)"\)} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, '', ''), $&.length ]
-    elsif %r{!\[(.*?)\]\((.*?)\)} =~ line
-      [ ImageNode.new(line.pos, $2, '', $1, '', ''), $&.length ]
+  PARSERS = [
+    MatcherForLineElements.new([
+                                 /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
+                                 /``([\s\S]*?[^\s][\s\S]*?)``/,
+                                 /` (.*[^\s].*) `/,
+                                 /`([^`]*?)`/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, CodeNode.new(md[1].gsub("\n", ' ')))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /^\*\*(?<em>[^\s].*?[^\s])\*\*/,
+                                 /(?<pre>[\s])\*\*(?<em>[^\s].*?[^\s])\*\*/,
+                                 /(?<pre>[\w])\*\*(?<em>[\w]*?[^\s])\*\*/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, StrongStarNode.new(md[:em]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__$/,
+                                 /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>[\s().,;?\-])/,
+                                 /(?<pre>[().,;?\-])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, StrongUnderscoreNode.new(md[:em]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /^\*(?<em>[^\s*].*?[^\s])\*/,
+                                 /(?<pre>[\s])\*(?<em>[^\s*].*?[^\s])\*/,
+                                 /(?<pre>[\w])\*(?<em>[\w]*?[^\s*])\*/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, EmphasisStarNode.new(md[:em]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_$/,
+                                 /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>[\s().,;?\-])/,
+                                 /(?<pre>[().,;?\-])_(?<em>[\w().,;?\-].*?[\S().,;?\-])_/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, EmphasisUnderscoreNode.new(md[:em]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
+                                 /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
+                                 /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
+                                 /\[(?<text>.*?)\]\((?<url>\S*?)\)/, ],
+                               lambda do |elements, md|
+                                 title = if md.names.include?("title") then md[:title] else nil end
+                                 url = md[:url]
+                                 url.gsub!(' ', '%20')
+                                 MatcherForLineElements.add_elements(elements, md, LinkNode.new(url, md[:text], title))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /\[(?<text>.*?)\]\[(?<ref>.*?)\]/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, RefLinkNode.new(md[:ref], md[:text]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /\[(?<ref>.*?)\]: (?<url>.*?) ["'(](?<title>.*?)["')]/,
+                                 /\[(?<ref>.*?)\]: (?<url>.*?)/, ],
+                               lambda do |elements, md|
+                                 title = if md.names.include?("title") then md[:title] else nil end
+                                 MatcherForLineElements.add_elements(elements, md, ReferenceNode.new(md[:ref], md[:url], title))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /\\\[(.*?)\\\]/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, FormulaNode.new(md[1]))
+                               end),
+
+    MatcherForLineElements.new([
+                                 /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})_(?<sub>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/,],
+                               lambda do |elements, md|
+                                 pre, post = MatcherForLineElements.pre_post(md)
+                                 elements << UnparsedNode.new(pre + md[:lower])
+                                 elements << SubscriptNode.new(md[:sub])
+                                 elements << UnparsedNode.new(post)                    if post != ''
+                               end),
+
+    MatcherForLineElements.new([
+                                 /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})\^(?<sup>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/, ],
+                               lambda do |elements, md|
+                                 pre, post = MatcherForLineElements.pre_post(md)
+                                 elements << UnparsedNode.new(pre + md[:lower])
+                                 elements << SuperscriptNode.new(md[:sup])
+                                 elements << UnparsedNode.new(post)                     if post != ''
+                               end),
+
+    MatcherForLineElements.new([ /~~(.+?)~~/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, DeletedNode.new(md[1]))
+                               end),
+
+    MatcherForLineElements.new([ /~(.+?)~/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, UnderlineNode.new(md[1]))
+                               end),
+  ]
+
+  def apply_parsers(node, result)
+    touched = false
+    PARSERS.each do |p|
+      touched = p.execute(node.content, result)
+      break if touched
+    end
+    touched
+  end
+
+  def test_for_match(node)
+    result = false
+    PARSERS.each do |p|
+      result = p.test_for_match(node.content)
+      break if result
+    end
+    result
+  end
+
+  ##
+  # Parse a single node into sub nodes
+  # @param [TextNode] node The node to be parsed
+  # @return [Array<TextNode>] the created nodes
+  def parse_node(node)
+
+    changed = false
+
+    if node.children.length > 0
+      result = []
+      node.children.each do |child|
+        e, c = parse_node(child)
+        result << e
+        changed ||= c
+      end
+      node.children = result.flatten
+      result = [ node ]
     else
-      [ nil, 0 ]
-    end
-  end
-
-  def parse_links(line)
-    if %r{\[(.*?)\]\((.*?)\)} =~ line
-      [ LinkNode.new(line.pos, $1, $2), $&.length ]
-    elsif %r{\[(.*?)\]\((.*?) "(.*?)"\)} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: <(.*?)> "(.*?)"} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: <(.*?)> '(.*?)'} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: <(.*?)> \((.*?)\)} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: (.*?) '(.*?)'} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: (.*?) "(.*?)"} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: (.*?) \((.*?)\)} =~ line
-      [ LinkNode.new(line.pos, $1, $2, $3), $&.length ]
-    elsif %r{^\[(.*?)\]: <(.*?)>} =~ line
-      [ LinkNode.new(line.pos, $1, $2), $&.length ]
-    elsif %r{^\[(.*?)\]: (.*)} =~ line
-      [ LinkNode.new(string_pos, $1, $2), $&.length ]
-    elsif %r{\[(.+?)\]\((.+?)\)} =~ line
-      [ LinkNode.new(line.pos, $1, $2), $&.length ]
-    else
-      [ nil, 0 ]
-    end
-  end
-
-  def delimiter_run(scanner)
-
-    punctuation = '\[\]!"#$%&\'\(\)+,./:;<=>?@^_`{|}~-'
-    delimiter = '[*_]{1,}'
-
-    # A left-flanking delimiter run is a delimiter run that is
-    # (1) not followed by Unicode whitespace, and either
-    # (2a) not followed by a punctuation character, or
-    # (2b) followed by a punctuation character and preceded by Unicode whitespace or a punctuation character.
-    # For purposes of this definition, the beginning and the end of the line count as Unicode whitespace.
-    left_flanking_regex = /((#{delimiter})[^*\s#{punctuation}])|(([\s#{punctuation}](#{delimiter}))[#{punctuation}])/
-
-    # A right-flanking delimiter run is a delimiter run that is
-    # (1) not preceded by Unicode whitespace, and either
-    # (2a) not preceded by a punctuation character, or
-    # (2b) preceded by a punctuation character and followed by Unicode whitespace or a punctuation character.
-    # For purposes of this definition, the beginning and the end of the line count as Unicode whitespace.
-    right_flanking_regex = /([^*\s#{punctuation}](#{delimiter}))|([#{punctuation}](#{delimiter})[\s#{punctuation}])/
-
-    delimiters = ''
-
-    if scanner.check(left_flanking_regex)
-      context = scanner.matched
-      delimiters = scanner.values_at(2, 4).join('')
-      type = :left_flanking
-
-      if context =~ right_flanking_regex
-        type = :both_flanking
-      else
-        type = :left_flanking
-      end
-    end
-
-    if scanner.check(right_flanking_regex)
-      context = scanner.matched
-      delimiters = scanner.values_at(2, 4).join('')
-
-      if context =~ left_flanking_regex
-        type = :both_flanking
-      else
-        type = :right_flanking
-      end
-    end
-
-    puts delimiters
-
-    # 1. A single * character can open emphasis iff it is part of a left-flanking delimiter run.
-    if delimiters == '*' && type == :left_flanking
-      return :open
-    end
-
-    # 2. A single _ character can open emphasis iff it is part of a left-flanking delimiter run and either
-    # (a) not part of a right-flanking delimiter run or
-    # (b) part of a right-flanking delimiter run preceded by punctuation.
-    if delimiters == '_'
-      if type == :left_flanking
-        return :open
-      elsif type == :both_flanking
-        # TODO: preceded by punctuation
-      end
-    end
-
-    # 3. A single * character can close emphasis iff it is part of a right-flanking delimiter run.
-    if delimiters == '*' && type == :right_flanking
-      return :close
-    end
-
-    # 4. A single _ character can close emphasis iff it is part of a right-flanking delimiter run and either
-    # (a) not part of a left-flanking delimiter run or
-    # (b) part of a left-flanking delimiter run followed by punctuation.
-    if delimiters == '_'
-      if type == :right_flanking
-        return :close
-      elsif type == :both_flanking
-        # TODO: followed by punctuation
-      end
-    end
-
-    # 5. A double ** can open strong emphasis iff it is part of a left-flanking delimiter run.
-    if delimiters == '**' && type == :left_flanking
-      return :open
-    end
-
-    # 6. A double __ can open strong emphasis iff it is part of a left-flanking delimiter run and either
-    # (a) not part of a right-flanking delimiter run or
-    # (b) part of a right-flanking delimiter run preceded by punctuation.
-    if delimiters == '__'
-      if type == :left_flanking
-        return :open
-      elsif type == :both_flanking
-        # TODO: preceded by punctuation
-      end
-    end
-
-    # 7. A double ** can close strong emphasis iff it is part of a right-flanking delimiter run.
-    if delimiters == '**' && type == :right_flanking
-      return :close
-    end
-
-    # 8. A double __ can close strong emphasis iff it is part of a right-flanking delimiter run and either
-    # (a) not part of a left-flanking delimiter run or
-    # (b) part of a left-flanking delimiter run followed by punctuation.
-    if delimiters == '__'
-      if type == :right_flanking
-        return :close
-      elsif type == :both_flanking
-        # TODO: followed by punctuation
-      end
-    end
-
-    # 9. Emphasis begins with a delimiter that can open emphasis
-    # and ends with a delimiter that can close emphasis,
-    # and that uses the same character (_ or *) as the opening delimiter.
-    # The opening and closing delimiters must belong to separate delimiter runs.
-    # If one of the delimiters can both open and close emphasis, then the sum of the
-    # lengths of the delimiter runs containing the opening and closing delimiters
-    # must not be a multiple of 3 unless both lengths are multiples of 3.
-
-    # 10. Strong emphasis begins with a delimiter that can open strong emphasis
-    # and ends with a delimiter that can close strong emphasis,
-    # and that uses the same character (_ or *) as the opening delimiter.
-    # The opening and closing delimiters must belong to separate delimiter runs.
-    # If one of the delimiters can both open and close strong emphasis, then the sum of the
-    # lengths of the delimiter runs containing the opening and closing delimiters
-    # must not be a multiple of 3 unless both lengths are multiples of 3.
-
-    # 11. A literal * character cannot occur at the beginning or end
-    # of *-delimited emphasis or **-delimited strong emphasis,
-    # unless it is backslash-escaped.
-
-    # 12. A literal _ character cannot occur at the beginning or end
-    # of _-delimited emphasis or __-delimited strong emphasis,
-    # unless it is backslash-escaped.
-
-    # 13. The number of nestings should be minimized.
-    # Thus, for example, an interpretation <strong>...</strong>
-    # is always preferred to <em><em>...</em></em>.
-
-    # 15. An interpretation <em><strong>...</strong></em> is
-    # always preferred to <strong><em>...</em></strong>.
-
-    # 16. When two potential emphasis or strong emphasis spans overlap,
-    # so that the second begins before the first ends and ends after the first ends,
-    # the first takes precedence. Thus, for example, *foo _bar* baz_ is parsed as <em>foo _bar</em> baz_
-    # rather than *foo <em>bar* baz</em>.
-
-    # 17. When there are two potential emphasis or strong emphasis spans with the same closing delimiter,
-    # the shorter one (the one that opens later) takes precedence.
-    # Thus, for example, **foo **bar baz** is parsed as **foo <strong>bar baz</strong>
-    # rather than <strong>foo **bar baz</strong>.
-
-    # 18. Inline code spans, links, images, and HTML tags group more tightly than emphasis.
-    # So, when there is a choice between an interpretation that contains one of these elements
-    # and one that does not, the former always wins.
-    # Thus, for example, *[foo*](bar) is parsed as *<a href="bar">foo*</a> rather than as <em>[foo</em>](bar)
-
-    return :none
-  end
-
-  def look_for_link_or_image(stack, nodes, line)
-
-    string_pos = line.pos
-
-    stack.search_backwards(%w{![ [}) do |delimiter|
-      # Search backward for the first opening delimiter
-
-      if delimiter.type == '!['
-        # Image start tag
-
-        # Parse the line and try to match image information
-        image_node, length = parse_images(line[delimiter])
-
-        if image_node
-          nodes.delete_node_and_after(delimiter.node)
-          stack.delete(delimiter)
-          nodes.add_node(image_node)
-          line.pos = image_node.pos # rewind line
-          line.skip_char(length) # skip over the matched element
-          return
+      if node.is_a? UnparsedNode
+        result = []
+        touched = apply_parsers(node, result)
+        unless touched
+          result << TextNode.new(node.content)
         end
-      elsif delimiter.type == '['
-        # Link start tag
-        link_node, length = parse_links(line[delimiter])
-
-        if link_node
-          # disable all opening delimiters
-          stack.disable('[', delimiter)
-
-          nodes.delete_node_and_after(delimiter.node)
-          stack.delete(delimiter)
-          nodes.add_node(link_node)
-          line.pos = link_node.pos # rewind line
-          line.skip_char(length) # skip over the matched element
-          return
+        changed = true
+      elsif node.class != TextNode && node.class != CodeNode && node.respond_to?(:content)
+        result = []
+        touched = apply_parsers(node, result)
+        if result.length > 1
+          node.children = result
+          changed = true
         end
+        result = [ node ]
       else
-        stack.delete(delimiter)
-        nodes.add(TextNode.new(string_pos, ']'))
+        result = [ node ]
       end
     end
+    [ result.flatten, changed ]
   end
+  ##
+  # Parse the given line of text
+  # @param [String] line_text The line to be parsed
+  # @return [Line] the resulting line object
+  def parse(line_text)
 
-  def process_emphasis(delimiters, nodes, line, stack_bottom = nil)
-    sub_stack = delimiters.sub_stack(stack_bottom)
-    pos = delimiters.length - 1
-    openers_bottom = pos
+    line = Line.new(line_text)
+    changed = true
 
-    while true
-      if delimiters[pos].type == '*'
+    while changed
+      changed = false
+      before = line.elements.dup
 
-      elsif delimiters[pos].type = '_'
+      elements = []
+
+      line.elements.each do |node|
+        e, c = parse_node(node)
+        elements << e
+        changed ||= c
       end
-
-      pos -= 1
+      line.elements = elements.flatten
     end
 
 
-
-  end
-
-  def parse_line(text)
-    line = Line.new(text)
-    nodes = NodeList.new
-    delimiters = DelimiterStack.new
-
-
-    until line.eos
-
-      c = line.fetch_next_char
-
-      if c == '\\' && line.peek_next_char
-        # next character is escaped, add it as a text node
-        # without further interpretation
-        nodes.current_node << line.fetch_next_char
-      elsif c == '!' && line.peek_next_char == '['
-        node = nodes.add_node(TextNode.new(line.pos - 1, '!['))
-        line.skip_char
-        delimiters << Delimiter.new('![', node)
-      elsif (c == '*') || (c == '_') || (c == '[')
-        node = nodes.add_node(TextNode.new(line.pos - 1, c))
-        delimiters << Delimiter.new(c, node)
-      elsif c == ']'
-        nodes.close_node
-        look_for_link_or_image(delimiters, nodes, line)
-      else
-        nodes.current_node << c
+    while false
+      changed = line.next_unparsed_node do |e|
+        parse_node(e)
       end
     end
 
-    nodes.add_node(nodes.current_node)
+    changed = false
+    while changed
+      line.elements.each do |e|
+        if e.class != TextNode && e.class != CodeNode && e.respond_to?(:content)
+          result, c = parse_node(e)
+          if result.length > 1
+            e.children = result
+          end
+        end
 
-    #
-    # process_emphasis(delimiters, nodes, line, nil)
+      end
+    end
 
-    puts delimiters
-    puts nodes
-  end
+    line
 
-
-end
-
-class StringScanner
-  def to_s
-    string[pos..]
-  end
-end
-
-#LineParser.new.parse_line('Test \\* *fett* _fetter_ ![img](/url) [[Link](/url) Test *')
-
-class TestLineParser < Minitest::Test
-
-  def prepare_scan(string, first, second)
-    s = StringScanner.new(string)
-    l = LineParser.new
-
-    s.skip(/[^_*]+/)
-    r_first = l.delimiter_run(s)
-    s.skip(/[_*]/)
-    s.skip(/[^_*]+/)
-    s.pos = s.pos - 1
-    r_second = l.delimiter_run(s)
-    assert_equal(first, r_first)
-    assert_equal(second, r_second)
-  end
-
-  def test_parser
-    prepare_scan(%Q{*foo bar*}, :open, :close)
-    prepare_scan(%Q{a * foo bar*}, :none, :close)
-    prepare_scan(%Q{a*"foo"*}, :none, :none)
-    prepare_scan(%Q{* a *}, :none, :none)
-    prepare_scan(%Q{foo*bar*}, :open, :close)
-    prepare_scan(%Q{5*6*78}, :open, :close)
   end
 end
 
-TestLineParser.new('test').test_parser
