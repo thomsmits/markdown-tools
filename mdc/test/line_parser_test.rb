@@ -5,100 +5,70 @@ require_relative '../lib/rendering/line_renderer'
 
 class LineRendererHTML < LineRenderer
 
-  ##
-  # Initialize the renderer
-  # @param [IO] io target of output operations
-  def initialize(io)
-    @io = io
+  def render_text(content)
+    content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
   end
 
-  def handle_array(node)
-    if node.content.is_a? Array
-      temp_io = StringIO.new
-      r = self.class.new(temp_io)
-      node.content.each { |e| e.render(r) }
-      node.content = temp_io.string
+  def render_code(content)
+    "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
+  end
+
+  def render_strongunderscore(content)
+    "<strong>#{content}</strong>"
+  end
+
+  def render_strongstar(content)
+    "<strong>#{content}</strong>"
+  end
+
+  def render_emphasisunderscore(content)
+    "<em>#{content}</em>"
+  end
+
+  def render_emphasisstar(content)
+    "<em>#{content}</em>"
+  end
+
+  def render_superscript(content)
+    "<sup>#{content}</sup>"
+  end
+
+  def render_subscript(content)
+    "<sub>#{content}</sub>"
+  end
+
+  def render_link(content, target = '', title = '')
+    if title.nil?
+      %Q{<a href="#{target}">#{content}</a>}
+    else
+      %Q{<a href="#{target}" title="#{title}">#{content}</a>}
     end
   end
 
-  def render_text(node)
-    handle_array(node)
-    @io << node.content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
+  def render_reflink(content, ref = '')
+    if ref == "bar" # TODO: Hack!
+       %Q{<a href="/url" title="title">#{content}</a>}
+     elsif ref == "ref"
+       %Q{<a href="/uri">#{content}</a>}
+     else
+       ''
+     end
   end
 
-  def render_code(node)
-    handle_array(node)
-    @io << "<code>#{node.content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
+  def render_formula(content)
+    "$$#{content}$$"
   end
 
-  def render_strongunderscore(node)
-    handle_array(node)
-    @io << "<strong>#{node.content}</strong>"
+  def render_deleted(content)
+    "<del>#{content}</del>"
   end
 
-  def render_strongstar(node)
-    handle_array(node)
-    @io << "<strong>#{node.content}</strong>"
+  def render_underline(content)
+    "<u>#{content}</u>"
   end
 
-  def render_emphasisunderscore(node)
-    handle_array(node)
-    @io << "<em>#{node.content}</em>"
-  end
-
-  def render_emphasisstar(node)
-    handle_array(node)
-    @io << "<em>#{node.content}</em>"
-  end
-
-  def render_superscript(node)
-    handle_array(node)
-    @io << "<sup>#{node.content}</sup>"
-  end
-
-  def render_subscript(node)
-    handle_array(node)
-    @io << "<sub>#{node.content}</sub>"
-  end
-
-  def render_link(node)
-    handle_array(node)
-    @io << if node.title.nil?
-             %Q{<a href="#{node.target}">#{node.content}</a>}
-           else
-             %Q{<a href="#{node.target}" title="#{node.title}">#{node.content}</a>}
-           end
-  end
-
-  def render_reflink(node)
-    handle_array(node)
-    @io << if node.ref == "bar"
-             %Q{<a href="/url" title="title">#{node.content}</a>}
-           elsif node.ref == "ref"
-             %Q{<a href="/uri">#{node.content}</a>}
-           else
-             ''
-           end
-  end
-
-  def render_formula(node)
-    handle_array(node)
-    @io << "$$#{node.content}$$"
-  end
-
-  def render_deleted(node)
-    handle_array(node)
-    @io << "<del>#{node.content}</del>"
-  end
-
-  def render_underline(node)
-    handle_array(node)
-    @io << "<u>#{node.content}</u>"
-  end
-
-  def render_unparsed(node)
-    handle_array(node)
-    @io << "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{node.content}"
+  def render_unparsed(content)
+    "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
   end
 end
 
@@ -202,11 +172,10 @@ class LineParserTest < Minitest::Test
 
   def test_line_parser
     Cases.each do |t|
-      line = LineParser3.new.parse(t[1])
-      io = StringIO.new
-      renderer = LineRendererHTML.new(io)
-      line.render(renderer)
-      result = io.string
+      line = LineParser.new.parse(t[1])
+      renderer = LineRendererHTML.new
+      result = line.render(renderer)
+
 
       assert_equal(result.strip, t[2], "case #{t[0]}")
       if result.strip != t[2]

@@ -6,20 +6,36 @@ require_relative '../domain/line_nodes'
 class Line
   attr_accessor :elements
 
+  ##
+  #  Create a new object for the given String
+  # @param [String] line
   def initialize(line)
     @elements = [ UnparsedNode.new(line) ]
   end
 
+  ##
+  # Are there any unparsed nodes present in the line
+  # @return [Boolean] true if all nodes have been processes, otherwise false
   def complete?
     unparsed = false
     @elements.each { |e| result ||= e.is_a? UnparsedNode }
     !unparsed
   end
 
+  ##
+  # Renders the line, using the given renderer
+  # @para [LineRenderer] renderer the renderer to be used
+  # @return [String] the result of the rendering
   def render(renderer)
-    @elements.each { |e| e.render(renderer) }
+    result = ''
+    @elements.each { |e| result << e.render(renderer) }
+    result
   end
 
+  ##
+  # Process the next unparsed node
+  # @return [Boolean] returns true if the operation has changed the list of nodes
+  # @yield [e] calls the provided block with the unparsed nodes of the line, the result replaces the node
   def next_unparsed_node
     result = []
     @elements.each do |e|
@@ -34,26 +50,68 @@ class Line
     @elements = result.flatten
     changed
   end
+
+  def compare(elements)
+    @elements.each_with_index do |e, i|
+      if e.class != elements[i].class
+        return false
+      elsif e.children.length != elements[i].children.length
+        return false
+      elsif e.children != elements[i].children
+        return false
+      end
+    end
+    true
+  end
 end
 
+##
+# Helper class for the matchers used to parse the line into nodes
 class MatcherForLineElements
+
+  ##
+  # Create a new instance
+  # @param [Array<Regexp>] regex Regular expression used
+  # @param [Proc] proc Lambda to be called if one of the expression matches
   def initialize(regex, proc)
     @regex = regex
     @proc = proc
   end
 
+  ##
+  # Executes the matcher
+  # @param [String] text Text to be parsed
+  # @param [Array<TextNode>] elements Array of already parsed nodes
+  # @return [Boolean] true, if a match was found, otherwise false
   def execute(text, elements)
+    md = test_for_match(text)
+    if md
+      @proc.call(elements, md)
+    end
+    !!md
+  end
+
+  ##
+  # Test if any of the matchers may fit
+  # @param [String] text Text to be parsed
+  # @return [MatchData, nil] the match or nil, if no match was found
+  def test_for_match(text)
     @regex.each do |regex|
       md = regex.match(text)
 
       if md
-        @proc.call(elements, md)
-        return true
+        return md
       end
     end
-    false
+    nil
   end
 
+private
+
+  ##
+  # Helper function to extract matches from the provided object
+  # @param [MatchData] md Match data
+  # @return [Array<String, String>] pre and post data
   def self.pre_post(md)
     pre = ''
     post = ''
@@ -66,6 +124,11 @@ class MatcherForLineElements
     [ pre, post ]
   end
 
+  ##
+  # Helper method to add elements to the collection
+  # @param [Array<TextNode>] elements The elements
+  # @param [MatchData] md Match data
+  # @param [TextNode] newNode node to be added
   def self.add_elements(elements, md, newNode)
     pre, post = MatcherForLineElements.pre_post(md)
     elements << UnparsedNode.new(pre)  if pre != ''
@@ -74,157 +137,214 @@ class MatcherForLineElements
   end
 end
 
-$parsers = [
-  MatcherForLineElements.new([
-    /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
-    /``([\s\S]*?[^\s][\s\S]*?)``/,
-    /` (.*[^\s].*) `/,
-    /`([^`]*?)`/ ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, CodeNode.new(md[1].gsub("\n", ' ')))
-    end),
+##
+# Class to parse a line of string into the nodes, representing the elements
+# of that line
+class LineParser
 
-  MatcherForLineElements.new([
-    /^\*\*(?<em>[^\s].*?[^\s])\*\*/,
-    /(?<pre>[\s])\*\*(?<em>[^\s].*?[^\s])\*\*/,
-    /(?<pre>[\w])\*\*(?<em>[\w]*?[^\s])\*\*/ ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, StrongStarNode.new(md[:em]))
-    end),
+  PARSERS = [
+    MatcherForLineElements.new([
+                                 /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
+                                 /``([\s\S]*?[^\s][\s\S]*?)``/,
+                                 /` (.*[^\s].*) `/,
+                                 /`([^`]*?)`/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, CodeNode.new(md[1].gsub("\n", ' ')))
+                               end),
 
-  MatcherForLineElements.new([
-    /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__$/,
-    /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>[\s().,;?\-])/,
-    /(?<pre>[().,;?\-])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, StrongUnderscoreNode.new(md[:em]))
-    end),
+    MatcherForLineElements.new([
+                                 /^\*\*(?<em>[^\s].*?[^\s])\*\*/,
+                                 /(?<pre>[\s])\*\*(?<em>[^\s].*?[^\s])\*\*/,
+                                 /(?<pre>[\w])\*\*(?<em>[\w]*?[^\s])\*\*/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, StrongStarNode.new(md[:em]))
+                               end),
 
-  MatcherForLineElements.new([
-    /^\*(?<em>[^\s*].*?[^\s])\*/,
-    /(?<pre>[\s])\*(?<em>[^\s*].*?[^\s])\*/,
-    /(?<pre>[\w])\*(?<em>[\w]*?[^\s*])\*/, ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, EmphasisStarNode.new(md[:em]))
-    end),
+    MatcherForLineElements.new([
+                                 /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__$/,
+                                 /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>[\s().,;?\-])/,
+                                 /(?<pre>[().,;?\-])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, StrongUnderscoreNode.new(md[:em]))
+                               end),
 
-  MatcherForLineElements.new([
-    /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_$/,
-    /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>[\s().,;?\-])/,
-    /(?<pre>[().,;?\-])_(?<em>[\w().,;?\-].*?[\S().,;?\-])_/, ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, EmphasisUnderscoreNode.new(md[:em]))
-    end),
+    MatcherForLineElements.new([
+                                 /^\*(?<em>[^\s*].*?[^\s])\*/,
+                                 /(?<pre>[\s])\*(?<em>[^\s*].*?[^\s])\*/,
+                                 /(?<pre>[\w])\*(?<em>[\w]*?[^\s*])\*/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, EmphasisStarNode.new(md[:em]))
+                               end),
 
-  MatcherForLineElements.new([
-    /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
-    /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
-    /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
-    /\[(?<text>.*?)\]\((?<url>\S*?)\)/, ],
-    lambda do |elements, md|
-      title = if md.names.include?("title") then md[:title] else nil end
-      url = md[:url]
-      url.gsub!(' ', '%20')
-      MatcherForLineElements.add_elements(elements, md, LinkNode.new(url, md[:text], title))
-    end),
+    MatcherForLineElements.new([
+                                 /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_$/,
+                                 /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>[\s().,;?\-])/,
+                                 /(?<pre>[().,;?\-])_(?<em>[\w().,;?\-].*?[\S().,;?\-])_/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, EmphasisUnderscoreNode.new(md[:em]))
+                               end),
 
-  MatcherForLineElements.new([
-    /\[(?<text>.*?)\]\[(?<ref>.*?)\]/, ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, RefLinkNode.new(md[:ref], md[:text]))
-    end),
+    MatcherForLineElements.new([
+                                 /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
+                                 /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
+                                 /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
+                                 /\[(?<text>.*?)\]\((?<url>\S*?)\)/, ],
+                               lambda do |elements, md|
+                                 title = if md.names.include?("title") then md[:title] else nil end
+                                 url = md[:url]
+                                 url.gsub!(' ', '%20')
+                                 MatcherForLineElements.add_elements(elements, md, LinkNode.new(url, md[:text], title))
+                               end),
 
-  MatcherForLineElements.new([
-    /\[(?<ref>.*?)\]: (?<url>.*?) ["'(](?<title>.*?)["')]/,
-    /\[(?<ref>.*?)\]: (?<url>.*?)/, ],
-    lambda do |elements, md|
-      title = if md.names.include?("title") then md[:title] else nil end
-      MatcherForLineElements.add_elements(elements, md, Reference.new(md[:ref], md[:url], title))
-    end),
+    MatcherForLineElements.new([
+                                 /\[(?<text>.*?)\]\[(?<ref>.*?)\]/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, RefLinkNode.new(md[:ref], md[:text]))
+                               end),
 
-  MatcherForLineElements.new([
-    /\\\[(.*?)\\\]/, ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, FormulaNode.new(md[1]))
-   end),
+    MatcherForLineElements.new([
+                                 /\[(?<ref>.*?)\]: (?<url>.*?) ["'(](?<title>.*?)["')]/,
+                                 /\[(?<ref>.*?)\]: (?<url>.*?)/, ],
+                               lambda do |elements, md|
+                                 title = if md.names.include?("title") then md[:title] else nil end
+                                 MatcherForLineElements.add_elements(elements, md, ReferenceNode.new(md[:ref], md[:url], title))
+                               end),
 
-  MatcherForLineElements.new([
-    /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})_(?<sub>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/,],
-    lambda do |elements, md|
-      pre, post = MatcherForLineElements.pre_post(md)
-      elements << UnparsedNode.new(pre + md[:lower])
-      elements << SubscriptNode.new(md[:sub])
-      elements << UnparsedNode.new(post)                    if post != ''
-    end),
+    MatcherForLineElements.new([
+                                 /\\\[(.*?)\\\]/, ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, FormulaNode.new(md[1]))
+                               end),
 
-  MatcherForLineElements.new([
-    /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})\^(?<sup>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/, ],
-    lambda do |elements, md|
-      pre, post = MatcherForLineElements.pre_post(md)
-      elements << UnparsedNode.new(pre + md[:lower])
-      elements << SuperscriptNode.new(md[:sup])
-      elements << UnparsedNode.new(post)                     if post != ''
-    end),
+    MatcherForLineElements.new([
+                                 /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})_(?<sub>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/,],
+                               lambda do |elements, md|
+                                 pre, post = MatcherForLineElements.pre_post(md)
+                                 elements << UnparsedNode.new(pre + md[:lower])
+                                 elements << SubscriptNode.new(md[:sub])
+                                 elements << UnparsedNode.new(post)                    if post != ''
+                               end),
 
-  MatcherForLineElements.new([ /~~(.+?)~~/ ],
-    lambda do |elements, md|
-      MatcherForLineElements.add_elements(elements, md, DeletedNode.new(md[1]))
-    end),
+    MatcherForLineElements.new([
+                                 /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})\^(?<sup>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/, ],
+                               lambda do |elements, md|
+                                 pre, post = MatcherForLineElements.pre_post(md)
+                                 elements << UnparsedNode.new(pre + md[:lower])
+                                 elements << SuperscriptNode.new(md[:sup])
+                                 elements << UnparsedNode.new(post)                     if post != ''
+                               end),
 
-  MatcherForLineElements.new([ /~(.+?)~/ ],
-  lambda do |elements, md|
-    MatcherForLineElements.add_elements(elements, md, UnderlineNode.new(md[1]))
-  end),
+    MatcherForLineElements.new([ /~~(.+?)~~/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, DeletedNode.new(md[1]))
+                               end),
 
-]
+    MatcherForLineElements.new([ /~(.+?)~/ ],
+                               lambda do |elements, md|
+                                 MatcherForLineElements.add_elements(elements, md, UnderlineNode.new(md[1]))
+                               end),
+  ]
 
+  def apply_parsers(node, result)
+    touched = false
+    PARSERS.each do |p|
+      touched = p.execute(node.content, result)
+      break if touched
+    end
+    touched
+  end
 
-class LineParser3
+  def test_for_match(node)
+    result = false
+    PARSERS.each do |p|
+      result = p.test_for_match(node.content)
+      break if result
+    end
+    result
+  end
+
+  ##
+  # Parse a single node into sub nodes
+  # @param [TextNode] node The node to be parsed
+  # @return [Array<TextNode>] the created nodes
+  def parse_node(node)
+
+    changed = false
+
+    if node.children.length > 0
+      result = []
+      node.children.each do |child|
+        e, c = parse_node(child)
+        result << e
+        changed ||= c
+      end
+      node.children = result.flatten
+      result = [ node ]
+    else
+      if node.is_a? UnparsedNode
+        result = []
+        touched = apply_parsers(node, result)
+        unless touched
+          result << TextNode.new(node.content)
+        end
+        changed = true
+      elsif node.class != TextNode && node.class != CodeNode && node.respond_to?(:content)
+        result = []
+        touched = apply_parsers(node, result)
+        if result.length > 1
+          node.children = result
+          changed = true
+        end
+        result = [ node ]
+      else
+        result = [ node ]
+      end
+    end
+    [ result.flatten, changed ]
+  end
+  ##
+  # Parse the given line of text
+  # @param [String] line_text The line to be parsed
+  # @return [Line] the resulting line object
   def parse(line_text)
 
     line = Line.new(line_text)
-
     changed = true
 
     while changed
+      changed = false
+      before = line.elements.dup
+
+      elements = []
+
+      line.elements.each do |node|
+        e, c = parse_node(node)
+        elements << e
+        changed ||= c
+      end
+      line.elements = elements.flatten
+    end
+
+
+    while false
       changed = line.next_unparsed_node do |e|
-        elements = []
-        text = e.content
-        touched = false
-
-        $parsers.each do |p|
-          touched = p.execute(text, elements)
-          break if touched
-        end
-
-        unless touched
-          elements << TextNode.new(text)
-        end
-
-        elements
+        parse_node(e)
       end
     end
 
-    new_nodes = []
-    # Second pass
-    line.elements.each do |e|
-      if e.class != TextNode && e.class != CodeNode && e.respond_to?(:content)
-        parts = []
-        $parsers.each do |p|
-          touched = p.execute(e.content, parts)
-          break if touched
+    changed = false
+    while changed
+      line.elements.each do |e|
+        if e.class != TextNode && e.class != CodeNode && e.respond_to?(:content)
+          result, c = parse_node(e)
+          if result.length > 1
+            e.children = result
+          end
         end
-        if parts.length > 1
-          # Make TextNodes from UnparsedNodes
-          parts.map! { |e| if e.class == UnparsedNode then TextNode.new(e.content) else e end }
-          # We were broken down
-          e.content = parts
-        end
+
       end
-      new_nodes << e
     end
 
-    line.elements = new_nodes
     line
 
   end

@@ -2,12 +2,13 @@
 ##
 # Node with simple text in it.
 class TextNode
-  attr_accessor :content
+  attr_accessor :content, :children
 
   ##
   # Creates a new text node with the given content.
   def initialize(content = '')
     @content = content
+    @children = [ ]
   end
 
   ##
@@ -23,13 +24,28 @@ class TextNode
   end
 
   def render(renderer)
-    renderer.render_text(self)
+    renderer.render_text(@content)
+  end
+
+  def render_children(renderer)
+    if @children.length > 0
+      result = ''
+      @children.each { |node| result << node.render(renderer) }
+      result
+    else
+      nil
+    end
   end
 
   def self.add_renderer
     method_name = 'render_' + self.name.downcase.gsub('node', '')
     define_method(:render) do |renderer|
-      renderer.method(method_name).call(self)
+      sub_content = render_children(renderer)
+      if sub_content
+        renderer.method(method_name).call(sub_content)
+      else
+        renderer.method(method_name).call(@content)
+      end
     end
   end
 end
@@ -82,12 +98,20 @@ class LinkNode < TextNode
   attr_accessor :target, :title
 
   def initialize(target, content, title)
+    super(content)
     @target = target
     @content = content
     @title = title
   end
 
-  add_renderer
+  def render(renderer)
+    sub_content = render_children(renderer)
+    if sub_content
+      renderer.render_link(sub_content, @target, @title)
+    else
+      renderer.render_link(@content, @target, @title)
+    end
+  end
 end
 
 ##
@@ -96,11 +120,19 @@ class RefLinkNode < TextNode
   attr_accessor :ref, :title
 
   def initialize(ref, content)
+    super(content)
     @ref = ref
     @content = content
   end
 
-  add_renderer
+  def render(renderer)
+    sub_content = render_children(renderer)
+    if sub_content
+      renderer.render_reflink(sub_content, @ref)
+    else
+      renderer.render_reflink(@content, @ref)
+    end
+  end
 end
 
 ##
@@ -110,17 +142,18 @@ class DeletedNode < TextNode
 end
 
 ##
-#  Unterline Text ~underline~
+#  Underline Text ~underline~
 class UnderlineNode < TextNode
   add_renderer
 end
 
 ##
 # Reference node [ref]: URL "TITLE"
-class Reference
+class ReferenceNode < TextNode
   attr_accessor :key, :url, :title
 
   def initialize(key, url, title = nil)
+    super(content)
     @key = key
     @url = url
     @title = title
