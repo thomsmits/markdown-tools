@@ -1,4 +1,5 @@
 require_relative 'renderer'
+require_relative 'line_renderer_latex'
 require_relative '../messages'
 require_relative '../constants'
 
@@ -321,7 +322,7 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+      super(io, LineRendererLatex.new, language, result_dir, image_dir, temp_dir)
     end
 
     ##
@@ -335,7 +336,7 @@ module Rendering
     ##
     # Method returning the inline replacements.Should be overwritten by the
     # subclasses.
-    # @return [String[]] the templates
+    # @return [Array<String>] the templates
     def all_inline_replacements(alternate = false)
       alternate ? INLINE_ALTERNATE : INLINE_NORMAL
     end

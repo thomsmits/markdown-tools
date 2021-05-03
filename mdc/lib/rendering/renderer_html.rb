@@ -1,6 +1,7 @@
 require 'erb'
 
 require_relative 'renderer'
+require_relative 'line_renderer_html'
 require_relative '../messages'
 require_relative '../constants'
 
@@ -299,7 +300,7 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+      super(io, LineRendererHTML.new, language, result_dir, image_dir, temp_dir)
       @toc = nil            # table of contents
       @last_toc_name = ''   # last name of toc entry to skip double entries
     end

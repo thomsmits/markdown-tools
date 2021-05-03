@@ -1,75 +1,7 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/line_parser'
 require_relative '../lib/rendering/line_renderer'
-
-class LineRendererHTML < Rendering::LineRenderer
-
-  def render_text(content)
-    content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
-  end
-
-  def render_code(content)
-    "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
-  end
-
-  def render_strongunderscore(content)
-    "<strong>#{content}</strong>"
-  end
-
-  def render_strongstar(content)
-    "<strong>#{content}</strong>"
-  end
-
-  def render_emphasisunderscore(content)
-    "<em>#{content}</em>"
-  end
-
-  def render_emphasisstar(content)
-    "<em>#{content}</em>"
-  end
-
-  def render_superscript(content)
-    "<sup>#{content}</sup>"
-  end
-
-  def render_subscript(content)
-    "<sub>#{content}</sub>"
-  end
-
-  def render_link(content, target = '', title = '')
-    if title.nil?
-      %Q{<a href="#{target}">#{content}</a>}
-    else
-      %Q{<a href="#{target}" title="#{title}">#{content}</a>}
-    end
-  end
-
-  def render_reflink(content, ref = '')
-    if ref == "bar" # TODO: Hack!
-       %Q{<a href="/url" title="title">#{content}</a>}
-     elsif ref == "ref"
-       %Q{<a href="/uri">#{content}</a>}
-     else
-       ''
-     end
-  end
-
-  def render_formula(content)
-    "$$#{content}$$"
-  end
-
-  def render_deleted(content)
-    "<del>#{content}</del>"
-  end
-
-  def render_underline(content)
-    "<u>#{content}</u>"
-  end
-
-  def render_unparsed(content)
-    "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
-  end
-end
+require_relative '../lib/rendering/line_renderer_html'
 
 ##
 # Test class for the MarkdownLine class
@@ -251,7 +183,7 @@ class LineParserTest < Minitest::Test
   def test_line_parser
     CASES.each do |t|
       line = Parsing::LineParser.new.parse(t[1])
-      renderer = LineRendererHTML.new
+      renderer = Rendering::LineRendererHTML.new
       result = line.render(renderer)
 
       assert_equal(result.strip, t[2], "case #{t[0]}")

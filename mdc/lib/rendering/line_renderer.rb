@@ -6,8 +6,18 @@ module Rendering
   # code.
   class LineRenderer
 
+    ##
+    # Method returning the inline replacements.Should be overwritten by the
+    # subclasses.
+    # @return [Array<String>] the templates
+    def all_inline_replacements(alternate = false)
+      [[]]
+    end
+
     def render_text(content)
-      content
+      result = content
+      all_inline_replacements.each { |e| result.gsub!(e[0], e[1]) }
+      result
     end
 
     def render_code(content)
