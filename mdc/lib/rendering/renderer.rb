@@ -1,7 +1,12 @@
+require 'erb'
+
 module Rendering
   ##
   # Base class for all renderer used by the markdown compiler
   class Renderer
+
+    attr_reader :line_renderer
+
     ##
     # Remove all trailing spaces on all lines of the string
     # @param [String] input the input string
@@ -26,6 +31,17 @@ module Rendering
           '
       ),
 
+      chapter_start: erb(
+        "
+        # <%= title %>
+        "
+      ),
+
+      chapter_end: erb(
+        '
+        '
+      ),
+
       equation: erb(
         %q(
         \[
@@ -35,33 +51,31 @@ module Rendering
       ),
 
       ol_start: erb(
-        '<%= number %> '
+        '  <%= number %>'
       ),
 
       ol_item: erb(
-        '<%= inline_code(content) %>'
+        '<%= "  "*@ol_level %>1. <%= content %>'
       ),
 
       ol_end: erb(
-        '
-        '
+        ''
       ),
 
       ul_start: erb(
-        '  * '
+        ''
       ),
 
       ul_item: erb(
-        '<%= inline_code(content) %>'
+        '<%= "  "*@ul_level %>* <%= content %>'
       ),
 
       ul_end: erb(
-        '
-        '
+        ' '
       ),
 
       quote: erb(
-        '> <%= inline_code(content) %>
+        '> <%= content %>
         <% if !source.nil? %>
         >> <%= source %>
         <% end %>
@@ -69,17 +83,17 @@ module Rendering
       ),
 
       important: erb(
-        '>!<%= inline_code(content) %>
+        '>! <%= content %>
         '
       ),
 
       question: erb(
-        '>? <%= inline_code(content) %>
+        '>? <%= content %>
         '
       ),
 
       box: erb(
-        '>: <%= inline_code(content) %>
+        '>: <%= content %>
         '
       ),
 
@@ -198,7 +212,8 @@ module Rendering
       ),
 
       comment_start: erb(
-        ''
+        '
+        ---'
       ),
 
       comment_end: erb(
@@ -210,7 +225,8 @@ module Rendering
       ),
 
       slide_start: erb(
-        ''
+        '## <%= title %>
+        '
       ),
 
       slide_end: erb(
@@ -227,11 +243,12 @@ module Rendering
       ),
 
       text: erb(
-        '<%= inline_code(content) %>'
+        '
+         <%= content %>'
       ),
 
       table_row: erb(
-        '<%= inline_code(content) %>'
+        '<%= content %>'
       ),
 
       multiple_choice_start: erb(
@@ -243,7 +260,7 @@ module Rendering
       ),
 
       multiple_choice: erb(
-        "[<%= if correct then 'X' else ' ' end %>] <%= text %>"
+        "[<%= if correct then 'X' else ' ' end %>]<%= if inline then '. ' else ' ' end %><%= text %>"
       )
     }.freeze
 
@@ -251,30 +268,8 @@ module Rendering
     INLINE = [].freeze
 
     ##
-    # Class representing the parts of a line
-    class LinePart
-      attr_accessor :matched, :content
-
-      ##
-      # Create a new instance
-      # @param [String] content content of the part
-      # @param [Boolean] matched indicates whether we have a match
-      #                  or normal text
-      def initialize(content, matched)
-        @matched = matched
-        @content = content
-      end
-
-      ##
-      # @return [String] representation
-      def to_s
-        @content
-      end
-    end
-
-    ##
     # Initialize the renderer
-    # @param [IO] io target of output operations
+    # @param [StringIO] io target of output operations
     # @param [Rendering::LineRenderer] line_renderer renderer for the lines
     # @param [String] language the default language for code snippets
     # @param [String] result_dir location for results
@@ -306,7 +301,7 @@ module Rendering
     end
 
     ##
-    # Method returning the inline replacements.Should be overwritten by the
+    # Method returning the inline replacements. Should be overwritten by the
     # subclasses.
     # @param [Boolean] _alternate should alternate replacements be used
     # @return [String[]] the templates
@@ -323,16 +318,6 @@ module Rendering
     end
 
     ##
-    # Replace `inline code` in input
-    # @param [String] input the input
-    # @param [boolean] _table code used in a table
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return the input with replaced code fragments
-    def inline_code(input, _table = false, _alternate = false)
-      input
-    end
-
-    ##
     # Apply regular expressions to replace inline content
     # @param [String] input Text to be replaced
     # @param [Boolean] alternate should alternate replacements be used
@@ -345,27 +330,6 @@ module Rendering
       all_inline_replacements(alternate).each { |e| result.gsub!(e[0], e[1]) }
 
       result
-    end
-
-    ##
-    # Split the line into tokens. One token for each code / non-code fragment
-    # is created
-    # @param [String] input the input
-    # @param [Pattern] expression regex used for tokenizing
-    # @return [Renderer::LinePart[]] the input tokenized
-    def tokenize_line(input, expression)
-      parts = []
-      remainder = input
-
-      while expression =~ remainder
-        parts << LinePart.new($`, false)
-        parts << LinePart.new(Regexp.last_match(1), true)
-        remainder = $'
-      end
-
-      parts << LinePart.new(remainder, false)
-
-      parts
     end
 
     ##
@@ -736,9 +700,10 @@ module Rendering
     ##
     # Render multiple choice question
     # @param [Domain::MultipleChoice] question the question
-    def multiple_choice(question)
+    # @param [bool] inline should we use inline checkboxes
+    def multiple_choice(question, inline = false)
       correct = question.correct
-      text = inline_code(question.text)
+      text = question.text # TODO: Sub-Rendering needed?
 
       @io << @templates[:multiple_choice].result(binding)
     end

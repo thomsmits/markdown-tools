@@ -117,15 +117,14 @@ module Rendering
     def render_code(content)
 
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
-      size = table ? ',basicstyle=\scriptsize' : ',style=inline'
+      #size = table ? ',basicstyle=\scriptsize' : ',style=inline' # TODO: Table management
+      size = ',style=inline'
 
       if content.include?('|')
-        "\\lstinline[#{options}language=#{@language}#{size}]+#{p.content}+"
+        "\\lstinline[#{options}language=#{@language}#{size}]+#{content}+"
       else
-        "\\lstinline[#{options}language=#{@language}#{size}]|#{p.content}|"
+        "\\lstinline[#{options}language=#{@language}#{size}]|#{content}|"
       end
-
-      "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
     end
 
     def render_strongunderscore(content)
@@ -152,9 +151,17 @@ module Rendering
       "<sub>#{content}</sub>"
     end
 
+    def render_citation(content)
+      "[\\cite{#{content}}]"
+    end
+
     def render_link(content, target = '', title = '')
+
+      _target = target.gsub('_', '\_')   # TODO: General replacement
+      _content = content.gsub('_', '\_')
+
       if title.nil?
-        %Q|\href{#{target}}{#{content}}|
+        %Q|\href{#{_target}}{#{content}}|
       else
         %Q|\href{#{target}}{#{content}}|
       end

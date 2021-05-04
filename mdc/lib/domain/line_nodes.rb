@@ -1,3 +1,5 @@
+require_relative '../rendering/line_renderer'
+
 module Domain
 
   ##
@@ -16,7 +18,7 @@ module Domain
     # Renders the line, using the given renderer. Before calling
     # this method, the line's content should be parsed to avoid
     # getting unparsed nodes as output.
-    # @para [LineRenderer] renderer the renderer to be used
+    # @para [Rendering::LineRenderer] renderer the renderer to be used
     # @return [String] the result of the rendering
     def render(renderer)
       result = ''
@@ -123,6 +125,12 @@ private
   ##
   # Subscript using _: CO_2
   class SubscriptNode < TextNode
+    add_renderer
+  end
+
+  ##
+  # [[key]]
+  class CitationNode < TextNode
     add_renderer
   end
 

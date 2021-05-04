@@ -84,8 +84,8 @@ module Parsing
       MatcherForLineElements.new([
                                    /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
                                    /``([\s\S]*?[^\s][\s\S]*?)``/,
-                                   /` (.*[^\s].*) `/,
-                                   /`([^`]*?)`/ ],
+                                   /`([^` ][^`]*?)`/ ,
+                                   /` (.*[^\s].*) `/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::CodeNode.new(md[1].gsub("\n", ' ')))
                                  end),
@@ -99,9 +99,9 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|[\s().,;?\-])__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>$|[\s().,;?\-])/,
+                                   /(?<pre>^|[\s().,;?\-: ])__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>$|[\s().,;?\-: ])/,
                                    /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>[\s().,;?\-])/,
-                                   /(?<pre>[().,;?\-])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
+                                   /(?<pre>[().,;?\- ])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
                                  end),
@@ -180,6 +180,10 @@ module Parsing
       MatcherForLineElements.new([ /~(.+?)~/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::UnderlineNode.new(md[1]))
+                                 end),
+      MatcherForLineElements.new([ /\[\[(.+?)\]\]/ ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::CitationNode.new(md[1]))
                                  end),
     ]
 

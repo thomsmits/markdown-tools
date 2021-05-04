@@ -29,7 +29,7 @@ module Domain
     def >>(renderer)
       renderer.multiple_choice_start(@inline)
       @questions.each do |e|
-        renderer.multiple_choice(e)
+        renderer.multiple_choice(e, @inline)
       end
       renderer.multiple_choice_end(@inline)
     end

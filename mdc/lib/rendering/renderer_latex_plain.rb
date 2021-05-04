@@ -57,7 +57,7 @@ module Rendering
           \pagestyle{headings}
           \pagenumbering{roman}
           \renewcommand{\maketitlehookd}{%
-            \vspace{7cm} \sffamily \small \textit{<%= inline_code(description) %>} %
+            \vspace{7cm} \sffamily \small \textit{<%= description %>} %
           }
           %\publishers{Herausgeber}
           <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
@@ -100,7 +100,7 @@ module Rendering
       chapter_start: erb(
         %q|
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \Needspace{12\baselineskip}\chapter{<%= inline_code(title) %>}\label{<%= id %>}
+        \Needspace{12\baselineskip}\chapter{<%= title %>}\label{<%= id %>}
 
         |
       ),
@@ -113,7 +113,7 @@ module Rendering
       slide_start: erb(
         %q|
         % ********************************************************************************************
-        \Needspace{5\baselineskip}\section{<%= inline_code(title) %> [<%= number %>]}\label{<%= id %>}
+        \Needspace{5\baselineskip}\section{<%= title %> [<%= number %>]}\label{<%= id %>}
         |
       ),
 
@@ -131,7 +131,7 @@ module Rendering
       ),
 
       text: erb(
-        %q|<%= inline_code(content) %>
+        %q|<%= content %>
         \vspace{0.1mm}|
       ),
 

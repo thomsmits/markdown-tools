@@ -267,6 +267,7 @@ module Parsing
                Domain::UnorderedListItem,
                Domain::Quote,
                Domain::Question,
+               Domain::Box,
                Domain::Important ].include? type
 
             footnotes.each do |footnote|

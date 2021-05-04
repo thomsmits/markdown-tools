@@ -11,7 +11,7 @@ module Rendering
     # subclasses.
     # @return [Array<String>] the templates
     def all_inline_replacements(alternate = false)
-      [[]]
+      [[ '', '' ]]
     end
 
     def render_text(content)
@@ -46,6 +46,10 @@ module Rendering
 
     def render_subscript(content)
       "_#{content}"
+    end
+
+    def render_citation(content)
+      "[[#{content}]]"
     end
 
     def render_link(content, target, title)

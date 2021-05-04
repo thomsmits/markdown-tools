@@ -136,7 +136,7 @@ module Rendering
 
       text: erb(
         %q|
-        <%= inline_code(content) %>
+        <%= content %>
         \vspace{0.1mm}
         |
       ),

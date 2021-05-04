@@ -14,6 +14,8 @@ module Domain
     def initialize(content = '', order = 0)
       super(order)
       @content = content
+
+      # @type [Rendering::LineRenderer]
       @nodes = nil
     end
 
@@ -46,7 +48,15 @@ module Domain
     def self.render_method(name)
       # Inject a new method '>>' to the class
       define_method(:>>) do |renderer|
-        renderer.send(name, @content)
+
+        c = if @nodes
+              # has sub nodes
+              @nodes.render(renderer.line_renderer)
+            else
+              @content
+            end
+
+        renderer.send(name, c)
       end
     end
 
