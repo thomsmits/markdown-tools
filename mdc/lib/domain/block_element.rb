@@ -5,7 +5,7 @@ module Domain
   ##
   # Base class for all elements that span more than one line
   class BlockElement < Element
-    attr_accessor :content
+    attr_accessor :content, :nodes
 
     ##
     # Create a new element with the given content
@@ -14,6 +14,7 @@ module Domain
     def initialize(content = '', order = 0)
       super(order)
       @content = content
+      @nodes = nil
     end
 
     ##
@@ -52,7 +53,7 @@ module Domain
     ##
     # Call the provided block on each content element.
     def each_content_element(&block)
-      block.call(self.class, @content)
+      block.call(self, self.class, @content)
     end
   end
 end

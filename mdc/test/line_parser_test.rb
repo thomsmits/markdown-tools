@@ -1,85 +1,14 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/line_parser'
 require_relative '../lib/rendering/line_renderer'
-
-
-class LineRendererHTML < LineRenderer
-
-  def render_text(content)
-    content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')
-  end
-
-  def render_code(content)
-    "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
-  end
-
-  def render_strongunderscore(content)
-    "<strong>#{content}</strong>"
-  end
-
-  def render_strongstar(content)
-    "<strong>#{content}</strong>"
-  end
-
-  def render_emphasisunderscore(content)
-    "<em>#{content}</em>"
-  end
-
-  def render_emphasisstar(content)
-    "<em>#{content}</em>"
-  end
-
-  def render_superscript(content)
-    "<sup>#{content}</sup>"
-  end
-
-  def render_subscript(content)
-    "<sub>#{content}</sub>"
-  end
-
-  def render_link(content, target = '', title = '')
-    if title.nil?
-      %Q{<a href="#{target}">#{content}</a>}
-    else
-      %Q{<a href="#{target}" title="#{title}">#{content}</a>}
-    end
-  end
-
-  def render_reflink(content, ref = '')
-    if ref == "bar" # TODO: Hack!
-       %Q{<a href="/url" title="title">#{content}</a>}
-     elsif ref == "ref"
-       %Q{<a href="/uri">#{content}</a>}
-     else
-       ''
-     end
-  end
-
-  def render_formula(content)
-    "$$#{content}$$"
-  end
-
-  def render_deleted(content)
-    "<del>#{content}</del>"
-  end
-
-  def render_underline(content)
-    "<u>#{content}</u>"
-  end
-
-  def render_unparsed(content)
-    "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
-  end
-end
-
+require_relative '../lib/rendering/line_renderer_html'
 
 ##
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
 
-  Cases = [
+  CASES = [
     ['Combined', %Q{*Bold ~underline~ Bold*}, %Q{<em>Bold <u>underline</u> Bold</em>}],
-
     ['364', %Q{foo*bar*}, %Q{foo<em>bar</em>}],
     ['360', %Q{*foo bar*}, %Q{<em>foo bar</em>}],
     ['338', %Q{`foo`}, %Q{<code>foo</code>}],
@@ -168,14 +97,94 @@ class LineParserTest < Minitest::Test
     ['Del', %q|~~delete me~~|, %q|<del>delete me</del>|],
     ['Underline', %q|~underline me~|, %q|<u>underline me</u>|],
 
+    ['Combined', %Q{before *Bold ~underline~ Bold* after}, %Q{before <em>Bold <u>underline</u> Bold</em> after}],
+    ['364', %Q{before foo*bar* after}, %Q{before foo<em>bar</em> after}],
+    ['360', %Q{before *foo bar* after}, %Q{before <em>foo bar</em> after}],
+    ['338', %Q{before `foo` after}, %Q{before <code>foo</code> after}],
+    ['339', %Q{before `` foo ` bar `` after}, %Q{before <code>foo ` bar</code> after}],
+    ['340', %Q{before ` `` ` after}, %Q{before <code>``</code> after}],
+    ['341', %Q{before `  ``  ` after}, %Q{before <code> `` </code> after}],
+    ['342', %Q{before ` a` after}, %Q{before <code> a</code> after}],
+    ['343', %Q{before `\tb\t` after}, %Q{before <code>\tb\t</code> after}],
+    ['344', %Q{before ` `\n`  ` after}, %Q{before <code> </code>\n<code>  </code> after}],
+    ['345', %Q{before ``\nfoo\nbar  \nbaz\n`` after}, %Q{before <code>foo bar   baz</code> after}],
+    ['346', %Q{before ``\nfoo \n`` after}, %Q{before <code>foo </code> after}],
+    ['347', %Q{before `foo   bar \nbaz` after}, %Q{before <code>foo   bar  baz</code> after}],
+    ['348', %Q{before `foo\\`bar` after}, %Q{before <code>foo\\</code>bar` after}],
+    ['349', %Q{before ``foo`bar`` after}, %Q{before <code>foo`bar</code> after}],
+    ['350', %Q{before ` foo `` bar ` after}, %Q{before <code>foo `` bar</code> after}],
+    ['351', %Q{before *foo`*` after}, %Q{before *foo<code>*</code> after}],
+    ['352', %Q{before [not a `link](/foo`) after}, %Q{before [not a <code>link](/foo</code>) after}],
+    ['353', %Q{before `<a href="`">` after}, %Q{before <code>&lt;a href=&quot;</code>&quot;&gt;` after}],
+    ['355', %Q{before `<http://foo.bar.`baz>` after}, %Q{before <code>&lt;http://foo.bar.</code>baz&gt;` after}],
+    ['358', %Q{before `foo after}, %Q{before `foo after}],
+    ['359', %Q{before `foo``bar`` after}, %Q{before `foo<code>bar</code> after}],
+    ['360', %Q{before *foo bar* after}, %Q{before <em>foo bar</em> after}],
+    ['361', %Q{before a * foo bar* after}, %Q{before a * foo bar* after}],
+    ['362', %Q{before a*"foo"* after}, %Q{before a*&quot;foo&quot;* after}],
+    ['363', %Q{before * a * after}, %Q{before * a * after}],
+    ['364', %Q{before foo*bar* after}, %Q{before foo<em>bar</em> after}],
+    ['365', %Q{before 5*6*78 after}, %Q{before 5<em>6</em>78 after}],
+    ['366', %Q{before _foo bar_ after}, %Q{before <em>foo bar</em> after}],
+    ['367', %Q{before _ foo bar_ after}, %Q{before _ foo bar_ after}],
+    ['368', %Q{before a_"foo"_ after}, %Q{before a_&quot;foo&quot;_ after}],
+    ['369', %Q{before foo_bar_ after}, %Q{before foo_bar_ after}],
+    ['370', %Q{before 5_6_78 after}, %Q{before 5_6_78 after}],
+    ['372', %Q{before aa_"bb"_cc after}, %Q{before aa_&quot;bb&quot;_cc after}],
+    ['373', %Q{before foo-_(bar)_ after}, %Q{before foo-<em>(bar)</em> after}],
+    ['374', %Q{before _foo* after}, %Q{before _foo* after}],
+    ['375', %Q{before *foo bar * after}, %Q{before *foo bar * after}],
+    ['376', %Q{before *foo bar\n* after}, %Q{before *foo bar\n* after}],
+    ['377', %Q{before *(*foo) after}, %Q{before *(*foo) after}],
+    ['379', %Q{before *foo*bar after}, %Q{before <em>foo</em>bar after}],
+    ['380', %Q{before _foo bar _ after}, %Q{before _foo bar _ after}],
+    ['381', %Q{before _(_foo) after}, %Q{before _(_foo) after}],
+    ['383', %Q{before _foo_bar after}, %Q{before _foo_bar after}],
+    ['385', %Q{before _foo_bar_baz_ after}, %Q{before <em>foo_bar_baz</em> after}],
+    ['386', %Q{before _(bar)_. after}, %Q{before <em>(bar)</em>. after}],
+    ['387', %Q{before **foo bar** after}, %Q{before <strong>foo bar</strong> after}],
+    ['388', %Q{before ** foo bar** after}, %Q{before ** foo bar** after}],
+    ['389', %Q{before a**"foo"** after}, %Q{before a**&quot;foo&quot;** after}],
+    ['390', %Q{before foo**bar** after}, %Q{before foo<strong>bar</strong> after}],
+    ['391', %Q{before __foo bar__ after}, %Q{before <strong>foo bar</strong> after}],
+    ['392', %Q{before __ foo bar__ after}, %Q{before __ foo bar__ after}],
+    ['393', %Q{before __\nfoo bar__ after}, %Q{before __\nfoo bar__ after}],
+    ['394', %Q{before a__"foo"__ after}, %Q{before a__&quot;foo&quot;__ after}],
+    ['395', %Q{before foo__bar__ after}, %Q{before foo__bar__ after}],
+    ['396', %Q{before 5__6__78 after}, %Q{before 5__6__78 after}],
+    ['399', %Q{before foo-__(bar)__ after}, %Q{before foo-<strong>(bar)</strong> after}],
+    ['400', %Q{before **foo bar ** after}, %Q{before **foo bar ** after}],
+    ['401', %Q{before **(**foo) after}, %Q{before **(**foo) after}],
+    ['405', %Q{before **foo**bar after}, %Q{before <strong>foo</strong>bar after}],
+    ['406', %Q{before __foo bar __ after}, %Q{before __foo bar __ after}],
+    ['407', %Q{before __(__foo) after}, %Q{before __(__foo) after}],
+    ['409', %Q{before __foo__bar after}, %Q{before __foo__bar after}],
+    ['411', %Q{before __foo__bar__baz__ after}, %Q{before <strong>foo__bar__baz</strong> after}],
+    ['412', %Q{before __(bar)__. after}, %Q{before <strong>(bar)</strong>. after}],
+    ['429', %Q{before ** is not an empty emphasis after}, %Q{before ** is not an empty emphasis after}],
+    ['493', %Q{before [link](/uri "title") after}, %Q{before <a href="/uri" title="title">link</a> after}],
+    ['494', %Q{before [link](/uri) after}, %Q{before <a href="/uri">link</a> after}],
+    ['495', %Q{before [link]() after}, %Q{before <a href="">link</a> after}],
+    ['496', %Q{before [link](<>) after}, %Q{before <a href="">link</a> after}],
+    ['497', %Q{before [link](/my uri) after}, %Q{before [link](/my uri) after}],
+    ['498', %Q{before [link](</my uri>) after}, %Q{before <a href="/my%20uri">link</a> after}],
+    ['499', %Q{before [link](foo\nbar) after}, %Q{before [link](foo\nbar) after}],
+    ['500', %Q{before [link](<foo\nbar>) after}, %Q{before [link](&lt;foo\nbar&gt;) after}],
+    ['501', %Q{before [a](<b)c>) after}, %Q{before <a href="b)c">a</a> after}],
+    ['Form', %q|\[x^{22 after}\]|, %q|$$x^{22 after}$$|],
+    ['Sub', %q|a_0|, %q|a<sub>0</sub>|],
+    ['Sub', %q|CO_2|, %q|CO<sub>2</sub>|],
+    ['Sup', %q|a^3|, %q|a<sup>3</sup>|],
+    ['Sup', %q|x^22|, %q|x<sup>22</sup>|],
+    ['Del', %q|~~delete me~~|, %q|<del>delete me</del>|],
+    ['Underline', %q|~underline me~|, %q|<u>underline me</u>|],
   ]
 
   def test_line_parser
-    Cases.each do |t|
-      line = LineParser.new.parse(t[1])
-      renderer = LineRendererHTML.new
+    CASES.each do |t|
+      line = Parsing::LineParser.new.parse(t[1])
+      renderer = Rendering::LineRendererHTML.new
       result = line.render(renderer)
-
 
       assert_equal(result.strip, t[2], "case #{t[0]}")
       if result.strip != t[2]

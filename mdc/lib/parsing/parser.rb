@@ -14,6 +14,7 @@ require_relative 'line_matcher'
 require_relative 'properties_reader'
 require_relative 'parser_state'
 require_relative 'parser_handler'
+require_relative 'line_parser'
 
 module Parsing
   ##
@@ -44,7 +45,7 @@ module Parsing
 
     ##
     # Parse the given string or file into the given presentation.
-    # @param [String] lines input to be parsed
+    # @param [Array<String>] lines input to be parsed
     # @param [String] file_name File to be parsed
     # @param [String] default_language language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
@@ -247,16 +248,19 @@ module Parsing
     end
 
     ##
-    # Perform a second pass to replace links and footnotes in the reference
+    # Perform a second pass to replace links and footnotes in the reference.
+    # Split up the text of the elements into node lists.
     # Format (i.e. [...] and [^...]) with inline versions.
     # @param [Domain::Presentation] presentation Storage of results
     def second_pass(presentation)
+
+      line_parser = Parsing::LineParser.new
 
       presentation.each do |chapter|
         footnotes = chapter.footnotes
         links = chapter.links
 
-        chapter.each_content_element do |type, content|
+        chapter.each_content_element do |element, type, content|
           # Types of content to do the footnote replacement with
           if [ Domain::Text,
                Domain::OrderedListItem,
@@ -275,6 +279,9 @@ module Parsing
               ref, inline = MarkdownLine.link_ref_to_inline(link)
               content.gsub!(ref, inline)
             end
+
+            # Parse the contents of the elements into nodes
+            element.nodes  = line_parser.parse(element.content)
           end
         end
       end
