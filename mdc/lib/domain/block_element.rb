@@ -1,5 +1,6 @@
 require_relative 'element'
 require_relative '../constants'
+require_relative 'line_nodes'
 
 module Domain
   ##
@@ -11,12 +12,11 @@ module Domain
     # Create a new element with the given content
     # @param [String] content of the element
     # @param [Fixnum] order the order of displaying the item
-    def initialize(content = '', order = 0)
+    # @param [LineNodes] nodes Element split into nodes
+    def initialize(content = '', order = 0, nodes = nil)
       super(order)
       @content = content
-
-      # @type [Rendering::LineRenderer]
-      @nodes = nil
+      @nodes = nodes
     end
 
     ##
@@ -43,19 +43,26 @@ module Domain
     end
 
     ##
+    # Render sub nodes, if present and return rendering
+    # result
+    # @param [Rendering::Renderer] renderer The current renderer
+    # @return [String] the rendered content
+    def render_sub_nodes(renderer)
+      if @nodes
+        # has sub nodes
+        @nodes.render(renderer.line_renderer)
+      else
+        @content
+      end
+    end
+
+    ##
     # Add the correct rendering method to the class
     # @param [Symbol] name name of the render method
     def self.render_method(name)
       # Inject a new method '>>' to the class
       define_method(:>>) do |renderer|
-
-        c = if @nodes
-              # has sub nodes
-              @nodes.render(renderer.line_renderer)
-            else
-              @content
-            end
-
+        c = render_sub_nodes(renderer)
         renderer.send(name, c)
       end
     end

@@ -383,7 +383,7 @@ module Parsing
         columns.each_with_index do |e, i|
           # The first | in the table will give us an empty element
           # therefore we ignore it (index == 0)
-          row << e.gsub('~~pipe~~', '|').strip if i > 0
+          row << Domain::Table::TableCell.new(e.gsub('~~pipe~~', '|').strip) if i > 0
         end
         element(ps).add_row(row)
       end

@@ -3,7 +3,7 @@ require_relative '../rendering/line_renderer'
 module Domain
 
   ##
-  # One line of input.
+  # One line of input, split into nodes.
   class LineNodes
     attr_accessor :elements
 
@@ -35,8 +35,10 @@ module Domain
 
     ##
     # Creates a new text node with the given content.
+    # @param [String] content the line's content as text
     def initialize(content = '')
       @content = content
+      # @type [Array<TextNode>] sub nodes
       @children = [ ]
     end
 
@@ -62,8 +64,9 @@ module Domain
 
     ##
     # Macro to add a render method to the class.
-    def self.add_renderer
-      method_name = 'render_' + self.name.downcase.gsub('node', '').gsub('domain::', '')
+    # @param [Symbol] name optional name for the method
+    def self.add_renderer(name = nil)
+      method_name = name || 'render_' + self.name.downcase.gsub('node', '').gsub('domain::', '')
       define_method(:render) do |renderer|
         sub_content = render_children(renderer)
         if sub_content
@@ -126,6 +129,18 @@ private
   # Subscript using _: CO_2
   class SubscriptNode < TextNode
     add_renderer
+  end
+
+  ##
+  # Header field of a table |NAME|
+  class TableHeaderNode < TextNode
+    add_renderer :render_text
+  end
+
+  ##
+  # Header cell of a table |value|
+  class TableCellNode < TextNode
+    add_renderer :render_text
   end
 
   ##

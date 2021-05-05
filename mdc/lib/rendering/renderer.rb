@@ -33,7 +33,7 @@ module Rendering
 
       chapter_start: erb(
         "
-        # <%= title %>
+        # <%= line_renderer.meta(title) %>
         "
       ),
 
@@ -123,7 +123,7 @@ module Rendering
       ),
 
       heading: erb(
-        '# <%= title %>
+        '# <%= line_renderer.meta(title) %>
         '
       ),
 
@@ -156,7 +156,7 @@ module Rendering
       ),
 
       index_entry: erb(
-        '<%= chapter_name %>
+        '<%= line_renderer.meta(chapter_name) %>
         '
       ),
 
@@ -225,7 +225,7 @@ module Rendering
       ),
 
       slide_start: erb(
-        '## <%= title %>
+        '## <%= line_renderer.meta(title) %>
         '
       ),
 
@@ -251,6 +251,10 @@ module Rendering
         '<%= content %>'
       ),
 
+      table_separator: erb(
+        ''
+      ),
+
       multiple_choice_start: erb(
         ''
       ),
@@ -263,9 +267,6 @@ module Rendering
         "[<%= if correct then 'X' else ' ' end %>]<%= if inline then '. ' else ' ' end %><%= text %>"
       )
     }.freeze
-
-    ## Inline replacements
-    INLINE = [].freeze
 
     ##
     # Initialize the renderer
@@ -301,35 +302,11 @@ module Rendering
     end
 
     ##
-    # Method returning the inline replacements. Should be overwritten by the
-    # subclasses.
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return [String[]] the templates
-    def all_inline_replacements(_alternate = false)
-      INLINE
-    end
-
-    ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
     # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
-    end
-
-    ##
-    # Apply regular expressions to replace inline content
-    # @param [String] input Text to be replaced
-    # @param [Boolean] alternate should alternate replacements be used
-    # @return [String] Text with replacements performed
-    def replace_inline_content(input, alternate = false)
-      return '' if input.nil?
-
-      result = input
-
-      all_inline_replacements(alternate).each { |e| result.gsub!(e[0], e[1]) }
-
-      result
     end
 
     ##
@@ -415,7 +392,7 @@ module Rendering
     ##
     # Quote
     # @param [String] content the content
-    # @param [String] source the source of the quote
+    # @param [String, nil] source the source of the quote
     def quote(content, source)
       with_source = !source.nil? && !source.empty?
       @io << @templates[:quote].result(binding)
@@ -472,19 +449,39 @@ module Rendering
     end
 
     ##
-    # Start of a table
+    # Header of table
     # @param [Array] headers the headers
     # @param [Array] alignment alignments of the cells
     def table_start(headers, alignment)
       @io << @templates[:table_start].result(binding)
+
+      headers.each_with_index do |h, i|
+        @io << "|#{h}" if alignment[i] != Constants::SEPARATOR
+        @io << "|---"  if alignment[i] == Constants::SEPARATOR
+      end
+
+      @io << '|' << nl
+
+      headers.each do |h|
+        @io << '|---'
+      end
+
+      @io << '|' << nl
     end
+
 
     ##
     # Row of the table
-    # @param [Array] row row of the table
+    # @param [Array<String>] row row of the table
     # @param [Array] alignment alignments of the cells
     def table_row(row, alignment)
-      @io << @templates[:table_row].result(binding)
+      row.each_with_index do |e, i|
+        @io << '|'
+        @io << e     if alignment[i] != Constants::SEPARATOR
+        @io << "---" if alignment[i] == Constants::SEPARATOR
+      end
+
+      @io << '|' << nl
     end
 
     ##

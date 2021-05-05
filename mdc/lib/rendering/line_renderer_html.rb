@@ -3,22 +3,25 @@ require_relative 'line_renderer'
 module Rendering
   class LineRendererHTML < LineRenderer
 
+    META_REPLACEMENTS = [
+      ['"',                   '&quot;'],
+      ['<',                   '&lt;'],
+      ['>',                   '&gt;'],
+    ]
+
     REPLACEMENTS = [
-      ['"',                              '&quot;'],
-      ['<',                              '&lt;'],
-      ['>',                              '&gt;'],
-      [/Z\.B\./,                         'Z.&nbsp;B.'],
-      [/z\.B\./,                         'z.&nbsp;B.'],
-      [/D\.h\./,                         'D.&nbsp;h.'],
-      [/d\.h\./,                         'd.&nbsp;h.'],
-      [/u\.a\./,                         'u.&nbsp;a.'],
-      [/s\.o\./,                         's.&nbsp;o.'],
-      [/s\.u\./,                         's.&nbsp;u.'],
-      [/i\.e\./,                         'i.&nbsp;e.'],
-      [/e\.g\./,                         'e.&nbsp;g.'],
-      [/---/,                            '&mdash;'],
-      [/--/,                             '&ndash;'],
-      [/\.\.\./,                         '&hellip;'],
+      [/Z\.B\./,              'Z.&nbsp;B.'],
+      [/z\.B\./,              'z.&nbsp;B.'],
+      [/D\.h\./,              'D.&nbsp;h.'],
+      [/d\.h\./,              'd.&nbsp;h.'],
+      [/u\.a\./,              'u.&nbsp;a.'],
+      [/s\.o\./,              's.&nbsp;o.'],
+      [/s\.u\./,              's.&nbsp;u.'],
+      [/i\.e\./,              'i.&nbsp;e.'],
+      [/e\.g\./,              'e.&nbsp;g.'],
+      [/---/,                 '&mdash;'],
+      [/--/,                  '&ndash;'],
+      [/\.\.\./,              '&hellip;'],
       [/\[\^(.*?)\]/,         '<sup><span title=\'\1\'>*</span></sup>'],
 
       [/^-> /,                '&rarr; '],
@@ -63,8 +66,16 @@ module Rendering
       [' <-> ',               ' &harr; '],
       ['<br><-> ',            '<br>&harr; ']].freeze
 
+    ##
+    # Method returning the inline replacements.Should be overwritten by the
+    # subclasses.
+    # @return [Array<String>] the templates
     def all_inline_replacements
-      REPLACEMENTS
+      META_REPLACEMENTS + REPLACEMENTS
+    end
+
+    def meta_replacements
+      META_REPLACEMENTS
     end
 
     def render_code(content)
@@ -114,7 +125,7 @@ module Rendering
     end
 
     def render_formula(content)
-      "$$#{content}$$"
+      "\\[ #{content} \\]"
     end
 
     def render_deleted(content)

@@ -103,7 +103,7 @@ module Rendering
       chapter_start: erb(
         %q|
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \section{<%= inline_code(title) %>}\label{<%= id %>}
+        \section{<%= title %>}\label{<%= id %>}
         \begin{frame}
         \separator{<%= title %>}
         \end{frame}|
@@ -117,7 +117,7 @@ module Rendering
       slide_start: erb(
         %q|
         % ********************************************************************************************
-        \begin{frame}[fragile]{<%= inline_code(title) %>}\label{<%= id %>}
+        \begin{frame}[fragile]{<%= title %>}\label{<%= id %>}
         |
       ),
 

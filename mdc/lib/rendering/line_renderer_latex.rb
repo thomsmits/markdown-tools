@@ -3,10 +3,16 @@ require_relative 'line_renderer'
 module Rendering
   class LineRendererLatex < LineRenderer
 
-    REPLACEMENTS = [
+    META_REPLACEMENTS = [
       ['\\',                  '\textbackslash '],
+      ['#',                   '\#'],
+      ['&',                   '\\\\&'],
+      ['_',                   '\_'],
       ['{',                   '\{'],
       ['}',                   '\}'],
+    ]
+
+    REPLACEMENTS = [
       ['α',                   '\begin{math}\alpha\end{math}'],
       ['β',                   '\begin{math}\beta\end{math}'],
       ['Γ',                   '\begin{math}\Gamma\end{math}'],
@@ -98,20 +104,20 @@ module Rendering
       ['<br><-> ',            '<br>$\leftrightarrow$ '],
       [/^<br>/,               "\\ \\newline\n"],
       [/<br>/,                "\\newline\n"],
-      ['#',                   '\#'],
-      ['&',                   '\\\\&'],
-      ['_',                   '\_'],
       ['<<',                  '{\flqq}'],
       ['>>',                  '{\frqq}'],
       ['<',                   '{\textless}'],
       ['>',                   '{\textgreater}'],
       ['~',                   '{\textasciitilde}'],
       ['^',                   '{\textasciicircum}'],
-      ['\textsubscript',      '_'],
-      ['\textsuperscript',    '^']].freeze
+    ].freeze
 
     def all_inline_replacements
-      REPLACEMENTS
+      META_REPLACEMENTS + REPLACEMENTS
+    end
+
+    def meta_replacements
+      META_REPLACEMENTS
     end
 
     def render_code(content)
@@ -144,11 +150,11 @@ module Rendering
     end
 
     def render_superscript(content)
-      "<sup>#{content}</sup>"
+      "\\begin{math}\\textsuperscript{#{content}}\\end{math}"
     end
 
     def render_subscript(content)
-      "<sub>#{content}</sub>"
+      "\\begin{math}\\textsubscript{#{content}}\\end{math}"
     end
 
     def render_citation(content)
@@ -156,14 +162,10 @@ module Rendering
     end
 
     def render_link(content, target = '', title = '')
-
-      _target = target.gsub('_', '\_')   # TODO: General replacement
-      _content = content.gsub('_', '\_')
-
       if title.nil?
-        %Q|\href{#{_target}}{#{content}}|
+        %Q|\href{#{meta(target)}}{#{meta(content)}}|
       else
-        %Q|\href{#{target}}{#{content}}|
+        %Q|\href{#{meta(target)}}{#{meta(content)}}|
       end
     end
 

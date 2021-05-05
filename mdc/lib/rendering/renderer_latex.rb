@@ -139,11 +139,11 @@ module Rendering
       ),
 
       heading_3: erb(
-        %q|\subsubsection*{<%= title %>}|
+        %q|\subsubsection*{<%= line_renderer.meta(title) %>}|
       ),
 
       heading_4: erb(
-        %q|\paragraph{<%= title %>}|
+        %q|\paragraph{<%= line_renderer.meta(title) %>}|
       ),
 
       image: erb(
@@ -182,7 +182,7 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, LineRendererLatex.new, language, result_dir, image_dir, temp_dir)
+      super(io, LineRendererLatex.new(language), language, result_dir, image_dir, temp_dir)
     end
 
     ##
@@ -201,7 +201,7 @@ module Rendering
       if caption.nil?
         caption_command = ''
       else
-        replaced_caption = replace_inline_content(caption)
+        replaced_caption = line_renderer.meta(caption)
         caption_command = "title={\\fontfamily{phv}\\selectfont\\textbf{#{replaced_caption}}},aboveskip=-0.4 \\baselineskip,"
       end
 
@@ -246,7 +246,7 @@ module Rendering
       i = 0
 
       headers.each_with_index do |e, k|
-        result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
+        result << "\\textbf{#{e}} " if alignment[k] != Constants::SEPARATOR
         result << ' & ' if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
       end
@@ -265,7 +265,7 @@ module Rendering
       row.each_with_index do |e, k|
         next if alignment[k] == Constants::SEPARATOR
 
-        text = inline_code(e, true)
+        text = e
 
         if /\\newline/ === text
           text = "\\specialcell[t]{#{text}}"

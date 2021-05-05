@@ -1,4 +1,5 @@
 require_relative 'renderer_html'
+require_relative 'line_renderer_jekyll'
 require_relative '../messages'
 
 module Rendering
@@ -69,7 +70,7 @@ module Rendering
         <%- unless /^0$/ === width_plain || /^0%$/ === width_plain -%>
         <figure class="picture">
         <img alt="<%= alt %>" src="<%= chosen_image %>"<%= width_attr_plain %>>
-        <figcaption class="fs-2"><%= inline(full_title) %></figcaption>
+        <figcaption class="fs-2"><%= line_renderer.meta(full_title) %></figcaption>
         </figure>
         <%- end -%>
         }
@@ -138,7 +139,7 @@ module Rendering
       ),
 
       ol_item: erb(
-        '  <li><%= inline_code(content) %></li>'
+        '  <li><%= content %></li>'
       ),
 
       ol_end: erb(
@@ -152,7 +153,7 @@ module Rendering
       ),
 
       ul_item: erb(
-        '  <li><%= inline_code(content) %></li>'
+        '  <li><%= content %></li>'
       ),
 
       ul_end: erb(
@@ -162,7 +163,7 @@ module Rendering
       quote: erb(
         %q|
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         <% if !source.nil? %>
           <br>
           <span class='fw-300'><%= source %></span>
@@ -174,7 +175,7 @@ module Rendering
       important: erb(
         %q|
         <div class="bg-yellow-000" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
         |
     ),
@@ -182,7 +183,7 @@ module Rendering
       question: erb(
         %q|
         <div class="bg-green-000" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
         |
     ),
@@ -190,7 +191,7 @@ module Rendering
       box: erb(
         %q|
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
         |
     ),
@@ -221,13 +222,13 @@ module Rendering
 
       text: erb(
       '
-        <p><%= inline_code(content) %></p>
+        <p><%= content %></p>
         '
     ),
 
       heading: erb(
       '
-        ### <%= title %>
+        ### <%= line_renderer.meta(title) %>
         '
     ),
 
@@ -272,86 +273,6 @@ module Rendering
     )
     }.freeze
 
-    ## Inline replacements
-    INLINE = [
-      [/"(.*?)"/,                        '&bdquo;\1&ldquo;'],
-      [/\[\^(.*?)\]/,                    '<sup><span title=\'\1\'>&#x22C6;</span></sup>'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\2<sub>\3</sub>\4'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\2<sup>\3</sup>\4'],
-      [/__(.+?)__/,                      '<em class="text-purple-100 fw-500">\1</em>'],
-      [/_(.+?)_/,                        '<strong class="text-purple-100 fw-500">\1</strong>'],
-      [/\*\*(.+?)\*\*/,                  '<em class="text-grey-dk-000 fw-500">\1</em>'],
-      [/\*(.+?)\*/,                      '<strong class="text-grey-dk-000 fw-300">\1</strong>'],
-      [/~~(.+?)~~/,                      '<del>\1</del>'],
-      [/~(.+?)~/,                        '<u>\1</u>'],
-      [/Z\.B\./,                         'Z.&nbsp;B.'],
-      [/z\.B\./,                         'z.&nbsp;B.'],
-      [/D\.h\./,                         'D.&nbsp;h.'],
-      [/d\.h\./,                         'd.&nbsp;h.'],
-      [/u\.a\./,                         'u.&nbsp;a.'],
-      [/s\.o\./,                         's.&nbsp;o.'],
-      [/s\.u\./,                         's.&nbsp;u.'],
-      [/i\.e\./,                         'i.&nbsp;e.'],
-      [/e\.g\./,                         'e.&nbsp;g.'],
-      [/---/,                            '&mdash;'],
-      [/--/,                             '&ndash;'],
-      [/\.\.\./,                         '&hellip;'],
-
-      [/^-> /,                '&rarr; '],
-      ['(-> ',                '(&rarr; '],
-      ['(->)',                '(&rarr;)'],
-      ['{-> ',                '{&rarr; '],
-      [' -> ',                ' &rarr; '],
-      ['<br>-> ',             '<br>&rarr; '],
-
-      [/^=> /,                '&rArr; '],
-      ['(=> ',                '(&rArr; '],
-      ['(=>)',                '(&rArr;)'],
-      ['{=> ',                '{&rArr; '],
-      [' => ',                ' &rArr; '],
-      ['<br>=> ',             '<br>&rArr; '],
-
-      [/^<- /,                '&larr; '],
-      ['(<- ',                '(&larr; '],
-      ['(<-)',                '(&larr;)'],
-      [' <- ',                ' &larr; '],
-      ['{<- ',                '{&larr; '],
-      ['<br><- ',             '<br>&larr; '],
-
-      [/^<= /,                '&lArr; '],
-      ['(<= ',                '(&lArr; '],
-      ['(<=)',                '(&lArr;)'],
-      ['{<= ',                '{&lArr; '],
-      [' <= ',                ' &lArr; '],
-      ['<br><= ',             '<br>&lArr; '],
-
-      [/^<=> /,               '&hArr; '],
-      ['(<=> ',               '(&hArr; '],
-      ['(<=>)',               '(&hArr;)'],
-      ['{<=> ',               '{&hArr; '],
-      [' <=> ',               ' &hArr; '],
-      ['<br><=> ',            '<br>&hArr; '],
-
-      [/^<-> /,               '&harr; '],
-      ['(<-> ',               '(&harr; '],
-      ['(<->)',               '(&harr;)'],
-      ['{<-> ',               '{&harr; '],
-      [' <-> ',               ' &harr; '],
-      ['<br><-> ',            '<br>&harr; ']
-
-    ].freeze
-
-    ##
-    # Method returning the inline replacements. Should be overwritten by the
-    # subclasses.
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return [String[]] the templates
-    def all_inline_replacements(_alternate = false)
-      INLINE
-    end
-
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -363,6 +284,7 @@ module Rendering
     # @param [Boolean] has_equation indicates that the presentation contains an equation
     def initialize(io, language, result_dir, image_dir, temp_dir, nav_order, has_equation)
       super(io, language, result_dir, image_dir, temp_dir)
+      @line_renderer = LineRendererJekyll.new(language)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
       @nav_order = nav_order
@@ -403,7 +325,7 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
       unless title == @last_title
@@ -420,16 +342,6 @@ module Rendering
     def chapter_start(title, number, id)
       nav_order = @nav_order
       @io << @templates[:chapter_start].result(binding)
-    end
-
-    ##
-    # Replace inline elements like emphasis (_..._)
-    #
-    # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
-    # @return [String] Text with replacements performed
-    def inline(input, alternate = false, inline_math_start = '\(', inline_math_end = '\)')
-      super(input, alternate, '<span>\(', '\)</span>')
     end
   end
 end

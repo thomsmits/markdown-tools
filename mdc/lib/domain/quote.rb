@@ -18,7 +18,8 @@ module Domain
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def >>(renderer)
-      renderer.quote(@content, source)
+      c = render_sub_nodes(renderer)
+      renderer.quote(c, @source)
     end
   end
 end

@@ -32,7 +32,7 @@ module Rendering
       ),
 
       ol_item: erb(
-        '  <li><%= inline_code(content) %>'
+        '  <li><%= content %>'
       ),
 
       ol_end: erb(
@@ -46,7 +46,7 @@ module Rendering
       ),
 
       ul_item: erb(
-        '  <li><%= inline_code(content) %>'
+        '  <li><%= content %>'
       ),
 
       ul_end: erb(
@@ -55,7 +55,7 @@ module Rendering
 
       quote: erb(
         "
-        <blockquote><%= inline_code(content) %>
+        <blockquote><%= content %>
         <% if !source.nil? %>
           <div class='quote_source'><%= source %></div>
         <% end %>
@@ -65,21 +65,21 @@ module Rendering
 
       important: erb(
         "
-        <blockquote class='important'><%= inline_code(content) %>
+        <blockquote class='important'><%= content %>
         </blockquote>
         "
       ),
 
       question: erb(
         "
-        <blockquote class='question'><%= inline_code(content) %>
+        <blockquote class='question'><%= content %>
         </blockquote>
         "
       ),
 
       box: erb(
         "
-        <blockquote class='box'><%= inline_code(content) %>
+        <blockquote class='box'><%= content %>
         </blockquote>
         "
       ),
@@ -95,7 +95,7 @@ module Rendering
       ),
 
       code: erb(
-        '<%= entities(content) %>'
+        '<%= line_renderer.meta(content) %>'
       ),
 
       code_end: erb(
@@ -121,13 +121,13 @@ module Rendering
       ),
 
       text: erb(
-        '<p><%= inline_code(content) %></p>
+        '<p><%= content %></p>
         '
       ),
 
       heading: erb(
         '
-        <h<%= level %>><%= title %></h<%= level %>>
+        <h<%= level %>><%= line_renderer.meta(title) %></h<%= level %>>
         '
       ),
 
@@ -300,7 +300,7 @@ module Rendering
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, LineRendererHTML.new, language, result_dir, image_dir, temp_dir)
+      super(io, LineRendererHTML.new(language), language, result_dir, image_dir, temp_dir)
       @toc = nil            # table of contents
       @last_toc_name = ''   # last name of toc entry to skip double entries
     end
@@ -323,69 +323,6 @@ module Rendering
     end
 
     ##
-    # Replace inline elements like emphasis (_..._)
-    #
-    # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
-    # @return [String] Text with replacements performed
-    def inline(input, alternate = false, inline_math_start = '\(', inline_math_end = '\)')
-      # Separate Hyperlinks from other contents
-      parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
-      result = ''
-
-      parts.each do |p|
-        if p.matched
-          # Hyperlink
-          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '<a href="\2">\1</a>')
-        elsif p.content =~ /\\\[(.*?)\\\]/
-          # Inline formula, treat special
-          sub_parts = tokenize_line(p.content, /\\\[(.*?)\\\]/)
-          sub_parts.each do |sp|
-            result << replace_inline_content(sp.content, alternate) unless sp.matched
-            result << inline_math_start << sp.content << inline_math_end if sp.matched
-          end
-        else
-          # No Hyperlink, no inline formula
-          result << replace_inline_content(p.content)
-        end
-      end
-
-      result
-    end
-
-    ##
-    # Replace HTML entities in input
-    # @param [String] input string to replace entities in
-    # @return [String] string with replacements
-    def entities(input)
-      result = input
-      result.gsub!(/&/,           '&amp;')
-      result.gsub!(/</,           '&lt;')
-      result.gsub!(/>/,           '&gt;')
-
-      result
-    end
-
-    ##
-    # Replace `inline code` in input
-    # @param [String] input the input
-    # @return the input with replaced code fragments
-    def inline_code(input)
-      parts = tokenize_line(input, /`(.+?)`/)
-      result = ''
-
-      parts.each do |p|
-        result << if p.matched
-                    "<code class='inline #{@language}'>#{entities(p.content)}</code>"
-                  else
-                    inline(p.content)
-                  end
-      end
-
-      result
-    end
-
-    ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
     # @param [String] caption caption of the sourcecode
@@ -393,30 +330,11 @@ module Rendering
       if caption.nil?
         caption_command = ''
       else
-        replaced_caption = replace_inline_content(caption)
+        replaced_caption = line_renderer.meta(caption)
         caption_command = "<figcaption>#{replaced_caption}</figcaption>"
       end
 
       @io << @templates[:code_start].result(binding).chomp
-    end
-
-    ##
-    # Replace []() links in input
-    # @param [String] input the input
-    # @return the input with replaced code fragments
-    def inline_links(input)
-      parts = tokenize_line(input, /`(.+?)`/)
-      result = ''
-
-      parts.each do |p|
-        result << if p.code
-                    "<code class='inline #{@language}'>#{entities(p.content)}</code>"
-                  else
-                    inline(p.content)
-                  end
-      end
-
-      result
     end
 
     ##
@@ -443,7 +361,7 @@ module Rendering
       headers.each_with_index do |e, i|
         css_class = class_for_constant(alignment[i])
 
-        @io << "<th#{css_class}>#{inline_code(e)}</th>" << nl if alignment[i] != Constants::SEPARATOR
+        @io << "<th#{css_class}>#{e}</th>" << nl if alignment[i] != Constants::SEPARATOR
         @io << "<th#{css_class}></th>" << nl if alignment[i] == Constants::SEPARATOR
       end
 
@@ -467,7 +385,7 @@ module Rendering
       row.each_with_index do |e, i|
         css_class = class_for_constant(alignment[i])
 
-        @io << "<td#{css_class}>#{inline_code(e)}</td>" << nl if alignment[i] != Constants::SEPARATOR
+        @io << "<td#{css_class}>#{e}</td>" << nl if alignment[i] != Constants::SEPARATOR
         @io << "<td#{css_class}></td>" << nl if alignment[i] == Constants::SEPARATOR
       end
 

@@ -283,6 +283,23 @@ module Parsing
 
             # Parse the contents of the elements into nodes
             element.nodes  = line_parser.parse(element.content)
+            puts element
+          end
+
+          if [ Domain::Table ].include? type
+            # Parse table contents
+            element.headers.each do |header|
+              header.nodes = line_parser.parse(header.content)
+            end
+
+            element.rows.each do |row|
+              # Separator?
+              next if row.nil?
+
+              row.each do |cell|
+                cell.nodes = line_parser.parse(cell.content)
+              end
+            end
           end
         end
       end

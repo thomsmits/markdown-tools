@@ -66,11 +66,11 @@ module Parsing
     # Helper method to add elements to the collection
     # @param [Array<TextNode>] elements The elements
     # @param [MatchData] md Match data
-    # @param [TextNode] newNode node to be added
-    def self.add_elements(elements, md, newNode)
+    # @param [TextNode] new_node node to be added
+    def self.add_elements(elements, md, new_node)
       pre, post = MatcherForLineElements.pre_post(md)
       elements << Domain::UnparsedNode.new(pre)  if pre != ''
-      elements << newNode
+      elements << new_node
       elements << Domain::UnparsedNode.new(post) if post != ''
     end
   end
@@ -93,14 +93,15 @@ module Parsing
       MatcherForLineElements.new([
                                    /^\*\*(?<em>[^\s].*?[^\s])\*\*/,
                                    /(?<pre>[\s])\*\*(?<em>[^\s].*?[^\s])\*\*/,
-                                   /(?<pre>[\w])\*\*(?<em>[\w]*?[^\s])\*\*/ ],
+                                   /(?<pre>[\w])\*\*(?<em>[\w]*?[^\s])\*\*/,
+                                   /(?<pre>[().,;?\- ])\*\*(?<em>[\w].*?[^\s])\*\*(?<post>[().,;?\- ])/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongStarNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
                                    /(?<pre>^|[\s().,;?\-: ])__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>$|[\s().,;?\-: ])/,
-                                   /^__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>[\s().,;?\-])/,
+                                   /^__(?<em>[\S().,;:?\-].*?[\S().,;?\-])__(?<post>[\s().,;:?\-])/,
                                    /(?<pre>[().,;?\- ])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
@@ -116,8 +117,8 @@ module Parsing
 
       MatcherForLineElements.new([
                                    /(?<pre>^|[\s().,;?\-])_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>$|[\s().,;?\-])/,
-                                   /^_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>[\s().,;?\-])/,
-                                   /(?<pre>[().,;?\-])_(?<em>[\w().,;?\-].*?[\S().,;?\-])_/, ],
+                                   /^_(?<em>[A-Za-z0-9().,;:?\-].*?[\S().,;?\-])_(?<post>[\s().,;:?\-])/,
+                                   /(?<pre>[().,;:?\-])_(?<em>[\w().,;?\-].*?[\S().,:;?\-])_/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisUnderscoreNode.new(md[:em]))
                                  end),
@@ -229,7 +230,7 @@ module Parsing
             result << Domain::TextNode.new(node.content)
           end
           changed = true
-        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.respond_to?(:content)
+        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
           _, result = apply_parsers(node)
           if result.length > 1
