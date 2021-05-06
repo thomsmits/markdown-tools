@@ -808,25 +808,25 @@ With some text
 
       row = e[0].rows
       assert_nil(row[0])
-      assert_equal('521,125', row[1][0].strip)
-      assert_equal('', row[1][1].strip)
-      assert_equal('', row[1][2].strip)
-      assert_equal('', row[1][3].strip)
+      assert_equal('521,125', row[1][0].to_s)
+      assert_equal('', row[1][1].to_s)
+      assert_equal('', row[1][2].to_s)
+      assert_equal('', row[1][3].to_s)
 
-      assert_equal('', row[2][0].strip)
-      assert_equal('1011,11', row[2][1].strip)
-      assert_equal('', row[2][2].strip)
-      assert_equal('', row[2][3].strip)
+      assert_equal('', row[2][0].to_s)
+      assert_equal('1011,11', row[2][1].to_s)
+      assert_equal('', row[2][2].to_s)
+      assert_equal('', row[2][3].to_s)
 
-      assert_equal('', row[3][0].strip)
-      assert_equal('', row[3][1].strip)
-      assert_equal('15,7', row[3][2].strip)
-      assert_equal('', row[3][3].strip)
+      assert_equal('', row[3][0].to_s)
+      assert_equal('', row[3][1].to_s)
+      assert_equal('15,7', row[3][2].to_s)
+      assert_equal('', row[3][3].to_s)
 
-      assert_equal('', row[4][0].strip)
-      assert_equal('', row[4][1].strip)
-      assert_equal('', row[4][2].strip)
-      assert_equal('AC,8', row[4][3].strip)
+      assert_equal('', row[4][0].to_s)
+      assert_equal('', row[4][1].to_s)
+      assert_equal('', row[4][2].to_s)
+      assert_equal('AC,8', row[4][3].to_s)
     end
 
     slide_index += 1
@@ -841,25 +841,25 @@ With some text
 
       row = e[0].rows
       assert_nil(row[0])
-      assert_equal('521,125', row[1][0].strip)
-      assert_equal('1000001001,001', row[1][1].strip)
-      assert_equal('1011,1', row[1][2].strip)
-      assert_equal('209,2', row[1][3].strip)
+      assert_equal('521,125', row[1][0].to_s)
+      assert_equal('1000001001,001', row[1][1].to_s)
+      assert_equal('1011,1', row[1][2].to_s)
+      assert_equal('209,2', row[1][3].to_s)
 
-      assert_equal('11,75', row[2][0].strip)
-      assert_equal('1011,11', row[2][1].strip)
-      assert_equal('13,6', row[2][2].strip)
-      assert_equal('B,C', row[2][3].strip)
+      assert_equal('11,75', row[2][0].to_s)
+      assert_equal('1011,11', row[2][1].to_s)
+      assert_equal('13,6', row[2][2].to_s)
+      assert_equal('B,C', row[2][3].to_s)
 
-      assert_equal('13,875', row[3][0].strip)
-      assert_equal('1101,111', row[3][1].strip)
-      assert_equal('15,7', row[3][2].strip)
-      assert_equal('D,E', row[3][3].strip)
+      assert_equal('13,875', row[3][0].to_s)
+      assert_equal('1101,111', row[3][1].to_s)
+      assert_equal('15,7', row[3][2].to_s)
+      assert_equal('D,E', row[3][3].to_s)
 
-      assert_equal('172,5', row[4][0].strip)
-      assert_equal('10101100,1', row[4][1].strip)
-      assert_equal('254,4', row[4][2].strip)
-      assert_equal('AC,8', row[4][3].strip)
+      assert_equal('172,5', row[4][0].to_s)
+      assert_equal('10101100,1', row[4][1].to_s)
+      assert_equal('254,4', row[4][2].to_s)
+      assert_equal('AC,8', row[4][3].to_s)
     end
 
     slide_index += 1
@@ -939,7 +939,7 @@ With some text
   # @param [Boolean] code does the slide contain any kind of code
   # @param [Boolean] skipped is the slide skipped
   # @param [Class[]] content_types expected types of content
-  # @param [String[]] contents expected Strings of content
+  # @param [Array<String>] contents expected Strings of content
   # @param [Proc] checks additional checks to be performed
   # @param [Boolean] strip strip content before comparison
   def check_slide(slide, title, code, skipped, content_types = [], contents = [], strip = true, &checks)
@@ -960,7 +960,7 @@ With some text
   ##
   # Create array of lines from a string
   # @param [String] string the string to be converted
-  # @return [String[]] array of lines
+  # @return [Array<String>] array of lines
   def lines(string)
     io = StringIO.new(string)
     result = io.readlines

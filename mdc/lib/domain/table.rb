@@ -19,6 +19,13 @@ module Domain
         # @type [LineNodes]
         @nodes = nil
       end
+
+      ##
+      # Return a string representation
+      # @return [String] String representation
+      def to_s
+        @content.strip
+      end
     end
 
     ##
