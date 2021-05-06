@@ -310,6 +310,26 @@ Some text
 
 Some text at the end
 
+## Slide 4.3
+
+Some text
+
+  * [ ] A question
+  * [*] A correct question
+  * [ ] A question
+
+Some text at the end
+
+## Slide 4.4
+
+Some text
+
+  * [ ]. A question
+  * [*]. A correct question
+  * [ ]. A question
+
+Some text at the end
+
 ## Slide 5.1
 
 | Dezimal | Binär    | Oktal | Hexadezimal |
@@ -780,6 +800,42 @@ With some text
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 4.2', false, false,
+                [Domain::Text, Domain::MultipleChoiceQuestions],
+                [],
+                false) do |e|
+
+      assert_equal(true, e[1].inline)
+
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].text)
+      assert_equal(false, e[1].questions[0].correct)
+      assert_equal('A correct question', e[1].questions[1].text)
+      assert_equal(true, e[1].questions[1].correct)
+      assert_equal('A question', e[1].questions[2].text)
+      assert_equal(false, e[1].questions[2].correct)
+      assert_equal('Some text at the end', e[2].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 4.3', false, false,
+                [Domain::Text, Domain::MultipleChoiceQuestions],
+                [],
+                false) do |e|
+
+      assert_equal(false, e[1].inline)
+
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].text)
+      assert_equal(false, e[1].questions[0].correct)
+      assert_equal('A correct question', e[1].questions[1].text)
+      assert_equal(true, e[1].questions[1].correct)
+      assert_equal('A question', e[1].questions[2].text)
+      assert_equal(false, e[1].questions[2].correct)
+      assert_equal('Some text at the end', e[2].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 4.4', false, false,
                 [Domain::Text, Domain::MultipleChoiceQuestions],
                 [],
                 false) do |e|
