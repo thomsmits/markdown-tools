@@ -8,7 +8,7 @@ module Domain
   class Presentation
     attr_accessor :slide_language, :title1, :title2, :section_number,
                   :section_name, :author, :copyright,
-                  :default_language, :chapters, :toc,
+                  :def_prog_lang, :chapters, :toc,
                   :description, :term, :comments, :create_index,
                   :bibliography
 
@@ -21,7 +21,7 @@ module Domain
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    # @param [String] default_language default programming language
+    # @param [String] def_prog_lang default programming language
     # @param [String] description additional description, e.g.
     #                 copyright information
     # @param [String] term Term of the presentation
@@ -30,7 +30,7 @@ module Domain
     # @param [String, nil] bibliography File with bibliography information
     #
     def initialize(slide_language, title1, title2, section_number, section_name,
-                   copyright, author, default_language, description,
+                   copyright, author, def_prog_lang, description,
                    term, create_index, bibliography)
       @slide_language = slide_language
       @title1 = title1
@@ -39,7 +39,7 @@ module Domain
       @section_name = section_name
       @copyright = copyright
       @author = author
-      @default_language = default_language
+      @def_prog_lang = def_prog_lang
       @description = description
       @term = term
       @create_index = create_index

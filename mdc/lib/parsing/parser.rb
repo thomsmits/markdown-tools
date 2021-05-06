@@ -47,9 +47,9 @@ module Parsing
     # Parse the given string or file into the given presentation.
     # @param [Array<String>] lines input to be parsed
     # @param [String] file_name File to be parsed
-    # @param [String] default_language language for code blocks not tagged
+    # @param [String] def_prog_lang language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
-    def parse_lines(lines, file_name, default_language, presentation)
+    def parse_lines(lines, file_name, def_prog_lang, presentation)
       #     begin
       ps = ParserState.new(presentation, file_name, @last_slide_counter,
                            :NORMAL,
@@ -70,7 +70,7 @@ module Parsing
                            :QUESTION,
                            :BOX)
 
-      ps.language = default_language
+      ps.prog_lang = def_prog_lang
       ps.comment_mode = false
       ps.chapter_counter = @chapter_counter
 
@@ -239,12 +239,12 @@ module Parsing
     ##
     # Parse the given file
     # @param [String] file_name File to be parsed
-    # @param [String] default_language language for code blocks not tagged
+    # @param [String] def_prog_lang language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
-    def parse(file_name, default_language, presentation)
+    def parse(file_name, def_prog_lang, presentation)
       # Read whole file into an array to allow looking ahead
       lines = File.readlines(file_name, "\n", encoding: 'UTF-8')
-      parse_lines(lines, file_name, default_language, presentation)
+      parse_lines(lines, file_name, def_prog_lang, presentation)
     end
 
     ##

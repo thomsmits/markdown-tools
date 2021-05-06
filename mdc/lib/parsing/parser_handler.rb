@@ -414,7 +414,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def source_start(ps, line)
-      slide(ps) << Domain::Source.new(ps.language)
+      slide(ps) << Domain::Source.new(ps.prog_lang)
       line.trim_code_prefix!
       element(ps) << line.string
       ps.code!

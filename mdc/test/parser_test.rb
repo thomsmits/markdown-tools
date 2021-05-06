@@ -460,7 +460,7 @@ With some text
     assert_equal('Section 3',         presentation.section_name)
     assert_equal(3,                   presentation.section_number)
     assert_equal('(c) 2014',          presentation.copyright)
-    assert_equal('java',              presentation.default_language)
+    assert_equal('java',              presentation.def_prog_lang)
     assert_equal('Test Presentation', presentation.description)
 
     chapter1 = presentation.chapters[0]
@@ -484,12 +484,12 @@ With some text
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.2', true, false,
                 [Domain::Source],
-                ["int i = 7;\ni++;"]) { |e| assert_equal('java', e[0].language) }
+                ["int i = 7;\ni++;"]) { |e| assert_equal('java', e[0].prog_lang) }
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.3', true, false,
                 [Domain::Source],
-                ["int k = 9;\nk++;"]) { |e| assert_equal('java', e[0].language) }
+                ["int k = 9;\nk++;"]) { |e| assert_equal('java', e[0].prog_lang) }
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.4', false, true)
@@ -775,9 +775,9 @@ With some text
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[0].to_s)
       assert_equal('AT LEAST SOME', e[1].to_s)
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[2].to_s)
-      assert_equal('Java', e[2].language)
+      assert_equal('Java', e[2].prog_lang)
       assert_equal('AT LEAST SOME', e[3].to_s)
-      assert_equal('Java', e[3].language)
+      assert_equal('Java', e[3].prog_lang)
     end
 
     slide_index += 1
