@@ -87,7 +87,7 @@ class LineParserTest < Minitest::Test
     ['501', %Q{[a](<b)c>)}, %Q{<a href="b)c">a</a>}],
 
     # Reference Style
-    ['535', %Q{[foo][bar]\n\n[bar]: /url "title"}, %Q{<a href="/url" title="title">foo</a>}],
+    #    ['535', %Q{[foo][bar]\n\n[bar]: /url "title"}, %Q{<a href="/url" title="title">foo</a>}],
 
     ['Form', %q|\[x^{22}\]|, %q|\[x^{22}\]|],
     ['Sub', %q|a_0|, %q|a<sub>0</sub>|],
