@@ -90,6 +90,14 @@ private
   end
 
   ##
+  # Node not parsed
+  class UnparsedNode < TextNode
+    def render(renderer)
+      raise NoMethodError("They shall not render me")
+    end
+  end
+
+  ##
   # Code `xxx` node
   class CodeNode < TextNode
     add_renderer
@@ -150,6 +158,24 @@ private
   end
 
   ##
+  # Delete Text ~~delete~~
+  class DeletedNode < TextNode
+    add_renderer
+  end
+
+  ##
+  #  Underline Text ~underline~
+  class UnderlineNode < TextNode
+    add_renderer
+  end
+
+  ##
+  # LaTeX Formula \[ FORMULA \]
+  class FormulaNode < TextNode
+    add_renderer
+  end
+
+  ##
   # Link [Name](URL "TITLE")
   class LinkNode < TextNode
     attr_accessor :target, :title
@@ -169,67 +195,5 @@ private
         renderer.render_link(@content, @target, @title)
       end
     end
-  end
-
-  ##
-  # Link [Name][REF]
-  class RefLinkNode < TextNode
-    attr_accessor :ref, :title
-
-    def initialize(ref, content)
-      super(content)
-      @ref = ref
-      @content = content
-    end
-
-    def render(renderer)
-      sub_content = render_children(renderer)
-      if sub_content
-        renderer.render_reflink(sub_content, @ref)
-      else
-        renderer.render_reflink(@content, @ref)
-      end
-    end
-  end
-
-  ##
-  # Delete Text ~~delete~~
-  class DeletedNode < TextNode
-    add_renderer
-  end
-
-  ##
-  #  Underline Text ~underline~
-  class UnderlineNode < TextNode
-    add_renderer
-  end
-
-  ##
-  # Reference node [ref]: URL "TITLE"
-  class ReferenceNode < TextNode
-    attr_accessor :key, :url, :title
-
-    def initialize(key, url, title = nil)
-      super(content)
-      @key = key
-      @url = url
-      @title = title
-    end
-
-    def render(renderer)
-      ""
-    end
-  end
-
-  ##
-  # LaTeX Formula \[ FORMULA \]
-  class FormulaNode < TextNode
-    add_renderer
-  end
-
-  ##
-  # Node not parsed
-  class UnparsedNode < TextNode
-    add_renderer
   end
 end

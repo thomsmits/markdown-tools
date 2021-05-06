@@ -283,7 +283,6 @@ module Parsing
 
             # Parse the contents of the elements into nodes
             element.nodes  = line_parser.parse(element.content)
-            puts element
           end
 
           if [ Domain::Table ].include? type

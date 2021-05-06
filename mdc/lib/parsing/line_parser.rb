@@ -136,20 +136,6 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /\[(?<text>.*?)\]\[(?<ref>.*?)\]/, ],
-                                 lambda do |elements, md|
-                                   MatcherForLineElements.add_elements(elements, md, Domain::RefLinkNode.new(md[:ref], md[:text]))
-                                 end),
-
-      MatcherForLineElements.new([
-                                   /\[(?<ref>.*?)\]: (?<url>.*?) ["'(](?<title>.*?)["')]/,
-                                   /\[(?<ref>.*?)\]: (?<url>.*?)/, ],
-                                 lambda do |elements, md|
-                                   title = if md.names.include?("title") then md[:title] else nil end
-                                   MatcherForLineElements.add_elements(elements, md, Domain::ReferenceNode.new(md[:ref], md[:url], title))
-                                 end),
-
-      MatcherForLineElements.new([
                                    /\\\[(.*?)\\\]/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::FormulaNode.new(md[1]))
@@ -191,7 +177,7 @@ module Parsing
     ##
     # Applies all parsers to the node.
     # @param [TextNode] node The node to be parsed.
-    # @return Array<Boolean, Array<TextNode>> A boolean indicating whether
+    # @return [Array<Boolean, Array<TextNode>>] A boolean indicating whether
     #         a change has happened and the resulting nodes
     def apply_parsers(node)
       touched = false
@@ -236,6 +222,8 @@ module Parsing
           if result.length > 1
             node.children = result
             changed = true
+          else
+            node.children = [ Domain::TextNode.new(node.content) ]
           end
           result = [ node ]
         else

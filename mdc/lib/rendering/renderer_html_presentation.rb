@@ -76,7 +76,7 @@ module Rendering
       image: erb(
         "
         <img class='presentation' src='<%= chosen_image %>' alt='<%= alt %>' title='<%= title %>'<%= width_attr_slide %>>
-        <div class='img_info'><%= inline(full_title) %></div>
+        <div class='img_info'><%= line_renderer.meta(full_title) %></div>
         "
       ),
 
@@ -102,7 +102,7 @@ module Rendering
       slide_start: erb(
         "
         <section id='<%= id %>' class='slide' data-number='<%= number %>'>
-        <h2 class='title'><%= inline_code(title) %></h2>
+        <h2 class='title'><%= line_renderer.meta(title) %></h2>
         "
       ),
 

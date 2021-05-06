@@ -76,7 +76,7 @@ module Rendering
         "
         <figure class='picture'>
         <img alt='<%= alt %>' src='<%= chosen_image %>'<%= width_attr_plain %>>
-        <figcaption><%= inline(full_title) %></figcaption>
+        <figcaption><%= line_renderer.meta(full_title) %></figcaption>
         </figure>
         "
       ),
@@ -194,7 +194,7 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
       unless title == @last_title

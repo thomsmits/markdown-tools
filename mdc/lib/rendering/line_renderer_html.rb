@@ -114,18 +114,8 @@ module Rendering
       end
     end
 
-    def render_reflink(content, ref = '')
-      if ref == "bar" # TODO: Hack!
-        %Q{<a href="/url" title="title">#{content}</a>}
-      elsif ref == "ref"
-        %Q{<a href="/uri">#{content}</a>}
-      else
-        ''
-      end
-    end
-
     def render_formula(content)
-      "\\[ #{content} \\]"
+      "\\[#{content}\\]"
     end
 
     def render_deleted(content)
@@ -134,10 +124,6 @@ module Rendering
 
     def render_underline(content)
       "<u>#{content}</u>"
-    end
-
-    def render_unparsed(content)
-      "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
     end
   end
 end

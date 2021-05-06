@@ -41,6 +41,10 @@ class RendererTest < Minitest::Test
 # Chapter
 ## Slide
 
+__instance_eval__
+
+It is \\[sin(x)=x^{2}\\]
+
 Text before the list
 
   * Item 1
@@ -212,5 +216,55 @@ This is a [link](http://www.example.com) and this another one [link](http://www.
 
     result = parse_and_render(input).gsub("\n", "")
     assert_equal(input.gsub("\n", ""), result)
+  end
+
+  def test_ref_links
+    input = <<-ENDOFTEXT
+# Chapter
+## Slide 6.3
+
+Text with a [one][1] and another [two][2]
+
+  * [three][3]
+  * [four][4]
+
+> Quote [five][5]
+
+>! Important [six][6]
+
+>? Question [seven][7]
+
+>? Question [eight][8]
+
+[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle
+[2]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"
+[3]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle 'Hobbit lifestyles'
+[4]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle (Hobbit lifestyles)
+[5]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> "Hobbit lifestyles"
+[6]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> 'Hobbit lifestyles'
+[7]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> (Hobbit lifestyles)
+[8]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle>
+    ENDOFTEXT
+
+    expected = <<-ENDOFTEXT
+# Chapter
+## Slide 6.3
+
+Text with a [one](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) and another [two](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+
+  * [three](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+  * [four](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+
+> Quote [five](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+
+>! Important [six](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+
+>? Question [seven](https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles")
+
+>? Question [eight](https://en.wikipedia.org/wiki/Hobbit#Lifestyle)
+    ENDOFTEXT
+
+    result = parse_and_render(input).gsub("\n", "")
+    assert_equal(expected.gsub("\n", ""), result)
   end
 end

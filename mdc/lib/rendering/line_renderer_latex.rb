@@ -10,6 +10,8 @@ module Rendering
       ['_',                   '\_'],
       ['{',                   '\{'],
       ['}',                   '\}'],
+      ['$',                   '\$'],
+      ['%',                   '\%'],
     ]
 
     REPLACEMENTS = [
@@ -64,8 +66,6 @@ module Rendering
       ['e.g.',                'e.\,g.'],
       ['o.O.',                'o.\,O.'],
       ['o.J.',                'o.\,J.'],
-      ['$',                   '\$'],
-      ['%',                   '\%'],
       [/^-> /,                '$\rightarrow$ '],
       ['(-> ',                '($\rightarrow$ '],
       ['(->)',                '($\rightarrow$)'],
@@ -169,16 +169,6 @@ module Rendering
       end
     end
 
-    def render_reflink(content, ref = '')
-      if ref == "bar" # TODO: Hack!
-        %Q{<a href="/url" title="title">#{content}</a>}
-      elsif ref == "ref"
-        %Q{<a href="/uri">#{content}</a>}
-      else
-        ''
-      end
-    end
-
     def render_formula(content)
       "\\begin{math}#{content}\\end{math}"
     end
@@ -189,10 +179,6 @@ module Rendering
 
     def render_underline(content)
       "\\underline{#{content}}"
-    end
-
-    def render_unparsed(content)
-      "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
     end
   end
 end

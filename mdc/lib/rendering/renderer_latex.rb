@@ -6,6 +6,7 @@ require_relative '../constants'
 module Rendering
   ##
   # Render the presentation into a latex file for further processing
+  # Render the presentation into a latex file for further processing
   # using LaTeX
   class RendererLatex < Renderer
     ## ERB templates to be used by the renderer

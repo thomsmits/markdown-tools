@@ -48,7 +48,7 @@ module Rendering
 
       text: erb(
         '
-        <%= inline_code(content) %>
+        <%= content %>
         '
       ),
 

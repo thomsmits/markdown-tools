@@ -6,7 +6,6 @@ module Rendering
   # code. You have to overwrite it with the desired
   # behavior.
   class LineRenderer
-
     ##
     # Initialize the renderer
     # @param [String] language the default language for code snippets
@@ -44,7 +43,9 @@ module Rendering
     end
 
     ##
-    # Render a text node.
+    # Render a text node. The inline replacements are applied
+    # to the text before rendering the node.
+    #
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_text(content)
@@ -129,16 +130,12 @@ module Rendering
       end
     end
 
-    def render_reflink(content)
-      # TODO: Implement
-    end
-
     ##
     # Render a \[ formula \] node.
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_formula(content)
-      "\\[ #{content} \\]"
+      "\\[#{content}\\]"
     end
 
     ##
@@ -155,14 +152,6 @@ module Rendering
     # @return [String] rendered version of the content
     def render_underline(content)
       "~#{content}~"
-    end
-
-    ##
-    # This method should never be called.
-    # @param [String] content contents of the node
-    # @return [String] rendered version of the content
-    def render_unparsed(content)
-      "UNPARSED NODE - SHOULD NOT BE RENDERED!!!! #{content}"
     end
   end
 end

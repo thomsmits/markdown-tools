@@ -222,76 +222,6 @@ module Rendering
       )
     }.freeze
 
-    ## Inline replacements
-    INLINE = [
-      [/ ([A-Za-z0-9])_([A-Za-z0-9]) /, ' \1<sub>\2</sub> '],
-      [/ ([A-Za-z0-9])\^([A-Za-z0-9]) /, ' \1<sup>\2</sup> '],
-      [/([A-Za-z0-9])\^([A-Za-z0-9])$/,  ' \1<sup>\2</sup>'],
-      [/([A-Za-z0-9])\^([A-Za-z0-9]) /,  ' \1<sup>\2</sup> '],
-      [/__(.+?)__/,                      '<strong>\1</strong>'],
-      [/_(.+?)_/,                        '<em>\1</em>'],
-      [/\*\*(.+?)\*\*/,                  '<strong class="alternative">\1</strong>'],
-      [/\*(.+?)\*/,                      '<em class="alternative">\1</em>'],
-      [/~~(.+?)~~/,                      '<del>\1</del>'],
-      [/Z\.B\./,                         'Z.&nbsp;B.'],
-      [/z\.B\./,                         'z.&nbsp;B.'],
-      [/D\.h\./,                         'D.&nbsp;h.'],
-      [/d\.h\./,                         'd.&nbsp;h.'],
-      [/u\.a\./,                         'u.&nbsp;a.'],
-      [/s\.o\./,                         's.&nbsp;o.'],
-      [/s\.u\./,                         's.&nbsp;u.'],
-      [/i\.e\./,                         'i.&nbsp;e.'],
-      [/e\.g\./,                         'e.&nbsp;g.'],
-      [/---/,                            '&mdash;'],
-      [/--/,                             '&ndash;'],
-      [/\.\.\./,                         '&hellip;'],
-
-      [/\[\^(.*?)\]/,         '<sup><span title=\'\1\'>*</span></sup>'],
-
-      [/^-> /,                '&rarr; '],
-      ['(-> ',                '(&rarr; '],
-      ['(->)',                '(&rarr;)'],
-      ['{-> ',                '{&rarr; '],
-      [' -> ',                ' &rarr; '],
-      ['<br>-> ',             '<br>&rarr; '],
-
-      [/^=> /,                '&rArr; '],
-      ['(=> ',                '(&rArr; '],
-      ['(=>)',                '(&rArr;)'],
-      ['{=> ',                '{&rArr; '],
-      [' => ',                ' &rArr; '],
-      ['<br>=> ',             '<br>&rArr; '],
-
-      [/^<- /,                '&larr; '],
-      ['(<- ',                '(&larr; '],
-      ['(<-)',                '(&larr;)'],
-      [' <- ',                ' &larr; '],
-      ['{<- ',                '{&larr; '],
-      ['<br><- ',             '<br>&larr; '],
-
-      [/^<= /,                '&lArr; '],
-      ['(<= ',                '(&lArr; '],
-      ['(<=)',                '(&lArr;)'],
-      ['{<= ',                '{&lArr; '],
-      [' <= ',                ' &lArr; '],
-      ['<br><= ',             '<br>&lArr; '],
-
-      [/^<=> /,               '&hArr; '],
-      ['(<=> ',               '(&hArr; '],
-      ['(<=>)',               '(&hArr;)'],
-      ['{<=> ',               '{&hArr; '],
-      [' <=> ',               ' &hArr; '],
-      ['<br><=> ',            '<br>&hArr; '],
-
-      [/^<-> /,               '&harr; '],
-      ['(<-> ',               '(&harr; '],
-      ['(<->)',               '(&harr;)'],
-      ['{<-> ',               '{&harr; '],
-      [' <-> ',               ' &harr; '],
-      ['<br><-> ',            '<br>&harr; ']
-
-    ].freeze
-
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
@@ -311,15 +241,6 @@ module Rendering
     # @return [Hash] the templates
     def all_templates
       @templates = super.merge(TEMPLATES)
-    end
-
-    ##
-    # Method returning the inline replacements. Should be overwritten by the
-    # subclasses.
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return [String[]] the templates
-    def all_inline_replacements(_alternate = false)
-      INLINE
     end
 
     ##

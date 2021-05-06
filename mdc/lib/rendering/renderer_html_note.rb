@@ -595,7 +595,7 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] _contains_code indicates whether the slide contains code fragments
     def slide_start(title, _number, id, _contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
 
       @io << "<section id='#{id}' class='slide'>" << nl
 
