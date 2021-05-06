@@ -7,7 +7,10 @@ module Domain
     attr_accessor :picture_name, :width_slide, :width_plain
 
     ##
-    # Create a new element
+    # Create a new element.
+    # @param [String] picture_name Name of the picture
+    # @param [String] width_slide Width in % or the picture on a slide
+    # @param [String] width_plain Width in % or the picture on a plain rendering
     def initialize(picture_name, width_slide, width_plain)
       super('')
       @picture_name = picture_name

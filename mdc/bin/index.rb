@@ -27,7 +27,7 @@ class Index
 
     ##
     # Return string representation
-    # @return string representation
+    # @return [String] string representation
     def puts
       "#{chapter_number} - #{chapter_name}"
     end

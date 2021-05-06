@@ -64,7 +64,7 @@ class CustomHandler
   # @param [String] src_file the file to be converted (ignored if contents is set)
   # @param [String] dest_file the file to write results to (ignored if contents is set)
   # @param [String] prog_language the default programming language
-  # @param [Class] renderer_class name of class used for rendering
+  # @param [String] renderer_class name of class used for rendering
   # @param [String] img_dir directory with images to include
   # @param [String] tmp_dir directory for temporary files
   def self.convert_file(src_dir, dest_dir, src_file, dest_file, prog_language,
@@ -87,14 +87,14 @@ class CustomHandler
   # Parse the given lines and convert them using the renderer. The output is returned
   # as a string.
   #
-  # @param src_dir String source directory
-  # @param dest_dir String target directory
-  # @param prog_language String the default programming language
-  # @param renderer_class String name of class used for rendering
-  # @param lines String[] lines to be parsed
-  # @param img_dir String directory with images to include
-  # @param tmp_dir String directory for temporary files
-  # @return String the result of the parsing and rendering as a string
+  # @param [String] src_dir source directory
+  # @param [String] dest_dir target directory
+  # @param [String] prog_language the default programming language
+  # @param [String] renderer_class name of class used for rendering
+  # @param [Array<String>] lines lines to be parsed
+  # @param [String] img_dir directory with images to include
+  # @param [String] tmp_dir directory for temporary files
+  # @return [String] the result of the parsing and rendering as a string
   def self.convert_stream(src_dir, dest_dir, prog_language, renderer_class, lines,
                           img_dir = 'img', tmp_dir ='../temp')
     io = StringIO.new

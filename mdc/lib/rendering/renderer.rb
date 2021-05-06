@@ -270,7 +270,7 @@ module Rendering
 
     ##
     # Initialize the renderer
-    # @param [StringIO] io target of output operations
+    # @param [IO, StringIO] io target of output operations
     # @param [Rendering::LineRenderer] line_renderer renderer for the lines
     # @param [String] language the default language for code snippets
     # @param [String] result_dir location for results
@@ -429,14 +429,14 @@ module Rendering
     ##
     # Start of a code fragment
     # @param [String] language language of the code fragment
-    # @param [String] caption caption of the sourcecode
+    # @param [String, nil] caption caption of the sourcecode
     def code_start(language, caption)
       @io << @templates[:code_start].result(binding).strip
     end
 
     ##
     # End of a code fragment
-    # @param [String] caption caption of the sourcecode
+    # @param [String, nil] caption caption of the sourcecode
     def code_end(caption)
       @io << @templates[:code_end].result(binding)
     end
@@ -674,7 +674,7 @@ module Rendering
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
+    # @param [String, nil] source source of the image
     def image(location, formats, alt, title, width_slide,
               width_plain, source = nil)
       @io << @templates[:image].result(binding)

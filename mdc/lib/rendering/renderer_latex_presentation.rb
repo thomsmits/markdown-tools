@@ -154,7 +154,7 @@ module Rendering
 
     ##
     # Initialize the renderer
-    # @param [IO] io target of output operations
+    # @param [IO, StringIO] io target of output operations
     # @param [String] language the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)

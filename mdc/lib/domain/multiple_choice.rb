@@ -8,7 +8,9 @@ module Domain
     attr_accessor :text, :correct
 
     ##
-    # Create a new object
+    # Create a new object.
+    # @param [String] text The text of the multiple choice element
+    # @param [Boolean] correct Indicator whether this is the correct choice
     def initialize(text, correct)
       super()
       @text = text

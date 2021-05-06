@@ -18,6 +18,12 @@ $project_path = ''
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
+
+  ##
+  # Main entry point.
+  # @param [String] directory Directory with the files to be parsed
+  # @param [String] type Type of output generated
+  # @param [String] output_file File to write results into
   def self.main(directory, type, output_file)
     # Determine my own directory to make invocation of the UML tool
     # more dynamic
@@ -121,5 +127,3 @@ end
 
 Main.main(ARGV[0], ARGV[1], ARGV[2])
 
-# Main::main('/Users/thomas/Documents/Work/Vorlesungen/GDI/03_Folien/src/06_oo',
-# 'tex-plain', '/Users/thomas/Temp/06_oo/06_oo.tex')

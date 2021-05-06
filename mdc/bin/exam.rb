@@ -8,9 +8,9 @@ require_relative '../lib/rendering/renderer_latex_exam'
 class Exam
   ##
   # Main entry point
-  # @param src_dir String directory with source files
-  # @param dest_dir String directory to store results in
-  # @param language String default programming language
+  # @param [String] src_dir directory with source files
+  # @param [String] dest_dir directory to store results in
+  # @param [String] language default programming language
   def self.main(src_dir, dest_dir, language = '')
 
     # Get all files in the directory
@@ -25,12 +25,12 @@ class Exam
 
   ##
   # Parse lines containing a markdown file and return the rendered result.
-  # @param src_dir String directory with source files
-  # @param dest_dir String target directory
-  # @param prog_language String the default programming language
-  # @param renderer_class String name of class used for rendering
-  # @param lines String[] text to be parsed
-  # @return String the rendered contents as
+  # @param [String] src_dir directory with source files
+  # @param [String] dest_dir target directory
+  # @param [String] prog_language the default programming language
+  # @param [String] renderer_class name of class used for rendering
+  # @param [Array<String>] lines text to be parsed
+  # @return [String] String the rendered contents as
   def self.parse_file_and_render(src_dir, dest_dir, prog_language, lines)
     CustomHandler.convert_stream(src_dir, dest_dir, prog_language,
                                  'Rendering::RendererLatexExam', lines)

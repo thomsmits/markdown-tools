@@ -615,7 +615,7 @@ module Rendering
 
     ##
     # Print the first 10 tags.
-    # @param [String[]] tags the tags
+    # @param [Array<String>] tags the tags
     # @return [String] the tags in HTML form
     def print_tags(tags)
       result = ''
@@ -635,7 +635,7 @@ module Rendering
     # @param [String] name name of the file
     # @param [String] title title of the file
     # @param [Date] date creation data
-    # @param [String[]] tags tags
+    # @param [Array<String>] tags tags
     # @param [String] digest digest of file content
     def index_file_entry(name, title, date, tags, digest)
       @io << @templates[:index_file_entry].result(binding)
@@ -647,7 +647,7 @@ module Rendering
     # @param [String] title title of the folder
     # @param [String] description description of folder
     # @param [Fixnum] count number of contained files
-    # @param [String[]] tags the tags
+    # @param [Array<String>] tags the tags
     def index_folder_entry(name, title, description, count, tags)
       @io << @templates[:index_folder_entry].result(binding)
     end

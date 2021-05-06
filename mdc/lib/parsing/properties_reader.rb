@@ -3,7 +3,7 @@ module Parsing
   class PropertiesReader
     ##
     # Create a new instance
-    # @param [String|IO] file name of properties file
+    # @param [String, IO] file name of properties file or IO object to read from
     # @param [String] defaults_file file containing the default values
     # @param [String] separator the separation character
     def initialize(file, separator = '=', defaults_file = nil)
@@ -18,7 +18,7 @@ module Parsing
 
     ##
     # Read the contents of a java properties file into an associative array
-    # @param [String|IO] file name of properties file
+    # @param [String, IO] file name of properties file or IO object to read from
     # @param [String] separator the separation character
     def read_file_into_array(file, separator)
       lines = if file.respond_to?(:readlines)

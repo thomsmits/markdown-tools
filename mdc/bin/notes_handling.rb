@@ -23,7 +23,7 @@ class NotesHandling
 
   ##
   # Convert an array in the form 'name: value', ... to a hash 'name' => 'value'
-  # @param [String[]] comments array with strings
+  # @param [Array<String>] comments array with strings
   # @return [Hash] a hash
   def strings_to_hash(comments)
     hash = {}
@@ -98,8 +98,8 @@ class NotesHandling
   # Recursively parse the given folder and return a
   # tree containing all found data
   # @param [String] directory of the root folder of the notes storage
-  # @param [String] folder the folder to add data to
-  # @return [Folder] root folder
+  # @param [Notes::Folder] folder the folder to add data to
+  # @return [Notes::Folder] root folder
   def parse_folder(directory, folder, first = false)
     # Unify to Unix file separators
     directory.tr!('\\', '/')
@@ -137,5 +137,3 @@ class NotesHandling
 end
 
 NotesHandling.main(ARGV[0].dup, ARGV[1].dup)
-# NotesHandling::main('/Users/thomas/Dropbox/Notes/',
-# '/Users/thomas/Dropbox/Notes_Html/')

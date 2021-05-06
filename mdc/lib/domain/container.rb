@@ -13,6 +13,7 @@ module Domain
     # Create a new instance
     def initialize
       super()
+      # @type [Array<Element>]
       @elements = []
     end
 

@@ -27,7 +27,7 @@ module Domain
     # @param [String] term Term of the presentation
     # @param [Boolean] create_index Should the document
     #                  contain an index at the end
-    # @param [String] bibliography File with bibliography information
+    # @param [String, nil] bibliography File with bibliography information
     #
     def initialize(slide_language, title1, title2, section_number, section_name,
                    copyright, author, default_language, description,

@@ -13,8 +13,8 @@ module Domain
     # @param [String] location path of the image
     # @param [String] alt alternate text
     # @param [String] title title
-    # @param [String] width_slide width for slides
-    # @param [String] width_plain width for plain text
+    # @param [String, nil] width_slide width for slides
+    # @param [String, nil] width_plain width for plain text
     def initialize(location, alt, title, width_slide, width_plain)
       super()
       @location = location

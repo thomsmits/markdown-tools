@@ -50,6 +50,7 @@ module Domain
 
     ##
     # Return a string representation
+    # @return [String] String representation
     def to_s
       self.class.to_s + ": '" + @content + "'"
     end
@@ -180,6 +181,11 @@ private
   class LinkNode < TextNode
     attr_accessor :target, :title
 
+    ##
+    # Create a new instance.
+    # @param [String] target The target of the link
+    # @param [String] content The text of the link
+    # @param [String] title The (optional) title
     def initialize(target, content, title)
       super(content)
       @target = target
@@ -187,6 +193,9 @@ private
       @title = title
     end
 
+    ##
+    # Render the element.
+    # @param [Rendering::LineRenderer] renderer The renderer used
     def render(renderer)
       sub_content = render_children(renderer)
       if sub_content

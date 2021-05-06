@@ -71,7 +71,7 @@ module Notes
 
     ##
     # Return all tags (i.e. short terms describing the file's content)
-    # @return [String[]] found tags alphabetically sorted
+    # @return [Array<String>] found tags alphabetically sorted
     def all_tags
       tags = {}
       @files.each do |f|
