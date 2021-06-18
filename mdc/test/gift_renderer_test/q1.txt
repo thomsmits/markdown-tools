@@ -1,0 +1,1 @@
+::Atome im Universum::[html]<p>Schätzungen zufolge besteht das Universum aus einer Tredezillion Atomen (10^78). Welche Bitbreite ist mindestens notwendig, um diese Zahl im Rechner zu speichern?</p>{~32 ~64 ~100 ~160 =260 ~360 ~1024 }

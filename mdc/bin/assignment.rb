@@ -55,7 +55,7 @@ if $0 == __FILE__
     prog_language = ARGV.shift
 
     # With an empty ARGV, ARGF will read from STDIN
-    # otherwise it will open all files ARGV is containing anc
+    # otherwise it will open all files ARGV is containing and
     #  concatenate them
     lines = ARGF.readlines
 

@@ -11,6 +11,7 @@ require_relative '../../lib/domain/button_live_preview_float'
 require_relative '../../lib/domain/multiple_choice'
 require_relative '../../lib/domain/vertical_space'
 require_relative '../../lib/domain/footnote'
+require_relative '../../lib/domain/input_question'
 
 module Parsing
   ##
@@ -28,6 +29,9 @@ module Parsing
 
     ## Predefined matchers
     MATCHERS = [
+      LineMatcher.new(/^<!-- INPUT answer="(.*)" -->/) \
+          { |_line, _line_id, values| Domain::InputQuestion.new(values.split(',')) },
+
       LineMatcher.new(/^<(.*)/) \
           { |line, _line_id| Domain::HTML.new(line) },
 

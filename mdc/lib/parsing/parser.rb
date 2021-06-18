@@ -68,7 +68,8 @@ module Parsing
                            :UML,
                            :IMPORTANT,
                            :QUESTION,
-                           :BOX)
+                           :BOX,
+                           :ASSIGNMENT_QUESTION)
 
       ps.prog_lang = def_prog_lang
       ps.comment_mode = false
@@ -150,6 +151,16 @@ module Parsing
         elsif ps.uml?
           handler.uml_line(ps, line)
 
+        elsif line.assignment_question_start?
+          # <!-- SHUFFLE type="questions" -->
+          handler.assignment_question_start(ps, line)
+
+        elsif ps.assignment_question? && !line.assignment_question?
+          ps.normal!
+
+        elsif ps.assignment_question? && line.assignment_question?
+          handler.assignment_question(ps, line)
+
         elsif line.ol1? && !ps.code_or_code_fenced?
           #   1. item
           handler.ol1(ps, line)
@@ -212,7 +223,7 @@ module Parsing
           # <!-- Spacing: xx -->
           handler.space_comment(ps, line)
 
-        elsif line.comment? & !line.image?
+        elsif line.comment? && !line.image? && !line.input_question?
           # <!-- --> but not after an image, to allow image dimensions
           # in comments.
           handler.comment(ps, line)
@@ -261,14 +272,15 @@ module Parsing
         links = chapter.links
 
         chapter.each_content_element do |element, type, content|
-          # Types of content to do the footnote replacement with
+          # Types of content to do the footnote and inline replacement with
           if [ Domain::Text,
                Domain::OrderedListItem,
                Domain::UnorderedListItem,
                Domain::Quote,
                Domain::Question,
                Domain::Box,
-               Domain::Important ].include? type
+               Domain::Important,
+               Domain::MultipleChoice].include? type
 
             footnotes.each do |footnote|
               # Replace the footnote references with the footnote

@@ -22,7 +22,7 @@ require_relative '../../lib/domain/box'
 require_relative '../../lib/domain/equation'
 require_relative '../../lib/domain/important'
 require_relative '../../lib/domain/html'
-require_relative '../../lib/domain/multiple_choice_question'
+require_relative '../../lib/domain/multiple_choice_questions'
 require_relative '../../lib/domain/ordered_list'
 require_relative '../../lib/domain/ordered_list_item'
 require_relative '../../lib/domain/question'
@@ -37,6 +37,9 @@ require_relative '../../lib/domain/unordered_list_item'
 require_relative '../../lib/domain/license'
 require_relative '../../lib/domain/footnote'
 require_relative '../../lib/domain/link'
+require_relative '../../lib/domain/matching_question'
+require_relative '../../lib/domain/matching_questions'
+
 require_relative '../constants'
 
 require_relative 'line_matcher'
@@ -551,6 +554,27 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def space_comment(ps, line)
       ps.slide.current_element.spacing = line.space_comment.to_i
+    end
+
+    ##
+    # Start of assignment questions
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def assignment_question_start(ps, line)
+      question = Domain::MatchingQuestions.new(line.assignment_question_start)
+      slide(ps) << question
+      ps.assignment_question!
+    end
+
+    ##
+    # A single assignment for the questions
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def assignment_question(ps, line)
+      left, right = line.assignment_question
+      element = element(ps)
+      question = Domain::MatchingQuestion.new(left, right)
+      element << question
     end
 
     private

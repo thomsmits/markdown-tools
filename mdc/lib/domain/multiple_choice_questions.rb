@@ -27,9 +27,12 @@ module Domain
     # Render the element
     # @param [Rendering::Renderer] renderer to be used
     def >>(renderer)
+      p_correct, p_wrong = percentages
       renderer.multiple_choice_start(@inline)
       @questions.each do |e|
-        renderer.multiple_choice(e, @inline)
+        text = e.render_sub_nodes(renderer)
+        correct = e.correct
+        renderer.multiple_choice(text, correct, p_correct, p_wrong, @inline)
       end
       renderer.multiple_choice_end(@inline)
     end
@@ -38,6 +41,23 @@ module Domain
     # Call the provided block on each content element.
     def each_content_element(&block)
       @questions.each { |e| e.each_content_element(&block) }
+    end
+
+    ##
+    # Get the number of correct questions
+    # @return [Integer] number of correct questions
+    def number_correct
+      @questions.count { |e| e.correct }
+    end
+
+    ##
+    # Get the percentage for correct and wrong questions
+    # @return [Array<Float, Float>] percentage for correct and wrong answers
+    def percentages
+      no_correct = number_correct
+      percentage_correct = (1.0 / no_correct * 100).round(5)
+      percentage_wrong   = (1.0 / (@questions.length - no_correct) * 100).round(5)
+      [ percentage_correct, percentage_wrong ]
     end
   end
 end

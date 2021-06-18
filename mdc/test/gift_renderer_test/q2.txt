@@ -1,0 +1,1 @@
+::Rechnen im Binärsystem - Addition von Brüchen::[html]<p>Bitte berechnen Sie binär ohne in ein anderes Zahlensystem umzuwandeln\: <code>101,1101 + 1110,11</code></p>{=101000,1001}

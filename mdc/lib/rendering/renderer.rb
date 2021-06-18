@@ -6,6 +6,7 @@ module Rendering
   class Renderer
 
     attr_reader :line_renderer
+    attr_accessor :io
 
     ##
     # Remove all trailing spaces on all lines of the string
@@ -265,7 +266,24 @@ module Rendering
 
       multiple_choice: erb(
         "[<%= if correct then 'X' else ' ' end %>]<%= if inline then '. ' else ' ' end %><%= text %>"
-      )
+      ),
+
+      input_question: erb(
+        %q|<!-- INPUT answer="<%= values.join(',') %>" -->|
+      ),
+
+      matching_question_start: erb(
+        %q|<!-- SHUFFLE type="<%= shuffle %>" -->|
+      ),
+
+      matching_question_end: erb(
+        ''
+      ),
+
+      matching_question: erb(
+        "  * <%= left %> -> <%= right %>"
+      ),
+
     }.freeze
 
     ##
@@ -681,6 +699,13 @@ module Rendering
     end
 
     ##
+    # Render an input question
+    # @param [Arra<String>] values possible, correct answers
+    def input_question(values)
+      @io << @templates[:input_question].result(binding)
+    end
+
+    ##
     # Render start of multiple choice questions
     # @param [bool] inline should we use inline checkboxes
     def multiple_choice_start(inline = false)
@@ -696,13 +721,34 @@ module Rendering
 
     ##
     # Render multiple choice question
-    # @param [Domain::MultipleChoice] question the question
-    # @param [bool] inline should we use inline checkboxes
-    def multiple_choice(question, inline = false)
-      correct = question.correct
-      text = question.text # TODO: Sub-Rendering needed?
-
+    # @param [String] text text of the question
+    # @param [Boolean] correct indicates if this is a correct answer
+    # @param [Float] p_correct percentage for correct answers
+    # @param [Float] p_wrong percentage for wrong answers
+    # @param [Boolean] inline should we use inline checkboxes
+    def multiple_choice(text, correct, p_correct = 1.0, p_wrong = 1.0, inline = false)
       @io << @templates[:multiple_choice].result(binding)
+    end
+
+    ##
+    # Render start of assignment questions
+    # @param [Symbol] shuffle type of shuffling to be performed
+    def matching_question_start(shuffle)
+      @io << @templates[:matching_question_start].result(binding)
+    end
+
+    ##
+    # Render end of assignment questions
+    def matching_question_end()
+      @io << @templates[:matching_question_end].result(binding)
+    end
+
+    ##
+    # Render assignment questions
+    # @param [String] left
+    # @param [String] right
+    def matching_question(left, right)
+      @io << @templates[:matching_question].result(binding)
     end
 
     ##

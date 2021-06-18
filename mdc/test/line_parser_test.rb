@@ -193,4 +193,3 @@ class LineParserTest < Minitest::Test
     end
   end
 end
-

@@ -137,6 +137,33 @@ module Parsing
       /!\[.*\]\(.+\)/ =~ @line
     end
 
+    ## Input Question
+    def input_question?
+      /<!-- INPUT.*-->/ =~ @line
+    end
+
+    ## Assignment question
+    def assignment_question_start
+      @line[/<!-- SHUFFLE type="(.*)" -->/, 1]
+    end
+
+    def assignment_question_start?
+      !!assignment_question_start
+    end
+
+    ## Assignment question
+    def assignment_question
+      if /^\*(.*)->(.*)$/ =~ @line.strip
+        [Regexp.last_match(1).strip, Regexp.last_match(2).strip]
+      else
+        nil
+      end
+    end
+
+    def assignment_question?
+      !!assignment_question
+    end
+
     ## Beginning of a fenced code block
     def fenced_code_start
       @line.strip[/^```([a-zA-Z0-9]*)(\[[1-9]\])?({.*?})?/, 1]

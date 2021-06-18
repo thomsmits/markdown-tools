@@ -29,7 +29,8 @@ class CustomHandler
   # @param [String] src_dir String the directory of the sources (required for relative includes)
   # @param [Rendering::Renderer] renderer the renderer to be used
   # @param [String] prog_language String the programming language
-  def self.parse_and_render_internal(lines, location, src_dir, renderer, prog_language)
+  # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
+  def self.parse_and_render_internal(lines, location, src_dir, renderer, prog_language, custom_handler)
 
     normalize_headings!(lines)
 
@@ -52,6 +53,9 @@ class CustomHandler
       parser.second_pass(presentation)
     end
 
+    # give the custom handler a chance to play with the data
+    custom_handler.call(presentation) unless custom_handler.nil?
+
     # Render the data
     presentation >> renderer
   end
@@ -67,8 +71,9 @@ class CustomHandler
   # @param [String] renderer_class name of class used for rendering
   # @param [String] img_dir directory with images to include
   # @param [String] tmp_dir directory for temporary files
+  # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.convert_file(src_dir, dest_dir, src_file, dest_file, prog_language,
-                        renderer_class, img_dir = 'img', tmp_dir ='../temp')
+                        renderer_class, img_dir = 'img', tmp_dir ='../temp', &custom_handler)
     # Read source file
     lines = File.readlines(src_dir + '/' + src_file, "\n", encoding: 'UTF-8')
 
@@ -79,7 +84,7 @@ class CustomHandler
     renderer = Object.const_get(renderer_class).new(io, prog_language, dest_dir,
                                                     img_dir, tmp_dir)
 
-    parse_and_render_internal(lines, src_file, src_dir, renderer, prog_language)
+    parse_and_render_internal(lines, src_file, src_dir, renderer, prog_language, custom_handler)
     io.close
   end
 
@@ -95,14 +100,15 @@ class CustomHandler
   # @param [String] img_dir directory with images to include
   # @param [String] tmp_dir directory for temporary files
   # @return [String] the result of the parsing and rendering as a string
+  # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.convert_stream(src_dir, dest_dir, prog_language, renderer_class, lines,
-                          img_dir = 'img', tmp_dir ='../temp')
+                          img_dir = 'img', tmp_dir ='../temp', &custom_handler)
     io = StringIO.new
 
     renderer = Object.const_get(renderer_class).new(io, prog_language, dest_dir,
                                                     img_dir, tmp_dir)
 
-    parse_and_render_internal(lines, '', src_dir, renderer, prog_language)
+    parse_and_render_internal(lines, '', src_dir, renderer, prog_language, custom_handler)
     io.string
   end
 end
