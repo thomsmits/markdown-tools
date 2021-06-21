@@ -143,16 +143,16 @@ module Parsing
     end
 
     ## Assignment question
-    def assignment_question_start
+    def matching_question_start
       @line[/<!-- SHUFFLE type="(.*)" -->/, 1]
     end
 
-    def assignment_question_start?
-      !!assignment_question_start
+    def matching_question_start?
+      !!matching_question_start
     end
 
     ## Assignment question
-    def assignment_question
+    def matching_question
       if /^\*(.*)->(.*)$/ =~ @line.strip
         [Regexp.last_match(1).strip, Regexp.last_match(2).strip]
       else
@@ -160,8 +160,8 @@ module Parsing
       end
     end
 
-    def assignment_question?
-      !!assignment_question
+    def matching_question?
+      !!matching_question
     end
 
     ## Beginning of a fenced code block

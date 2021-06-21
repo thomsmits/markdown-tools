@@ -33,7 +33,7 @@ module Domain
         right = e.right.render_sub_nodes(renderer)
         renderer.matching_question(left, right)
       end
-      renderer.matching_question_end()
+      renderer.matching_question_end(@shuffle)
     end
 
     ##

@@ -69,7 +69,7 @@ module Parsing
                            :IMPORTANT,
                            :QUESTION,
                            :BOX,
-                           :ASSIGNMENT_QUESTION)
+                           :MATCHING_QUESTION)
 
       ps.prog_lang = def_prog_lang
       ps.comment_mode = false
@@ -151,15 +151,15 @@ module Parsing
         elsif ps.uml?
           handler.uml_line(ps, line)
 
-        elsif line.assignment_question_start?
+        elsif line.matching_question_start?
           # <!-- SHUFFLE type="questions" -->
-          handler.assignment_question_start(ps, line)
+          handler.matching_question_start(ps, line)
 
-        elsif ps.assignment_question? && !line.assignment_question?
+        elsif ps.matching_question? && !line.matching_question?
           ps.normal!
 
-        elsif ps.assignment_question? && line.assignment_question?
-          handler.assignment_question(ps, line)
+        elsif ps.matching_question? && line.matching_question?
+          handler.matching_question(ps, line)
 
         elsif line.ol1? && !ps.code_or_code_fenced?
           #   1. item

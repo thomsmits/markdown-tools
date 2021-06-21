@@ -73,6 +73,22 @@ module Rendering
         \vspace{5mm}
         <%= translate(:answer) %>: \dotfill
         \fi|),
+
+      matching_question_start: erb(%q||),
+      matching_question_end: erb(%q|
+        \begin{enumerate}
+        <% for question in questions %>
+          <% if question.length > 0 %>
+            \item <%= question %> $\rightarrow$ \fillin[][1cm]
+          <% end %>
+        <% end %>
+        \end{enumerate}
+        \begin{enumerate}[label=\Alph*]
+        <% for answer in answers %>
+          \item <%= answer %>
+        <% end %>
+        \end{enumerate}|),
+      matching_question: erb(%q||),
     }.freeze
 
     ##
@@ -84,6 +100,7 @@ module Rendering
     # @param [String] temp_dir location for temporary files
     def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
       super(io, prog_lang, result_dir, image_dir, temp_dir)
+      @matching_questions = []
     end
 
     ##
@@ -127,6 +144,30 @@ module Rendering
       unless /^0$/ === width_plain || /^0%$/ === width_plain
         image_latex(location, title, width, source)
       end
+    end
+
+    ##
+    # Render assignment questions
+    # @param [String] left
+    # @param [String] right
+    def matching_question(left, right)
+      @io << @templates[:matching_question].result(binding)
+      @matching_questions << [ left, right ]
+    end
+
+    ##
+    # Render end of assignment questions
+    def matching_question_end(shuffle)
+      questions = @matching_questions.map { |e| e[0] }
+      answers   = @matching_questions.map { |e| e[1] }
+
+      if shuffle == :questions
+        questions.shuffle!
+      elsif shuffle == :questions_and_answers
+        questions.shuffle!
+        answers.shuffle!
+      end
+      @io << @templates[:matching_question_end].result(binding)
     end
 
     ##

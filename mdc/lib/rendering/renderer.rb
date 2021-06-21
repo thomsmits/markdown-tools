@@ -740,7 +740,7 @@ module Rendering
 
     ##
     # Render end of assignment questions
-    def matching_question_end()
+    def matching_question_end(shuffle)
       @io << @templates[:matching_question_end].result(binding)
     end
 

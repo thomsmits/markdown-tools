@@ -560,18 +560,18 @@ module Parsing
     # Start of assignment questions
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
-    def assignment_question_start(ps, line)
-      question = Domain::MatchingQuestions.new(line.assignment_question_start)
+    def matching_question_start(ps, line)
+      question = Domain::MatchingQuestions.new(line.matching_question_start.to_sym)
       slide(ps) << question
-      ps.assignment_question!
+      ps.matching_question!
     end
 
     ##
     # A single assignment for the questions
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
-    def assignment_question(ps, line)
-      left, right = line.assignment_question
+    def matching_question(ps, line)
+      left, right = line.matching_question
       element = element(ps)
       question = Domain::MatchingQuestion.new(left, right)
       element << question
