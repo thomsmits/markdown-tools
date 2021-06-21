@@ -702,6 +702,7 @@ module Rendering
     # Render an input question
     # @param [Arra<String>] values possible, correct answers
     def input_question(values)
+      puts "Input Question " + values.join(",")
       @io << @templates[:input_question].result(binding)
     end
 

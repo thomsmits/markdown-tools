@@ -172,7 +172,9 @@ module Rendering
       multiple_choice: erb(
         %q(<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
         )
-      )
+      ),
+
+      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|),
     }.freeze
 
     ##

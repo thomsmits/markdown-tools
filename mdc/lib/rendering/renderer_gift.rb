@@ -59,7 +59,7 @@ module Rendering
       html: erb(""),
       multiple_choice_start: erb('<%- -%>{<%- -%>'),
       multiple_choice_end: erb('<%- -%>}'),
-      input_question: erb(%q|{<%= if values.length > 0 then '=' + values.join(',') else '' end %>}|),
+      input_question: erb(%q|{<%= if values.length > 0 then '=' + line_renderer.render_text(values.join(',')) else '' end %>}|),
       matching_question_start: erb(%q|{<%= ' ' -%>|),
       matching_question_end: erb('<%- -%>}'),
       matching_question: erb(" =<%= left %> -> <%= right %><%= ' ' -%>"),

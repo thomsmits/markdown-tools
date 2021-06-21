@@ -65,7 +65,14 @@ module Rendering
       code_end: erb(
         %q(\end{lstlisting}\vspace{2mm}
         )
-      )
+      ),
+
+      input_question: erb(%q|
+        \ifprintanswers
+        \else
+        \vspace{5mm}
+        <%= translate(:answer) %>: \dotfill
+        \fi|),
     }.freeze
 
     ##

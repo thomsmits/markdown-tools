@@ -32,6 +32,8 @@ class CustomHandler
   # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.parse_and_render_internal(lines, location, src_dir, renderer, prog_language, custom_handler)
 
+    # TODO: Make output language configurable
+
     normalize_headings!(lines)
 
     parser = Parsing::Parser.new(Constants::PAGES_FRONT_MATTER)
@@ -39,6 +41,10 @@ class CustomHandler
     presentation = Domain::Presentation.new('DE', '', '', '', '',
                                             '', '', prog_language, '', '',
                                             false, nil)
+
+
+    # Set the slide language
+    set_language(presentation.slide_language.downcase)
 
     # The parser expects that all Documents start with a heading on level 1
     # So we simply put a line at the beginning of the file to make the

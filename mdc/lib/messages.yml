@@ -12,6 +12,7 @@ en:
   output: "Output"
   index: "Index"
   literature: "References"
+  answer: "Answer"
 
 de:
   contents: "Inhalt"
@@ -27,3 +28,4 @@ de:
   output: "Ausgabe"
   index: "Index"
   literature: "Quellen"
+  answer: "Antwort"
