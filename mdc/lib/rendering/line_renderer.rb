@@ -37,7 +37,7 @@ module Rendering
       result = input
 
       meta_replacements.each do |m|
-        result.gsub!(m[0], m[1]);
+        result = result.gsub(m[0], m[1]);
       end
       result
     end

@@ -4,20 +4,16 @@ module Rendering
   class LineRendererGIFT < LineRendererHTML
 
     META_REPLACEMENTS = [
-      ['"',  '&quot;'],
-      ['<',  '&lt;'],
-      ['>',  '&gt;'],
-      [':',  '\:']
+      [ '\\', '\\\\\\'],
+      [ '~', '\~' ],
+      [ '=', '\=' ],
+      [ '#', '\#' ],
+      [ '{', '\{' ],
+      [ '}', '\}' ],
+      [ ':', '\:' ]
     ]
 
     REPLACEMENTS = [
-      [ '#', '&\#x0023;' ],
-      [ '[', '&\#x005B;' ],
-      [ ']', '&\#x005D;' ],
-      [ '{', '&\#x007B;' ],
-      [ '}', '&\#x007D;' ],
-      [ '=', '&\#x003D;' ],
-      [ '~', '&\#x007E;' ],
     ].freeze
 
     ##
@@ -30,6 +26,20 @@ module Rendering
 
     def meta_replacements
       META_REPLACEMENTS
+    end
+
+    def code(content)
+      meta(content)
+         .gsub("\n", '\n')
+         .gsub('<', '&lt;')
+         .gsub('>', '&gt;')
+    end
+    ##
+    # Render a `code` node.
+    # @param [String] content contents of the node
+    # @return [String] rendered version of the content
+    def render_code(content)
+      "<code>#{code(content)}</code>"
     end
 
     def formula_replacements(content)

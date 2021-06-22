@@ -1,1 +1,1 @@
-::If-Bedingung mit Elif::[html]<p>Welche <em>Ausgabe</em> macht das folgende Programm? <em>Begründen</em> Sie Ihre Antwort kurz.</p><code><pre>a &\#x003D; 8\n\nif (a &lt; 0)\:\n    print('A')\nelif (a &lt; 10)\:\n    print('B')\nelse\:\n    print('C')\n</pre></code>{}
+::If-Bedingung mit Elif::[html]<p>Welche <em>Ausgabe</em> macht das folgende Programm? <em>Begründen</em> Sie Ihre Antwort kurz.</p><code><pre>a \= 8\n\nif (a &lt; 0)\:\n    print('A')\nelif (a &lt; 10)\:\n    print('B')\nelse\:\n    print('C')\n</pre></code>{}

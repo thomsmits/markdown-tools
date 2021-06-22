@@ -71,21 +71,24 @@ module Rendering
         \ifprintanswers
         \else
         \vspace{5mm}
-        <%= translate(:answer) %>: \dotfill
+        \textit{<%= translate(:answer) %>}: \fillin[<%= values.join(', ') %>][10cm]
         \fi|),
 
       matching_question_start: erb(%q||),
       matching_question_end: erb(%q|
+        \begin{enumerate}[label=\alph{enumi}.]
+        <% for answer in answers %>
+          \item <%= answer %>
+        <% end %>
+        \end{enumerate}
+
+        \textit{<%= translate(:matching_question) %>}
+
         \begin{enumerate}
         <% for question in questions %>
           <% if question.length > 0 %>
-            \item <%= question %> $\rightarrow$ \fillin[][1cm]
+            \item \fillin[][1cm] $\rightarrow$  <%= question %>
           <% end %>
-        <% end %>
-        \end{enumerate}
-        \begin{enumerate}[label=\Alph*]
-        <% for answer in answers %>
-          \item <%= answer %>
         <% end %>
         \end{enumerate}|),
       matching_question: erb(%q||),
@@ -161,7 +164,9 @@ module Rendering
       questions = @matching_questions.map { |e| e[0] }
       answers   = @matching_questions.map { |e| e[1] }
 
-      if shuffle == :questions
+      if shuffle == :answers
+        answers.shuffle!
+      elsif shuffle == :questions
         questions.shuffle!
       elsif shuffle == :questions_and_answers
         questions.shuffle!
