@@ -126,8 +126,12 @@ module Rendering
       #size = table ? ',basicstyle=\scriptsize' : ',style=inline' # TODO: Table management
       size = ',style=inline'
 
+      delimiters = %w{+ ! & _ - = $ : ~ . ; ?}
       if content.include?('|')
-        "\\lstinline[#{options}language=#{@language}#{size}]+#{content}+"
+        # search for a delimiter not used
+        delimiters.filter! { |d| !content.include?(d) }
+        delimiter = delimiters.pop
+        "\\lstinline[#{options}language=#{@language}#{size}]#{delimiter}#{content}#{delimiter}"
       else
         "\\lstinline[#{options}language=#{@language}#{size}]|#{content}|"
       end
