@@ -13,6 +13,7 @@ en:
   index: "Index"
   literature: "References"
   answer: "Answer"
+  matching_question: "Please match the answers"
 
 de:
   contents: "Inhalt"
@@ -29,3 +30,4 @@ de:
   index: "Index"
   literature: "Quellen"
   answer: "Antwort"
+  matching_question: "Bitte ordnen Sie entsprechend zu"

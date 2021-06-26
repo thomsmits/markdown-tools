@@ -19,7 +19,7 @@ module Rendering
       comment_start: erb("// "),
       comment_end: erb(""),
       code_start: erb("<code><pre>"),
-      code: erb(%q|<%= line_renderer.render_text(content).gsub("\n", '\n') %>|),
+      code: erb(%q|<%= line_renderer.code(content) %>|),
       code_end: erb("</pre></code><% -%>"),
       image: erb(""),
       uml: erb(""),
