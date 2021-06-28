@@ -49,5 +49,19 @@ module Rendering
     def render_formula(content)
       "\\\\[#{formula_replacements(content)}\\\\]"
     end
+
+    def render_strongunderscore(content)
+      "<strong><em>#{content}</em></strong>"
+    end
+
+    alias render_strongstar render_strongunderscore
+
+
+    def render_emphasisunderscore(content)
+      "<strong>#{content}</strong>"
+    end
+
+    alias render_emphasisstar render_emphasisunderscore
+
   end
 end
