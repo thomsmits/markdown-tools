@@ -178,6 +178,7 @@ class LineParserTest < Minitest::Test
     ['Sup', %q|x^22|, %q|x<sup>22</sup>|],
     ['Del', %q|~~delete me~~|, %q|<del>delete me</del>|],
     ['Underline', %q|~underline me~|, %q|<u>underline me</u>|],
+    ['Emph!', %q|_emphasis_!|, %q|<em>emphasis</em>!|]
   ]
 
   def test_line_parser
