@@ -117,7 +117,7 @@ module Rendering
       slide_start: erb(
         %q|
         % ********************************************************************************************
-        \begin{frame}[fragile]{<%= title %>}\label{<%= id %>}
+        \begin{frame}[fragile]{<%= line_renderer.render_text(title) %>}\label{<%= id %>}
         |
       ),
 

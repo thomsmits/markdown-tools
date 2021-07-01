@@ -113,7 +113,7 @@ module Rendering
       slide_start: erb(
         %q|
         % ********************************************************************************************
-        \Needspace{5\baselineskip}\section{<%= title %> [<%= number %>]}\label{<%= id %>}
+        \Needspace{5\baselineskip}\section{<%= line_renderer.render_text(title) %> [<%= number %>]}\label{<%= id %>}
         |
       ),
 
