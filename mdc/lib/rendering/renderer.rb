@@ -103,7 +103,7 @@ module Rendering
       ),
 
       code_start: erb(
-        '```<%= language %>'
+        '```<%= prog_lang %>'
       ),
 
       code: erb(
@@ -290,15 +290,15 @@ module Rendering
     # Initialize the renderer
     # @param [IO, StringIO] io target of output operations
     # @param [Rendering::LineRenderer] line_renderer renderer for the lines
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images
     #                 (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, line_renderer, language, result_dir, image_dir, temp_dir)
+    def initialize(io, line_renderer, prog_lang, result_dir, image_dir, temp_dir)
       @io = io
       @line_renderer = line_renderer
-      @language = language
+      @prog_lang = prog_lang
       @result_dir = result_dir
       @image_dir = image_dir
       @temp_dir = temp_dir
@@ -446,9 +446,9 @@ module Rendering
 
     ##
     # Start of a code fragment
-    # @param [String] language language of the code fragment
+    # @param [String] prog_lang language of the code fragment
     # @param [String, nil] caption caption of the sourcecode
-    def code_start(language, caption)
+    def code_start(prog_lang, caption)
       @io << @templates[:code_start].result(binding).strip
     end
 

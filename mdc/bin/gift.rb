@@ -18,14 +18,14 @@ class GIFT
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir directory to store results in
   # @param [String] language default programming language
-  def self.parse_directory_and_render(src_dir, dest_dir, language = '')
+  def self.parse_directory_and_render(src_dir, dest_dir, prog_lang = '')
 
     # Get all files in the directory
     files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 
     files.each do |file|
       target_name = file.gsub('.md', '.txt')
-      CustomHandler.convert_file(src_dir, dest_dir, file, target_name, language,
+      CustomHandler.convert_file(src_dir, dest_dir, file, target_name, prog_lang,
                                  'Rendering::RendererGIFT')
     end
   end

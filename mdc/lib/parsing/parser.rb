@@ -82,7 +82,7 @@ module Parsing
         ps.line_counter = ps.line_counter + 1
 
         if line.code_include? && !ps.code_or_code_fenced?
-          # !INCLUDESRC[x] "path" Language
+          # !INCLUDESRC[x] "path" prog_lang
           handler.code_include(ps, line)
 
         elsif line.multiple_choice?

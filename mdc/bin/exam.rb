@@ -10,15 +10,15 @@ class Exam
   # Main entry point
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir directory to store results in
-  # @param [String] language default programming language
-  def self.main(src_dir, dest_dir, language = '')
+  # @param [String] prog_lang default programming language
+  def self.main(src_dir, dest_dir, prog_lang = '')
 
     # Get all files in the directory
     files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 
     files.each do |file|
       target_name = file.gsub('.md', '.tex')
-      CustomHandler.convert_file(src_dir, dest_dir, file, target_name, language,
+      CustomHandler.convert_file(src_dir, dest_dir, file, target_name, prog_lang,
                                  'Rendering::RendererLatexExam')
     end
   end
@@ -27,12 +27,12 @@ class Exam
   # Parse lines containing a markdown file and return the rendered result.
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir target directory
-  # @param [String] prog_language the default programming language
+  # @param [String] prog_lang the default programming language
   # @param [String] renderer_class name of class used for rendering
   # @param [Array<String>] lines text to be parsed
   # @return [String] String the rendered contents as
-  def self.parse_file_and_render(src_dir, dest_dir, prog_language, lines)
-    CustomHandler.convert_stream(src_dir, dest_dir, prog_language,
+  def self.parse_file_and_render(src_dir, dest_dir, prog_lang, lines)
+    CustomHandler.convert_stream(src_dir, dest_dir, prog_lang,
                                  'Rendering::RendererLatexExam', lines)
   end
 end

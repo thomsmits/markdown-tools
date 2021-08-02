@@ -8,9 +8,9 @@ module Rendering
   class LineRenderer
     ##
     # Initialize the renderer
-    # @param [String] language the default language for code snippets
-    def initialize(language)
-      @language = language
+    # @param [String] prog_lang the default language for code snippets
+    def initialize(prog_lang)
+      @prog_lang = prog_lang
     end
 
     ##

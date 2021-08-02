@@ -131,9 +131,9 @@ module Rendering
         # search for a delimiter not used
         delimiters.filter! { |d| !content.include?(d) }
         delimiter = delimiters.pop
-        "\\lstinline[#{options}language=#{@language}#{size}]#{delimiter}#{content}#{delimiter}"
+        "\\lstinline[#{options}language=#{@prog_lang}#{size}]#{delimiter}#{content}#{delimiter}"
       else
-        "\\lstinline[#{options}language=#{@language}#{size}]|#{content}|"
+        "\\lstinline[#{options}language=#{@prog_lang}#{size}]|#{content}|"
       end
     end
 

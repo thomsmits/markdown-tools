@@ -153,7 +153,7 @@ module Parsing
     end
 
     ##
-    # Beginning of a fenced (GitHub style) code block "```language"
+    # Beginning of a fenced (GitHub style) code block "```prog_lang"
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def code_fenced_start(ps, line)

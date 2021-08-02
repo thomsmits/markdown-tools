@@ -198,12 +198,12 @@ module Rendering
     ##
     # Initialize the renderer
     # @param [StringIO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
       @dialog_counter = 1 # counter for dialog popups
     end
 

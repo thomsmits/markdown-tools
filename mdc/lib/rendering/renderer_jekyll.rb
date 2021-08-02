@@ -53,7 +53,7 @@ module Rendering
 
       code_start: erb(
         %q|<div class="fw-300 fs-3"><%= caption_command %></div>
-        ```<%= language %>
+        ```<%= prog_lang %>
         |
       ),
 
@@ -276,15 +276,15 @@ module Rendering
     ##
     # Initialize the renderer
     # @param [IO, StringIO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     # @param [Numeric] nav_order navigation order of the page
     # @param [Boolean] has_equation indicates that the presentation contains an equation
-    def initialize(io, language, result_dir, image_dir, temp_dir, nav_order, has_equation)
-      super(io, language, result_dir, image_dir, temp_dir)
-      @line_renderer = LineRendererJekyll.new(language)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir, nav_order, has_equation)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
+      @line_renderer = LineRendererJekyll.new(prog_lang)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
       @nav_order = nav_order
