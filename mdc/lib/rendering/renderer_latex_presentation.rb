@@ -103,9 +103,9 @@ module Rendering
       chapter_start: erb(
         %q|
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \section{<%= title %>}\label{<%= id %>}
+        \section{<%= line_renderer.render_text(title) %>}\label{<%= id %>}
         \begin{frame}
-        \separator{<%= title %>}
+        \separator{<%= line_renderer.render_text(title) %>}
         \end{frame}|
       ),
 
