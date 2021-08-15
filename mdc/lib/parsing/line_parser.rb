@@ -100,9 +100,9 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|[\s().,;?\-: >])__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>$|[\s().,;?\-: <])/,
-                                   /^__(?<em>[\S().,;:?\-].*?[\S().,;?\-])__(?<post>[\s().,;:?\-])/,
-                                   /(?<pre>[().,;?\- ])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
+                                   /(?<pre>^|[\s().,;?\-: >])__(?<em>[\S().,;?\-].*?[\S().,;?\-])__(?<post>$|[\s().,;?\-: <\/])/,
+                                   /^__(?<em>[\S().,;:?\-].*?[\S().,;?\-])__(?<post>[\s().,;:?\-\/])/,
+                                   /(?<pre>[().,;?\- \/])__(?<em>[\w().,;?\-].*?[\S().,;?\-])__/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
                                  end),
@@ -116,9 +116,9 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|[\s().,;?\-: >])_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>$|[!\s().,;?\- <])/,
-                                   /^_(?<em>[A-Za-z0-9().,;:?\-].*?[\S().,;?\-])_(?<post>[!\s().,;:?\- <])/,
-                                   /(?<pre>[().,;:?\-])_(?<em>[\w().,;?\-].*?[\S().,:;?\-])_/, ],
+                                   /(?<pre>^|[\s().,;?\-: >])_(?<em>[A-Za-z0-9().,;?\-].*?[\S().,;?\-])_(?<post>$|[!\s().,;?\- <\/])/,
+                                   /^_(?<em>[A-Za-z0-9().,;:?\-].*?[\S().,;?\-])_(?<post>[!\s().,;:?\- <\/])/,
+                                   /(?<pre>[().,;:?\-\/])_(?<em>[\w().,;?\-].*?[\S().,:;?\-])_/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisUnderscoreNode.new(md[:em]))
                                  end),
