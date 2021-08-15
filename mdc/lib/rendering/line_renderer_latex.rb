@@ -167,9 +167,9 @@ module Rendering
 
     def render_link(content, target = '', title = '')
       if title.nil?
-        %Q|\href{#{meta(target)}}{#{meta(content)}}|
+        %Q|\\href{#{meta(target)}}{#{meta(content)}}|
       else
-        %Q|\href{#{meta(target)}}{#{meta(content)}}|
+        %Q|\\href{#{meta(target)}}{#{meta(content)}}|
       end
     end
 
