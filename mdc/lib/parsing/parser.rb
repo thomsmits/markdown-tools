@@ -295,6 +295,11 @@ module Parsing
 
             # Parse the contents of the elements into nodes
             element.nodes  = line_parser.parse(element.content)
+
+            # A quote may have an additional source field
+            if Domain::Quote == type && !element.source.nil?
+              element.source_nodes = line_parser.parse(element.source)
+            end
           end
 
           if [ Domain::Table ].include? type
