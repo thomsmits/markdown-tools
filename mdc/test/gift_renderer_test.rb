@@ -2,9 +2,9 @@ require 'minitest/autorun'
 require_relative '../lib/domain/presentation'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/rendering/renderer_gift'
-require_relative 'render_test_base'
+require_relative 'renderer_test_base'
 
-class GiftRendererTest < RenderTestBase
+class GiftRendererTest < RendererTestBase
 
   ##
   # Determine the base path of this file.

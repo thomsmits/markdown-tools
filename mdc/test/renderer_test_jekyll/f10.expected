@@ -1,0 +1,47 @@
+---
+layout: page
+parent: Section 3
+title: Chapter
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide 6.3
+
+<p>Text with a <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">one](https://en.wikipedia.org/wiki/Hobbit#Lifestyle) and another [two</a>
+</p>
+
+
+<p>* <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">three</a>
+</p>
+
+
+<p>* <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">four</a>
+</p>
+
+
+<div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
+Quote <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">five</a>
+
+
+</div>
+
+
+<div class="bg-yellow-000" style="padding: 0.5em 1.0em">
+Important <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">six</a>
+
+</div>
+
+
+<div class="bg-green-000" style="padding: 0.5em 1.0em">
+Question <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle" title="Hobbit lifestyles">seven</a>
+
+</div>
+
+
+<div class="bg-green-000" style="padding: 0.5em 1.0em">
+Question <a href="https://en.wikipedia.org/wiki/Hobbit#Lifestyle">eight</a>
+
+</div>
+
+
+

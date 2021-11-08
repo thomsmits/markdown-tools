@@ -1,0 +1,87 @@
+---
+layout: page
+parent: Section 3
+title: Chapter
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide 5.1
+
+<table class='small content'>
+<thead><tr>
+
+<th class='left'>Dezimal</th>
+<th class='left'>Binär</th>
+<th class='left'>Oktal</th>
+<th class='left'>Hexadezimal</th>
+</tr></thead><tbody>
+
+
+<tr>
+<td class='left'>521,125</td>
+<td class='left'></td>
+<td class='left'></td>
+<td class='left'></td>
+</tr>
+<tr>
+<td class='left'></td>
+<td class='left'>1011,11</td>
+<td class='left'></td>
+<td class='left'></td>
+</tr>
+<tr>
+<td class='left'></td>
+<td class='left'></td>
+<td class='left'>15,7</td>
+<td class='left'></td>
+</tr>
+<tr>
+<td class='left'></td>
+<td class='left'></td>
+<td class='left'></td>
+<td class='left'>AC,8</td>
+</tr>
+
+</tbody></table>
+
+## Slide 5.2
+
+<table class='small content'>
+<thead><tr>
+
+<th class='center'>Dezimal</th>
+<th class='center'>Binär</th>
+<th class='center'>Oktal</th>
+<th class='center'>Hexadezimal</th>
+</tr></thead><tbody>
+
+
+<tr>
+<td class='center'>521,125</td>
+<td class='center'>1000001001,001</td>
+<td class='center'>1011,1</td>
+<td class='center'>209,2</td>
+</tr>
+<tr>
+<td class='center'>11,75</td>
+<td class='center'>1011,11</td>
+<td class='center'>13,6</td>
+<td class='center'>B,C</td>
+</tr>
+<tr>
+<td class='center'>13,875</td>
+<td class='center'>1101,111</td>
+<td class='center'>15,7</td>
+<td class='center'>D,E</td>
+</tr>
+<tr>
+<td class='center'>172,5</td>
+<td class='center'>10101100,1</td>
+<td class='center'>254,4</td>
+<td class='center'>AC,8</td>
+</tr>
+
+</tbody></table>
+
+
+

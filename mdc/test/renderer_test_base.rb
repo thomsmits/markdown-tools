@@ -6,7 +6,7 @@ require_relative '../lib/parsing/parser_handler'
 
 ##
 # Base class for renderer tests.
-class RenderTestBase < Minitest::Test
+class RendererTestBase < Minitest::Test
 
   ##
   # Determine the base path of this file.
@@ -64,5 +64,25 @@ class RenderTestBase < Minitest::Test
     renderer.io = output
     presentation >> renderer
     output.string
+  end
+
+  ##
+  # Perform the test for all the files in our test directory.
+  def execute_all(renderer)
+
+    execute_for_all_files(base_path) do |md_name|
+      md = File.read(base_path + md_name)
+
+      result_file = base_path + File.basename(md_name, ".*") + ".expected"
+      result = parse_and_render(md, renderer).gsub("\n", "").gsub(' ', '')
+
+      expected = if File.exist?(result_file)
+                   File.read(result_file)
+                 else
+                   md
+                 end
+
+      assert_equal(expected.gsub("\n", "").gsub(' ', ''), result, "Error in file #{md_name}")
+    end
   end
 end

@@ -1,0 +1,47 @@
+---
+layout: page
+parent: Section 3
+title: Chapter
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide 2
+
+<div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
+This is <em class="text-grey-dk-000 fw-300">very</em> <strong class="text-grey-dk-000 fw-500">very</strong> important with <em class="text-purple-100 fw-500">emphasis</em> and <strong class="text-purple-100 fw-500">strongness</strong>
+
+
+</div>
+
+
+<div class="bg-yellow-000" style="padding: 0.5em 1.0em">
+This is <em class="text-grey-dk-000 fw-300">very</em> <strong class="text-grey-dk-000 fw-500">very</strong> important with <em class="text-purple-100 fw-500">emphasis</em> and <strong class="text-purple-100 fw-500">strongness</strong>
+
+</div>
+
+
+<p>This is (*very*) (<strong class="text-grey-dk-000 fw-500">very</strong>) important with (<em class="text-purple-100 fw-500">emphasis</em> and) and (<strong class="text-purple-100 fw-500">strongness</strong> and)
+</p>
+
+
+<div class="bg-green-000" style="padding: 0.5em 1.0em">
+This is <em class="text-grey-dk-000 fw-300">very</em> <strong class="text-grey-dk-000 fw-500">very</strong> important with <em class="text-purple-100 fw-500">emphasis</em> and <strong class="text-purple-100 fw-500">strongness</strong>
+
+</div>
+
+
+<div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
+Even <code>code</code> is possible here
+
+
+</div>
+
+
+<div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
+This is <u>underlined</u> and <del>deleted</del>
+
+
+</div>
+
+
+
