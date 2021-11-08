@@ -29,49 +29,49 @@ module Rendering
       ['(->)',                '(&rarr;)'],
       ['{-> ',                '{&rarr; '],
       [' -> ',                ' &rarr; '],
-      ['<br>-> ',             '<br>&rarr; '],
+      ['-> ',                 '&rarr; '],
 
       [/^=> /,                '&rArr; '],
       ['(=> ',                '(&rArr; '],
       ['(=>)',                '(&rArr;)'],
       ['{=> ',                '{&rArr; '],
       [' => ',                ' &rArr; '],
-      ['<br>=> ',             '<br>&rArr; '],
+      ['=> ',                 '&rArr; '],
 
       [/^<- /,                '&larr; '],
       ['(<- ',                '(&larr; '],
       ['(<-)',                '(&larr;)'],
       [' <- ',                ' &larr; '],
       ['{<- ',                '{&larr; '],
-      ['<br><- ',             '<br>&larr; '],
+      ['<- ',                 '&larr; '],
 
       [/^<= /,                '&lArr; '],
       ['(<= ',                '(&lArr; '],
       ['(<=)',                '(&lArr;)'],
       ['{<= ',                '{&lArr; '],
       [' <= ',                ' &lArr; '],
-      ['<br><= ',             '<br>&lArr; '],
+      ['<= ',                 '&lArr; '],
 
       [/^<=> /,               '&hArr; '],
       ['(<=> ',               '(&hArr; '],
       ['(<=>)',               '(&hArr;)'],
       ['{<=> ',               '{&hArr; '],
       [' <=> ',               ' &hArr; '],
-      ['<br><=> ',            '<br>&hArr; '],
+      ['<=> ',                '&hArr; '],
 
       [/^<-> /,               '&harr; '],
       ['(<-> ',               '(&harr; '],
       ['(<->)',               '(&harr;)'],
       ['{<-> ',               '{&harr; '],
       [' <-> ',               ' &harr; '],
-      ['<br><-> ',            '<br>&harr; ']].freeze
+      ['<-> ',                '&harr; ']].freeze
 
     ##
     # Method returning the inline replacements.Should be overwritten by the
     # subclasses.
-    # @return [Array<String>] the templates
+    # @return [Array<Array<String>>] the templates
     def all_inline_replacements
-      META_REPLACEMENTS + REPLACEMENTS
+      REPLACEMENTS + META_REPLACEMENTS
     end
 
     def meta_replacements
