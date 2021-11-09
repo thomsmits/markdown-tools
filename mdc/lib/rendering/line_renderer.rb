@@ -153,5 +153,12 @@ module Rendering
     def render_underline(content)
       "~#{content}~"
     end
+
+    ##
+    # Render a newline
+    def render_newline(content)
+      "<br>"
+    end
+
   end
 end

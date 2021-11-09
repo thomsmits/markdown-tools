@@ -174,6 +174,11 @@ module Parsing
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::CitationNode.new(md[1]))
                                  end),
+
+      MatcherForLineElements.new([ /<br>/ ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::NewLineNode.new(''))
+                                 end),
     ]
 
     ##

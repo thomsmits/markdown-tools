@@ -15,6 +15,7 @@ module Rendering
     ]
 
     REPLACEMENTS = [
+      # Greek characters
       ['α',                   '\begin{math}\alpha\end{math}'],
       ['β',                   '\begin{math}\beta\end{math}'],
       ['Γ',                   '\begin{math}\Gamma\end{math}'],
@@ -53,7 +54,11 @@ module Rendering
       ['ω',                   '\begin{math}\omega\end{math}'],
       ['≤',                   '\begin{math}\le\end{math}'],
       ['≥',                   '\begin{math}\ge\end{math}'],
+
+      # Quotes
       [/"(.*?)"/,             '\enquote{\1}'],
+
+      # Abbreviations
       ['Z.B.',                'Z.\,B.'],
       ['z.B.',                'z.\,B.'],
       ['D.h.',                'D.\,h.'],
@@ -66,44 +71,19 @@ module Rendering
       ['e.g.',                'e.\,g.'],
       ['o.O.',                'o.\,O.'],
       ['o.J.',                'o.\,J.'],
-      [/^-> /,                '$\rightarrow$ '],
-      ['(-> ',                '($\rightarrow$ '],
-      ['(->)',                '($\rightarrow$)'],
-      ['{-> ',                '{$\rightarrow$ '],
-      [' -> ',                ' $\rightarrow$ '],
-      ['<br>-> ',             '<br>$\rightarrow$ '],
-      [/^=> /,                '$\Rightarrow$ '],
-      ['(=> ',                '($\Rightarrow$ '],
-      ['(=>)',                '($\Rightarrow$)'],
-      ['{=> ',                '{$\Rightarrow$ '],
-      [' => ',                ' $\Rightarrow$ '],
-      ['<br>=> ',             '<br>$\Rightarrow$ '],
-      [/^<- /,                '$\leftarrow$ '],
-      ['(<- ',                '($\leftarrow$ '],
-      ['(<-)',                '($\leftarrow$)'],
-      [' <- ',                ' $\leftarrow$ '],
-      ['{<- ',                '{$\leftarrow$ '],
-      ['<br><- ',             '<br>$\leftarrow$ '],
-      [/^<= /,                '$\Leftarrow$ '],
-      ['(<= ',                '($\Leftarrow$ '],
-      ['(<=)',                '($\Leftarrow$)'],
-      ['{<= ',                '{$\Leftarrow$ '],
-      [' <= ',                ' $\Leftarrow$ '],
-      ['<br><= ',             '<br>$\Leftarrow$ '],
-      [/^<=> /,               '$\Leftrightarrow$ '],
-      ['(<=> ',               '($\Leftrightarrow$ '],
-      ['(<=>)',               '($\Leftrightarrow$)'],
-      ['{<=> ',               '{$\Leftrightarrow$ '],
-      [' <=> ',               ' $\Leftrightarrow$ '],
-      ['<br><=> ',            '<br>$\Leftrightarrow$ '],
-      [/^<-> /,               '$\leftrightarrow$ '],
-      ['(<-> ',               '($\leftrightarrow$ '],
-      ['(<->)',               '($\leftrightarrow$)'],
-      ['{<-> ',               '{$\leftrightarrow$ '],
-      [' <-> ',               ' $\leftrightarrow$ '],
-      ['<br><-> ',            '<br>$\leftrightarrow$ '],
-      [/^<br>/,               "\\ \\newline\n"],
-      [/<br>/,                "\\newline\n"],
+
+      # Arrows
+      [/([^<]|^)<->(\s|\))/,  '\1$\leftrightarrow$\2' ],
+      [/([^<]|^)<=>(\s|\))/,  '\1$\Leftrightarrow$\2' ],
+      [/([^<]|^)->(\s|\))/,   '\1$\rightarrow$\2' ],
+      [/([^<]|^)=>(\s|\))/,   '\1$\Rightarrow$\2' ],
+      [/([^<]|^)<-(\s|\))/,   '\1$\leftarrow$\2' ],
+      [/([^<]|^)<=(\s|\))/,   '\1$\Leftarrow$\2' ],
+
+      # Dots
+      ['...',                 '\dots{}'],
+
+      ## Other special characters
       ['<<',                  '{\flqq}'],
       ['>>',                  '{\frqq}'],
       ['<',                   '{\textless}'],
@@ -183,6 +163,10 @@ module Rendering
 
     def render_underline(content)
       "\\underline{#{content}}"
+    end
+
+    def render_newline(content)
+      "\\newline\n"
     end
   end
 end

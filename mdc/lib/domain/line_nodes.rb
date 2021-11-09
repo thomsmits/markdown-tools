@@ -177,6 +177,13 @@ private
   end
 
   ##
+  # Newline
+  class NewLineNode < TextNode
+    add_renderer
+  end
+
+
+  ##
   # Link [Name](URL "TITLE")
   class LinkNode < TextNode
     attr_accessor :target, :title
