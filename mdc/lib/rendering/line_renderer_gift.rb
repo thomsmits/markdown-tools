@@ -16,6 +16,14 @@ module Rendering
     REPLACEMENTS = [
     ].freeze
 
+    FORMULA_REPLACEMENTS = [
+      [ '\\', '\\\\\\\\' ],
+      [ '{',  '\{' ],
+      [ '}',  '\}' ],
+      [ "\n", '\n' ],
+      [ '=',  '\=' ],
+    ].freeze
+
     ##
     # Method returning the inline replacements.Should be overwritten by the
     # subclasses.
@@ -26,6 +34,10 @@ module Rendering
 
     def meta_replacements
       META_REPLACEMENTS
+    end
+
+    def formula_replacements
+      FORMULA_REPLACEMENTS
     end
 
     def code(content)
@@ -42,12 +54,8 @@ module Rendering
       "<code>#{code(content)}</code>"
     end
 
-    def formula_replacements(content)
-      content.gsub('\\', '\\\\\\\\').gsub('{', '\{').gsub('}', '\}').gsub("\n", '\n').gsub('=', '\=')
-    end
-
     def render_formula(content)
-      "\\\\[#{formula_replacements(content)}\\\\]"
+      "\\\\[#{formula(content)}\\\\]"
     end
 
     def render_strongunderscore(content)

@@ -53,6 +53,8 @@ module Rendering
               pdfsubject={<%= title2 %>}
           }
 
+          \usepackage[euler]{textgreek}
+
           \begin{document}
           \pagestyle{headings}
           \pagenumbering{roman}

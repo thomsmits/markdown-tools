@@ -16,42 +16,42 @@ module Rendering
 
     REPLACEMENTS = [
       # Greek characters
-      ['α',                   '\begin{math}\alpha\end{math}'],
-      ['β',                   '\begin{math}\beta\end{math}'],
-      ['Γ',                   '\begin{math}\Gamma\end{math}'],
-      ['γ',                   '\begin{math}\gamma\end{math}'],
-      ['Δ',                   '\begin{math}\Delta\end{math}'],
-      ['δ',                   '\begin{math}\delta\end{math}'],
-      ['ϵ',                   '\begin{math}\epsilon\end{math}'],
-      ['ζ',                   '\begin{math}\zeta\end{math}'],
-      ['η',                   '\begin{math}\eta\end{math}'],
-      ['Θ',                   '\begin{math}\Theta\end{math}'],
-      ['θ',                   '\begin{math}\theta\end{math}'],
-      ['ι',                   '\begin{math}\iota\end{math}'],
-      ['κ',                   '\begin{math}\kappa\end{math}'],
-      ['Λ',                   '\begin{math}\Lambda\end{math}'],
-      ['λ',                   '\begin{math}\lambda\end{math}'],
-      ['μ',                   '\begin{math}\mu\end{math}'],
-      ['ν',                   '\begin{math}\nu\end{math}'],
-      ['Ξ',                   '\begin{math}\Xi\end{math}'],
-      ['ξ',                   '\begin{math}\xi\end{math}'],
-      ['Π',                   '\begin{math}\Pi\end{math}'],
-      ['π',                   '\begin{math}\pi\end{math}'],
-      ['ρ',                   '\begin{math}\rho\end{math}'],
-      ['∑',                   '\begin{math}\Sigma\end{math}'],
+      ['α',                   '\textalpha{}'],
+      ['β',                   '\textbeta{}'],
+      ['Γ',                   '\textGamma{}'],
+      ['γ',                   '\textgamma{}'],
+      ['Δ',                   '\textDelta{}'],
+      ['δ',                   '\textdelta{}'],
+      ['ϵ',                   '\textepsilon{}'],
+      ['ζ',                   '\textzeta{}'],
+      ['η',                   '\texteta{}'],
+      ['Θ',                   '\textTheta{}'],
+      ['θ',                   '\texttheta{}'],
+      ['ι',                   '\textiota{}'],
+      ['κ',                   '\textkappa{}'],
+      ['Λ',                   '\textLambda{}'],
+      ['λ',                   '\textlambda{}'],
+      ['μ',                   '\textmu{}'],
+      ['ν',                   '\textnu{}'],
+      ['Ξ',                   '\textXi{}'],
+      ['ξ',                   '\textxi{}'],
+      ['Π',                   '\textPi{}'],
+      ['π',                   '\textpi{}'],
+      ['ρ',                   '\textrho{}'],
+      ['∑',                   '\textSigma{}'],
       ['σ^2',                 '\begin{math}\sigma\textsuperscript{2}\end{math}'],
-      ['σ',                   '\begin{math}\sigma\end{math}'],
-      ['τ',                   '\begin{math}\tau\end{math}'],
-      ['Υ',                   '\begin{math}\Upsilon\end{math}'],
-      ['υ',                   '\begin{math}\upsilon\end{math}'],
-      ['Φ',                   '\begin{math}\Phi\end{math}'],
-      ['ϕ',                   '\begin{math}\phi\end{math}'],
-      ['φ',                   '\begin{math}\varphi\end{math}'],
-      ['χ',                   '\begin{math}\chi\end{math}'],
-      ['Ψ',                   '\begin{math}\Psi\end{math}'],
-      ['ψ',                   '\begin{math}\psi\end{math}'],
-      ['Ω',                   '\begin{math}\Omega\end{math}'],
-      ['ω',                   '\begin{math}\omega\end{math}'],
+      ['σ',                   '\textsigma{}'],
+      ['τ',                   '\texttau{}'],
+      ['Υ',                   '\textUpsilon{}'],
+      ['υ',                   '\textupsilon{}'],
+      ['Φ',                   '\textPhi{}'],
+      ['ϕ',                   '\textphi{}'],
+      ['φ',                   '\textvarphi{}'],
+      ['χ',                   '\textchi{}'],
+      ['Ψ',                   '\textPsi{}'],
+      ['ψ',                   '\textpsi{}'],
+      ['Ω',                   '\textOmega{}'],
+      ['ω',                   '\textomega{}'],
       ['≤',                   '\begin{math}\le\end{math}'],
       ['≥',                   '\begin{math}\ge\end{math}'],
 
@@ -92,12 +92,54 @@ module Rendering
       ['^',                   '{\textasciicircum}'],
     ].freeze
 
+    FORMULA_REPLACEMENTS = [
+      ['α',                   '\alpha{}'],
+      ['β',                   '\beta{}'],
+      ['Γ',                   '\Gamma{}'],
+      ['γ',                   '\gamma{}'],
+      ['Δ',                   '\Delta{}'],
+      ['δ',                   '\delta{}'],
+      ['ϵ',                   '\epsilon{}'],
+      ['ζ',                   '\zeta{}'],
+      ['η',                   '\eta{}'],
+      ['Θ',                   '\Theta{}'],
+      ['θ',                   '\theta{}'],
+      ['ι',                   '\iota{}'],
+      ['κ',                   '\kappa{}'],
+      ['Λ',                   '\Lambda{}'],
+      ['λ',                   '\lambda{}'],
+      ['μ',                   '\mu{}'],
+      ['ν',                   '\nu{}'],
+      ['Ξ',                   '\Xi{}'],
+      ['ξ',                   '\xi{}'],
+      ['Π',                   '\Pi{}'],
+      ['π',                   '\pi{}'],
+      ['ρ',                   '\rho{}'],
+      ['∑',                   '\Sigma{}'],
+      ['σ',                   '\sigma{}'],
+      ['τ',                   '\tau{}'],
+      ['Υ',                   '\Upsilon{}'],
+      ['υ',                   '\upsilon{}'],
+      ['Φ',                   '\Phi{}'],
+      ['ϕ',                   '\phi{}'],
+      ['φ',                   '\varphi{}'],
+      ['χ',                   '\chi{}'],
+      ['Ψ',                   '\Psi{}'],
+      ['ψ',                   '\psi{}'],
+      ['Ω',                   '\Omega{}'],
+      ['ω',                   '\omega{}'],
+    ].freeze
+
     def all_inline_replacements
       META_REPLACEMENTS + REPLACEMENTS
     end
 
     def meta_replacements
       META_REPLACEMENTS
+    end
+
+    def formula_replacements
+      FORMULA_REPLACEMENTS
     end
 
     def render_code(content)
@@ -154,7 +196,7 @@ module Rendering
     end
 
     def render_formula(content)
-      "\\begin{math}#{content}\\end{math}"
+      "\\begin{math}#{formula(content)}\\end{math}"
     end
 
     def render_deleted(content)

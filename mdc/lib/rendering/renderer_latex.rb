@@ -21,7 +21,7 @@ module Rendering
         %q(
         \abovedisplayskip=0mm
         \begin{align*}
-        <%= contents %>\end{align*}
+        <%= line_renderer.formula(contents) %>\end{align*}
         \belowdisplayskip=0mm
         )
       ),

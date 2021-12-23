@@ -30,6 +30,14 @@ module Rendering
     end
 
     ##
+    # Method returning the replacements used inside a formula.
+    # Should be overwritten by the subclasses.
+    # @return [Array<Array<String, String>>] the templates
+    def formula_replacements
+      [[ '', '' ]]
+    end
+
+    ##
     # Replace meta characters.
     # @param [String] input Input string
     # @return [String] result with replaced meta characters
@@ -37,6 +45,19 @@ module Rendering
       result = input
 
       meta_replacements.each do |m|
+        result = result.gsub(m[0], m[1]);
+      end
+      result
+    end
+
+    ##
+    # Replace characters inside math formula
+    # @param [String] input Input string
+    # @return [String] result with replaced meta characters
+    def formula(input)
+      result = input
+
+      formula_replacements.each do |m|
         result = result.gsub(m[0], m[1]);
       end
       result
@@ -135,7 +156,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_formula(content)
-      "\\[#{content}\\]"
+      "\\[#{formula(content)}\\]"
     end
 
     ##

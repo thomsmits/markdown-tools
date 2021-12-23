@@ -30,7 +30,7 @@ module Rendering
       presentation_start: erb(""),
       presentation_end: erb(""),
       vertical_space: erb(""),
-      equation: erb(%q|\\\\[<%= line_renderer.formula_replacements(contents) %>\\\\]<%- -%>|),
+      equation: erb(%q|\\\\[<%= line_renderer.formula(contents) %>\\\\]<%- -%>|),
       ol_start: erb("<ol start='<%= number %>'><%- -%>"),
       ol_item: erb('<li><%= content %><%- -%>'),
       ol_end: erb('</ol><%- -%>'),
