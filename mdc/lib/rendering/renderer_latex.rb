@@ -288,7 +288,7 @@ module Rendering
     # @param [String] location path to image
     # @param [String] title title of image
     # @param [String] width width for slide
-    # @param [String] source source of the image
+    # @param [String|nil] source source of the image
     def image_latex(location, title, width, source = nil)
       stripped_location = location.gsub(/\..../, '')
 
