@@ -8,6 +8,8 @@ require_relative '../lib/rendering/line_renderer_html'
 class LineParserTest < Minitest::Test
 
   CASES = [
+    ['emph_quot', %q|_"emphasis"_|, %q|<em>&quot;emphasis&quot;</em>|],
+    ['strong_quot', %q|__"emphasis"__|, %q|<strong>&quot;emphasis&quot;</strong>|],
     ['Combined', %Q{*Bold ~underline~ Bold*}, %Q{<em>Bold <u>underline</u> Bold</em>}],
     ['364', %Q{foo*bar*}, %Q{foo<em>bar</em>}],
     ['360', %Q{*foo bar*}, %Q{<em>foo bar</em>}],
@@ -184,7 +186,8 @@ class LineParserTest < Minitest::Test
     ['Sup', %q|x^22|, %q|x<sup>22</sup>|],
     ['Del', %q|~~delete me~~|, %q|<del>delete me</del>|],
     ['Underline', %q|~underline me~|, %q|<u>underline me</u>|],
-    ['Emph!', %q|_emphasis_!|, %q|<em>emphasis</em>!|]
+    ['Emph!', %q|_emphasis_!|, %q|<em>emphasis</em>!|],
+
   ]
 
   def test_line_parser

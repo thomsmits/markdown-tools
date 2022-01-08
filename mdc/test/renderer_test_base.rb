@@ -68,13 +68,17 @@ class RendererTestBase < Minitest::Test
 
   ##
   # Perform the test for all the files in our test directory.
-  def execute_all(renderer)
+  def execute_all(renderer, print_result = false)
 
     execute_for_all_files(base_path) do |md_name|
       md = File.read(base_path + md_name)
 
       result_file = base_path + File.basename(md_name, ".*") + ".expected"
-      result = parse_and_render(md, renderer).gsub("\n", "").gsub(' ', '')
+      result = parse_and_render(md, renderer)
+
+      puts result if print_result
+
+      result = result.gsub("\n", "").gsub(' ', '')
 
       expected = if File.exist?(result_file)
                    File.read(result_file)
