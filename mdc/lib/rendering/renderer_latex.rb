@@ -135,7 +135,7 @@ module Rendering
 
       text: erb(
         %q|
-        <%= cleaned_content %>
+        <%= content %>
         \vspace{0.1mm}|
       ),
 
