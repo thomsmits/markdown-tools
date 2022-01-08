@@ -92,7 +92,7 @@ module Rendering
 
         \cleardoublepage
         \phantomsection
-        \addcontentsline{toc}{section}{Index}
+        \addcontentsline{toc}{chapter}{Index}
         \printindex
 
         \end{document}
