@@ -110,8 +110,8 @@ module Parsing
 
       MatcherForLineElements.new([
                                    /^\*(?<em>[^\s*].*?[^\s])\*/,
-                                   /(?<pre>[\s])\*(?<em>[^\s*].*?[^\s])\*/,
-                                   /(?<pre>[\w])\*(?<em>[\w]*?[^\s*])\*/, ],
+                                   /(?<pre>[\s(])\*(?<em>[^\s*].*?[^\s])\*/,
+                                   /(?<pre>[\w(])\*(?<em>[\w]*?[^\s*])\*/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisStarNode.new(md[:em]))
                                  end),
