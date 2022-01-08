@@ -12,6 +12,8 @@ class LineParserTest < Minitest::Test
     ['strong_bracket', %q|(**emphasis**)|, %q|(<strong>emphasis</strong>)|],
     ['emph_bracket 2', %q|(_emphasis_)|, %q|(<em>emphasis</em>)|],
     ['strong_bracket 2', %q|(__emphasis__)|, %q|(<strong>emphasis</strong>)|],
+    ['em_quote', %q|"_emphasis_"|, %q|&quot;<em>emphasis</em>&quot;|],
+    ['strong_quote', %q|"__emphasis__"|, %q|&quot;<strong>emphasis</strong>&quot;|],
     ['emph_quot', %q|_"emphasis"_|, %q|<em>&quot;emphasis&quot;</em>|],
     ['strong_quot', %q|__"emphasis"__|, %q|<strong>&quot;emphasis&quot;</strong>|],
     ['Combined', %Q{*Bold ~underline~ Bold*}, %Q{<em>Bold <u>underline</u> Bold</em>}],
