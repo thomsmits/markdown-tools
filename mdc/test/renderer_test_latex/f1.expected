@@ -4,3 +4,6 @@
 
 \quotedns{Test \strong{\enquote{Quoted}} or \strong{unqoted}
 }
+
+Test \strong{\enquote{Quoted}} or \strong{unqoted}\vspace{0.1mm}
+

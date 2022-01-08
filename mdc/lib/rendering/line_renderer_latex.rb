@@ -160,7 +160,7 @@ module Rendering
     end
 
     def render_strongunderscore(content)
-      "\\term{#{content}}"
+      "\\term{#{content}}\\index{#{content}}"
     end
 
     def render_strongstar(content)
