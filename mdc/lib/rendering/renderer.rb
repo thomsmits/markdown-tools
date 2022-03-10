@@ -22,7 +22,7 @@ module Rendering
     # and trailing spaces before
     # @param [String] input the input string for the template
     def self.erb(input)
-      ERB.new(clean(input), nil, '-')
+      ERB.new(clean(input), trim_mode: '-')
     end
 
     ## ERB templates to be used by the renderer
