@@ -81,7 +81,7 @@ module Rendering
     end
 
     def render_formula(content)
-      "\\[#{content}\\]"
+      "\\(#{content}\\)"
     end
 
     def render_deleted(content)
