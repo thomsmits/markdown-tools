@@ -195,6 +195,8 @@ class LineParserTest < Minitest::Test
     ['Emph!', %q|_emphasis_!|, %q|<em>emphasis</em>!|],
     ['Strong"', %q|"__emphasis__"|, %q|&quot;<strong>emphasis</strong>&quot;|],
     ['Emph"', %q|"_emphasis_"|, %q|&quot;<em>emphasis</em>&quot;|],
+    ['greedy emph', %q|_aaa_ bbb _ccc_: ddd _eee_ fff.|, %q|<em>aaa</em> bbb <em>ccc</em>: ddd <em>eee</em> fff.|],
+    ['greedy string', %q|__aaa__ bbb __ccc__: ddd __eee__ fff.|, %q|<strong>aaa</strong> bbb <strong>ccc</strong>: ddd <strong>eee</strong> fff.|],
 
   ]
 
