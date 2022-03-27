@@ -20,7 +20,7 @@ This is <em class="text-grey-dk-000 fw-300">very</em> <strong class="text-grey-d
 </div>
 
 
-<p>This is (*very*) (<strong class="text-grey-dk-000 fw-500">very</strong>) important with (<em class="text-purple-100 fw-500">emphasis</em> and) and (<strong class="text-purple-100 fw-500">strongness</strong> and)
+<p>This is (<emclass="text-grey-dk-000fw-300">very</em>) (<strong class="text-grey-dk-000 fw-500">very</strong>) important with (<em class="text-purple-100 fw-500">emphasis</em> and) and (<strong class="text-purple-100 fw-500">strongness</strong> and)
 </p>
 
 

@@ -142,6 +142,30 @@ module Rendering
       FORMULA_REPLACEMENTS
     end
 
+    ##
+    # Render a text node. The inline replacements are applied
+    # to the text before rendering the node.
+    #
+    # @param [String] content contents of the node
+    # @return [String] rendered version of the content
+    def render_text(content)
+      result = content
+      all_inline_replacements.each { |e| result.gsub!(e[0], e[1]) }
+
+      # Special case for qoutes
+      if result[-1] == '"'
+        # ends with a quote char, replace with enquote
+        result = result[0...-1] + '\\enquote{'
+      end
+
+      if result[0] == '"'
+        # starts with a quote char, replace with enquote
+        result = "}" + result[1..]
+      end
+
+      result
+    end
+
     def render_code(content)
 
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
@@ -189,9 +213,9 @@ module Rendering
 
     def render_link(content, target = '', title = '')
       if title.nil?
-        %Q|\\href{#{meta(target)}}{#{meta(content)}}|
+        %Q|\\href{#{meta(target)}}{#{content}}|
       else
-        %Q|\\href{#{meta(target)}}{#{meta(content)}}|
+        %Q|\\href{#{meta(target)}}{#{content}}|
       end
     end
 
