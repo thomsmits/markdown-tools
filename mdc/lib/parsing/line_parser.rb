@@ -81,6 +81,7 @@ module Parsing
   class LineParser
 
     PARSERS = [
+
       MatcherForLineElements.new([
                                    /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
                                    /``([\s\S]*?[^\s][\s\S]*?)``/,
@@ -88,6 +89,24 @@ module Parsing
                                    /` (.*[^\s].*) `/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::CodeNode.new(md[1].gsub("\n", ' ')))
+                                 end),
+
+      MatcherForLineElements.new([
+                                   /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
+                                   /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
+                                   /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
+                                   /\[(?<text>.*?)\]\((?<url>\S*?)\)/, ],
+                                 lambda do |elements, md|
+                                   title = if md.names.include?("title") then md[:title] else nil end
+                                   url = md[:url]
+                                   url.gsub!(' ', '%20')
+                                   MatcherForLineElements.add_elements(elements, md, Domain::LinkNode.new(url, md[:text], title))
+                                 end),
+
+      MatcherForLineElements.new([
+                                   /"(.*?)"/, ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::QuotedNode.new(md[1]))
                                  end),
 
       MatcherForLineElements.new([
@@ -119,22 +138,11 @@ module Parsing
       MatcherForLineElements.new([
                                    /(?<pre>^|[\s().,;?\-: >"])_(?<em>[äöüÄÖÜA-Za-z0-9().,;?"\-].*?[\S().,;?"\-])_(?<post>$|[!\s().,;:?\- <\/"])/,
                                    /(?<pre>^|[\s().,;?\-: >"])_(?<em>[äöüÄÖÜA-Za-z0-9().,;?"\-])_(?<post>$|[!\s().,;?\- <\/"])/,
+                                   /^_(?<em>[äöüÄÖÜA-Za-z0-9().,;:?"\-].*?[\S().,;?"\-])_$/,
                                    /^_(?<em>[äöüÄÖÜA-Za-z0-9().,;:?"\-].*?[\S().,;?"\-])_(?<post>[!\s().,;:?\- <\/])/,
                                    /(?<pre>[().,;:?\-\/])_(?<em>[\w().,;?"\-].*?[\S().,:;?"\-])_/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisUnderscoreNode.new(md[:em]))
-                                 end),
-
-      MatcherForLineElements.new([
-                                   /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
-                                   /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
-                                   /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
-                                   /\[(?<text>.*?)\]\((?<url>\S*?)\)/, ],
-                                 lambda do |elements, md|
-                                   title = if md.names.include?("title") then md[:title] else nil end
-                                   url = md[:url]
-                                   url.gsub!(' ', '%20')
-                                   MatcherForLineElements.add_elements(elements, md, Domain::LinkNode.new(url, md[:text], title))
                                  end),
 
       MatcherForLineElements.new([
@@ -170,6 +178,7 @@ module Parsing
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::UnderlineNode.new(md[1]))
                                  end),
+
       MatcherForLineElements.new([ /\[\[(.+?)\]\]/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::CitationNode.new(md[1]))
@@ -226,7 +235,7 @@ module Parsing
         elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
           _, result = apply_parsers(node)
-          if result.length > 1
+          if result.length >= 1
             node.children = result
             changed = true
           else
@@ -239,6 +248,29 @@ module Parsing
         end
       end
       [ changed, result.flatten ]
+    end
+
+    def patch_nodes(elements, i, text, type)
+
+      e_0 = elements[i]
+      e_1 = elements[i + 1]
+      e_2 = elements[i + 2]
+
+      if e_0.class == Domain::TextNode &&
+            e_1.class == Domain::QuotedNode &&
+            e_2.class == Domain::TextNode &&
+            (e_0.content.length == text.length || e_0.content[-(text.length + 1)] == ' ') &&
+            e_0.content.end_with?(text) &&
+            e_2.content.start_with?(text) &&
+            (e_2.content.length == text.length || e_2.content[text.length] == ' ')
+
+        elements[i] = Domain::TextNode.new(elements[i].content[0...-(text.length)])
+        quote = elements[i + 1]
+        emph = type.new
+        emph.children << quote
+        elements[i + 1] = emph
+        elements[i + 2] = Domain::TextNode.new(elements[i + 2].content[(text.length)...])
+      end
     end
 
     ##
@@ -260,6 +292,14 @@ module Parsing
           changed ||= c
         end
         line.elements = elements.flatten
+      end
+
+      # Special case for quotes contained in emphasis
+      (0..(line.elements.size)).each do |i|
+        patch_nodes(line.elements, i, '__', Domain::StrongUnderscoreNode)
+        patch_nodes(line.elements, i, '_', Domain::EmphasisUnderscoreNode)
+        patch_nodes(line.elements, i, '**', Domain::StrongStarNode)
+        patch_nodes(line.elements, i, '*', Domain::EmphasisStarNode)
       end
 
       line

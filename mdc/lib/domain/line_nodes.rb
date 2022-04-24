@@ -182,6 +182,12 @@ private
     add_renderer
   end
 
+  ##
+  # Text in quotes
+  class QuotedNode < TextNode
+    add_renderer
+  end
+
 
   ##
   # Link [Name](URL "TITLE")

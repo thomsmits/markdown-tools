@@ -6,15 +6,15 @@ require_relative '../lib/rendering/line_renderer_html'
 ##
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
-
   CASES = [
+    ['emph_quot', %q|_"emphasis"_|, %q|<em>&quot;emphasis&quot;</em>|],
+    ['em_quote', %q|"_emphasis_"|, %q|&quot;<em>emphasis</em>&quot;|],
+    ['quote and emph', 'Text "text _emph_ text" text', %q|Text &quot;text <em>emph</em> text&quot; text|],
     ['emph_bracket', %q|(*emphasis*)|, %q|(<em>emphasis</em>)|],
     ['strong_bracket', %q|(**emphasis**)|, %q|(<strong>emphasis</strong>)|],
     ['emph_bracket 2', %q|(_emphasis_)|, %q|(<em>emphasis</em>)|],
     ['strong_bracket 2', %q|(__emphasis__)|, %q|(<strong>emphasis</strong>)|],
-    ['em_quote', %q|"_emphasis_"|, %q|&quot;<em>emphasis</em>&quot;|],
     ['strong_quote', %q|"__emphasis__"|, %q|&quot;<strong>emphasis</strong>&quot;|],
-    ['emph_quot', %q|_"emphasis"_|, %q|<em>&quot;emphasis&quot;</em>|],
     ['strong_quot', %q|__"emphasis"__|, %q|<strong>&quot;emphasis&quot;</strong>|],
     ['Combined', %Q{*Bold ~underline~ Bold*}, %Q{<em>Bold <u>underline</u> Bold</em>}],
     ['364', %Q{foo*bar*}, %Q{foo<em>bar</em>}],
@@ -197,7 +197,9 @@ class LineParserTest < Minitest::Test
     ['Emph"', %q|"_emphasis_"|, %q|&quot;<em>emphasis</em>&quot;|],
     ['greedy emph', %q|_aaa_ bbb _ccc_: ddd _eee_ fff.|, %q|<em>aaa</em> bbb <em>ccc</em>: ddd <em>eee</em> fff.|],
     ['greedy string', %q|__aaa__ bbb __ccc__: ddd __eee__ fff.|, %q|<strong>aaa</strong> bbb <strong>ccc</strong>: ddd <strong>eee</strong> fff.|],
-
+    ['quote and emph', 'Text "text _emph_ text" text', %q|Text &quot;text <em>emph</em> text&quot; text|],
+    ['br emph', 'xxx<br>*emph*<br>*emph2*end', %q|xxx<br><em>emph</em><br><em>emph2</em>end|],
+  #['br emph quot', 'xxx<br>*"emph"*<br>*"emph2"*end', %q|xxx<br><em>&quot;emph&quot;</em><br><em>&quot;emph2&quot;</em>end|],
   ]
 
   def test_line_parser

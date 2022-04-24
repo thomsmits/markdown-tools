@@ -91,5 +91,9 @@ module Rendering
     def render_underline(content)
       "<u>#{content}</u>"
     end
+
+    def render_quoted(content)
+      "&quot;#{content}&quot;"
+    end
   end
 end

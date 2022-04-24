@@ -234,5 +234,9 @@ module Rendering
     def render_newline(content)
       "\\newline\n"
     end
+
+    def render_quoted(content)
+      "\\enquote{#{content}}"
+    end
   end
 end

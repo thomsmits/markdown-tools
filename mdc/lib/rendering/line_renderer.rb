@@ -181,5 +181,10 @@ module Rendering
       "<br>"
     end
 
+    ##
+    # Render a quote
+    def render_quoted(content)
+      %Q|"#{content}"|
+    end
   end
 end
