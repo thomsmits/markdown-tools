@@ -188,6 +188,15 @@ module Parsing
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::NewLineNode.new(''))
                                  end),
+
+      MatcherForLineElements.new([
+                                         /(?<pre>.*?)(?<char>__|\*\*)(?<post>.*)/,
+                                         /(?<pre>.*?)(?<char>[_*])(?<post>.*)/,
+                                      ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::SingleEmphOrStrong.new(md[:char]))
+                                 end),
+
     ]
 
     ##
@@ -232,7 +241,7 @@ module Parsing
             result << Domain::TextNode.new(node.content)
           end
           changed = true
-        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.respond_to?(:content)
+        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
           _, result = apply_parsers(node)
           if result.length >= 1
@@ -250,26 +259,63 @@ module Parsing
       [ changed, result.flatten ]
     end
 
-    def patch_nodes(elements, i, text, type)
+    ALLOWED_BEFORE_AND_AFTER = [
+      ' ', ';', '.', '-', "\n", "\t", "<", ">", ':'
+    ]
+    # TODO: Check charset
 
-      e_0 = elements[i]
-      e_1 = elements[i + 1]
-      e_2 = elements[i + 2]
+    # TODO: Explain
+    def patch_nodes(elements)
 
-      if e_0.class == Domain::TextNode &&
-            e_1.class == Domain::QuotedNode &&
-            e_2.class == Domain::TextNode &&
-            (e_0.content.length == text.length || e_0.content[-(text.length + 1)] == ' ') &&
-            e_0.content.end_with?(text) &&
-            e_2.content.start_with?(text) &&
-            (e_2.content.length == text.length || e_2.content[text.length] == ' ')
+      # search for start
+      start_idx = elements.index { |n| n.class == Domain::SingleEmphOrStrong }
+      end_idx   = elements.rindex { |n| n.class == Domain::SingleEmphOrStrong }
 
-        elements[i] = Domain::TextNode.new(elements[i].content[0...-(text.length)])
-        quote = elements[i + 1]
-        emph = type.new
-        emph.children << quote
-        elements[i + 1] = emph
-        elements[i + 2] = Domain::TextNode.new(elements[i + 2].content[(text.length)...])
+      if start_idx &&
+          end_idx &&
+          start_idx != end_idx &&
+          elements[start_idx].content == elements[end_idx].content
+
+        # There must not be a space after the start or before the end
+        if start_idx < elements.size - 1 && elements[start_idx + 1].class == Domain::TextNode && elements[start_idx + 1].content.start_with?(' ', "\n", "\t")
+          return elements
+        end
+
+        if end_idx > 0 && elements[end_idx - 1].class == Domain::TextNode && elements[end_idx - 1].content.end_with?(' ', "\n", "\t")
+          return elements
+        end
+
+        # There must be a space before the start and after the end
+        if start_idx > 0 && elements[start_idx - 1].class == Domain::TextNode && !elements[start_idx - 1].content.end_with?(*ALLOWED_BEFORE_AND_AFTER)
+          return elements
+        end
+
+        if end_idx < elements.size - 1  && elements[end_idx + 1].class == Domain::TextNode && !elements[end_idx + 1].content.start_with?(*ALLOWED_BEFORE_AND_AFTER)
+          return elements
+        end
+
+        result = []
+        result << elements[0...start_idx]
+        node_clazz = case elements[start_idx].content
+                     when '_'
+                       Domain::EmphasisUnderscoreNode
+                     when '__'
+                       Domain::StrongUnderscoreNode
+                     when '*'
+                       Domain::EmphasisStarNode
+                     when '**'
+                       Domain::StrongStarNode
+                     else
+                       nil
+                     end
+        node = node_clazz.new
+        node.children = elements[(start_idx + 1)...end_idx]
+        result << node
+        result << elements[(end_idx + 1)..] if end_idx < elements.size
+
+        result.flatten
+      else
+        elements
       end
     end
 
@@ -294,13 +340,7 @@ module Parsing
         line.elements = elements.flatten
       end
 
-      # Special case for quotes contained in emphasis
-      (0..(line.elements.size)).each do |i|
-        patch_nodes(line.elements, i, '__', Domain::StrongUnderscoreNode)
-        patch_nodes(line.elements, i, '_', Domain::EmphasisUnderscoreNode)
-        patch_nodes(line.elements, i, '**', Domain::StrongStarNode)
-        patch_nodes(line.elements, i, '*', Domain::EmphasisStarNode)
-      end
+      line.elements = patch_nodes(line.elements)
 
       line
 

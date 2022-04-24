@@ -188,6 +188,10 @@ private
     add_renderer
   end
 
+  ##
+  # A single marker for emphasis (_, __, *, **)
+  class SingleEmphOrStrong < TextNode
+  end
 
   ##
   # Link [Name](URL "TITLE")

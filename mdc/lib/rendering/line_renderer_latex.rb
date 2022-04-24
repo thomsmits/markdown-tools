@@ -55,9 +55,6 @@ module Rendering
       ['≤',                   '\begin{math}\le\end{math}'],
       ['≥',                   '\begin{math}\ge\end{math}'],
 
-      # Quotes
-      [/"(.*?)"/,             '\enquote{\1}'],
-
       # Abbreviations
       ['Z.B.',                'Z.\,B.'],
       ['z.B.',                'z.\,B.'],
@@ -151,17 +148,6 @@ module Rendering
     def render_text(content)
       result = content
       all_inline_replacements.each { |e| result.gsub!(e[0], e[1]) }
-
-      # Special case for qoutes
-      if result[-1] == '"'
-        # ends with a quote char, replace with enquote
-        result = result[0...-1] + '\\enquote{'
-      end
-
-      if result[0] == '"'
-        # starts with a quote char, replace with enquote
-        result = "}" + result[1..]
-      end
 
       result
     end
