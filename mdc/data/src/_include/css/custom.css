@@ -1,0 +1,375 @@
+/*********************************************
+ * FONT-FACE DEFINITIONS
+ *********************************************/
+
+/*@import url(http://fonts.googleapis.com/css?family=News+Cycle:400,700);*/
+
+
+/*********************************************
+ * GLOBAL STYLES
+ *********************************************/
+
+.reveal .slides p.small,
+.reveal .slides ul.small  {
+    font-size: 70%;
+}
+
+.reveal pre {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.reveal pre code {
+    font-family: 'Monaco', 'Consolas', 'Courier New', 'Courier', monospace;
+    font-size: 14pt;
+    line-height: 150%;
+}
+
+.reveal pre.bigger code {
+    font-size: 16pt;
+}
+
+.reveal pre.smaller code {
+    font-size: 12pt;
+}
+
+.reveal pre.bigger code {
+    font-size: 14pt;
+}
+
+.reveal pre code.bigger {
+    font-size: 16pt;
+}
+
+.reveal pre code.big {
+    font-size: 18pt;
+}
+
+.reveal pre.big code {
+    font-size: 18pt;
+}
+
+.reveal pre.inline {
+    display: inline;
+    position: relative;
+    text-align: left;
+    font-family: monospace;
+    line-height: 1.0;
+    word-wrap: break-word;
+    box-shadow: none;
+    background-color: transparent;
+    padding: 0;
+}
+
+
+.reveal pre.inline code {
+    display: inline;
+    position: relative;
+    text-align: left;
+    font-family: monospace;
+    line-height: 1.0;
+    word-wrap: break-word;
+    box-shadow: none;
+    background-color: transparent;
+    padding: 0;
+    font-size: 80%;
+}
+
+.reveal code {
+    font-family: 'Monaco', 'Consolas', 'Courier New', 'Courier', monospace;
+    font-size: 20pt;
+    line-height: 150%;
+    color: rgb(0, 51, 102);
+}
+
+.reveal h2 > code {
+    color: rgb(58, 92, 57);
+}
+
+/*
+.reveal li code {
+  font-size: 20pt;
+}
+
+.reveal li li code {
+  font-size: 18pt;
+}
+
+.reveal li li pre code {
+  font-size: 16pt;
+}
+*/
+
+.reveal em {
+    color: rgb(0, 51, 102);
+    font-style: normal;
+}
+
+.reveal strong {
+    color: rgb(0, 51, 102);
+    font-style: italic;
+    font-weight: normal;
+}
+
+.reveal em.alternative {
+    color: rgb(90, 90, 90);
+    font-style: normal;
+}
+
+.reveal strong.alternative {
+    color: rgb(90, 90, 90);
+    font-style: italic;
+    font-weight: normal;
+}
+
+
+.svg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 1.5em;
+
+}
+
+.svg_left {
+    display: block;
+    padding-top: 1.5em;
+
+}
+
+
+.reveal section .button {
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0;
+}
+
+.reveal section .runbutton {
+    width: 3.4em;
+    height: 1.9em;
+    font-size: 15pt;
+    background-color: rgb(150, 150, 150);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    color: white;
+    display: block;
+    float: left;
+    margin-top: 6px;
+}
+
+div.copyright {
+    font-size: 10pt;
+    color: rgb(78, 100, 127);
+    position: absolute;
+    bottom: 10px;
+    margin-left: -160px;
+    left: 50%;
+    max-width: 1024px;
+}
+
+div.nummer {
+    font-size: 10pt;
+    color: rgb(78, 100, 127);
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+    margin-right: 160px;
+    max-width: 1024px;
+}
+
+div.menu {
+    font-size: 10pt;
+    color: rgb(78, 100, 127);
+    position: absolute;
+    bottom: 10px;
+    left: 50px;
+    max-width: 1024px;
+}
+
+.ui-menu {
+    width: 300px;
+}
+
+ul#menu {
+    width: 50px;
+    border: none;
+    background: none;
+}
+
+li#menu-inhalt {
+    font-size: 10pt;
+    color: rgb(78, 100, 127);
+}
+
+div.kapitel_nr {
+    font-size: 24pt;
+    color: rgb(90, 90, 90);
+    margin-bottom: 0.3em;
+}
+
+
+div.kapitel {
+    font-size: 42pt;
+    color: rgb(90, 90, 90);
+}
+
+iframe.framed {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    width: 80%;
+    height: 80%
+}
+
+.reveal section iframe.framed_wide {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    height: 400px;
+}
+
+.reveal section iframe.full {
+    width: 100%;
+    height: 600px;
+}
+
+.reveal section iframe.framed_full {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    height: 600px;
+}
+
+
+.reveal section iframe.full_scroll {
+    width: 100%;
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.reveal ul.tight {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    margin-left: 15px;
+}
+
+.reveal ul.tight li {
+    margin-top: 0px;
+    line-height: 100%;
+}
+
+.reveal table.small {
+    font-size: 70%;
+    margin-top: 1em;
+    line-height: 1.0;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reveal table.small tr {
+    border-style: solid;
+    border-color: black;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    padding: 1.2em;
+    margin: 0;
+}
+
+.reveal table.small tr td,
+.reveal table.small tr th {
+    border-style: solid;
+    border-color: black;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left: none;
+    border-right: none;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    margin: 0;
+    text-shadow: none;
+}
+
+.reveal table.small tr td {
+    color: rgb(90, 90, 90);
+}
+
+.reveal table.small tr td.code {
+    color: rgb(90, 90, 90);
+    font-family:  'Monaco', 'Consolas', 'Courier New', 'Courier', monospace;
+    font-size: 70%;
+}
+
+.reveal table.small tr th {
+    color: white;
+    background-color: rgb(58, 92, 57);
+}
+
+
+/*********************************************
+ * IMAGES
+ *********************************************/
+
+.reveal section img {
+    margin: 30px 0 0 0;
+}
+
+.reveal a:hover img {
+    background: rgba(255,255,255,0.2);
+    border-color: darkblue;
+
+    -webkit-box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+    -moz-box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+}
+
+.reveal section img.plain {
+    margin: 30px 0 0 0;
+    border: none;
+    box-shadow: none;
+    transition: none;
+}
+
+
+.reveal blockquote {
+    margin: 0;
+    margin-top: 1em;
+    border-left: 1em;
+    border-left-style: solid;
+    border-left-color: lightgrey;
+    padding: 0.5em;
+    width: 100%;
+    font-style: normal;
+}
+
+.reveal blockquote.question {
+    border-left-color: darkgreen;
+}
+
+.reveal blockquote.important {
+    border-left-color: darkred;
+}
+
+.quote_source {
+    font-size: smaller;
+    font-style: italic;
+}
+
+.reveal blockquote + small {
+    font-size: 50%;
+    margin-top: 0.5em;
+    color: grey;
+}
+
+.reveal ol {
+    margin-left: 1.5em;
+}
+
+.reveal ol li {
+    padding: 0.2em;
+}
+
+.reveal li ul li:first-child {
+    padding-top: 14pt;
+}
+
+div.plain img {
+    float: none;
+}

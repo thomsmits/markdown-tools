@@ -122,7 +122,7 @@ module Rendering
           <link rel='stylesheet' href='css/zenburn.css'>
 
           <script src='lib/js/head.min.js'></script>
-          <script src='js/thomas.js'></script>
+          <script src='js/custom.js'></script>
           <script src='lib/js/highlight.js'></script>
           <script src='lib/js/jquery-1.9.1.js'></script>
           <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
