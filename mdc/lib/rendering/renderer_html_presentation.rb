@@ -33,7 +33,7 @@ module Rendering
 
       link_previous: erb(
         "
-        <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml plain r-stretch' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>attachPreviousHandler($('#<%= line_id %>'));</script>
        "
       ),
@@ -47,14 +47,14 @@ module Rendering
 
       live_preview: erb(
         "
-        <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml plain r-stretch' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>attachHandler($('#<%= line_id %>'));</script>
        "
       ),
 
       live_preview_float: erb(
         "
-        <div class='outputhtml' style='float: right;' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml r-stretch' style='float: right;' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>synchronize($('#<%= line_id %>'));</script>
        "
       ),
