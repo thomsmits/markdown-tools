@@ -69,7 +69,7 @@ module Rendering
 
       image: erb(
         "
-        <img class='presentation' src='<%= chosen_image %>' alt='<%= alt %>' title='<%= title %>'<%= width_attr_slide %>>
+        <img class='presentation r-stretch' src='<%= chosen_image %>' alt='<%= alt %>' title='<%= title %>'<%= width_attr_slide %>>
         <div class='img_info'><%= line_renderer.meta(full_title) %></div>
         "
       ),
@@ -82,7 +82,7 @@ module Rendering
 
       chapter_start: erb(
         "
-        <section id='<%= id %>' class='chapter' data-number='<%= number %>'>
+        <section id='<%= id %>' class='chapter center' data-number='<%= number %>'>
         <h1 class='trenner'><%= title %></h1>
         </section>
        "
@@ -123,10 +123,8 @@ module Rendering
           <link rel="stylesheet" href="dist/theme/white.css">
           <link rel="stylesheet" href="css/custom.css">
 
-          <script src='lib/js/head.min.js'></script>
+          <script src='js/jquery-3.6.0.js'></script>
           <script src='js/custom.js'></script>
-          <script src='lib/js/highlight.js'></script>
-          <script src='lib/js/jquery-1.9.1.js'></script>
         </head>
 
         <body>
@@ -137,11 +135,13 @@ module Rendering
         <!-- Any section element inside of this container is displayed as a slide -->
         <div class='slides'>
 
-        <section data-number=''>
-          <h1><%= title1 %></h1>
-          <h2><%= title2 %></h2>
-          <h4><%= section_number %></h4>
-          <h2><%= section_name %></h2>
+        <section data-number='' class="title_page center">
+          <h1 class="titlepage"><%= title1 %></h1>
+          <div class="titlepage"><%= title2 %></div>
+          <h2 class="titlepage"><%= section_name %></h2>
+          <h3 class="titlepage"><%= author %></h3>
+          <h4 class="titlepage"><%= term %></h3>
+          <h4 class="titlepage"><%= Time.now.strftime("%Y-%m-%d") %></h3>
         </section>
         }
       ),
@@ -182,9 +182,10 @@ module Rendering
               slideNumber: false,
               hashOneBasedIndex: true,
               hash: true,
-              transition: 'slide', // none/fade/slide/convex/concave/zoom
+              transition: 'none', // none/fade/slide/convex/concave/zoom
               transitionSpeed: 'default', // default/fast/slow
               backgroundTransition: 'fade',
+              center: false,
             });
           </script>
 
