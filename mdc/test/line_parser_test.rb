@@ -7,7 +7,7 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
-
+    ['html', 'Text <span class="clazZ">In span</span>', %q|Text <span class="clazZ">In span</span>|],
     ['hamlet', %q|aaa<br>*"bbb" [1] ccc.*|, %q|aaa<br><em>&quot;bbb&quot; [1] ccc.</em>|],
     ['emp colon', "_P_: xxx", %q|<em>P</em>: xxx|],
     ['strong_quot', %q|__"emphasis"__|, %q|<strong>&quot;emphasis&quot;</strong>|],

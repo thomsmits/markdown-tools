@@ -92,6 +92,12 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
+                                   /(<[^>]+>.*<\/[^>]+>)/, ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::HtmlNode.new(md[1]))
+                                 end),
+
+      MatcherForLineElements.new([
                                    /\[(?<text>.*?)\]\(<(?<url>.*?)> ["'(](?<title>.*?)["')]\)/,
                                    /\[(?<text>.*?)\]\((?<url>\S*?) ["'(](?<title>.*?)["')]\)/,
                                    /\[(?<text>.*?)\]\(<(?<url>.*?)>\)/,
@@ -190,9 +196,8 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                         /(?<pre>.*?)(?<char>__|\*\*)(?<post>.*)/,
-                                         /(?<pre>.*?)(?<char>[_*])(?<post>.*)/,
-                                      ],
+                                   /(?<pre>.*?)(?<char>__|\*\*)(?<post>.*)/,
+                                   /(?<pre>.*?)(?<char>[_*])(?<post>.*)/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::SingleEmphOrStrong.new(md[:char]))
                                  end),
@@ -241,7 +246,7 @@ module Parsing
             result << Domain::TextNode.new(node.content)
           end
           changed = true
-        elsif node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
+        elsif node.class != Domain::HtmlNode && node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
           _, result = apply_parsers(node)
           if result.length >= 1

@@ -99,6 +99,12 @@ private
   end
 
   ##
+  # HTML node
+  class HtmlNode < TextNode
+    add_renderer
+  end
+
+  ##
   # Code `xxx` node
   class CodeNode < TextNode
     add_renderer

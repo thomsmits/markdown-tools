@@ -84,6 +84,14 @@ module Rendering
     end
 
     ##
+    # Render a HTML node.
+    # @param [String] content contents of the node
+    # @return [String] rendered version of the content
+    def render_html(content)
+      "#{content}"
+    end
+
+    ##
     # Render a __strong__ node.
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
