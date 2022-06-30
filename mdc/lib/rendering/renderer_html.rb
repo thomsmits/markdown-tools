@@ -171,41 +171,36 @@ module Rendering
       ),
 
       index_start: erb(
-        "
+        %q|
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset='utf-8'>
           <title><%= title1 %></title>
-          <link rel='stylesheet' href='css/plain.css'>
-          <link rel='stylesheet' href='css/book.css'>
-          <link rel='stylesheet' href='css/zenburn.css'>
-          <script src='lib/js/head.min.js'></script>
-          <script src='js/custom.js'></script>
-          <script src='lib/js/highlight.js'></script>
-          <script src='lib/js/jquery-1.9.1.js'></script>
-          <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
+          <link rel="stylesheet" href="dist/reset.css">
+          <link rel="stylesheet" href="css/custom.css">
+          <link rel="stylesheet" href="css/index.css">
         </head>
         <body>
-        <div class='title_first'><%= title1 %></div>
-        <div class='title_second'><%= title2 %></div>
-        <div class='copyright'><%= copyright%></div>
-        <div class='description'><%= description%></div>
+        <h1 class="title_first"><%= title1 %></h1>
+        <h2 class="title_second"><%= title2 %></h2>
+        <h3 class="copyright"><%= copyright%></h3>
+        <aside class="description"><%= description%></aside>
         <br>
         <table>
         <tr><th><%= translate(:chapter) %></th>
-        <th colspan='2'><%= translate(:material) %></th></tr>
-        "
+        <th colspan="1"><%= translate(:material) %></th></tr>
+        |
       ),
 
       index_entry: erb(
-        "
+        %q|
         <tr>
         <td><%= chapter_number %> - <%= chapter_name %></td>
-        <td><a href='<%= slide_file %>'><%= slide_name %></a></td>
-        <td><a href='<%= plain_file %>'><%= plain_name %></a></td>
+        <td><a href="<%= slide_file %>"><%= slide_name %></a></td>
+        <!-- <td><a href="<%= plain_file %>"><%= plain_name %></a></td> -->
         </tr>
-        "
+        |
       ),
 
       index_end: erb(
