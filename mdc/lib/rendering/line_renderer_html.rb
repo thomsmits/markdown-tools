@@ -45,7 +45,7 @@ module Rendering
     end
 
     def render_code(content)
-      "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
+      "<code>#{content.gsub('&', '&amp;').gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
     end
 
     def render_strongunderscore(content)
@@ -93,7 +93,13 @@ module Rendering
     end
 
     def render_quoted(content)
-      "&quot;#{content}&quot;"
+      if $language == "de"
+        "&bdquo;#{content}&ldquo;"
+      elsif $language == "en"
+        "&ldquo;#{content}&rdquo;"
+      else
+        "&quot;#{content}&quot;"
+      end
     end
   end
 end

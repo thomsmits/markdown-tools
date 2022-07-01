@@ -9,7 +9,7 @@ module Rendering
   ##
   # Base class for rendering slides to HTML
   class RendererHTML < Renderer
-    PREFERRED_IMAGE_FORMATS = %w[svg png jpg jpeg].freeze
+    PREFERRED_IMAGE_FORMATS = %w[svg png jpg jpeg gif].freeze
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
@@ -95,7 +95,7 @@ module Rendering
       ),
 
       code: erb(
-        '<%= line_renderer.meta(content) %>'
+        '<%= line_renderer.meta(content.gsub("&", "&amp;")) %>'
       ),
 
       code_end: erb(
