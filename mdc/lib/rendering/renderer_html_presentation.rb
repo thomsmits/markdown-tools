@@ -186,6 +186,16 @@ module Rendering
               transitionSpeed: 'default', // default/fast/slow
               backgroundTransition: 'fade',
               center: false,
+              katex: {
+                  version: 'latest',
+                  delimiters: [
+                    {left: '$$', right: '$$', display: false},
+//                    {left: '$', right: '$', display: false},
+//                    {left: '\\(', right: '\\)', display: false},
+                    {left: '\\[', right: '\\]', display: true}
+                 ],
+                 ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+               }
             });
           </script>
 
