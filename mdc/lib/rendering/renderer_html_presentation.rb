@@ -171,9 +171,18 @@ module Rendering
           <script src='dist/reveal.js'></script>
           <script src="plugin/math/math.js"></script>
           <script src="plugin/highlight/highlight.js"></script>
-
           <script>
             Reveal.initialize({
+                katex: {
+                  version: 'latest',
+                  delimiters: [
+                    {left: '$$', right: '$$', display: false},
+//                    {left: '$', right: '$', display: false},
+//                    {left: '\\\\(', right: '\\\\)', display: false},
+                    {left: '\\\\[', right: '\\\\]', display: true}
+                 ],
+                 ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+              },
               plugins: [ RevealMath.KaTeX, RevealHighlight ],
               progress: true,
               controlsLayout: 'bottom-right',
@@ -185,23 +194,13 @@ module Rendering
               transition: 'none', // none/fade/slide/convex/concave/zoom
               transitionSpeed: 'default', // default/fast/slow
               backgroundTransition: 'fade',
-              center: false,
-              katex: {
-                  version: 'latest',
-                  delimiters: [
-                    {left: '$$', right: '$$', display: false},
-//                    {left: '$', right: '$', display: false},
-//                    {left: '\\(', right: '\\)', display: false},
-                    {left: '\\[', right: '\\]', display: true}
-                 ],
-                 ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-               }
+              center: false
             });
           </script>
 
           <script>Reveal.addEventListener( 'slidechanged', function( event ) { $('#slide_nr').html($(event.currentSlide).attr('data-number')); } );</script>
 
-          </body>
+         </body>
         </html>
         ?
       )
