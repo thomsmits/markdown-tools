@@ -107,7 +107,7 @@ class LineParserTest < Minitest::Test
     # Reference Style
     #    ['535', %Q{[foo][bar]\n\n[bar]: /url "title"}, %Q{<a href="/url" title="title">foo</a>}],
 
-    ['Form', %q|\[x^{22}\]|, %q|\(x^{22}\)|],
+    ['Form', %q|\[x^{22}\]|, %q|$$ x^{22} $$|],
     ['Sub', %q|a_0|, %q|a<sub>0</sub>|],
     ['Sub', %q|CO_2|, %q|CO<sub>2</sub>|],
     ['Sup', %q|a^3|, %q|a<sup>3</sup>|],
@@ -192,7 +192,7 @@ class LineParserTest < Minitest::Test
     ['499', %Q{before [link](foo\nbar) after}, %Q{before [link](foo\nbar) after}],
     ['500', %Q{before [link](<foo\nbar>) after}, %Q{before [link](&lt;foo\nbar&gt;) after}],
     ['501', %Q{before [a](<b)c>) after}, %Q{before <a href="b)c">a</a> after}],
-    ['Form', %q|\[x^{22 after}\]|, %q|\(x^{22 after}\)|],
+    ['Form', %q|\[x^{22 after}\]|, %q|$$ x^{22 after} $$|],
     ['Sub', %q|a_0|, %q|a<sub>0</sub>|],
     ['Sub', %q|CO_2|, %q|CO<sub>2</sub>|],
     ['Sup', %q|a^3|, %q|a<sup>3</sup>|],
