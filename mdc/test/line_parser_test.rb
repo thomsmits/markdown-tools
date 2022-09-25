@@ -7,6 +7,8 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['misc empg', '__Durchsatz (D)__ [**Throughput**]', %q|<strong>Durchsatz (D)</strong> [<strong>Throughput</strong>]| ],
+    ['emph dash', '__Inter__-Net -- Netz __zwischen__ den Netzen', %q|<strong>Inter</strong>-Net &ndash; Netz <strong>zwischen</strong> den Netzen| ],
     ['html', 'Text <span class="clazZ">In span</span>', %q|Text <span class="clazZ">In span</span>|],
     ['hamlet', %q|aaa<br>*"bbb" [1] ccc.*|, %q|aaa<br><em>&quot;bbb&quot; [1] ccc.</em>|],
     ['emp colon', "_P_: xxx", %q|<em>P</em>: xxx|],
@@ -89,7 +91,7 @@ class LineParserTest < Minitest::Test
     ['405', %Q{**foo**bar}, %Q{<strong>foo</strong>bar}],
     ['406', %Q{__foo bar __}, %Q{__foo bar __}],
     ['407', %Q{__(__foo)}, %Q{__(__foo)}],
-    #    ['409', %Q{__foo__bar}, %Q{__foo__bar}],
+    ['409', %Q{__foo__bar}, %Q{__foo__bar}],
     ['411', %Q{__foo__bar__baz__}, %Q{<strong>foo__bar__baz</strong>}],
     ['412', %Q{__(bar)__.}, %Q{<strong>(bar)</strong>.}],
     ['429', %Q{** is not an empty emphasis}, %Q{** is not an empty emphasis}],
@@ -179,7 +181,7 @@ class LineParserTest < Minitest::Test
     ['405', %Q{before **foo**bar after}, %Q{before <strong>foo</strong>bar after}],
     ['406', %Q{before __foo bar __ after}, %Q{before __foo bar __ after}],
     ['407', %Q{before __(__foo) after}, %Q{before __(__foo) after}],
-    #    ['409', %Q{before __foo__bar after}, %Q{before __foo__bar after}],
+    ['409', %Q{before __foo__bar after}, %Q{before __foo__bar after}],
     ['411', %Q{before __foo__bar__baz__ after}, %Q{before <strong>foo__bar__baz</strong> after}],
     ['412', %Q{before __(bar)__. after}, %Q{before <strong>(bar)</strong>. after}],
     ['429', %Q{before ** is not an empty emphasis after}, %Q{before ** is not an empty emphasis after}],
