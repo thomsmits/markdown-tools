@@ -83,10 +83,10 @@ module Parsing
     PARSERS = [
 
       MatcherForLineElements.new([
-                                   /``[ \n]([\s\S]*?[^\s][\s\S]*?)[ \n]``/,
-                                   /``([\s\S]*?[^\s][\s\S]*?)``/,
+                                   /``[ \n]([\s\S]*?\S[\s\S]*?)[ \n]``/,
+                                   /``([\s\S]*?\S[\s\S]*?)``/,
                                    /`([^` ][^`]*?)`/ ,
-                                   /` (.*[^\s].*) `/ ],
+                                   /` (.*\S.*) `/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::CodeNode.new(md[1].gsub("\n", ' ')))
                                  end),
@@ -117,38 +117,24 @@ module Parsing
 
       MatcherForLineElements.new([
                                    /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/\[])\*\*(?<em>\S.*?\S|[\p{L}\p{N}\[])\*\*(?<post>[-!().,;?:> \/"\]]?)/ ],
-                                   #/(?<pre>[\p{L}\p{N}])\*\*(?<em>[\p{L}\p{N}]*?[\S])\*\*/,
-                                 #/(?<pre>[().,;?\- ])\*\*(?<em>[\p{L}\p{N}].*?\S)\*\*(?<post>[().,;?\- <])/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongStarNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
                                    /(?<pre>^|\s+|[-().,;?:>\/])__(?<em>[\p{L}\p{N}(\[].+?[\p{L}\p{N})\]]|[\p{L}\p{N})\]]+?)__(?<post>[-!().,;?:> \/"]+|$)/ ],
-                                 #                                   /(?<pre>^|[\s().,;?\-:>"])__(?<em>[\S().,;?"\-].*?[\S().,;?"\-])__(?<post>$|[\s().,;?\-:<\/"])/,
-                                 #  /(?<pre>^|[\s().,;?\-:>"])__(?<em>[\S().,;?"\-])__(?<post>$|[\s().,;?\-:<\/"])/,
-                                 #  /^__(?<em>[\S().,;:?"\-].*?[\S().,;?"\-])__(?<post>[\s().,;:?\-\/])/,
-                                 #  /(?<pre>[\s().,;?\-\/"])__(?<em>[\p{L}\p{N}().,;?"\-].*?[\S().,;?"\-])__/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
                                    /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/])\*(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])\*(?<post>[-!().,;?:> \/"]?|$)/ ],
-                                 #/^\*(?<em>[^\s*].*?[^\s])\*/,
-                                 #/(?<pre>[\s(])\*(?<em>[^\s*].*?[^\s])\*/,
-                                 #/(?<pre>[\p{L}\p{N}(])\*(?<em>[\p{L}\p{N}]*?[^\s*])\*/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisStarNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
                                    /(?<pre>^|\s+|[().,;?\-:> \/])_(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])_(?<post>[-!().,;?:> \/"]+|$)/ ],
-                                 #/(?<pre>^|[\s().,;?\-: >"])_(?<em>[\p{L}\p{N}#().,;?"\-].*?[\S().,;?"\-])_(?<post>$|[!\s().,;:?\- <\/"])/,
-                                 #/(?<pre>^|[\s().,;?\-: >"])_(?<em>[\p{L}\p{N}#().,;?"\-])_(?<post>$|[!\s().,;?\- <\/"])/,
-                                 #/^_(?<em>[\p{L}\p{N}#().,;:?"\-].*?[\S().,;?"\-])_$/,
-                                 #/^_(?<em>[\p{L}\p{N}#().,;:?"\-].*?[\S().,;?"\-])_(?<post>[!\s().,;:?\- <\/])/,
-                                 #                                   /(?<pre>[().,;:?\-\/])_(?<em>[\p{L}\p{N}.,;?"\-].*?[\S().,:;?"\-])_/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisUnderscoreNode.new(md[:em]))
                                  end),
@@ -165,7 +151,7 @@ module Parsing
                                    pre, post = MatcherForLineElements.pre_post(md)
                                    elements << Domain::UnparsedNode.new(pre + md[:lower])
                                    elements << Domain::SubscriptNode.new(md[:sub])
-                                   elements << Domain::UnparsedNode.new(post)                    if post != ''
+                                   elements << Domain::UnparsedNode.new(post)  if post != ''
                                  end),
 
       MatcherForLineElements.new([
@@ -174,7 +160,7 @@ module Parsing
                                    pre, post = MatcherForLineElements.pre_post(md)
                                    elements << Domain::UnparsedNode.new(pre + md[:lower])
                                    elements << Domain::SuperscriptNode.new(md[:sup])
-                                   elements << Domain::UnparsedNode.new(post)                     if post != ''
+                                   elements << Domain::UnparsedNode.new(post) if post != ''
                                  end),
 
       MatcherForLineElements.new([ /~~(.+?)~~/ ],
@@ -203,7 +189,6 @@ module Parsing
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::SingleEmphOrStrong.new(md[:char]))
                                  end),
-
     ]
 
     ##
