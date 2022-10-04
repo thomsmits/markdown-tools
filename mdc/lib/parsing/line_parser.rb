@@ -122,7 +122,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|\s+|[-().,;?:>\/])__(?<em>[\p{L}\p{N}(\[].+?[\p{L}\p{N})\]]|[\p{L}\p{N})\]]+?)__(?<post>[-!().,;?:> \/"]+|$)/ ],
+                                   /(?<pre>^|\s+|[-().,;?:>\/])__(?<em>[\p{L}\p{N}(\[].*?[\p{L}\p{N})\]]|[\p{L}\p{N})\]]+?)__(?<post>[-!().,;?:> \/"]+|$)/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
                                  end),

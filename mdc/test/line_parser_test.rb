@@ -7,7 +7,8 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
-    ['misc empg', '__Durchsatz (D)__ [**Throughput**]', %q|<strong>Durchsatz (D)</strong> [<strong>Throughput</strong>]| ],
+    ['multi emph', '__and__, __or__, __xor__ und __not__', %q|<strong>and</strong>, <strong>or</strong>, <strong>xor</strong> und <strong>not</strong>|],
+    ['misc emph', '__Durchsatz (D)__ [**Throughput**]', %q|<strong>Durchsatz (D)</strong> [<strong>Throughput</strong>]| ],
     ['emph dash', '__Inter__-Net -- Netz __zwischen__ den Netzen', %q|<strong>Inter</strong>-Net &ndash; Netz <strong>zwischen</strong> den Netzen| ],
     ['html', 'Text <span class="clazZ">In span</span>', %q|Text <span class="clazZ">In span</span>|],
     ['hamlet', %q|aaa<br>*"bbb" [1] ccc.*|, %q|aaa<br><em>&quot;bbb&quot; [1] ccc.</em>|],
