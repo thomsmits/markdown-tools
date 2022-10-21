@@ -116,25 +116,25 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/\[])\*\*(?<em>\S.*?\S|[\p{L}\p{N}\[])\*\*(?<post>[-!().,;?:> \/"\]]?)/ ],
+                                   /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/\[])\*\*(?<em>\S.*?\S|[\p{L}\p{N}\[])\*\*(?<post>[-+!().,;?:> \/"\]]?)/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongStarNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|\s+|[-().,;?:>\/])__(?<em>[\p{L}\p{N}(\[].*?[\p{L}\p{N})\]]|[\p{L}\p{N})\]]+?)__(?<post>[-!().,;?:> \/"]+|$)/ ],
+                                   /(?<pre>^|\s+|[-().,;?:>\/])__(?<em>[\p{L}\p{N}(\[].*?[\p{L}\p{N}+)\]]|[\p{L}\p{N}+)\]]+?)__(?<post>[-+!().,;?:> \/"]+|$)/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::StrongUnderscoreNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/])\*(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])\*(?<post>[-!().,;?:> \/"]?|$)/ ],
+                                   /(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> \/])\*(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])\*(?<post>[-+!().,;?:> \/"]?|$)/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisStarNode.new(md[:em]))
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|\s+|[().,;?\-:> \/])_(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])_(?<post>[-!().,;?:> \/"]+|$)/ ],
+                                   /(?<pre>^|\s+|[().,;?\-:> \/])_(?<em>[\p{L}\p{N}].*?[\p{L}\p{N}]|[\p{L}\p{N}])_(?<post>[-+!().,;?:> \/"]+|$)/ ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::EmphasisUnderscoreNode.new(md[:em]))
                                  end),
