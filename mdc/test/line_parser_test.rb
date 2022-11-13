@@ -7,6 +7,7 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['emph paren', 'Ursachen für Krisen können endogen *(z.B. schlechte Projektplanung)* oder exogen *(z.B. Insolvenz von Partnern)* sein', %q|Ursachen für Krisen können endogen <em>(z.&nbsp;B. schlechte Projektplanung)</em> oder exogen <em>(z.&nbsp;B. Insolvenz von Partnern)</em> sein|],
     ['emph plus', 'before (__PE__ / __PE32+__)<br>', %q|before (<strong>PE</strong> / <strong>PE32+</strong>)<br>|],
     ['multi emph', '__and__, __or__, __xor__ und __not__', %q|<strong>and</strong>, <strong>or</strong>, <strong>xor</strong> und <strong>not</strong>|],
     ['misc emph', '__Durchsatz (D)__ [**Throughput**]', %q|<strong>Durchsatz (D)</strong> [<strong>Throughput</strong>]| ],
