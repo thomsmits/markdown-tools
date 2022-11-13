@@ -1,7 +1,7 @@
 ---
 layout: page
-parent: Section 3
-title: Chapter
+parent: "Section 3"
+title: "Chapter"
 nav_order: 0
 ---
 <h1 class="fw-700 text-purple-300">Chapter</h1>
