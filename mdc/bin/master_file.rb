@@ -106,7 +106,7 @@ class MasterFile
           section = MasterFileSection.new(Regexp.last_match(1))
           master_file << section
         end
-      elsif /([+KU-]):\[([0-9]*)\]\((.*)\)/ =~ line
+      elsif /([+KU-]):\[([0-9]*)\]\((.*)\)/ =~ line || /  \* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/ =~ line
         # File reference
         file_path = Regexp.last_match(3)
         points = Integer(Regexp.last_match(2))
@@ -115,7 +115,7 @@ class MasterFile
         if desired_status.include?(status)
           section << MasterFileEntry.new(path + '/' + file_path, points, status)
         end
-      elsif /([+KU-]):---/ =~ line
+      elsif /([+KU-]):---/ =~ line ||  /  \* \[([+KU-])\] ---/ =~ line
         # Separator
         status = Regexp.last_match(1)
         section << MasterFileEntry.new(nil, 0, status)
