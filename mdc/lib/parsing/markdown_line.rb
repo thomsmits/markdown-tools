@@ -355,6 +355,14 @@ module Parsing
         [Regexp.last_match(1), 0, Regexp.last_match(2)]
       elsif /^!INCLUDESRC "(.*?)"$/ =~ @line.strip
         [Regexp.last_match(1), 0, '']
+      elsif /^<!-- include_src\[([0-9]*?)\]: "(.*?)" (.*?) -->$/ =~ @line.strip
+        [Regexp.last_match(2), Regexp.last_match(1).to_i, Regexp.last_match(3)]
+      elsif /^<!-- include_src\[([0-9]*?)\]: "(.*?)" -->$/ =~ @line.strip
+        [Regexp.last_match(2), Regexp.last_match(1).to_i, '']
+      elsif /^<!-- include_src: "(.*?)" (.*?) -->$/ =~ @line.strip
+        [Regexp.last_match(1), 0, Regexp.last_match(2)]
+      elsif /^<!-- include_src: "(.*?)" -->$/ =~ @line.strip
+        [Regexp.last_match(1), 0, '']
       end
     end
 
