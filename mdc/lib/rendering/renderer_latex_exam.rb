@@ -75,6 +75,7 @@ module Rendering
         \fi|),
 
       matching_question_start: erb(%q||),
+
       matching_question_end: erb(%q|
         \begin{enumerate}[label=\alph{enumi}.]
         <% for answer in answers %>
@@ -163,6 +164,9 @@ module Rendering
     def matching_question_end(shuffle)
       questions = @matching_questions.map { |e| e[0] }
       answers   = @matching_questions.map { |e| e[1] }
+
+      # Remove duplicate answers
+      answers.uniq!
 
       if shuffle == :answers
         answers.shuffle!
