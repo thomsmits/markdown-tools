@@ -53,6 +53,7 @@ module Rendering
 
       code_start: erb(
         %q|<div class="fw-300 fs-3"><%= caption_command %></div>
+        {% raw  %}
         ```<%= prog_lang %>
         |
       ),
@@ -62,7 +63,9 @@ module Rendering
       ),
 
       code_end: erb(
-        '```'
+        %q|```
+        {% endraw %}
+        |
       ),
 
       image: erb(
@@ -83,7 +86,7 @@ module Rendering
       ),
 
       chapter_start: erb(
-      %q|title: <%= title %>
+      %q|title: "<%= title %>"
           nav_order: <%= nav_order %>
           ---
         <%- if @has_equation -%>
@@ -110,9 +113,9 @@ module Rendering
       ),
 
       presentation_start: erb(
-        "---
+        %q|---
           layout: page
-          parent: <%= section_name %>"
+          parent: "<%= section_name %>"|
       ),
 
       presentation_end: erb(

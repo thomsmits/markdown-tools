@@ -132,7 +132,7 @@ class Main
     # Write index file
     File.open(result_dir + "/" + "index.markdown", 'w', encoding: 'UTF-8') do |f|
       f << "---\n"
-      f << "title: #{chapter_name}\n"
+      f << "title: \"#{chapter_name}\"\n"
       f << "layout: default\n"
       f << "has_children: true\n"
       f << "has_toc: true\n"
