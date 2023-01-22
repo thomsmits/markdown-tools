@@ -146,7 +146,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})_(?<sub>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/,],
+                                   /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})_(?<sub>[A-Za-z0-9]{1,5})(?<post>$|[\s(*<,.;:!>-])/,],
                                  lambda do |elements, md|
                                    pre, post = MatcherForLineElements.pre_post(md)
                                    elements << Domain::UnparsedNode.new(pre + md[:lower])
@@ -155,7 +155,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})\^(?<sup>[A-Za-z0-9]{1,4})(?<post>$|[\s(*<,.;:!>-])/, ],
+                                   /(?<pre>^|[\s(*<,.;:!>-])(?<lower>[A-Za-z0-9]{1,4})\^(?<sup>[A-Za-z0-9]{1,5})(?<post>$|[\s(*<,.;:!>-])/, ],
                                  lambda do |elements, md|
                                    pre, post = MatcherForLineElements.pre_post(md)
                                    elements << Domain::UnparsedNode.new(pre + md[:lower])
