@@ -14,15 +14,11 @@ module Rendering
         %q|
           \include{preambel_plain}
           \makeindex
-          \renewcommand{\maketitlehooka}{%
-              \vspace{-3.5cm}\bfseries\sffamily\titlelogo\\\\
-              \large <%= title1 %>\\\\ \vspace{2mm}\normalsize <%= title2 %>
-              \vspace{5cm}
-          }
-          %\titlehead{\vspace{3cm}\sffamily <%= title1 %>\\\\ \vspace{2mm} \small<%= title2 %>}
           \title{<%= section_name  %>}
-          \author{\small \sffamily <%= author %>}
-          \date{\vspace{1cm}\color{grau} \Large\sffamily <%= term %>\\\\ \scriptsize\vspace{2mm}\today}
+          \author{<%= author %>}
+          \date{<%= term %>}
+          \newcommand*{\lecturename}[0]{<%= title1 %>}
+          \newcommand*{\lecturesub}[0]{<%= title2 %>}
 
           <%- if slide_language == 'DE' -%>
             \usepackage[main=ngerman, english]{babel}       % Deutsch und Englisch unterstützen
@@ -56,19 +52,58 @@ module Rendering
           \usepackage[euler]{textgreek}
 
           \begin{document}
+          \null
+          \thispagestyle{empty}
+          \makeatletter
+          \begin{textblock*}{\textwidth}(2.5cm,2cm) %
+            \sffamily %
+            \textbf{\huge\color{grau}\lecturename} \\
+
+            \textbf{\large\color{grau}\lecturesub}
+          \end{textblock*}%
+
+          \begin{textblock*}{17cm}(2.5cm,5.5cm) %
+            \Huge\sffamily %
+            \raggedright\textbf{\color{hsblau}\@title}
+          \end{textblock*}%
+
+          \begin{textblock*}{\textwidth}(0cm,9cm) %
+          \includegraphics[width=21cm]{\titleimage} %
+          \end{textblock*}%
+
+          \begin{textblock*}{1.4cm}(0cm,0cm) %
+          {\color{mittelgrau}\rule{1.4cm}{29.5cm}}%
+          \end{textblock*}%
+
+          \begin{textblock*}{2cm}(0.32cm,13.5cm) %
+          \begin{turn}{90}
+          \textbf{\centering\sffamily\Huge\color{white}\@date}
+          \end{turn}
+          \end{textblock*}%
+
+          \begin{textblock*}{13.5cm}(2.5cm,26cm) %
+          \textit{\sffamily\scriptsize{}<%= description %>}
+          \end{textblock*}%
+
+          \begin{textblock*}{3cm}(17cm,28cm) %
+          \includegraphics[width=3cm]{\titlelogo} %
+          \end{textblock*}%
+
+          \begin{textblock*}{13cm}(2.5cm,24cm) %
+          \textbf{\Large\sffamily{}\@author}
+          \end{textblock*}%
+
+
+          \begin{textblock*}{\textwidth}(2.5cm,28cm) %
+          {\sffamily\scriptsize\color{grau}<%= translate('version') %>: \today}
+          \end{textblock*}%
+
+          \newpage
           \pagestyle{headings}
           \pagenumbering{roman}
-          \renewcommand{\maketitlehookd}{%
-            \vspace{7cm} \sffamily \small \textit{<%= description %>} %
-          }
-          %\publishers{Herausgeber}
           <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
           \label{<%= section_id %>}
           \pdfbookmark[\contentsname]{<%= section_name %>}{<%= section_id %>}
-
-          \thispagestyle{empty}
-          \vspace{3cm}
-          \maketitle
           \newpage
           \clearpage
           \tableofcontents

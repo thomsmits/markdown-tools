@@ -59,8 +59,10 @@
 \usepackage{datetime}
 \usepackage{needspace}
 \usepackage{ulem} % Strikeout support
-
 \usepackage{csquotes}
+\usepackage{marginnote}
+\usepackage[absolute]{textpos}    % Absolute Textpositionen (für Deckblatt)
+\usepackage{rotating}
 
 \renewcommand{\dateseparator}{-}
 \yyyymmdddate
@@ -290,7 +292,8 @@
 
 %\setlist[itemize]{leftmargin=*}
 
-\newcommand{\titlelogo}{\includegraphics[width=6cm]{logo}}
+\newcommand{\titlelogo}{logo}
+\newcommand{\titleimage}{cat}
 
 \input{lst_clojure.sty}
 \input{lst_console.sty}

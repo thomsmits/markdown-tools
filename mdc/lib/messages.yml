@@ -14,6 +14,7 @@ en:
   literature: "References"
   answer: "Answer"
   matching_question: "Please match the answers"
+  version: "Version"
 
 de:
   contents: "Inhalt"
@@ -31,3 +32,4 @@ de:
   literature: "Quellen"
   answer: "Antwort"
   matching_question: "Bitte ordnen Sie entsprechend zu"
+  version: "Stand"
