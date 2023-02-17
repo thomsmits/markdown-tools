@@ -22,5 +22,9 @@ module Rendering
     def render_emphasisstar(content)
       %Q{<em class="text-grey-dk-000 fw-300">#{content}</em>}
     end
+
+    def render_formula(content)
+      "\\( #{content} \\)"
+    end
   end
 end
