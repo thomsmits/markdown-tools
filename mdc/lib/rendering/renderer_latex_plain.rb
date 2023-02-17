@@ -71,8 +71,8 @@ module Rendering
           \includegraphics[width=21cm]{\titleimage} %
           \end{textblock*}%
 
-          \begin{textblock*}{1.4cm}(0cm,0cm) %
-          {\color{mittelgrau}\rule{1.4cm}{29.5cm}}%
+          \begin{textblock*}{1.4cm}(0cm,-1mm) %
+          {\color{mittelgrau}\rule{1.4cm}{29.7cm}}%
           \end{textblock*}%
 
           \begin{textblock*}{2cm}(0.32cm,13.5cm) %
