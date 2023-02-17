@@ -59,13 +59,20 @@ class Main
     dir = Dir.new(directory)
     prop_file = directory + '/metadata.properties'
 
+    # Determine the chapter number from the directory
+    if /([0-9][0-9])_.*/ =~ File.basename(File.expand_path(directory))
+      chapter_no_from_file = $1.to_i
+    else
+      chapter_no_from_file = nil
+    end
+
     defaults_file = directory + '/..' + '/metadata.properties'
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
     title1           = props['title_1']
     title2           = props['title_2']
-    chapter_no       = props['chapter_no']
+    chapter_no       = props['chapter_no'] || chapter_no_from_file
     chapter_name     = props['chapter_name']
     copyright        = props['copyright']
     author           = props['author']
