@@ -7,6 +7,7 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['multi `', 'text <br> `code1` <br> `    code2` <br> `code3`', %q|text <br> <code>code1</code> <br> <code>    code2</code> <br> <code>code3</code>|],
     ['it paren', '_Zeichenkodierung (encoding)_ und einem _Zeichensatz (font)_', %q|<em>Zeichenkodierung (encoding)</em> und einem <em>Zeichensatz (font)</em>|],
     ['emph paren', 'Ursachen für Krisen können endogen *(z.B. schlechte Projektplanung)* oder exogen *(z.B. Insolvenz von Partnern)* sein', %q|Ursachen für Krisen können endogen <em>(z.&nbsp;B. schlechte Projektplanung)</em> oder exogen <em>(z.&nbsp;B. Insolvenz von Partnern)</em> sein|],
     ['emph plus', 'before (__PE__ / __PE32+__)<br>', %q|before (<strong>PE</strong> / <strong>PE32+</strong>)<br>|],
@@ -36,7 +37,9 @@ class LineParserTest < Minitest::Test
     ['339', %Q{`` foo ` bar ``}, %Q{<code>foo ` bar</code>}],
     ['340', %Q{` `` `}, %Q{<code>``</code>}],
     ['341', %Q{`  ``  `}, %Q{<code> `` </code>}],
-    #    ['342', %Q{` a`}, %Q{<code> a</code>}],
+    ['342', %Q{` a`}, %Q{<code> a</code>}],
+    ['342b', %Q{`  a`}, %Q{<code>  a</code>}],
+    ['342c', %Q{`a`x`  b`}, %Q{<code>a</code>x<code>  b</code>}],
     ['343', %Q{`\tb\t`}, %Q{<code>\tb\t</code>}],
     #    ['344', %Q{` `\n`  `}, %Q{<code> </code>\n<code>  </code>}],
     ['345', %Q{``\nfoo\nbar  \nbaz\n``}, %Q{<code>foo bar   baz</code>}],
