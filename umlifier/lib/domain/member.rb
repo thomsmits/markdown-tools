@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-module Domain
+module DomainUML
   class Member
     attr_accessor :name, :visibility, :static
 

@@ -3,7 +3,7 @@
 require_relative 'connectors'
 require_relative 'types'
 
-module Domain
+module DomainUML
 
   class Diagram
 

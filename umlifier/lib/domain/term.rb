@@ -1,4 +1,4 @@
-module Domain
+module DomainUML
   class Term
     attr_accessor :name
 
