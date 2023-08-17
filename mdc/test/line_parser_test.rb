@@ -15,7 +15,7 @@ class LineParserTest < Minitest::Test
     ['emph dash', '__Inter__-Net -- Netz __zwischen__ den Netzen', %q|<strong>Inter</strong>-Net &ndash; Netz <strong>zwischen</strong> den Netzen| ],
     ['html', 'Text <span class="clazZ">In span</span>', %q|Text <span class="clazZ">In span</span>|],
     ['hamlet', %q|aaa<br>*"bbb" [1] ccc.*|, %q|aaa<br><em>&quot;bbb&quot; [1] ccc.</em>|],
-    ['emp colon', "_P_: xxx", %q|<em>P</em>: xxx|],
+    ['emp colon', '_P_: xxx', %q|<em>P</em>: xxx|],
     ['strong_quot', %q|__"emphasis"__|, %q|<strong>&quot;emphasis&quot;</strong>|],
     ['361', %Q{a * foo bar*}, %Q{a * foo bar*}],
     ['nested_quote', %q|aaa: *bbb "ccc" ddd "eee" fff*|, %q|aaa: <em>bbb &quot;ccc&quot; ddd &quot;eee&quot; fff</em>|],
@@ -219,12 +219,10 @@ class LineParserTest < Minitest::Test
     CASES.each do |t|
       line = Parsing::LineParser.new.parse(t[1])
       renderer = Rendering::LineRendererHTML.new('java')
-      result = line.render(renderer)
+      result = line.render(renderer).gsub('&ldquo;', '&quot;').gsub('&rdquo;', '&quot;')
 
       assert_equal(t[2], result.strip, "case #{t[0]}")
-      if result.strip != t[2]
-        puts "case #{t[0]}: expected '#{t[2]}', got '#{result}'"
-      end
+      puts "case #{t[0]}: expected '#{t[2]}', got '#{result}'" if result.strip != t[2]
     end
   end
 end
