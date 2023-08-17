@@ -86,6 +86,12 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
+                                   /` (.*?[^ ])`/ ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md, Domain::CodeNode.new(' ' + md[1].gsub("\n", ' ')))
+                                 end),
+
+      MatcherForLineElements.new([
                                    /(<[^>]+>.*<\/[^>]+>)/, ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md, Domain::HtmlNode.new(md[1]))

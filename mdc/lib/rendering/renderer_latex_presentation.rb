@@ -151,7 +151,16 @@ module Rendering
           \vspace{0.2mm}
         <%- end -%>
         \begin{ul<%= @ul_level %>})
-      )
+      ),
+
+      heading_3: erb(
+        %q|
+          \vspace{1.5mm}
+          \textbf{<%= line_renderer.meta(title) %>}
+          \vspace{2mm}
+        |
+      ),
+
     }.freeze
 
     ##
