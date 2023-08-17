@@ -74,7 +74,7 @@ class MasterFile
   end
 
   def each_section
-    sections.each do |e|
+    @sections.each do |e|
       yield e
     end
   end
@@ -93,11 +93,12 @@ class MasterFile
     master_file << section
 
     File.open(input_file, "r:UTF-8").each do |line|
-      if /^# (.*)/ =~ line
+      case line
+      when /^# (.*)/
         # Title of the file
         master_file.title = Regexp.last_match(1)
         master_file.title += ' (Musterlösung)' if solution
-      elsif /^## (.*)/ =~ line
+      when /^## (.*)/
         if section.title == ''
           # First, anonymous section
           section.title = Regexp.last_match(1)
@@ -106,7 +107,7 @@ class MasterFile
           section = MasterFileSection.new(Regexp.last_match(1))
           master_file << section
         end
-      elsif /([+KU-]):\[([0-9]*)\]\((.*)\)/ =~ line || /  \* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/ =~ line
+      when /([+KU-]):\[([0-9]*)\]\((.*)\)/, /  \* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/
         # File reference
         file_path = Regexp.last_match(3)
         points = Integer(Regexp.last_match(2))
@@ -115,7 +116,7 @@ class MasterFile
         if desired_status.include?(status)
           section << MasterFileEntry.new(path + '/' + file_path, points, status)
         end
-      elsif /([+KU-]):---/ =~ line ||  /  \* \[([+KU-])\] ---/ =~ line
+      when /([+KU-]):---/, /  \* \[([+KU-])\] ---/
         # Separator
         status = Regexp.last_match(1)
         section << MasterFileEntry.new(nil, 0, status)

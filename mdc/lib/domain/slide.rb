@@ -70,7 +70,7 @@ module Domain
     # Indicates that the slide contains animated elements, i.e. elements
     # that should be shown one after each other
     def animated?
-      max_order > 0
+      max_order.positive?
     end
 
     ##

@@ -47,11 +47,9 @@ class GIFT
       exercise = presentation.chapters[0].slides[0]
       question_found = exercise.elements.filter { |e|
         [ Domain::MultipleChoiceQuestions, Domain::InputQuestion, Domain::MatchingQuestions ].include?(e.class)
-      }.length > 0
+      }.length.positive?
 
-      unless question_found
-        exercise << Domain::InputQuestion.new([])
-      end
+      exercise << Domain::InputQuestion.new([]) unless question_found
     end
   end
 
@@ -61,7 +59,7 @@ class GIFT
   # @param [String] section_prefix additional hierarchy to separate exercises
   def self.from_master_file(input_file, desired_status = ['+'], section_prefix = '')
 
-    base_dir = File.dirname(input_file) + "/"
+    base_dir = File.dirname(input_file) + '/'
 
     master_file = MasterFile.parse(input_file, desired_status, false)
 
@@ -69,28 +67,24 @@ class GIFT
 
       title = section.title.gsub('Themenbereich: ', '')
 
-      if section.has_entries
-        puts "$CATEGORY: $course$/#{section_prefix}#{title}\n\n"
-      end
+      puts "$CATEGORY: $course$/#{section_prefix}#{title}\n\n" if section.has_entries
 
       section.each_entry do |e|
         next if e.path.nil?
 
         filename = e.path
-        unless File.exist?(filename)
-          filename = filename + ".md"
-        end
+        filename += '.md' unless File.exist?(filename)
 
         lines = File.readlines(filename)
         puts "// GIFT generated from file #{filename.gsub(base_dir, '')}"
         puts GIFT.parse_file_and_render(File.dirname(filename), '', '', lines)
-        puts ""
+        puts ''
       end
     end
   end
 end
 
-if $0 == __FILE__
+if $PROGRAM_NAME == __FILE__
   file = ARGV[0]
 
   unless File.exist?(file)
@@ -98,7 +92,7 @@ if $0 == __FILE__
     exit(1)
   end
 
-  prefix = if ARGV.length > 2 then ARGV[2] else '' end
+  prefix = ARGV.length > 2 ? ARGV[2] : ''
   desired_status = [ ARGV[1] ]
   GIFT.from_master_file(file, desired_status, prefix)
 end

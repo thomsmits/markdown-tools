@@ -44,12 +44,12 @@ class NotesHandling
     parser = Parsing::Parser.new(0)
 
     folder.files.each do |file|
-      src_path = folder.path + '/' + file.name
-      dest_dir = target + '/' + folder.name
+      src_path = "#{folder.path}/#{file.name}"
+      dest_dir = "#{target}/#{folder.name}"
 
       FileUtils.mkdir_p(dest_dir)  unless Dir.exist?(dest_dir)
 
-      dest_path = dest_dir + '/' + file.name + '.html'
+      dest_path = "#{dest_dir}/#{file.name}.html"
 
       puts "Compiling #{src_path}"
 
@@ -60,7 +60,7 @@ class NotesHandling
       parser.parse(src_path, '', presentation)
       presentation.title1 = presentation.chapters[0].title
       file.title = presentation.title1
-      file.digest = presentation.digest(180) + '...'
+      file.digest = "#{presentation.digest(180)}..."
       file.date = File.mtime(src_path)
 
       metadata = strings_to_hash(presentation.comments)
@@ -77,9 +77,9 @@ class NotesHandling
       io.close
     end
 
-    folder.folders.each { |dir| read_files_and_convert(dir, target + '/' + folder.name) }
+    folder.folders.each { |dir| read_files_and_convert(dir, "#{target}/#{folder.name}") }
 
-    dest_dir = target + '/' + folder.name
+    dest_dir = "#{target}/#{folder.name}"
     make_index(dest_dir, folder)
   end
 
@@ -87,7 +87,7 @@ class NotesHandling
     return if folder.folders.count.zero? && folder.files.count.zero?
 
     Dir.mkdir(dest_dir) unless Dir.exist?(dest_dir)
-    io = File.new(dest_dir + '/' + 'index.html', 'w')
+    io = File.new("#{dest_dir}/index.html", 'w')
     renderer = Rendering::RendererHTMLNote.new(io, '', '', '',
                                                '', [], [], folder.title)
     folder >> renderer

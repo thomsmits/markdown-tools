@@ -103,8 +103,8 @@ module Domain
 
     ##
     # Iterate over all chapters.
-    def each
-      @chapters.each { |e| yield e }
+    def each(&block)
+      @chapters.each(&block)
     end
   end
 end

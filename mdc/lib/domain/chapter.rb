@@ -50,8 +50,8 @@ module Domain
 
     ##
     # Iterate over all slides of the chapter
-    def each
-      @slides.each { |s| yield s }
+    def each(&block)
+      @slides.each(&block)
     end
 
     ##

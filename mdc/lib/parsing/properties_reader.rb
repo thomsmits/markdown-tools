@@ -60,6 +60,12 @@ module Parsing
     end
 
     ##
+    # We respond to the missing method call.
+    def respond_to_missing?(*_args)
+      true
+    end
+
+    ##
     # Return string representation
     def to_s
       @result.to_s + @defaults.to_s

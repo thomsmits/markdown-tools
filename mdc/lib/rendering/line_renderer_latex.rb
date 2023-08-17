@@ -155,10 +155,10 @@ module Rendering
     def render_code(content)
 
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
-      #size = table ? ',basicstyle=\scriptsize' : ',style=inline' # TODO: Table management
+      # size = table ? ',basicstyle=\scriptsize' : ',style=inline' # TODO: Table management
       size = ',style=inline'
 
-      delimiters = %w{+ ! & _ - = $ : ~ . ; ?}
+      delimiters = %w[+ ! & _ - = $ : ~ . ; ?]
       if content.include?('|')
         # search for a delimiter not used
         delimiters.filter! { |d| !content.include?(d) }
@@ -199,9 +199,9 @@ module Rendering
 
     def render_link(content, target = '', title = '')
       if title.nil?
-        %Q|\\href{#{meta(target)}}{#{content}}|
+        %Q(\\href{#{meta(target)}}{#{content}})
       else
-        %Q|\\href{#{meta(target)}}{#{content}}|
+        %Q(\\href{#{meta(target)}}{#{content}})
       end
     end
 

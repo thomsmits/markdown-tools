@@ -186,13 +186,13 @@ module Rendering
     ##
     # Render a newline
     def render_newline(content)
-      "<br>"
+      '<br>'
     end
 
     ##
     # Render a quote
     def render_quoted(content)
-      %Q|"#{content}"|
+      %Q("#{content}")
     end
   end
 end

@@ -30,7 +30,7 @@ module Parsing
     # Cut away the first characters
     # @param [Fixnum] from number of characters to be removed
     def substr!(from)
-      @line = @line[from..-1]
+      @line = @line[from..]
     end
 
     ##
@@ -307,7 +307,7 @@ module Parsing
     ## Title of a slide
     def slide_title
       title = @line[/^ *## (.*)/, 1]
-      title.nil? ? nil : title.sub(/##/, '').strip
+      title&.sub(/##/, '')&.strip
     end
 
     ## Title of a slide
@@ -318,7 +318,7 @@ module Parsing
     ## Title of a chapter
     def chapter_title
       title = @line[/^ *# (.*)/, 1]
-      title.nil? ? nil : title.sub(/#/, '').strip
+      title&.sub(/#/, '')&.strip
     end
 
     ## Title of a chapter
@@ -347,21 +347,22 @@ module Parsing
 
     ## Include of sources
     def code_include
-      if /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/ =~ @line.strip
+      case @line.strip
+      when /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, Regexp.last_match(3)]
-      elsif /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/ =~ @line.strip
+      when /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, '']
-      elsif /^!INCLUDESRC "(.*?)" (.*?)$/ =~ @line.strip
+      when /^!INCLUDESRC "(.*?)" (.*?)$/
         [Regexp.last_match(1), 0, Regexp.last_match(2)]
-      elsif /^!INCLUDESRC "(.*?)"$/ =~ @line.strip
+      when /^!INCLUDESRC "(.*?)"$/
         [Regexp.last_match(1), 0, '']
-      elsif /^<!-- include_src\[([0-9]*?)\]: "(.*?)" (.*?) -->$/ =~ @line.strip
+      when /^<!-- include_src\[([0-9]*?)\]: "(.*?)" (.*?) -->$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, Regexp.last_match(3)]
-      elsif /^<!-- include_src\[([0-9]*?)\]: "(.*?)" -->$/ =~ @line.strip
+      when /^<!-- include_src\[([0-9]*?)\]: "(.*?)" -->$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, '']
-      elsif /^<!-- include_src: "(.*?)" (.*?) -->$/ =~ @line.strip
+      when /^<!-- include_src: "(.*?)" (.*?) -->$/
         [Regexp.last_match(1), 0, Regexp.last_match(2)]
-      elsif /^<!-- include_src: "(.*?)" -->$/ =~ @line.strip
+      when /^<!-- include_src: "(.*?)" -->$/
         [Regexp.last_match(1), 0, '']
       end
     end

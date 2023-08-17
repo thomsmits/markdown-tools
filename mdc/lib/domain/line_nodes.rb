@@ -52,7 +52,7 @@ module Domain
     # Return a string representation
     # @return [String] String representation
     def to_s
-      self.class.to_s + ": '" + @content + "'"
+      "#{self.class}: '#{@content}'"
     end
 
     ##
@@ -67,7 +67,7 @@ module Domain
     # Macro to add a render method to the class.
     # @param [Symbol] name optional name for the method
     def self.add_renderer(name = nil)
-      method_name = name || 'render_' + self.name.downcase.gsub('node', '').gsub('domain::', '')
+      method_name = name || "render_#{self.name.downcase.gsub('node', '').gsub('domain::', '')}"
       define_method(:render) do |renderer|
         sub_content = render_children(renderer)
         if sub_content

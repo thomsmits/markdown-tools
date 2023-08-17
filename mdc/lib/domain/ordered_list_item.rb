@@ -5,6 +5,7 @@ module Domain
   # Item of an ordered list
   class OrderedListItem < BlockElement
     attr_accessor :parent
+
     render_method :ol_item
 
     ##

@@ -4,7 +4,7 @@ require_relative 'line_nodes'
 
 module Domain
   ##
-  # Base class for all elements that span more than one line
+  # Base class for all elements that span more than one line.
   class BlockElement < Element
     attr_accessor :content, :nodes
 
@@ -15,7 +15,9 @@ module Domain
     # @param [LineNodes] nodes Element split into nodes
     def initialize(content = '', order = 0, nodes = nil)
       super(order)
+      # @type [String]
       @content = content
+      # @type [LineNodes]
       @nodes = nodes
     end
 

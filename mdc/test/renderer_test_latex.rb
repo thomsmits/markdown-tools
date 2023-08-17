@@ -15,7 +15,7 @@ class RendererTestLatex < RendererTestBase
   # Determine the base path of this file.
   # @return [String] path pointing to this file
   def base_path
-    File.dirname(__FILE__) + "/" + File.basename(__FILE__, ".*") + "/"
+    "#{File.dirname(__FILE__)}/#{File.basename(__FILE__, '.*')}/"
   end
 
   ##

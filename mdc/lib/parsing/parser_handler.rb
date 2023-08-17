@@ -471,7 +471,7 @@ module Parsing
 
       # Catch malformed documents with missing sections
       if slide(ps).nil? && !line.empty?
-        raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+        raise StandardError, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
                          'contains content outside of a subsection. Maybe you ' \
                          "forgot to start the subsection with '## TITLE'? " \
                          "#{ps}, '#{line}'"
@@ -486,7 +486,7 @@ module Parsing
 
           ps.normal!
         else
-          raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+          raise StandardError, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
                            "has a syntax error - #{ps}, '#{line}'"
         end
       else
@@ -657,12 +657,10 @@ module Parsing
       license_file = "#{dirname}/#{basename}.txt"
 
       if File.exist?(license_file)
-        license = Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
+        Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
       else
-        license = nil
+        nil 
       end
-
-      license
     end
   end
 end

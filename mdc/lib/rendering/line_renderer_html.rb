@@ -74,9 +74,9 @@ module Rendering
 
     def render_link(content, target = '', title = '')
       if title.nil?
-        %Q{<a href="#{target}">#{content}</a>}
+        %(<a href="#{target}">#{content}</a>)
       else
-        %Q{<a href="#{target}" title="#{title}">#{content}</a>}
+        %(<a href="#{target}" title="#{title}">#{content}</a>)
       end
     end
 
@@ -93,9 +93,9 @@ module Rendering
     end
 
     def render_quoted(content)
-      if $language == "de"
+      if $language == 'de'
         "&bdquo;#{content}&ldquo;"
-      elsif $language == "en"
+      elsif $language == 'en'
         "&ldquo;#{content}&rdquo;"
       else
         "&quot;#{content}&quot;"

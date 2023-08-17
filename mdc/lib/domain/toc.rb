@@ -46,7 +46,7 @@ module Domain
     # @param [String] name name of the entry
     def add_sub_entry(parent_id, id, name)
       parent = find_entry_by_id(parent_id, @entries)
-      raise Exception, "Parent must exist #{parent_id}" if parent.nil?
+      raise StandardError, "Parent must exist #{parent_id}" if parent.nil?
 
       parent.add(id, name)
     end
@@ -61,8 +61,8 @@ module Domain
 
     ##
     # Iterate over the entries
-    def each
-      @entries.each { |e| yield e }
+    def each(&block)
+      @entries.each(&block)
     end
   end
 end

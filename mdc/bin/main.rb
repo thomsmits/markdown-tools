@@ -33,16 +33,16 @@ class Main
 
     # Read global properties
     dir = Dir.new(directory)
-    prop_file = directory + '/metadata.properties'
+    prop_file = "#{directory}/metadata.properties"
 
     # Determine the chapter number from the directory
-    if /([0-9][0-9])_.*/ =~ directory
-      chapter_no_from_file = $1.to_i
-    else
-      chapter_no_from_file = nil
-    end
+    chapter_no_from_file = if /([0-9][0-9])_.*/ =~ directory
+                             Regexp.last_match(1).to_i
+                           else
+                             nil
+                           end
 
-    defaults_file = directory + '/..' + '/metadata.properties'
+    defaults_file = "#{directory}/../metadata.properties"
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
@@ -91,7 +91,7 @@ class Main
     # Parse files in directory
     files.each do |file|
       puts "Parsing: #{file}"
-      parser.parse(directory + '/' + file, default_syntax, presentation)
+      parser.parse("#{directory}/#{file}", default_syntax, presentation)
       parser.second_pass(presentation)
     end
 

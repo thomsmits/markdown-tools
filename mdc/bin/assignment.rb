@@ -42,12 +42,13 @@ class Assignment
   end
 end
 
-if $0 == __FILE__
+if $PROGRAM_NAME == __FILE__
+
   # Get and remove command line arguments
   src_dir = ARGV.shift
   dest_dir = ARGV.shift
 
-  if ARGV.size.zero?
+  if ARGV.empty?
     # Only directories given. Compile whole directory
     puts Assignment.parse_directory_and_render(src_dir, dest_dir)
   else

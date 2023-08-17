@@ -8,19 +8,19 @@ module Rendering
     end
 
     def render_strongunderscore(content)
-      %Q{<strong class="text-purple-100 fw-500">#{content}</strong>}
+      %(<strong class="text-purple-100 fw-500">#{content}</strong>)
     end
 
     def render_strongstar(content)
-      %Q{<strong class="text-grey-dk-000 fw-500">#{content}</strong>}
+      %(<strong class="text-grey-dk-000 fw-500">#{content}</strong>)
     end
 
     def render_emphasisunderscore(content)
-      %Q{<em class="text-purple-100 fw-500">#{content}</em>}
+      %(<em class="text-purple-100 fw-500">#{content}</em>)
     end
 
     def render_emphasisstar(content)
-      %Q{<em class="text-grey-dk-000 fw-300">#{content}</em>}
+      %(<em class="text-grey-dk-000 fw-300">#{content}</em>)
     end
 
     def render_formula(content)

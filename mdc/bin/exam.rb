@@ -37,6 +37,6 @@ class Exam
   end
 end
 
-if $0 == __FILE__
+if $PROGRAM_NAME == __FILE__
   Exam.main(ARGV[0], ARGV[1], ARGV[2])
 end

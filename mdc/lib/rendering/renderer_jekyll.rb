@@ -86,7 +86,7 @@ module Rendering
       ),
 
       chapter_start: erb(
-      %q|title: "<%= title %>"
+        %q|title: "<%= title %>"
           nav_order: <%= nav_order %>
           ---
         <%- if @has_equation -%>
@@ -123,13 +123,13 @@ module Rendering
       ),
 
       vertical_space: erb(
-      '
+        '
           <br>
           '
       ),
 
       equation: erb(
-      %q(
+        %q(
         <div>
         \[
         \begin{align*}
@@ -203,79 +203,79 @@ module Rendering
     ),
 
       script: erb(
-      '
+        '
         <script><%= content %></script>
         '
     ),
 
       table_start: erb(
-      "
+        "
         <table class='small content'>
         <thead><tr>
         "
     ),
 
       table_separator: erb(
-      '
+        '
       '
     ),
 
       table_end: erb(
-      '
+        '
         </tbody></table>
         '
     ),
 
       text: erb(
-      '
+        '
         <p><%= content %></p>
         '
     ),
 
       heading: erb(
-      '
+        '
         ### <%= line_renderer.meta(title) %>
         '
     ),
 
       toc_start: erb(
-      ""
+        ""
     ),
 
       toc_entry: erb(
-      ""
+        ""
     ),
 
       toc_end: erb(
-      ''
+        ''
     ),
 
       toc_sub_entries_start: erb(
-      ""
+        ""
     ),
 
       toc_sub_entry: erb(
-      ""
+        ""
     ),
 
       toc_sub_entries_end: erb(
-      ''
+        ''
     ),
 
       index_start: erb(
-      ""
+        ""
     ),
 
       index_entry: erb(
-      ""
+        ""
     ),
 
       index_end: erb(
-      ''
+        ''
     ),
 
       html: erb(
-      '<%= content %>'
+        '<%= content %>'
     )
     }.freeze
 

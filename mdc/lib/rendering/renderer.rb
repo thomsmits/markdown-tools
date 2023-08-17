@@ -273,7 +273,7 @@ module Rendering
       ),
 
       matching_question_start: erb(
-        %q|<!-- SHUFFLE type="<%= shuffle %>" -->|
+        '<!-- SHUFFLE type="<%= shuffle %>" -->'
       ),
 
       matching_question_end: erb(
@@ -281,7 +281,7 @@ module Rendering
       ),
 
       matching_question: erb(
-        "  * <%= left %> -> <%= right %>"
+        '  * <%= left %> -> <%= right %>'
       ),
 
     }.freeze
@@ -475,7 +475,7 @@ module Rendering
 
       headers.each_with_index do |h, i|
         @io << "|#{h}" if alignment[i] != Constants::SEPARATOR
-        @io << "|---"  if alignment[i] == Constants::SEPARATOR
+        @io << '|---'  if alignment[i] == Constants::SEPARATOR
       end
 
       @io << '|' << nl
@@ -487,7 +487,6 @@ module Rendering
       @io << '|' << nl
     end
 
-
     ##
     # Row of the table
     # @param [Array<String>] row row of the table
@@ -496,7 +495,7 @@ module Rendering
       row.each_with_index do |e, i|
         @io << '|'
         @io << e     if alignment[i] != Constants::SEPARATOR
-        @io << "---" if alignment[i] == Constants::SEPARATOR
+        @io << '---' if alignment[i] == Constants::SEPARATOR
       end
 
       @io << '|' << nl

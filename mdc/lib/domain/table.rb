@@ -31,8 +31,7 @@ module Domain
     ##
     # Header of the table
     class TableHeader
-      attr_accessor :content, :nodes
-      attr_accessor :alignment, :separator
+      attr_accessor :content, :nodes, :alignment, :separator
 
       ##
       # Create a new header

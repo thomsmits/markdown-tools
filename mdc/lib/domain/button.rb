@@ -16,6 +16,7 @@ module Domain
     end
 
     attr_accessor :line_id
+
     render_method :button
 
     ## Create a new button

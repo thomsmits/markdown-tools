@@ -42,10 +42,11 @@ module Rendering
 
     def code(content)
       meta(content)
-         .gsub("\n", '\n')
-         .gsub('<', '&lt;')
-         .gsub('>', '&gt;')
+        .gsub("\n", '\n')
+        .gsub('<', '&lt;')
+        .gsub('>', '&gt;')
     end
+
     ##
     # Render a `code` node.
     # @param [String] content contents of the node

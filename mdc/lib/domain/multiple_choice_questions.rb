@@ -47,7 +47,7 @@ module Domain
     # Get the number of correct questions
     # @return [Integer] number of correct questions
     def number_correct
-      @questions.count { |e| e.correct }
+      @questions.count(&:correct)
     end
 
     ##

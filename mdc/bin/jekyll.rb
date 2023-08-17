@@ -57,16 +57,16 @@ class Main
 
     # Read global properties
     dir = Dir.new(directory)
-    prop_file = directory + '/metadata.properties'
+    prop_file = "#{directory}/metadata.properties"
 
     # Determine the chapter number from the directory
-    if /([0-9][0-9])_.*/ =~ File.basename(File.expand_path(directory))
-      chapter_no_from_file = $1.to_i
-    else
-      chapter_no_from_file = nil
-    end
+    chapter_no_from_file = if /([0-9][0-9])_.*/ =~ File.basename(File.expand_path(directory))
+                             Regexp.last_match(1).to_i
+                           else
+                             nil
+                           end
 
-    defaults_file = directory + '/..' + '/metadata.properties'
+    defaults_file = "#{directory}/../metadata.properties"
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
@@ -115,7 +115,7 @@ class Main
 
       chapters << presentation.chapters
       puts "Parsing: #{file}"
-      parser.parse(directory + '/' + file, default_syntax, presentation)
+      parser.parse("#{directory}/#{file}", default_syntax, presentation)
       parser.second_pass(presentation)
 
       has_equation = has_equation(chapters)
@@ -123,7 +123,7 @@ class Main
       io = StringIO.new
       io.set_encoding('UTF-8')
 
-      output_file = result_dir + "/" + File.basename(file, ".md") +  ".markdown"
+      output_file = "#{result_dir}/#{File.basename(file, ".md")}.markdown"
 
       renderer = Rendering::RendererJekyll.new(
                      io, default_syntax, result_dir,
@@ -137,7 +137,7 @@ class Main
     end
 
     # Write index file
-    File.open(result_dir + "/" + "index.markdown", 'w', encoding: 'UTF-8') do |f|
+    File.open("#{result_dir}/index.markdown", 'w', encoding: 'UTF-8') do |f|
       f << "---\n"
       f << "title: \"#{chapter_name}\"\n"
       f << "layout: default\n"
@@ -150,7 +150,7 @@ class Main
     end
 
     # Write welcome file
-    File.open(result_dir + "/../" + "index.markdown", 'w', encoding: 'UTF-8') do |f|
+    File.open("#{result_dir}/../index.markdown", 'w', encoding: 'UTF-8') do |f|
       nl = "\n"
       f << %Q|---| << nl
       f << %Q|layout: home| << nl

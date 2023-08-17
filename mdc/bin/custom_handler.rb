@@ -60,7 +60,7 @@ class CustomHandler
     end
 
     # give the custom handler a chance to play with the data
-    custom_handler.call(presentation) unless custom_handler.nil?
+    custom_handler&.call(presentation)
 
     # Render the data
     presentation >> renderer
@@ -81,7 +81,7 @@ class CustomHandler
   def self.convert_file(src_dir, dest_dir, src_file, dest_file, prog_language,
                         renderer_class, img_dir = 'img', tmp_dir ='../temp', &custom_handler)
     # Read source file
-    lines = File.readlines(src_dir + '/' + src_file, "\n", encoding: 'UTF-8')
+    lines = File.readlines("#{src_dir}/#{src_file}", "\n", encoding: 'UTF-8')
 
     # Open output file
     io = File.open("#{dest_dir}/#{dest_file}", 'w')

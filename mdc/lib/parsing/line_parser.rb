@@ -23,9 +23,7 @@ module Parsing
     # @return [Boolean] true, if a match was found, otherwise false
     def execute_matchers(text, elements)
       md = test_for_match(text)
-      if md
-        @proc.call(elements, md)
-      end
+      @proc.call(elements, md) if md
       !!md
     end
 
@@ -37,15 +35,11 @@ module Parsing
       @regex.each do |regex|
         md = regex.match(text)
 
-        if md
-          return md
-        end
+        return md if md
       end
       nil
     end
-
-  private
-
+    
     ##
     # Helper function to extract matches from the provided object
     # @param [MatchData] md Match data
@@ -215,7 +209,7 @@ module Parsing
 
       changed = false
 
-      if node.children.length > 0
+      if node.children.length.positive?
         # Node has sub nodes, parse them
         result = []
         node.children.each do |child|
@@ -229,9 +223,7 @@ module Parsing
         if node.is_a? Domain::UnparsedNode
           # Node has not been parsed
           touched, result = apply_parsers(node)
-          unless touched
-            result << Domain::TextNode.new(node.content)
-          end
+          result << Domain::TextNode.new(node.content) unless touched
           changed = true
         elsif node.class != Domain::HtmlNode && node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
           # Node has the potential for parsing into sub nodes
@@ -264,21 +256,21 @@ module Parsing
       end_idx   = elements.rindex { |n| n.class == Domain::SingleEmphOrStrong }
 
       if start_idx &&
-          end_idx &&
-          start_idx != end_idx &&
-          elements[start_idx].content == elements[end_idx].content
+         end_idx &&
+         start_idx != end_idx &&
+         elements[start_idx].content == elements[end_idx].content
 
         # There must not be a space after the start or before the end
         if start_idx < elements.size - 1 && elements[start_idx + 1].class == Domain::TextNode && elements[start_idx + 1].content.start_with?(' ', "\n", "\t")
           return elements
         end
 
-        if end_idx > 0 && elements[end_idx - 1].class == Domain::TextNode && elements[end_idx - 1].content.end_with?(' ', "\n", "\t")
+        if end_idx.positive? && elements[end_idx - 1].class == Domain::TextNode && elements[end_idx - 1].content.end_with?(' ', "\n", "\t")
           return elements
         end
 
         # There must be a space before the start and after the end
-        if start_idx > 0 && elements[start_idx - 1].class == Domain::TextNode && !elements[start_idx - 1].content.end_with?(*ALLOWED_BEFORE_AND_AFTER)
+        if start_idx.positive? && elements[start_idx - 1].class == Domain::TextNode && !elements[start_idx - 1].content.end_with?(*ALLOWED_BEFORE_AND_AFTER)
           return elements
         end
 

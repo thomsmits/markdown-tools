@@ -44,8 +44,8 @@ module Domain
 
     ##
     # Iterate over all contained elements.
-    def each
-      @elements.each { |e| yield e }
+    def each(&block)
+      @elements.each(&block)
     end
 
     ##

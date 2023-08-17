@@ -47,7 +47,7 @@ class Index
     directory = '.' if directory.nil?
 
     dir = Dir.new(directory)
-    main_prop_file = directory + '/metadata.properties'
+    main_prop_file = "#{directory}/metadata.properties"
     main_props = Parsing::PropertiesReader.new(main_prop_file)
 
     postfix_slide = '-slides.html'
