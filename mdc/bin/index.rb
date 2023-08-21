@@ -71,6 +71,7 @@ class Index
       prop_file = "#{directory}/#{f}/metadata.properties"
 
       next unless File.exist?(prop_file)
+      next if File.exist?("#{directory}/#{f}/.ignore")
 
       chapter_props = Parsing::PropertiesReader.new(prop_file)
 
