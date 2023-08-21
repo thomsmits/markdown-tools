@@ -1,8 +1,9 @@
 require_relative 'line_renderer_html'
 
 module Rendering
+  ##
+  # Line renderer for Jekyll.
   class LineRendererJekyll < LineRendererHTML
-
     def render_code(content)
       "<code>#{content.gsub('<', '&lt;').gsub('>', '&gt;').gsub('"', '&quot;')}</code>"
     end

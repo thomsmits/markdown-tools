@@ -12,14 +12,12 @@ require_relative '../lib/domain/input_question'
 # This covers a very special use case. For more generic use cases
 # use the fle `main.rb`
 class GIFT
-
   ##
   # Parse a whole directory of files.
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir directory to store results in
   # @param [String] language default programming language
   def self.parse_directory_and_render(src_dir, dest_dir, prog_lang = '')
-
     # Get all files in the directory
     files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 
@@ -41,13 +39,12 @@ class GIFT
   # @return [String] the rendered contents as string
   def self.parse_file_and_render(src_dir, dest_dir, prog_language, lines, input_file = '')
     CustomHandler.convert_stream(src_dir, dest_dir, prog_language,
-                                 'Rendering::RendererGIFT', lines, input_file)  do |presentation|
-
+                                 'Rendering::RendererGIFT', lines, input_file) do |presentation|
       # Ensure that every exercise is at least an input question
       exercise = presentation.chapters[0].slides[0]
-      question_found = exercise.elements.filter { |e|
-        [ Domain::MultipleChoiceQuestions, Domain::InputQuestion, Domain::MatchingQuestions ].include?(e.class)
-      }.length.positive?
+      question_found = exercise.elements.filter do |e|
+        [Domain::MultipleChoiceQuestions, Domain::InputQuestion, Domain::MatchingQuestions].include?(e.class)
+      end.length.positive?
 
       exercise << Domain::InputQuestion.new([]) unless question_found
     end
@@ -58,16 +55,14 @@ class GIFT
   # @param [String] input_file the control file
   # @param [String] section_prefix additional hierarchy to separate exercises
   def self.from_master_file(input_file, desired_status = ['+'], section_prefix = '')
-
-    base_dir = File.dirname(input_file) + '/'
+    base_dir = "#{File.dirname(input_file)}/"
 
     master_file = MasterFile.parse(input_file, desired_status, false)
 
     master_file.each_section do |section|
-
       title = section.title.gsub('Themenbereich: ', '')
 
-      puts "$CATEGORY: $course$/#{section_prefix}#{title}\n\n" if section.has_entries
+      puts "$CATEGORY: $course$/#{section_prefix}#{title}\n\n" if section.entries?
 
       section.each_entry do |e|
         next if e.path.nil?
@@ -93,6 +88,6 @@ if $PROGRAM_NAME == __FILE__
   end
 
   prefix = ARGV.length > 2 ? ARGV[2] : ''
-  desired_status = [ ARGV[1] ]
+  desired_status = [ARGV[1]]
   GIFT.from_master_file(file, desired_status, prefix)
 end

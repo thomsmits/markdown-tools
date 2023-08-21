@@ -12,7 +12,6 @@ class Exam
   # @param [String] dest_dir directory to store results in
   # @param [String] prog_lang default programming language
   def self.main(src_dir, dest_dir, prog_lang = '')
-
     # Get all files in the directory
     files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 
@@ -37,6 +36,4 @@ class Exam
   end
 end
 
-if $PROGRAM_NAME == __FILE__
-  Exam.main(ARGV[0], ARGV[1], ARGV[2])
-end
+Exam.main(ARGV[0], ARGV[1], ARGV[2]) if $PROGRAM_NAME == __FILE__

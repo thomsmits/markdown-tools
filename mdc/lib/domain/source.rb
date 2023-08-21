@@ -26,11 +26,11 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.code_start(@prog_lang, @caption)
-      renderer.code(@content)
-      renderer.code_end(@caption)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.code_start(@prog_lang, @caption)
+      other.code(@content)
+      other.code_end(@caption)
     end
   end
 end

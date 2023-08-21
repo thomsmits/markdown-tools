@@ -60,11 +60,11 @@ module Rendering
       ),
 
       comment_start: erb(
-        %q|<!--|
+        '<!--'
       ),
 
       comment_end: erb(
-        "-->"
+        '-->'
       ),
 
       image: erb(

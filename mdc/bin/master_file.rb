@@ -1,43 +1,72 @@
+##
+# One section in the master file, controlling an exam.
 class MasterFileSection
   attr_reader :entries
   attr_accessor :title
 
+  ##
+  # Create a new instance.
+  # @param [String] title Title of the exam.
   def initialize(title = '')
     @title = title
+    # @type [MasterFileEntry]
     @entries = []
   end
 
+  ##
+  # Add a new entry to the section.
+  # @param [MasterFileEntry] entry the entry to be added.
   def <<(entry)
     @entries << entry
   end
 
+  ##
+  # Sum of the element's points.
+  # @return [Integer|BigDecimal] sum of the points
   def sum_points(status = '+')
-    @entries.reduce(0) { |s, e| s + e.sum_points(status)}
+    @entries.reduce(0) { |s, e| s + e.sum_points(status) }
   end
 
+  ##
+  # Return a string representation.
+  # @return [String] the entry as a string.
   def to_s
-    "\n## #{@title}\n\n" + @entries.join("\n") + "\n"
+    "\n## #{@title}\n\n#{@entries.join("\n")}\n"
   end
 
-  def each_entry
-    @entries.each { |e| yield e }
+  ##
+  # Iterate over all entries and apply the given block to them.
+  def each_entry(&block)
+    @entries.each(&block)
   end
 
-  def has_entries
-    @entries.filter { |e| !e.path.nil?}.length > 0
+  ##
+  # Provide the information, if the section has any entries.
+  # @return [Boolean] true, if entries are present, otherwise false.
+  def entries?
+    @entries.filter { |e| !e.path.nil? }.length.positive?
   end
 end
 
+##
+# Class representing one entry in the exam's master file.
 class MasterFileEntry
-
   attr_reader :path, :points, :status
 
+  ##
+  # Create a new entry.
+  # @param [String|nil] path Path to entry
+  # @param [Integer] points Points for the entry
+  # @param [String] status status of the entry
   def initialize(path, points, status)
     @path = path
     @points = points
     @status = status
   end
 
+  ##
+  # Return a string representation.
+  # @return [String] the entry as a string.
   def to_s
     if path.nil?
       "#{status}:---"
@@ -46,6 +75,9 @@ class MasterFileEntry
     end
   end
 
+  ##
+  # Sum of the element's points.
+  # @return [Integer|BigDecimal] sum of the points
   def sum_points(status = '+')
     if @status == status
       points
@@ -55,36 +87,59 @@ class MasterFileEntry
   end
 end
 
+##
+# Class representing the master file, which controls the exam's questions.
 class MasterFile
-  attr_accessor :title, :frontmatter, :sections, :path
+  attr_accessor :title, :front_matter, :sections, :path
 
-  def initialize(title = '', frontmatter = '', sections = [], path = '')
+  ##
+  # Create a new instance.
+  # @param [String] title The title of the exam.
+  # @param [String] front_matter The front_matter.
+  # @para [Array<MasterFileSection>] sections Sections.
+  # @param [String] path Path to the master file itself.
+  def initialize(title = '', front_matter = '', sections = [], path = '')
     @title = title
-    @frontmatter = frontmatter
+    @front_matter = front_matter
     @sections = sections || []
     @path = path
   end
 
+  ##
+  # Sum of the element's points.
+  # @return [Integer|BigDecimal] sum of the points
   def sum_points(status = '+')
-    @sections.reduce(0) { |s, e| s + e.sum_points(status)}
+    @sections.reduce(0) { |s, e| s + e.sum_points(status) }
   end
 
+  ##
+  # Return a string representation.
+  # @return [String] the entry as a string.
   def to_s
-    "# #{@title}\n\n#{@frontmatter}\n" + @sections.join("\n")
+    "# #{@title}\n\n#{@front_matter}\n" + @sections.join("\n")
   end
 
-  def each_section
-    @sections.each do |e|
-      yield e
-    end
+  ##
+  # Iterate over all sections and apply the given block to them.
+  def each_section(&block)
+    @sections.each(&block)
   end
 
+  ##
+  # Add a section.
+  # @param [MasterFileSection] section the section to be added.
   def <<(section)
     @sections << section
   end
 
+  ##
+  # Parse the given file and extract the elements with the given status.
+  # If requested, the solution is added.
+  # @param [String] input_file File with the exam's configuration.
+  # @param [Array<String>] desired_status Status of the entries to be extracted.
+  # @param [Boolean] solution Configures if the solution should be added.
+  # @return [MasterFile] the parsed file
   def self.parse(input_file, desired_status = ['+'], solution = false)
-
     path = File.dirname(input_file)
     master_file = MasterFile.new
 
@@ -92,7 +147,7 @@ class MasterFile
     section = MasterFileSection.new
     master_file << section
 
-    File.open(input_file, "r:UTF-8").each do |line|
+    File.open(input_file, 'r:UTF-8').each do |line|
       case line
       when /^# (.*)/
         # Title of the file
@@ -107,25 +162,23 @@ class MasterFile
           section = MasterFileSection.new(Regexp.last_match(1))
           master_file << section
         end
-      when /([+KU-]):\[([0-9]*)\]\((.*)\)/, /  \* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/
+      when /([+KU-]):\[([0-9]*)\]\((.*)\)/, / {2}\* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/
         # File reference
         file_path = Regexp.last_match(3)
-        points = Integer(Regexp.last_match(2))
+        points = Integer(Regexp.last_match(2) || 0)
         status = Regexp.last_match(1)
 
-        if desired_status.include?(status)
-          section << MasterFileEntry.new(path + '/' + file_path, points, status)
-        end
-      when /([+KU-]):---/, /  \* \[([+KU-])\] ---/
+        section << MasterFileEntry.new("#{path}/#{file_path}", points, status) if desired_status.include?(status)
+      when /([+KU-]):---/, / {2}\* \[([+KU-])\] ---/
         # Separator
         status = Regexp.last_match(1)
         section << MasterFileEntry.new(nil, 0, status)
       else
-        master_file.frontmatter += line
+        master_file.front_matter += line
       end
     end
 
-    master_file.frontmatter.strip!
+    master_file.front_matter.strip!
 
     master_file
   end

@@ -1,5 +1,4 @@
 module Rendering
-
   ##
   # Default implementation of the line renderer.
   # This class does nothing but return the Markdown
@@ -18,7 +17,7 @@ module Rendering
     # subclasses.
     # @return [Array<Array<String, String>>] the templates
     def all_inline_replacements
-      [[ '', '' ]]
+      [['', '']]
     end
 
     ##
@@ -26,7 +25,7 @@ module Rendering
     # subclasses.
     # @return [Array<Array<String, String>>] the templates
     def meta_replacements
-      [[ '', '' ]]
+      [['', '']]
     end
 
     ##
@@ -34,7 +33,7 @@ module Rendering
     # Should be overwritten by the subclasses.
     # @return [Array<Array<String, String>>] the templates
     def formula_replacements
-      [[ '', '' ]]
+      [['', '']]
     end
 
     ##
@@ -45,7 +44,7 @@ module Rendering
       result = input
 
       meta_replacements.each do |m|
-        result = result.gsub(m[0], m[1]);
+        result = result.gsub(m[0], m[1])
       end
       result
     end
@@ -58,7 +57,7 @@ module Rendering
       result = input
 
       formula_replacements.each do |m|
-        result = result.gsub(m[0], m[1]);
+        result = result.gsub(m[0], m[1])
       end
       result
     end
@@ -88,7 +87,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_html(content)
-      "#{content}"
+      content.to_s
     end
 
     ##
@@ -153,9 +152,9 @@ module Rendering
     # @return [String] rendered version of the content
     def render_link(content, target, title)
       if title.nil?
-        %Q{[#{meta(content)}](#{meta(target)})}
+        %{[#{meta(content)}](#{meta(target)})}
       else
-        %Q{[#{meta(content)}](#{meta(target)} "#{title}")}
+        %{[#{meta(content)}](#{meta(target)} "#{title}")}
       end
     end
 
@@ -185,14 +184,14 @@ module Rendering
 
     ##
     # Render a newline
-    def render_newline(content)
+    def render_newline(_content)
       '<br>'
     end
 
     ##
     # Render a quote
     def render_quoted(content)
-      %Q("#{content}")
+      %("#{content}")
     end
   end
 end

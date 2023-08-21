@@ -4,7 +4,6 @@ module Rendering
   ##
   # Base class for all renderer used by the markdown compiler
   class Renderer
-
     attr_reader :line_renderer
     attr_accessor :io
 
@@ -282,7 +281,7 @@ module Rendering
 
       matching_question: erb(
         '  * <%= left %> -> <%= right %>'
-      ),
+      )
 
     }.freeze
 

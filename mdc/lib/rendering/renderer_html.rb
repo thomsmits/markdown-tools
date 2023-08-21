@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'erb'
 
 require_relative 'renderer'
@@ -194,13 +196,13 @@ module Rendering
       ),
 
       index_entry: erb(
-        %q|
+        '
         <tr>
         <td><%= chapter_number %> - <%= chapter_name %></td>
         <td><a href="<%= slide_file %>"><%= slide_name %></a></td>
         <!-- <td><a href="<%= plain_file %>"><%= plain_name %></a></td> -->
         </tr>
-        |
+        '
       ),
 
       index_end: erb(
@@ -342,7 +344,6 @@ module Rendering
     # @param [Array] formats available file formats
     # @return the most preferred image file name
     def choose_image(file_name, formats)
-
       format = nil
 
       formats.each do |f|
@@ -353,7 +354,9 @@ module Rendering
       end
 
       if format.nil?
-        raise Exception, "No suitable format found for image #{file_name}; Found: #{formats}; Supported: #{PREFERRED_IMAGE_FORMATS}"
+        raise StandardError,
+              "No suitable format found for image #{file_name}; " \
+              "Found: #{formats}; Supported: #{PREFERRED_IMAGE_FORMATS}"
       end
 
       if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name

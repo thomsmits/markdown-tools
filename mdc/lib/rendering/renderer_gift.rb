@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'renderer_html'
 require_relative 'line_renderer_gift'
 require_relative '../messages'
@@ -6,63 +8,62 @@ module Rendering
   ##
   # Renderer to GIFT (Moodle exam format)
   class RendererGIFT < RendererHTML
-
     ## ERB templates to be used by the renderer
     TEMPLATES = {
-      button: erb(""),
-      button_with_log: erb(""),
-      button_with_log_pre: erb(""),
-      link_previous: erb(""),
-      live_css: erb(""),
-      live_preview: erb(""),
-      live_preview_float: erb(""),
-      comment_start: erb("// "),
-      comment_end: erb(""),
-      code_start: erb("<code><pre>"),
-      code: erb(%q|<%= line_renderer.code(content) %>|),
-      code_end: erb("</pre></code><% -%>"),
-      image: erb(""),
-      uml: erb(""),
-      chapter_start: erb(""),
-      chapter_end: erb(""),
-      slide_start: erb(%q|::<%= line_renderer.meta(title) %>::[html]<% -%>|),
-      slide_end: erb(""),
-      presentation_start: erb(""),
-      presentation_end: erb(""),
-      vertical_space: erb(""),
-      equation: erb(%q|\\\\[<%= line_renderer.formula(contents) %>\\\\]<%- -%>|),
+      button: erb(''),
+      button_with_log: erb(''),
+      button_with_log_pre: erb(''),
+      link_previous: erb(''),
+      live_css: erb(''),
+      live_preview: erb(''),
+      live_preview_float: erb(''),
+      comment_start: erb('// '),
+      comment_end: erb(''),
+      code_start: erb('<code><pre>'),
+      code: erb('<%= line_renderer.code(content) %>'),
+      code_end: erb('</pre></code><% -%>'),
+      image: erb(''),
+      uml: erb(''),
+      chapter_start: erb(''),
+      chapter_end: erb(''),
+      slide_start: erb('::<%= line_renderer.meta(title) %>::[html]<% -%>'),
+      slide_end: erb(''),
+      presentation_start: erb(''),
+      presentation_end: erb(''),
+      vertical_space: erb(''),
+      equation: erb('\\\\[<%= line_renderer.formula(contents) %>\\\\]<%- -%>'),
       ol_start: erb("<ol start='<%= number %>'><%- -%>"),
       ol_item: erb('<li><%= content %><%- -%>'),
       ol_end: erb('</ol><%- -%>'),
       ul_start: erb('<ul><%- -%>'),
       ul_item: erb('  <li><%= content %><%- -%>'),
       ul_end: erb('</ul><%- -%>'),
-      quote: erb(""),
-      important: erb(""),
-      question: erb(""),
-      box: erb(""),
-      script: erb(""),
-      table_start: erb("<table><thead><tr><%-  -%>"),
+      quote: erb(''),
+      important: erb(''),
+      question: erb(''),
+      box: erb(''),
+      script: erb(''),
+      table_start: erb('<table><thead><tr><%-  -%>'),
       table_separator: erb(''),
       table_end: erb('</tbody></table><%-  -%>'),
       text: erb(%q|<p><%= content.strip.gsub("\n", '<br>') %></p><%-  -%>|),
-      heading: erb(""),
-      toc_start: erb(""),
-      toc_entry: erb(""),
-      toc_end: erb(""),
-      toc_sub_entries_start: erb(""),
-      toc_sub_entry: erb(""),
-      toc_sub_entries_end: erb(""),
-      index_start: erb(""),
-      index_entry: erb(""),
-      index_end: erb(""),
-      html: erb(""),
+      heading: erb(''),
+      toc_start: erb(''),
+      toc_entry: erb(''),
+      toc_end: erb(''),
+      toc_sub_entries_start: erb(''),
+      toc_sub_entry: erb(''),
+      toc_sub_entries_end: erb(''),
+      index_start: erb(''),
+      index_entry: erb(''),
+      index_end: erb(''),
+      html: erb(''),
       multiple_choice_start: erb('<%- -%>{<%- -%>'),
       multiple_choice_end: erb('<%- -%>}'),
-      input_question: erb(%q|{<%= if values.length > 0 then '=' + line_renderer.render_text(values.join(',')) else '' end %>}|),
-      matching_question_start: erb(%q|{<%= ' ' -%>|),
+      input_question: erb("{<%= if values.length > 0 then '=' + line_renderer.render_text(values.join(',')) else '' end %>}"),
+      matching_question_start: erb("{<%= ' ' -%>"),
       matching_question_end: erb('<%- -%>}'),
-      matching_question: erb(" =<%= left %> -> <%= right %><%= ' ' -%>"),
+      matching_question: erb(" =<%= left %> -> <%= right %><%= ' ' -%>")
     }.freeze
 
     def nl
@@ -106,7 +107,7 @@ module Rendering
     # Return a css class for the given alignment constant
     # @param [Fixnum] alignment for the alignment
     # @return [String] css class string to be used in HTML page
-    def class_for_constant(alignment)
+    def class_for_constant(_alignment)
       ''
     end
 
@@ -147,9 +148,9 @@ module Rendering
     # @param [String] text text of the question
     # @param [Boolean] correct indicates if this is a correct answer
     # @param [Float] p_correct percentage for correct answers
-    # @param [Float] p_wrong percentage for wrong answers
-    # @param [bool] inline should we use inline checkboxes
-    def multiple_choice(text, correct, p_correct = 100, p_wrong = 100, inline = false)
+    # @param [Float] _p_wrong percentage for wrong answers
+    # @param [bool] _inline should we use inline checkboxes
+    def multiple_choice(text, correct, p_correct = 100, _p_wrong = 100, _inline = false)
       if p_correct < 100
         @io << "~%#{p_correct}%#{text} "  if correct
         @io << "~%-#{p_correct}%#{text} " unless correct
@@ -161,7 +162,7 @@ module Rendering
 
     ##
     # Beginning of a comment section, i.e. explanations to the current slide
-    def comment_start(spacing = 0)
+    def comment_start(_spacing = 0)
       @orig_io = @io
       @io = StringIO.new
     end

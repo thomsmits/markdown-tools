@@ -64,32 +64,21 @@ module Rendering
       ),
 
       code_end: erb(
-        '\end{lstlisting}\vspace{2mm}' + "\n"
+        "\\end{lstlisting}\\vspace{2mm}\n"
       ),
 
       multiple_choice_start: erb(
-          '\begin{itemize}'
-        ),
+        '\begin{itemize}'
+      ),
 
       multiple_choice_end: erb(
-          '\end{itemize}'
-        ),
+        '\end{itemize}'
+      ),
 
       multiple_choice: erb(
-          %q(\item <%= if correct then '[X]' else '[ ]' end %> <%= text %>)
-        )
+        %q(\item <%= if correct then '[X]' else '[ ]' end %> <%= text %>)
+      )
     }.freeze
-
-    ##
-    # Initialize the renderer
-    # @param [IO] io target of output operations
-    # @param [String] prog_lang the default language for code snippets
-    # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (relative to result_dir)
-    # @param [String] temp_dir location for temporary files
-    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
-      super(io, prog_lang, result_dir, image_dir, temp_dir)
-    end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the
@@ -129,9 +118,9 @@ module Rendering
       width = width_plain || width_slide
 
       # Skip images with width 0
-      unless /^0$/ === width_plain || /^0%$/ === width_plain
-        image_latex(location, title, width, source)
-      end
+      return if /^0$/ === width_plain || /^0%$/ === width_plain
+
+      image_latex(location, title, width, source)
     end
 
     ##

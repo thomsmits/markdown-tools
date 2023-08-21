@@ -57,7 +57,7 @@ class Index
     title2           = main_props['title_2']
     copyright        = main_props['copyright']
     description      = main_props['description']
-    slide_language   = main_props['language'] || "DE"
+    slide_language   = main_props['language'] || 'DE'
 
     set_language(slide_language.downcase)
 

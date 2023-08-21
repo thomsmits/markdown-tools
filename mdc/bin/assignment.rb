@@ -30,7 +30,6 @@ class Assignment
   # @param [String] dest_dir directory to store results in
   # @param [String] prog_lang default programming language
   def self.parse_directory_and_render(src_dir, dest_dir, prog_lang = '')
-
     # Get all files in the directory
     files = Dir.new(src_dir).entries.select { |f| (/^.*\.md$/ =~ f) }
 

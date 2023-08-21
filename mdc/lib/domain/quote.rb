@@ -16,15 +16,15 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      c = render_sub_nodes(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      c = render_sub_nodes(other)
       s = if @source_nodes.nil?
             nil
           else
-            @source_nodes.render(renderer.line_renderer)
+            @source_nodes.render(other.line_renderer)
           end
-      renderer.quote(c, s)
+      other.quote(c, s)
     end
   end
 end

@@ -32,22 +32,22 @@ module Domain
 
     ##
     # Render the Slide
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
       return if @skip
 
-      if renderer.handles_animation?
+      if other.handles_animation?
         (0...max_order + 1).each do |order|
-          renderer.slide_start(@title, @number, @id, contains_code?)
+          other.slide_start(@title, @number, @id, contains_code?)
           @elements.each do |e|
-            e >> renderer if !e.order.nil? && e.order <= order
+            e >> other if !e.order.nil? && e.order <= order
           end
-          renderer.slide_end
+          other.slide_end
         end
       else
-        renderer.slide_start(@title, @number, @id, contains_code?)
-        @elements.each { |e| e >> renderer }
-        renderer.slide_end
+        other.slide_start(@title, @number, @id, contains_code?)
+        @elements.each { |e| e >> other }
+        other.slide_end
       end
     end
 

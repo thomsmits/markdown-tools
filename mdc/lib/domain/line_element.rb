@@ -7,12 +7,6 @@ module Domain
     attr_accessor :type
 
     ##
-    # Create a new instance
-    def initialize
-      super()
-    end
-
-    ##
     # Create a digest of the content
     # @return [String] a digest of the slide
     def digest

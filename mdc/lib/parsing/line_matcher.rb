@@ -139,7 +139,7 @@ module Parsing
     # Match against all matchers
     # @param [String] line input to match against
     # @param [String] line_id id of the current line
-    # @return [Domain::Element] the matching element or nil
+    # @return [Domain::Element|nil] the matching element or nil
     def self.match(line, line_id)
       MATCHERS.each do |m|
         r = m.match_single(line, line_id)

@@ -18,7 +18,7 @@ module Parsing
 
     ##
     # Read the contents of a java properties file into an associative array
-    # @param [String, IO] file name of properties file or IO object to read from
+    # @param [String|IO] file name of properties file or IO object to read from
     # @param [String] separator the separation character
     def read_file_into_array(file, separator)
       lines = if file.respond_to?(:readlines)
@@ -33,7 +33,7 @@ module Parsing
 
       lines.each do |line|
         # ignore comments
-        next if /^[ ]*#.*/ =~ line
+        next if /^ *#.*/ =~ line
 
         # Add entry to the hash
         regex.match(line) { |m| result[m[1].strip] = m[2].strip }

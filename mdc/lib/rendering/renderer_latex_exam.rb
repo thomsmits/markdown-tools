@@ -74,7 +74,7 @@ module Rendering
         \textit{<%= translate(:answer) %>}: \fillin[<%= values.join(', ') %>][10cm]
         \fi|),
 
-      matching_question_start: erb(%q||),
+      matching_question_start: erb(''),
 
       matching_question_end: erb(%q|
         \begin{enumerate}[label=\alph{enumi}.]
@@ -92,7 +92,7 @@ module Rendering
           <% end %>
         <% end %>
         \end{enumerate}|),
-      matching_question: erb(%q||),
+      matching_question: erb('')
     }.freeze
 
     ##
@@ -145,9 +145,9 @@ module Rendering
       width = width_plain || width_slide
 
       # Skip images with width 0
-      unless /^0$/ === width_plain || /^0%$/ === width_plain
-        image_latex(location, title, width, source)
-      end
+      return if /^0$/ === width_plain || /^0%$/ === width_plain
+
+      image_latex(location, title, width, source)
     end
 
     ##
@@ -156,7 +156,7 @@ module Rendering
     # @param [String] right
     def matching_question(left, right)
       @io << @templates[:matching_question].result(binding)
-      @matching_questions << [ left, right ]
+      @matching_questions << [left, right]
     end
 
     ##
@@ -168,11 +168,12 @@ module Rendering
       # Remove duplicate answers
       answers.uniq!
 
-      if shuffle == :answers
+      case shuffle
+      when :answers
         answers.shuffle!
-      elsif shuffle == :questions
+      when :questions
         questions.shuffle!
-      elsif shuffle == :questions_and_answers
+      when :questions_and_answers
         questions.shuffle!
         answers.shuffle!
       end

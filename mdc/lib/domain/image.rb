@@ -28,10 +28,10 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.image(@location, @formats, @alt, @title, @width_slide,
-                     @width_plain, @license.nil? ? nil : @license.source)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.image(@location, @formats, @alt, @title, @width_slide,
+                  @width_plain, @license&.source)
     end
 
     ##

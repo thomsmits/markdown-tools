@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 require_relative 'line_renderer'
 
 module Rendering
   class LineRendererHTML < LineRenderer
-
     META_REPLACEMENTS = [
       ['"',                   '&quot;'],
       ['<',                   '&lt;'],
-      ['>',                   '&gt;'],
-    ]
+      ['>',                   '&gt;']
+    ].freeze
 
     REPLACEMENTS = [
       [/Z\.B\./,              'Z.&nbsp;B.'],
@@ -24,12 +25,12 @@ module Rendering
       [/\.\.\./,              '&hellip;'],
       [/\[\^(.*?)\]/,         '<sup><span title=\'\1\'>*</span></sup>'],
 
-      [/([^<]|^)<->(\s|\))/,    '\1&harr;\2' ],
-      [/([^<]|^)<=>(\s|\))/,    '\1&hArr;\2' ],
-      [/([^<]|^)->(\s|\))/,     '\1&rarr;\2' ],
-      [/([^<]|^)=>(\s|\))/,     '\1&rArr;\2' ],
-      [/([^<]|^)<-(\s|\))/,     '\1&larr;\2' ],
-      [/([^<]|^)<=(\s|\))/,     '\1&lArr;\2' ]
+      [/([^<]|^)<->(\s|\))/,    '\1&harr;\2'],
+      [/([^<]|^)<=>(\s|\))/,    '\1&hArr;\2'],
+      [/([^<]|^)->(\s|\))/,     '\1&rarr;\2'],
+      [/([^<]|^)=>(\s|\))/,     '\1&rArr;\2'],
+      [/([^<]|^)<-(\s|\))/,     '\1&larr;\2'],
+      [/([^<]|^)<=(\s|\))/,     '\1&lArr;\2']
     ].freeze
 
     ##

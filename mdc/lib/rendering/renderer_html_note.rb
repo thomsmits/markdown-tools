@@ -599,10 +599,10 @@ module Rendering
 
       @io << "<section id='#{id}' class='slide'>" << nl
 
-      unless title == @last_title
-        @io << "<h2 class='title'>#{escaped_title} <span class='title_number'></span></h2>" << nl
-        @last_title = title
-      end
+      return if title == @last_title
+
+      @io << "<h2 class='title'>#{escaped_title} <span class='title_number'></span></h2>" << nl
+      @last_title = title
     end
 
     ##

@@ -16,9 +16,9 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.input_question(@values)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.input_question(@values)
     end
   end
 end

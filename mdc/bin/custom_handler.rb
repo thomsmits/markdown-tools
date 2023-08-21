@@ -8,7 +8,6 @@ require_relative '../lib/domain/presentation'
 # Helper class for the direct parsing of markdown to other formats
 # without using the whole logic of the Main class.
 class CustomHandler
-
   ##
   # Normalize all Headings ("#", "###", "####") to "##". This is necessary
   # because the parser only understands # and ##
@@ -31,7 +30,6 @@ class CustomHandler
   # @param [String] prog_language String the programming language
   # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.parse_and_render_internal(lines, location, src_dir, renderer, prog_language, custom_handler)
-
     # TODO: Make output language configurable
 
     normalize_headings!(lines)
@@ -41,7 +39,6 @@ class CustomHandler
     presentation = Domain::Presentation.new('DE', '', '', '', '',
                                             '', '', prog_language, '', '',
                                             false, nil)
-
 
     # Set the slide language
     set_language(presentation.slide_language.downcase)
@@ -79,7 +76,7 @@ class CustomHandler
   # @param [String] tmp_dir directory for temporary files
   # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.convert_file(src_dir, dest_dir, src_file, dest_file, prog_language,
-                        renderer_class, img_dir = 'img', tmp_dir ='../temp', &custom_handler)
+                        renderer_class, img_dir = 'img', tmp_dir = '../temp', &custom_handler)
     # Read source file
     lines = File.readlines("#{src_dir}/#{src_file}", "\n", encoding: 'UTF-8')
 
@@ -108,7 +105,7 @@ class CustomHandler
   # @return [String] the result of the parsing and rendering as a string
   # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.convert_stream(src_dir, dest_dir, prog_language, renderer_class, lines,
-                          img_dir = 'img', tmp_dir ='../temp', &custom_handler)
+                          img_dir = 'img', tmp_dir = '../temp', &custom_handler)
     io = StringIO.new
 
     renderer = Object.const_get(renderer_class).new(io, prog_language, dest_dir,

@@ -2,7 +2,6 @@ require_relative 'chapter'
 require_relative 'toc'
 
 module Domain
-
   ##
   # Representation of the whole presentation
   class Presentation
@@ -17,7 +16,7 @@ module Domain
     # @param [String] slide_language the language
     # @param [String] title1 first title
     # @param [String] title2 second title
-    # @param [String] section_number number of the section
+    # @param [String|Integer] section_number number of the section
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
@@ -88,17 +87,17 @@ module Domain
 
     ##
     # Render the presentation
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
       build_toc
-      renderer.presentation_start(@slide_language, @title1,
-                                  @title2, @section_number, @section_name,
-                                  @copyright, @author, @description, @term, @bibliography)
-      renderer.render_toc(@toc)
-      @chapters.each { |chapter| chapter >> renderer }
-      renderer.presentation_end(@slide_language, @title1,
-                                @title2, @section_number, @section_name,
-                                @copyright, @author, @create_index, @bibliography)
+      other.presentation_start(@slide_language, @title1,
+                               @title2, @section_number, @section_name,
+                               @copyright, @author, @description, @term, @bibliography)
+      other.render_toc(@toc)
+      @chapters.each { |chapter| chapter >> other }
+      other.presentation_end(@slide_language, @title1,
+                             @title2, @section_number, @section_name,
+                             @copyright, @author, @create_index, @bibliography)
     end
 
     ##

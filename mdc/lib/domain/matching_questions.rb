@@ -25,15 +25,15 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.matching_question_start(@shuffle)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.matching_question_start(@shuffle)
       @questions.each do |e|
-        left = e.left.render_sub_nodes(renderer)
-        right = e.right.render_sub_nodes(renderer)
-        renderer.matching_question(left, right)
+        left = e.left.render_sub_nodes(other)
+        right = e.right.render_sub_nodes(other)
+        other.matching_question(left, right)
       end
-      renderer.matching_question_end(@shuffle)
+      other.matching_question_end(@shuffle)
     end
 
     ##

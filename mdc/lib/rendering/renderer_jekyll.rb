@@ -44,7 +44,7 @@ module Rendering
       ),
 
       comment_start: erb(
-        ""
+        ''
       ),
 
       comment_end: erb(
@@ -52,10 +52,10 @@ module Rendering
       ),
 
       code_start: erb(
-        %q|<div class="fw-300 fs-3"><%= caption_command %></div>
+        '<div class="fw-300 fs-3"><%= caption_command %></div>
         {% raw  %}
         ```<%= prog_lang %>
-        |
+        '
       ),
 
       code: erb(
@@ -63,20 +63,20 @@ module Rendering
       ),
 
       code_end: erb(
-        %q|```
+        '```
         {% endraw %}
-        |
+        '
       ),
 
       image: erb(
-        %q{
+        '
         <%- unless /^0$/ === width_plain || /^0%$/ === width_plain -%>
         <figure class="picture">
         <img alt="<%= alt %>" src="<%= chosen_image %>"<%= width_attr_plain %>>
         <figcaption class="fs-2"><%= line_renderer.meta(full_title) %></figcaption>
         </figure>
         <%- end -%>
-        }
+        '
       ),
 
       uml: erb(
@@ -86,7 +86,7 @@ module Rendering
       ),
 
       chapter_start: erb(
-        %q|title: "<%= title %>"
+        'title: "<%= title %>"
           nav_order: <%= nav_order %>
           ---
         <%- if @has_equation -%>
@@ -96,7 +96,7 @@ module Rendering
             onload="renderMathInElement(document.body);">
           </script>
         <%- end -%>
-        <h1 class="fw-700 text-purple-300"><%= title %></h1>|
+        <h1 class="fw-700 text-purple-300"><%= title %></h1>'
       ),
 
       chapter_end: erb(
@@ -105,7 +105,7 @@ module Rendering
       ),
 
       slide_start: erb(
-        ""
+        ''
       ),
 
       slide_end: erb(
@@ -113,13 +113,13 @@ module Rendering
       ),
 
       presentation_start: erb(
-        %q|---
+        '---
           layout: page
-          parent: "<%= section_name %>"|
+          parent: "<%= section_name %>"'
       ),
 
       presentation_end: erb(
-        ""
+        ''
       ),
 
       vertical_space: erb(
@@ -141,7 +141,7 @@ module Rendering
       ),
 
       ol_start: erb(
-        %q|<ol start="<%= number %>"><% no = number %>|
+        '<ol start="<%= number %>"><% no = number %>'
       ),
 
       ol_item: erb(
@@ -167,7 +167,7 @@ module Rendering
       ),
 
       quote: erb(
-        %q|
+        %q(
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
         <%= content %>
         <% if !source.nil? %>
@@ -175,108 +175,108 @@ module Rendering
           <span class='fw-300'><%= source %></span>
         <% end %>
         </div>
-        |
-    ),
+        )
+      ),
 
       important: erb(
-        %q|
+        '
         <div class="bg-yellow-000" style="padding: 0.5em 1.0em">
         <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       question: erb(
-        %q|
+        '
         <div class="bg-green-000" style="padding: 0.5em 1.0em">
         <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       box: erb(
-        %q|
+        '
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
         <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       script: erb(
         '
         <script><%= content %></script>
         '
-    ),
+      ),
 
       table_start: erb(
         "
         <table class='small content'>
         <thead><tr>
         "
-    ),
+      ),
 
       table_separator: erb(
         '
       '
-    ),
+      ),
 
       table_end: erb(
         '
         </tbody></table>
         '
-    ),
+      ),
 
       text: erb(
         '
         <p><%= content %></p>
         '
-    ),
+      ),
 
       heading: erb(
         '
         ### <%= line_renderer.meta(title) %>
         '
-    ),
+      ),
 
       toc_start: erb(
-        ""
-    ),
+        ''
+      ),
 
       toc_entry: erb(
-        ""
-    ),
+        ''
+      ),
 
       toc_end: erb(
         ''
-    ),
+      ),
 
       toc_sub_entries_start: erb(
-        ""
-    ),
+        ''
+      ),
 
       toc_sub_entry: erb(
-        ""
-    ),
+        ''
+      ),
 
       toc_sub_entries_end: erb(
         ''
-    ),
+      ),
 
       index_start: erb(
-        ""
-    ),
+        ''
+      ),
 
       index_entry: erb(
-        ""
-    ),
+        ''
+      ),
 
       index_end: erb(
         ''
-    ),
+      ),
 
       html: erb(
         '<%= content %>'
-    )
+      )
     }.freeze
 
     ##
@@ -334,10 +334,10 @@ module Rendering
       escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
-      unless title == @last_title
-        @io << "## #{escaped_title}" << nl
-        @last_title = title
-      end
+      return if title == @last_title
+
+      @io << "## #{escaped_title}" << nl
+      @last_title = title
     end
 
     ##

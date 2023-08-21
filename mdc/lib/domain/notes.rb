@@ -47,17 +47,17 @@ module Notes
 
     ##
     # Render contents
-    # @param [Rendering::RendererHTMLNote] renderer renderer
+    # @param [Rendering::RendererHTMLNote] other renderer
     #         used for generation
-    def >>(renderer)
-      renderer.index_start(@title, @description)
+    def >>(other)
+      other.index_start(@title, @description)
       @folders.each do |f|
-        renderer.index_folder_entry(
+        other.index_folder_entry(
           f.name, f.title, f.description, f.count, f.all_tags
         )
       end
-      @files.each { |f| f >> renderer }
-      renderer.index_end
+      @files.each { |f| f >> other }
+      other.index_end
     end
 
     ##
@@ -113,9 +113,9 @@ module Notes
 
     ##
     # Render contents
-    # @param [Rendering::RendererHTMLNote] renderer renderer used for generation
-    def >>(renderer)
-      renderer.index_file_entry(@name, @title, @date, @tags, @digest)
+    # @param [Rendering::RendererHTMLNote] other renderer used for generation
+    def >>(other)
+      other.index_file_entry(@name, @title, @date, @tags, @digest)
     end
   end
 end

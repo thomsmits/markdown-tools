@@ -36,9 +36,9 @@ module Rendering
       ),
 
       ol_item: erb(
-        %q|
+        %q(
         \item <%= content %>
-        |
+        )
       ),
 
       ol_end: erb(
@@ -53,37 +53,37 @@ module Rendering
       ),
 
       ul_item: erb(
-        %q|\item <%= content %>|
+        %q(\item <%= content %>)
       ),
 
       ul_end: erb(
-        %q|\end{ul<%= @ul_level %>}|
+        %q(\end{ul<%= @ul_level %>})
       ),
 
       quote: erb(
-        %q|<%- if with_source -%>
+        %q(<%- if with_source -%>
           \quoted{<%= content %>}{<%= source.strip %>}
         <%- else -%>
           \quotedns{<%= content %>}
-        <%- end -%>|
+        <%- end -%>)
       ),
 
       important: erb(
-        %q|
+        %q(
         \important{<%= content %>}
-        |
+        )
       ),
 
       question: erb(
-        %q|
+        %q(
         \question{<%= content %>}
-        |
+        )
       ),
 
       box: erb(
-        %q|
+        %q(
         \mybox{<%= content %>}
-        |
+        )
       ),
 
       script: erb(
@@ -134,9 +134,9 @@ module Rendering
       ),
 
       text: erb(
-        %q|
+        %q(
         <%= content %>
-        \vspace{0.1mm}|
+        \vspace{0.1mm})
       ),
 
       heading_3: erb(
@@ -174,7 +174,7 @@ module Rendering
         )
       ),
 
-      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|),
+      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|)
     }.freeze
 
     ##

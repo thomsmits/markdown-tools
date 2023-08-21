@@ -18,7 +18,6 @@ $project_path = ''
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
-
   ##
   # Main entry point.
   # @param [String] directory Directory with the files to be parsed
@@ -53,8 +52,8 @@ class Main
     copyright        = props['copyright']
     author           = props['author']
     default_syntax   = props['default_syntax']
-    image_dir        = props['image_dir']
-    temp_dir         = props['temp_dir']
+    image_dir        = props['image_dir'] || '.'
+    temp_dir         = props['temp_dir'] || '.'
     description      = props['description']
     term             = props['term']
     slide_language   = props['language']
@@ -66,8 +65,8 @@ class Main
 
     set_language(slide_language.downcase)
 
-    image_dir = image_dir.sub(%r{/$}, '')  unless image_dir.nil?
-    temp_dir  = temp_dir.sub(%r{/$}, '')   unless temp_dir.nil?
+    image_dir = image_dir.sub(%r{/$}, '')
+    temp_dir  = temp_dir.sub(%r{/$}, '')
 
     result_dir = File.dirname(output_file)
 
@@ -99,22 +98,22 @@ class Main
     io.set_encoding('UTF-8')
 
     renderer = case type
-               when 'slide' then
+               when 'slide'
                  Rendering::RendererHTMLPresentation.new(
                    io, default_syntax, result_dir,
                    image_dir, temp_dir
                  )
-               when 'plain' then
+               when 'plain'
                  Rendering::RendererHTMLPlain.new(
                    io, default_syntax, result_dir,
                    image_dir, temp_dir
                  )
-               when 'tex-slide' then
+               when 'tex-slide'
                  Rendering::RendererLatexPresentation.new(
                    io, default_syntax, result_dir,
                    image_dir, temp_dir
                  )
-               when 'tex-plain' then
+               when 'tex-plain'
                  Rendering::RendererLatexPlain.new(
                    io, default_syntax, result_dir,
                    image_dir, temp_dir
@@ -133,4 +132,3 @@ class Main
 end
 
 Main.main(ARGV[0], ARGV[1], ARGV[2])
-

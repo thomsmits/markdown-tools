@@ -25,16 +25,16 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
       p_correct, p_wrong = percentages
-      renderer.multiple_choice_start(@inline)
+      other.multiple_choice_start(@inline)
       @questions.each do |e|
-        text = e.render_sub_nodes(renderer)
+        text = e.render_sub_nodes(other)
         correct = e.correct
-        renderer.multiple_choice(text, correct, p_correct, p_wrong, @inline)
+        other.multiple_choice(text, correct, p_correct, p_wrong, @inline)
       end
-      renderer.multiple_choice_end(@inline)
+      other.multiple_choice_end(@inline)
     end
 
     ##
@@ -52,12 +52,12 @@ module Domain
 
     ##
     # Get the percentage for correct and wrong questions
-    # @return [Array<Float, Float>] percentage for correct and wrong answers
+    # @return [Array<Integer|Float, Integer|Float>] percentage for correct and wrong answers
     def percentages
       no_correct = number_correct
       percentage_correct = (1.0 / no_correct * 100).round(5)
       percentage_wrong   = (1.0 / (@questions.length - no_correct) * 100).round(5)
-      [ percentage_correct, percentage_wrong ]
+      [percentage_correct, percentage_wrong]
     end
   end
 end

@@ -135,11 +135,11 @@ module Rendering
       ),
 
       chapter_start: erb(
-        %q|
+        %q(
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         \Needspace{12\baselineskip}\chapter{<%= title %>}\label{<%= id %>}
 
-        |
+        )
       ),
 
       chapter_end: erb(
@@ -168,8 +168,8 @@ module Rendering
       ),
 
       text: erb(
-        %q|<%= content %>
-        \vspace{0.1mm}|
+        %q(<%= content %>
+        \vspace{0.1mm})
       ),
 
       ul_start: erb(
@@ -182,17 +182,6 @@ module Rendering
         \begin{ul<%= @ul_level %>})
       )
     }.freeze
-
-    ##
-    # Initialize the renderer
-    # @param [IO, StringIO] io target of output operations
-    # @param [String] prog_lang the default language for code snippets
-    # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (relative to result_dir)
-    # @param [String] temp_dir location for temporary files
-    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
-      super(io, prog_lang, result_dir, image_dir, temp_dir)
-    end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the
@@ -230,9 +219,9 @@ module Rendering
     # @param [String] source source of the image
     def image(location, _formats, _alt, title, _width_slide, width_plain, source = nil)
       # Skip images with width 0
-      unless /^0$/ === width_plain || /^0%$/ === width_plain
-        image_latex(location, title, width_plain, source)
-      end
+      return if /^0$/ === width_plain || /^0%$/ === width_plain
+
+      image_latex(location, title, width_plain, source)
     end
 
     ##

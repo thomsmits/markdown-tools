@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require_relative 'line_renderer'
 
 module Rendering
+  ##
+  # Line renderer for LaTeX output.
   class LineRendererLatex < LineRenderer
-
     META_REPLACEMENTS = [
       ['\\',                  '\textbackslash '],
       ['#',                   '\#'],
@@ -11,8 +14,8 @@ module Rendering
       ['{',                   '\{'],
       ['}',                   '\}'],
       ['$',                   '\$'],
-      ['%',                   '\%'],
-    ]
+      ['%',                   '\%']
+    ].freeze
 
     REPLACEMENTS = [
       # Greek characters
@@ -70,12 +73,12 @@ module Rendering
       ['o.J.',                'o.\,J.'],
 
       # Arrows
-      [/([^<]|^)<->(\s|\))/,  '\1$\leftrightarrow$\2' ],
-      [/([^<]|^)<=>(\s|\))/,  '\1$\Leftrightarrow$\2' ],
-      [/([^<]|^)->(\s|\))/,   '\1$\rightarrow$\2' ],
-      [/([^<]|^)=>(\s|\))/,   '\1$\Rightarrow$\2' ],
-      [/([^<]|^)<-(\s|\))/,   '\1$\leftarrow$\2' ],
-      [/([^<]|^)<=(\s|\))/,   '\1$\Leftarrow$\2' ],
+      [/([^<]|^)<->(\s|\))/,  '\1$\leftrightarrow$\2'],
+      [/([^<]|^)<=>(\s|\))/,  '\1$\Leftrightarrow$\2'],
+      [/([^<]|^)->(\s|\))/,   '\1$\rightarrow$\2'],
+      [/([^<]|^)=>(\s|\))/,   '\1$\Rightarrow$\2'],
+      [/([^<]|^)<-(\s|\))/,   '\1$\leftarrow$\2'],
+      [/([^<]|^)<=(\s|\))/,   '\1$\Leftarrow$\2'],
 
       # Dots
       ['...',                 '\dots{}'],
@@ -86,7 +89,7 @@ module Rendering
       ['<',                   '{\textless}'],
       ['>',                   '{\textgreater}'],
       ['~',                   '{\textasciitilde}'],
-      ['^',                   '{\textasciicircum}'],
+      ['^',                   '{\textasciicircum}']
     ].freeze
 
     FORMULA_REPLACEMENTS = [
@@ -124,7 +127,7 @@ module Rendering
       ['Ψ',                   '\Psi{}'],
       ['ψ',                   '\psi{}'],
       ['Ω',                   '\Omega{}'],
-      ['ω',                   '\omega{}'],
+      ['ω',                   '\omega{}']
     ].freeze
 
     def all_inline_replacements
@@ -153,7 +156,6 @@ module Rendering
     end
 
     def render_code(content)
-
       options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
       # size = table ? ',basicstyle=\scriptsize' : ',style=inline' # TODO: Table management
       size = ',style=inline'
@@ -197,12 +199,8 @@ module Rendering
       "[\\cite{#{content}}]"
     end
 
-    def render_link(content, target = '', title = '')
-      if title.nil?
-        %Q(\\href{#{meta(target)}}{#{content}})
-      else
-        %Q(\\href{#{meta(target)}}{#{content}})
-      end
+    def render_link(content, target = '', _title = '')
+      %(\\href{#{meta(target)}}{#{content}})
     end
 
     def render_formula(content)
@@ -217,7 +215,7 @@ module Rendering
       "\\underline{#{content}}"
     end
 
-    def render_newline(content)
+    def render_newline(_content)
       "\\newline\n"
     end
 

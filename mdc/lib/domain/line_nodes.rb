@@ -11,7 +11,7 @@ module Domain
     # Create a new object for the given String
     # @param [String] line
     def initialize(line)
-      @elements = [ UnparsedNode.new(line) ]
+      @elements = [UnparsedNode.new(line)]
     end
 
     ##
@@ -39,7 +39,7 @@ module Domain
     def initialize(content = '')
       @content = content
       # @type [Array<TextNode>] sub nodes
-      @children = [ ]
+      @children = []
     end
 
     ##
@@ -78,9 +78,10 @@ module Domain
       end
     end
 
-private
+    private
+
     def render_children(renderer)
-      if @children.length > 0
+      if @children.length.positive?
         result = ''
         @children.each { |node| result << node.render(renderer) }
         result
@@ -93,8 +94,8 @@ private
   ##
   # Node not parsed
   class UnparsedNode < TextNode
-    def render(renderer)
-      raise NoMethodError("They shall not render me")
+    def render(_renderer)
+      raise NoMethodError('They shall not render me')
     end
   end
 

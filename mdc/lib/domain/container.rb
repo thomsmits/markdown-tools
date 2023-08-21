@@ -28,7 +28,7 @@ module Domain
 
     ##
     # Return the last element added
-    # @return [Element] last element added
+    # @return [Element|nil] last element added
     def current_element
       @elements.last
     end

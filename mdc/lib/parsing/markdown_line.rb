@@ -67,7 +67,7 @@ module Parsing
 
     ## Source code prefixed by four blanks
     def source?
-      /^ {4}[^*\-](.*)/ =~ @line
+      /^ {4}[^*-](.*)/ =~ @line
     end
 
     ## Row of a table
@@ -117,9 +117,9 @@ module Parsing
 
     ## Multiple choice
     def multiple_choice
-      if /^( {2}\* |)\[([ Xx*])\](\.?) (.*)/ =~ @line
-        [Regexp.last_match(2) != ' ', Regexp.last_match(3) == '.', Regexp.last_match(4)]
-      end
+      return unless /^( {2}\* |)\[([ Xx*])\](\.?) (.*)/ =~ @line
+
+      [Regexp.last_match(2) != ' ', Regexp.last_match(3) == '.', Regexp.last_match(4)]
     end
 
     ## Multiple choice
@@ -153,11 +153,9 @@ module Parsing
 
     ## Assignment question
     def matching_question
-      if /^\*(.*)->(.*)$/ =~ @line.strip
-        [Regexp.last_match(1).strip, Regexp.last_match(2).strip]
-      else
-        nil
-      end
+      return unless /^\*(.*)->(.*)$/ =~ @line.strip
+
+      [Regexp.last_match(1).strip, Regexp.last_match(2).strip]
     end
 
     def matching_question?
@@ -226,12 +224,12 @@ module Parsing
 
     ## Separator of table headers
     def table_separator?
-      /^\|[-]{2,}\|.*/ =~ @line.strip
+      /^\|-{2,}\|.*/ =~ @line.strip
     end
 
     ## unordered list, level 1
     def ul1
-      @line[/^ {2}[*\-] (.*)/, 1]
+      @line[/^ {2}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 1
@@ -241,7 +239,7 @@ module Parsing
 
     ## unordered list, level 2
     def ul2
-      @line[/^ {4}[*\-] (.*)/, 1]
+      @line[/^ {4}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 2
@@ -251,7 +249,7 @@ module Parsing
 
     ## unordered list, level 3
     def ul3
-      @line[/^ {6}[*\-] (.*)/, 1]
+      @line[/^ {6}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 3
@@ -383,7 +381,7 @@ module Parsing
     # @param [Domain::Footnote] footnote the footnote to transform
     # @return [[Regexp, String]] ref and inline version
     def self.footnote_ref_to_inline(footnote)
-      [ /\[\^#{footnote.key}\]/, "[^#{footnote.text}]" ]
+      [/\[\^#{footnote.key}\]/, "[^#{footnote.text}]"]
     end
 
     ##
@@ -393,9 +391,9 @@ module Parsing
     # @return [[Regexp, String]] ref and inline version
     def self.link_ref_to_inline(link)
       if link.title
-        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target} \"#{link.title}\")" ]
+        [/\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target} \"#{link.title}\")"]
       else
-        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target})" ]
+        [/\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target})"]
       end
     end
 

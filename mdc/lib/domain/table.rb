@@ -1,11 +1,9 @@
 require_relative 'block_element'
 
 module Domain
-
   ##
   # Table
   class Table < BlockElement
-
     ##
     # A cell of the table outside of the header
     class TableCell
@@ -87,26 +85,26 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used.
+    def >>(other)
       alignment = []
       titles = []
       @headers.each do |h|
         alignment << h.alignment
-        titles << h.nodes.render(renderer.line_renderer)
+        titles << h.nodes.render(other.line_renderer)
       end
 
-      renderer.table_start(titles, alignment)
+      other.table_start(titles, alignment)
 
       @rows.each do |r|
         if r.nil?
-          renderer.table_separator(@headers)
+          other.table_separator(@headers)
         else
-          c = r.map { |e| e.nodes.render(renderer.line_renderer) }
-          renderer.table_row(c, alignment)
+          c = r.map { |e| e.nodes.render(other.line_renderer) }
+          other.table_row(c, alignment)
         end
       end
-      renderer.table_end
+      other.table_end
     end
   end
 end

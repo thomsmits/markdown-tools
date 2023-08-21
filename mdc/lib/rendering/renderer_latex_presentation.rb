@@ -129,7 +129,7 @@ module Rendering
       ),
 
       comment_start: erb(
-        %q|\iffalse|
+        %q(\iffalse)
       ),
 
       comment_end: erb(
@@ -137,10 +137,10 @@ module Rendering
       ),
 
       text: erb(
-        %q|
+        %q(
         <%= content %>
         \vspace{0.1mm}
-        |
+        )
       ),
 
       ul_start: erb(
@@ -159,20 +159,9 @@ module Rendering
           \textbf{<%= line_renderer.meta(title) %>}
           \vspace{2mm}
         |
-      ),
+      )
 
     }.freeze
-
-    ##
-    # Initialize the renderer
-    # @param [IO, StringIO] io target of output operations
-    # @param [String] prog_lang the default language for code snippets
-    # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (relative to result_dir)
-    # @param [String] temp_dir location for temporary files
-    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
-      super(io, prog_lang, result_dir, image_dir, temp_dir)
-    end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the

@@ -354,11 +354,11 @@ module Parsing
         columns.each do |e|
           alignment =
             case e
-            when /^[ ]{2,}.*[ ]{2,}$/
+            when /^ {2,}.* {2,}$/
               Constants::CENTER
-            when /^[ ]{2,}.*[ ]$/
+            when /^ {2,}.* $/
               Constants::RIGHT
-            when /^[ ]{1}.*[ ]+$/
+            when /^ .* +$/
               Constants::LEFT
             when /^!$/
               Constants::SEPARATOR
@@ -386,7 +386,7 @@ module Parsing
         columns.each_with_index do |e, i|
           # The first | in the table will give us an empty element
           # therefore we ignore it (index == 0)
-          row << Domain::Table::TableCell.new(e.gsub('~~pipe~~', '|').strip) if i > 0
+          row << Domain::Table::TableCell.new(e.gsub('~~pipe~~', '|').strip) if i.positive?
         end
         element(ps).add_row(row)
       end
@@ -516,7 +516,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def code_with_stars(ps, line)
       str_line = line.string
-      str_line = str_line[4..-1] if str_line.length > 4
+      str_line = str_line[4..] if str_line.length > 4
       element(ps) << str_line
     end
 
@@ -651,16 +651,14 @@ module Parsing
     ##
     # Returns the license information for the image.
     # @param [String] file the name of the file (with or without extensions)
-    # @return [Domain::License] license of the image
+    # @return [Domain::License|nil] license of the image
     def get_license(file)
       dirname, basename = get_path_and_name(file)
       license_file = "#{dirname}/#{basename}.txt"
 
-      if File.exist?(license_file)
-        Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
-      else
-        nil 
-      end
+      return unless File.exist?(license_file)
+
+      Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
     end
   end
 end

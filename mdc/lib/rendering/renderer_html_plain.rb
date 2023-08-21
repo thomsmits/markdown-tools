@@ -69,7 +69,7 @@ module Rendering
       ),
 
       code_start: erb(
-          "<figure class='code'><%= caption_command %><pre><code class='<%= prog_lang %>'>"
+        "<figure class='code'><%= caption_command %><pre><code class='<%= prog_lang %>'>"
       ),
 
       image: erb(
@@ -197,10 +197,9 @@ module Rendering
       escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
-      unless title == @last_title
+      return if title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl
         @last_title = title
-      end
     end
   end
 end

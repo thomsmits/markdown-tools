@@ -2,7 +2,6 @@ require_relative 'element'
 require_relative 'footnote'
 
 module Domain
-
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
@@ -13,6 +12,7 @@ module Domain
     # @param [String] title title of the chapter
     # @param [String] id chapter id for references
     def initialize(title, id = '')
+      super()
       @title = title
       @id = id
       @slides = []
@@ -71,13 +71,13 @@ module Domain
 
     ##
     # Render contents
-    # @param [Renderer] renderer renderer used for generation
-    def >>(renderer)
+    # @param [Renderer] other renderer used for generation
+    def >>(other)
       page_number = !@slides.empty? ? @slides[0].number - 1 : 0
 
-      renderer.chapter_start(title, page_number, id)
-      @slides.each { |slide| slide >> renderer }
-      renderer.chapter_end
+      other.chapter_start(title, page_number, id)
+      @slides.each { |slide| slide >> other }
+      other.chapter_end
     end
   end
 end

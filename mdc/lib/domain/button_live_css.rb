@@ -15,9 +15,9 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer renderer to be used
-    def >>(renderer)
-      renderer.live_css(@line_id, @fragment)
+    # @param [Rendering::Renderer] other Renderer to be used.
+    def >>(other)
+      other.live_css(@line_id, @fragment)
     end
   end
 end

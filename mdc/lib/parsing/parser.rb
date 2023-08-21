@@ -264,7 +264,6 @@ module Parsing
     # Format (i.e. [...] and [^...]) with inline versions.
     # @param [Domain::Presentation] presentation Storage of results
     def second_pass(presentation)
-
       line_parser = Parsing::LineParser.new
 
       presentation.each do |chapter|
@@ -273,14 +272,14 @@ module Parsing
 
         chapter.each_content_element do |element, type, content|
           # Types of content to do the footnote and inline replacement with
-          if [ Domain::Text,
-               Domain::OrderedListItem,
-               Domain::UnorderedListItem,
-               Domain::Quote,
-               Domain::Question,
-               Domain::Box,
-               Domain::Important,
-               Domain::MultipleChoice].include? type
+          if [Domain::Text,
+              Domain::OrderedListItem,
+              Domain::UnorderedListItem,
+              Domain::Quote,
+              Domain::Question,
+              Domain::Box,
+              Domain::Important,
+              Domain::MultipleChoice].include? type
 
             footnotes.each do |footnote|
               # Replace the footnote references with the footnote
@@ -294,15 +293,13 @@ module Parsing
             end
 
             # Parse the contents of the elements into nodes
-            element.nodes  = line_parser.parse(element.content)
+            element.nodes = line_parser.parse(element.content)
 
             # A quote may have an additional source field
-            if Domain::Quote == type && !element.source.nil?
-              element.source_nodes = line_parser.parse(element.source)
-            end
+            element.source_nodes = line_parser.parse(element.source) if type == Domain::Quote && !element.source.nil?
           end
 
-          if [ Domain::Table ].include? type
+          if [Domain::Table].include? type
             # Parse table contents
             element.headers.each do |header|
               header.nodes = line_parser.parse(header.content)

@@ -1,33 +1,33 @@
+# frozen_string_literal: true
+
 require_relative 'line_renderer_html'
 
 module Rendering
   class LineRendererGIFT < LineRendererHTML
-
     META_REPLACEMENTS = [
-      [ '\\', '\\\\\\'],
-      [ '~', '\~' ],
-      [ '=', '\=' ],
-      [ '#', '\#' ],
-      [ '{', '\{' ],
-      [ '}', '\}' ],
-      [ ':', '\:' ]
-    ]
-
-    REPLACEMENTS = [
+      ['\\', '\\\\\\'],
+      ['~', '\~'],
+      ['=', '\='],
+      ['#', '\#'],
+      ['{', '\{'],
+      ['}', '\}'],
+      [':', '\:']
     ].freeze
 
+    REPLACEMENTS = [].freeze
+
     FORMULA_REPLACEMENTS = [
-      [ '\\', '\\\\\\\\' ],
-      [ '{',  '\{' ],
-      [ '}',  '\}' ],
-      [ "\n", '\n' ],
-      [ '=',  '\=' ],
+      ['\\', '\\\\\\\\'],
+      ['{',  '\{'],
+      ['}',  '\}'],
+      ["\n", '\n'],
+      ['=',  '\=']
     ].freeze
 
     ##
     # Method returning the inline replacements.Should be overwritten by the
     # subclasses.
-    # @return [Array<String>] the templates
+    # @return [Array<[String, String]>] the templates
     def all_inline_replacements
       META_REPLACEMENTS + REPLACEMENTS
     end
@@ -65,12 +65,10 @@ module Rendering
 
     alias render_strongstar render_strongunderscore
 
-
     def render_emphasisunderscore(content)
       "<strong>#{content}</strong>"
     end
 
     alias render_emphasisstar render_emphasisunderscore
-
   end
 end

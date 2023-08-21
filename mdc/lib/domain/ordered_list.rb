@@ -23,11 +23,11 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.ol_start(@start_number)
-      @entries.each { |e| e >> renderer }
-      renderer.ol_end
+    # @param [Rendering::Renderer] other Renderer to be used.
+    def >>(other)
+      other.ol_start(@start_number)
+      @entries.each { |e| e >> other }
+      other.ol_end
     end
   end
 end
