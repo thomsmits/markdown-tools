@@ -68,6 +68,14 @@ class Index
     entries = []
 
     dirs.each do |f|
+
+      # Determine the chapter number from the directory
+      chapter_no_from_file = if /([0-9][0-9])_.*/ =~ f
+                               Regexp.last_match(1)
+                             else
+                               ''
+                             end
+
       prop_file = "#{directory}/#{f}/metadata.properties"
 
       next unless File.exist?(prop_file)
@@ -75,11 +83,12 @@ class Index
 
       chapter_props = Parsing::PropertiesReader.new(prop_file)
 
-      chapter_file = chapter_props['resultfile']
+      chapter_file = chapter_props['resultfile'].gsub('${chapter_no}', chapter_no_from_file)
       slide_file = chapter_file + postfix_slide
       plain_file = chapter_file + postfix_plain
+      chapter_no = chapter_props['chapter_no'] || chapter_no_from_file
 
-      entries << Entry.new(chapter_props['chapter_no'],
+      entries << Entry.new(chapter_no,
                            chapter_props['chapter_name'],
                            slide_file,
                            plain_file)
