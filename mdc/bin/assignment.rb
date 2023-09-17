@@ -44,8 +44,8 @@ end
 if $PROGRAM_NAME == __FILE__
 
   # Get and remove command line arguments
-  src_dir = ARGV.shift
-  dest_dir = ARGV.shift
+  src_dir = ARGV.shift || '.'
+  dest_dir = ARGV.shift || '.'
 
   if ARGV.empty?
     # Only directories given. Compile whole directory
