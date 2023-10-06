@@ -51,7 +51,7 @@ module Rendering
       ),
 
       ol_start: erb(
-        '  <%= number %>'
+        '  '
       ),
 
       ol_item: erb(
