@@ -5,3 +5,5 @@ result/*
 data/_include/lib/mathjax/*
 temp/
 result/
+coverage/
+
