@@ -12,6 +12,9 @@ en:
   output: "Output"
   index: "Index"
   literature: "References"
+  answer: "Answer"
+  matching_question: "Please match the answers"
+  version: "Version"
 
 de:
   contents: "Inhalt"
@@ -27,3 +30,6 @@ de:
   output: "Ausgabe"
   index: "Index"
   literature: "Quellen"
+  answer: "Antwort"
+  matching_question: "Bitte ordnen Sie entsprechend zu"
+  version: "Stand"

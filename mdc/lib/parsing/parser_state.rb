@@ -3,7 +3,7 @@ module Parsing
   # State of the parser
   class ParserState
     attr_accessor :state, :line_counter, :comment_mode, :slide,
-                  :chapter, :language, :current_list, :slide_counter,
+                  :chapter, :prog_lang, :current_list, :slide_counter,
                   :presentation, :file_name, :chapter_counter
 
     ##

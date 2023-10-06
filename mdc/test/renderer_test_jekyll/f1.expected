@@ -1,0 +1,34 @@
+---
+layout: page
+parent: "Section 3"
+title: "Chapter"
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide
+
+<p><strong class="text-purple-100 fw-500">instance_eval</strong>
+</p>
+
+
+<p>It is \( sin(x)=x^{2} \)
+</p>
+
+
+<p>Text before the list
+</p>
+
+<ul>
+<li>Item 1<br>With newline</li>
+<li>Item 2</li>
+<ul>
+<li>Item 2.1</li>
+<li>Item 2.2</li>
+</ul>
+</ul>
+
+<p>Text after the list
+</p>
+
+
+

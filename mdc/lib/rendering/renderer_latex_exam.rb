@@ -48,14 +48,14 @@ module Rendering
 
       text: erb(
         '
-        <%= inline_code(content) %>
+        <%= content %>
         '
       ),
 
       code_start: erb(
         %q(
         \vspace{4mm}
-        \begin{lstlisting}[language=<%= language %>,<%= caption_command %>,basicstyle=\small\ttfamily])
+        \begin{lstlisting}[language=<%= prog_lang %>,<%= caption_command %>,basicstyle=\small\ttfamily])
       ),
 
       code: erb(
@@ -65,18 +65,46 @@ module Rendering
       code_end: erb(
         %q(\end{lstlisting}\vspace{2mm}
         )
-      )
+      ),
+
+      input_question: erb(%q|
+        \ifprintanswers
+        \else
+        \vspace{5mm}
+        \textit{<%= translate(:answer) %>}: \fillin[<%= values.join(', ') %>][10cm]
+        \fi|),
+
+      matching_question_start: erb(''),
+
+      matching_question_end: erb(%q|
+        \begin{enumerate}[label=\alph{enumi}.]
+        <% for answer in answers %>
+          \item <%= answer %>
+        <% end %>
+        \end{enumerate}
+
+        \textit{<%= translate(:matching_question) %>}
+
+        \begin{enumerate}
+        <% for question in questions %>
+          <% if question.length > 0 %>
+            \item \fillin[][1cm] $\rightarrow$  <%= question %>
+          <% end %>
+        <% end %>
+        \end{enumerate}|),
+      matching_question: erb('')
     }.freeze
 
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
+      @matching_questions = []
     end
 
     ##
@@ -117,9 +145,39 @@ module Rendering
       width = width_plain || width_slide
 
       # Skip images with width 0
-      unless /^0$/ === width_plain || /^0%$/ === width_plain
-        image_latex(location, title, width, source)
+      return if /^0$/ === width_plain || /^0%$/ === width_plain
+
+      image_latex(location, title, width, source)
+    end
+
+    ##
+    # Render assignment questions
+    # @param [String] left
+    # @param [String] right
+    def matching_question(left, right)
+      @io << @templates[:matching_question].result(binding)
+      @matching_questions << [left, right]
+    end
+
+    ##
+    # Render end of assignment questions
+    def matching_question_end(shuffle)
+      questions = @matching_questions.map { |e| e[0] }
+      answers   = @matching_questions.map { |e| e[1] }
+
+      # Remove duplicate answers
+      answers.uniq!
+
+      case shuffle
+      when :answers
+        answers.shuffle!
+      when :questions
+        questions.shuffle!
+      when :questions_and_answers
+        questions.shuffle!
+        answers.shuffle!
       end
+      @io << @templates[:matching_question_end].result(binding)
     end
 
     ##

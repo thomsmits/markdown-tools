@@ -27,7 +27,7 @@ class Index
 
     ##
     # Return string representation
-    # @return string representation
+    # @return [String] string representation
     def puts
       "#{chapter_number} - #{chapter_name}"
     end
@@ -47,7 +47,7 @@ class Index
     directory = '.' if directory.nil?
 
     dir = Dir.new(directory)
-    main_prop_file = directory + '/metadata.properties'
+    main_prop_file = "#{directory}/metadata.properties"
     main_props = Parsing::PropertiesReader.new(main_prop_file)
 
     postfix_slide = '-slides.html'
@@ -57,6 +57,9 @@ class Index
     title2           = main_props['title_2']
     copyright        = main_props['copyright']
     description      = main_props['description']
+    slide_language   = main_props['language'] || 'DE'
+
+    set_language(slide_language.downcase)
 
     dirs = []
 
@@ -65,17 +68,27 @@ class Index
     entries = []
 
     dirs.each do |f|
+
+      # Determine the chapter number from the directory
+      chapter_no_from_file = if /([0-9][0-9])_.*/ =~ f
+                               Regexp.last_match(1)
+                             else
+                               ''
+                             end
+
       prop_file = "#{directory}/#{f}/metadata.properties"
 
       next unless File.exist?(prop_file)
+      next if File.exist?("#{directory}/#{f}/.ignore")
 
       chapter_props = Parsing::PropertiesReader.new(prop_file)
 
-      chapter_file = chapter_props['resultfile']
+      chapter_file = chapter_props['resultfile'].gsub('${chapter_no}', chapter_no_from_file)
       slide_file = chapter_file + postfix_slide
       plain_file = chapter_file + postfix_plain
+      chapter_no = chapter_props['chapter_no'] || chapter_no_from_file
 
-      entries << Entry.new(chapter_props['chapter_no'],
+      entries << Entry.new(chapter_no,
                            chapter_props['chapter_name'],
                            slide_file,
                            plain_file)

@@ -33,7 +33,7 @@ module Rendering
 
       link_previous: erb(
         "
-        <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml plain r-stretch' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>attachPreviousHandler($('#<%= line_id %>'));</script>
        "
       ),
@@ -47,36 +47,30 @@ module Rendering
 
       live_preview: erb(
         "
-        <div class='outputhtml plain' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml plain r-stretch' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>attachHandler($('#<%= line_id %>'));</script>
        "
       ),
 
       live_preview_float: erb(
         "
-        <div class='outputhtml' style='float: right;' id='<%= line_id %>' name='html_output'>&nbsp;</div>
+        <div class='outputhtml r-stretch' style='float: right;' id='<%= line_id %>' name='html_output'>&nbsp;</div>
         <script>synchronize($('#<%= line_id %>'));</script>
        "
       ),
 
       comment_start: erb(
-        %q|
-        <div class='more'><img src='img/help.png' onclick="$('#dialog_<%= @dialog_counter %>').dialog('open')"></div>
-        <div id='dialog_<%= @dialog_counter %>' title='<%= translate(:more_info) %>'><p>
-        |
+        '<!--'
       ),
 
       comment_end: erb(
-        "
-        <p></div>
-        <script>$('#dialog_<%= @dialog_counter %>').dialog( { width: 900, autoOpen: false  } );</script>
-        "
+        '-->'
       ),
 
       image: erb(
         "
-        <img class='presentation' src='<%= chosen_image %>' alt='<%= alt %>' title='<%= title %>'<%= width_attr_slide %>>
-        <div class='img_info'><%= inline(full_title) %></div>
+        <img class='presentation r-stretch' src='<%= chosen_image %>' alt='<%= alt %>' title='<%= title %>'<%= width_attr_slide %>>
+        <div class='img_info'><%= line_renderer.meta(full_title) %></div>
         "
       ),
 
@@ -88,7 +82,7 @@ module Rendering
 
       chapter_start: erb(
         "
-        <section id='<%= id %>' class='chapter' data-number='<%= number %>'>
+        <section id='<%= id %>' class='chapter center' data-number='<%= number %>'>
         <h1 class='trenner'><%= title %></h1>
         </section>
        "
@@ -102,7 +96,7 @@ module Rendering
       slide_start: erb(
         "
         <section id='<%= id %>' class='slide' data-number='<%= number %>'>
-        <h2 class='title'><%= inline_code(title) %></h2>
+        <h2 class='title'><%= line_renderer.meta(title) %></h2>
         "
       ),
 
@@ -113,7 +107,7 @@ module Rendering
       ),
 
       presentation_start: erb(
-        "
+        %q{
         <!DOCTYPE html>
         <html lang='de'>
 
@@ -123,18 +117,14 @@ module Rendering
           <meta name='author' content='<%= author %>'>
           <meta name='apple-mobile-web-app-capable' content='yes' />
           <meta name='apple-mobile-web-app-status-bar-style' content='black-translucent' />
-          <link rel='stylesheet' href='css/plain.css'>
-          <link rel='stylesheet' href='css/zenburn.css'>
-          <link rel='stylesheet' href='css/ui-lightness/jquery-ui-1.10.3.css'>
-          <link rel='stylesheet' href='css/main.css'>
-          <link rel='stylesheet' href='css/thomas.css'>
+          <link rel='stylesheet' href='dist/reset.css'>
+          <link rel='stylesheet' href='dist/reveal.css'>
+          <link rel="stylesheet" href="plugin/highlight/github.css">
+          <link rel="stylesheet" href="dist/theme/white.css">
+          <link rel="stylesheet" href="css/custom.css">
 
-          <script src='lib/js/head.min.js'></script>
-          <script src='js/thomas.js'></script>
-          <script src='lib/js/highlight.js'></script>
-          <script src='lib/js/jquery-1.9.1.js'></script>
-          <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
-          <script src='lib/js/jquery-ui-1.10.3.js'></script>
+          <script src='js/jquery-3.6.0.js'></script>
+          <script src='js/custom.js'></script>
         </head>
 
         <body>
@@ -145,14 +135,15 @@ module Rendering
         <!-- Any section element inside of this container is displayed as a slide -->
         <div class='slides'>
 
-        <section data-number=''>
-          <h1><%= title1 %></h1>
-          <h2><%= title2 %></h2>
-          <div class='kapitel_nr' style='margin-top: 50%'><%= section_number %></div>
-          <div class='kapitel'><%= section_name %></div>
-          <img class='plain' style='position: absolute; bottom: -10px; right: 0;' src='img/logo_title.png' alt='Telefon'>
+        <section data-number='' class="title_page center">
+          <h1 class="titlepage"><%= title1 %></h1>
+          <div class="titlepage"><%= title2 %></div>
+          <h2 class="titlepage"><%= section_name %></h2>
+          <h3 class="titlepage"><%= author %></h3>
+          <h4 class="titlepage"><%= term %></h3>
+          <h4 class="titlepage"><%= Time.now.strftime("%Y-%m-%d") %></h3>
         </section>
-        "
+        }
       ),
 
       presentation_end: erb(
@@ -171,25 +162,45 @@ module Rendering
         <div class='progress'><span></span></div>
 
         </div>
-        <div class='menu'>
-        <ul id='menu'>
-        <li id='menu-inhalt'><%= translate(:contents) %>
-        <%= toc_menu %>
-        </ul>
-        </div>
         <div class='copyright'>
         <%= title1 %> | <%= copyright %>
         </div>
           <div class='nummer'>
           <span id='slide_nr'>&nbsp;</span>
         </div>
-          <script src='lib/js/reveal.min.js'></script>
-          <script src='js/settings.js'></script>
+          <script src='dist/reveal.js'></script>
+          <script src="plugin/math/math.js"></script>
+          <script src="plugin/highlight/highlight.js"></script>
+          <script>
+            Reveal.initialize({
+                katex: {
+                  version: 'latest',
+                  delimiters: [
+                    {left: '$$', right: '$$', display: false},
+//                    {left: '$', right: '$', display: false},
+//                    {left: '\\\\(', right: '\\\\)', display: false},
+                    {left: '\\\\[', right: '\\\\]', display: true}
+                 ],
+                 ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+              },
+              plugins: [ RevealMath.KaTeX, RevealHighlight ],
+              progress: true,
+              controlsLayout: 'bottom-right',
+              controls: true,
+              controlsTutorial: false,
+              slideNumber: false,
+              hashOneBasedIndex: true,
+              hash: true,
+              transition: 'none', // none/fade/slide/convex/concave/zoom
+              transitionSpeed: 'default', // default/fast/slow
+              backgroundTransition: 'fade',
+              center: false
+            });
+          </script>
 
-          <script>$('code.inline').each(function(i, e) { hljs.highlightBlock(e) } );</script>
-          <script>$(function() { $('#menu').menu({ position: { my: 'left bottom', at: 'right-5 top+5' } }); });</script>
           <script>Reveal.addEventListener( 'slidechanged', function( event ) { $('#slide_nr').html($(event.currentSlide).attr('data-number')); } );</script>
-          </body>
+
+         </body>
         </html>
         ?
       )
@@ -198,12 +209,12 @@ module Rendering
     ##
     # Initialize the renderer
     # @param [StringIO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
       @dialog_counter = 1 # counter for dialog popups
     end
 

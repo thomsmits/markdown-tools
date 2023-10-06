@@ -12,7 +12,7 @@ require 'stringio'
 
 require_relative '../rendering/renderer_dot'
 
-module Parsing
+module ParsingUML
   class Parser
 
     ##
@@ -32,7 +32,7 @@ module Parsing
 
       ##
       # Create a new object
-      # @param [Domain::Diagram] diagram presentation to work on
+      # @param [DomainUml::Diagram] diagram presentation to work on
       # @param [String] file_name name of the file being parsed
       def initialize(diagram, file_name)
         @diagram = diagram
@@ -61,7 +61,7 @@ module Parsing
 
     ##
     # Parse a file
-    # @param [Domain::Diagram] diagram presentation to work on
+    # @param [DomainUml::Diagram] diagram presentation to work on
     # @param [String] file_name name of the file being parsed
     def parse(file_name, diagram)
 
@@ -72,7 +72,7 @@ module Parsing
 
     ##
     # Parse lines
-    # @param [Domain::Diagram] diagram presentation to work on
+    # @param [DomainUml::Diagram] diagram presentation to work on
     # @param [String] file_name name of the file being parsed
     # @param [Array] lines the contents to be parsed
     # @param [Fixnum] line_number the number of the first line in the file (for error output)
@@ -131,10 +131,10 @@ module Parsing
 
       if line.abstract_clazz?
         name = line.abstract_clazz.strip
-        type = Domain::Clazz.new(name, true)
+        type = DomainUML::Clazz.new(name, true)
       else
         name = line.clazz.strip
-        type = Domain::Clazz.new(name, false)
+        type = DomainUML::Clazz.new(name, false)
       end
 
       types[ name ] = type
@@ -151,7 +151,7 @@ module Parsing
       ps.clazz!
 
       name = line.instance.strip
-      type = Domain::Instance.new(name)
+      type = DomainUML::Instance.new(name)
 
       types[ name ] = type
       ps.current_type = type
@@ -166,9 +166,9 @@ module Parsing
     def handle_type(ps, line, types)
 
       content = line.to_s.strip
-      abstract = ps.current_type.instance_of?(Domain::Interface)
+      abstract = ps.current_type.instance_of?(DomainUML::Interface)
       static = false
-      visibility = Domain::Visibility.parse(content)
+      visibility = DomainUML::Visibility.parse(content)
       content = content[1..content.length]  if visibility
       member = nil
 
@@ -185,14 +185,14 @@ module Parsing
       if /\(.*\)/ =~ content
 
         if content.strip.start_with?(ps.current_type.name)
-          member = Domain::Constructor.new(content.strip, visibility)
+          member = DomainUML::Constructor.new(content.strip, visibility)
         else
-          member = Domain::Method.new(content.strip, visibility, static, abstract)
+          member = DomainUML::Method.new(content.strip, visibility, static, abstract)
         end
 
       else
         puts line
-        member = Domain::Field.new(content.strip, visibility, static || ps.current_type.instance_of?(Domain::Interface))
+        member = DomainUML::Field.new(content.strip, visibility, static || ps.current_type.instance_of?(DomainUML::Interface))
       end
 
       ps.current_type << member
@@ -206,7 +206,7 @@ module Parsing
     def handle_interface_start(ps, line, types)
       ps.interface!
       name = line.interface.strip
-      type = Domain::Interface.new(name)
+      type = DomainUML::Interface.new(name)
       types[ name ] = type
       ps.current_type = type
       ps.diagram << type
@@ -219,7 +219,7 @@ module Parsing
     # @param [Hash] types
     def handle_term(ps, line, types)
       name = line.term.strip
-      type = Domain::Term.new(name)
+      type = DomainUML::Term.new(name)
       types[ name ] = type
       ps.current_type = type
       ps.diagram << type
@@ -274,36 +274,36 @@ module Parsing
         from = type($1, types, ps)
         to = type($2, types, ps)
 
-        if from.instance_of?(Domain::Clazz) && to.instance_of?(Domain::Interface)
-          connector = Domain::Implementation.new(from, to)
+        if from.instance_of?(DomainUML::Clazz) && to.instance_of?(DomainUML::Interface)
+          connector = DomainUML::Implementation.new(from, to)
         else
-          connector = Domain::Inheritance.new(from, to)
+          connector = DomainUML::Inheritance.new(from, to)
         end
 
       # -<>
       elsif /(.*?)[-]{2,}<>(.*)/ =~ content
-        connector = Domain::Aggregation.new(type($1, types, ps), type($2, types, ps),
-                label, card_from, card_to)
+        connector = DomainUML::Aggregation.new(type($1, types, ps), type($2, types, ps),
+                                               label, card_from, card_to)
 
       # -<#>
       elsif /(.*?)[-]{2,}<#>(.*)/ =~ content
-        connector = Domain::Composition.new(type($1, types, ps), type($2, types, ps),
-                                            label, card_from, card_to)
+        connector = DomainUML::Composition.new(type($1, types, ps), type($2, types, ps),
+                                               label, card_from, card_to)
 
       # -.>
       elsif /(.*?)[-]{2,}\.>(.*)/ =~ content
-        connector = Domain::Relation.new(type($1, types, ps), type($2, types, ps),
+        connector = DomainUML::Relation.new(type($1, types, ps), type($2, types, ps),
                                             label, card_from, card_to)
 
       # ->
       elsif /(.*?)[-]{2,}>(.*)/ =~ content
-        connector = Domain::DirectedAssociation.new(type($1, types, ps), type($2, types, ps),
-                                            label, card_from, card_to)
+        connector = DomainUML::DirectedAssociation.new(type($1, types, ps), type($2, types, ps),
+                                                       label, card_from, card_to)
 
       # --
       elsif /(.*?)[-]{2,}(.*)/ =~ content
-        connector = Domain::Association.new(type($1, types, ps), type($2, types, ps),
-                                            label, card_from, card_to)
+        connector = DomainUML::Association.new(type($1, types, ps), type($2, types, ps),
+                                               label, card_from, card_to)
       end
 
       ps.diagram << connector
@@ -313,7 +313,7 @@ module Parsing
       type = types[ name.strip ]
 
       if type.nil?
-        type = Domain::Term.new(name.strip)
+        type = DomainUML::Term.new(name.strip)
         ps.diagram << type
       end
 

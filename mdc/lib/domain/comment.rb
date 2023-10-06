@@ -15,11 +15,11 @@ module Domain
 
     ##
     # Render contents
-    # @param [Renderer] renderer renderer used for generation
-    def >>(renderer)
-      renderer.comment_start(spacing)
-      elements.each { |e| e >> renderer }
-      renderer.comment_end
+    # @param [Renderer] other renderer used for generation
+    def >>(other)
+      other.comment_start(spacing)
+      elements.each { |e| e >> other }
+      other.comment_end
     end
   end
 end

@@ -2,7 +2,7 @@
 
 require_relative 'renderer'
 
-module Rendering
+module RenderingUML
   class RendererDOT < Renderer
 
     ##

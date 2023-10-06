@@ -22,7 +22,7 @@ require_relative '../../lib/domain/box'
 require_relative '../../lib/domain/equation'
 require_relative '../../lib/domain/important'
 require_relative '../../lib/domain/html'
-require_relative '../../lib/domain/multiple_choice_question'
+require_relative '../../lib/domain/multiple_choice_questions'
 require_relative '../../lib/domain/ordered_list'
 require_relative '../../lib/domain/ordered_list_item'
 require_relative '../../lib/domain/question'
@@ -37,6 +37,9 @@ require_relative '../../lib/domain/unordered_list_item'
 require_relative '../../lib/domain/license'
 require_relative '../../lib/domain/footnote'
 require_relative '../../lib/domain/link'
+require_relative '../../lib/domain/matching_question'
+require_relative '../../lib/domain/matching_questions'
+
 require_relative '../constants'
 
 require_relative 'line_matcher'
@@ -150,7 +153,7 @@ module Parsing
     end
 
     ##
-    # Beginning of a fenced (GitHub style) code block "```language"
+    # Beginning of a fenced (GitHub style) code block "```prog_lang"
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def code_fenced_start(ps, line)
@@ -351,11 +354,11 @@ module Parsing
         columns.each do |e|
           alignment =
             case e
-            when /^[ ]{2,}.*[ ]{2,}$/
+            when /^ {2,}.* {2,}$/
               Constants::CENTER
-            when /^[ ]{2,}.*[ ]$/
+            when /^ {2,}.* $/
               Constants::RIGHT
-            when /^[ ]{1}.*[ ]+$/
+            when /^ .* +$/
               Constants::LEFT
             when /^!$/
               Constants::SEPARATOR
@@ -383,7 +386,7 @@ module Parsing
         columns.each_with_index do |e, i|
           # The first | in the table will give us an empty element
           # therefore we ignore it (index == 0)
-          row << e.gsub('~~pipe~~', '|').strip if i > 0
+          row << Domain::Table::TableCell.new(e.gsub('~~pipe~~', '|').strip) if i.positive?
         end
         element(ps).add_row(row)
       end
@@ -414,7 +417,7 @@ module Parsing
     # @param [ParserState] ps State of the parser
     # @param [MarkdownLine] line Line of input
     def source_start(ps, line)
-      slide(ps) << Domain::Source.new(ps.language)
+      slide(ps) << Domain::Source.new(ps.prog_lang)
       line.trim_code_prefix!
       element(ps) << line.string
       ps.code!
@@ -468,7 +471,7 @@ module Parsing
 
       # Catch malformed documents with missing sections
       if slide(ps).nil? && !line.empty?
-        raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+        raise StandardError, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
                          'contains content outside of a subsection. Maybe you ' \
                          "forgot to start the subsection with '## TITLE'? " \
                          "#{ps}, '#{line}'"
@@ -483,7 +486,7 @@ module Parsing
 
           ps.normal!
         else
-          raise Exception, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
+          raise StandardError, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
                            "has a syntax error - #{ps}, '#{line}'"
         end
       else
@@ -513,7 +516,7 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def code_with_stars(ps, line)
       str_line = line.string
-      str_line = str_line[4..-1] if str_line.length > 4
+      str_line = str_line[4..] if str_line.length > 4
       element(ps) << str_line
     end
 
@@ -551,6 +554,27 @@ module Parsing
     # @param [MarkdownLine] line Line of input
     def space_comment(ps, line)
       ps.slide.current_element.spacing = line.space_comment.to_i
+    end
+
+    ##
+    # Start of assignment questions
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def matching_question_start(ps, line)
+      question = Domain::MatchingQuestions.new(line.matching_question_start.to_sym)
+      slide(ps) << question
+      ps.matching_question!
+    end
+
+    ##
+    # A single assignment for the questions
+    # @param [ParserState] ps State of the parser
+    # @param [MarkdownLine] line Line of input
+    def matching_question(ps, line)
+      left, right = line.matching_question
+      element = element(ps)
+      question = Domain::MatchingQuestion.new(left, right)
+      element << question
     end
 
     private
@@ -627,18 +651,14 @@ module Parsing
     ##
     # Returns the license information for the image.
     # @param [String] file the name of the file (with or without extensions)
-    # @return [Domain::License] license of the image
+    # @return [Domain::License|nil] license of the image
     def get_license(file)
       dirname, basename = get_path_and_name(file)
       license_file = "#{dirname}/#{basename}.txt"
 
-      if File.exist?(license_file)
-        license = Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
-      else
-        license = nil
-      end
+      return unless File.exist?(license_file)
 
-      license
+      Domain::License.create_from_props(PropertiesReader.new(license_file, ':'))
     end
   end
 end

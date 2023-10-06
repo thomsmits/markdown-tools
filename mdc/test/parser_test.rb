@@ -7,7 +7,7 @@ require_relative '../lib/domain/footnote'
 require_relative '../lib/domain/equation'
 require_relative '../lib/domain/html'
 require_relative '../lib/domain/important'
-require_relative '../lib/domain/multiple_choice_question'
+require_relative '../lib/domain/multiple_choice_questions'
 require_relative '../lib/domain/ordered_list'
 require_relative '../lib/domain/ordered_list_item'
 require_relative '../lib/domain/question'
@@ -37,373 +37,8 @@ require_relative '../lib/domain/vertical_space'
 #
 class ParserTest < Minitest::Test
   def test_text
-    <<-ENDOFTEXT
-
-# Chapter 1
-
-## Slide 1.1
-
-Text before the list
-
-  * Item 1
-  * Item 2
-    - Item 2.1
-    - Item 2.2
-
-Text after the list
-
-
-## Slide 1.2
-
-```java
-int i = 7;
-i++;
-```
-
-## Slide 1.3
-
-    int k = 9;
-    k++;
-
-## Slide 1.4 --skip--
-
-
-## Slide 1.5
-
-> Quote Line 1
-> Quote Line 2
-
-
-## Slide 1.6
-
->! Important Line 1
->! Important Line 2
->? Question Line 1
->? Question Line 2
-
-
-## Slide 1.7
-
-Some text
-
----
-Comment line
-
-
-## Slide 1.8
-
-```java
-int i = 0;
-```
-<br>
-```cpp
-int k = 17;
-```
-
-
-## Slide 1.9
-
-  1. Item 1
-  2. Item 2
-    1. Item 2.1
-    2. Item 2.2
-
-
-## Slide 1.10
-
-<!-- Comment before -->
-<script>
-  alert('Javascript goes here!');
-</script>
-<!-- Comment after -->
-
-
-# Chapter 2
-
-## Slide 2.1
-
-<b>Bold</b>
-
-
-## Slide 2.2
-
-((Link-Previous))
-((Live-CSS Hugo))
-((Live-Preview))
-((Live-Preview-Float))
-((Button))
-((Button-With-Log))
-((Button-With-Log-Pre))
-
-
-## Slide 2.3
-
-### Heading 3
-#### Heading 4
-##### Heading 5
-
-
-## Slide 2.4
-
-![](img/file.png)/10%//30%/
-
-![](img/file.png)/10%/
-
-![](img/file.png)
-
-![](img/file.png)/10%//0%/
-
-![](img/file.png)/10%//0/
-
-
-
-
-## Slide 2.5
-
-![](img/file.png "Title of image")/10%//30%/
-
-![](img/file.png "Title of image")/10%/
-
-![](img/file.png "Title of image")
-
-
-## Slide 2.6
-
-![Alt title of image](img/file.png)/10%//30%/
-
-![Alt title of image](img/file.png)/10%/
-
-![Alt title of image](img/file.png)
-
-
-## Slide 2.6b
-
-![Alt title of image](img/file.png)<!-- /10%//30%/ -->
-
-![Alt title of image](img/file.png)<!-- /10%/ -->
-
-![Alt title of image](img/file.png)
-
-
-## Slide 2.7
-
-![Alt title of image](img/file.png "Title of image")/10%//30%/
-
-![Alt title of image](img/file.png "Title of image")/10%/
-
-![Alt title of image](img/file.png "Title of image")
-
-
-## Slide 2.7b
-
-![Alt title of image](img/file.png "Title of image")<!-- /10%//30%/ -->
-
-![Alt title of image](img/file.png "Title of image")<!-- /10%/ -->
-
-![Alt title of image](img/file.png "Title of image")
-
-
-## Slide 2.8
-
-@startuml[100%][70%]
-Class { Auto
-  v : int
-  vmax : int
-  beschleunigen()
-}
-
-Instance { Porsche : Auto
-  vmax = 289
-  v = 0
-}
-
-Instance { M6 : Auto
-  vmax = 305
-  v = 0
-}
-
-Porsche : Auto --<<instantiate>>--.> Auto
-M6 : Auto --<<instantiate>>--.> Auto
-@enduml
-
-
-## Slide 2.9
-
-\\[
-\\sum_{i=0}^N{P(X = i)} = 1
-\\]
-
-
-## Slide 2.10
-
-```console
-  0011      3             1101      -3             0111       7
-+ 0010    + 2           + 1110    + -2           + 1011    + -5
-------    ---           ------    ----           ------    ----
-= 0101    = 5           = 1011    = -5           = 0010    =  2
-```
-
-
-## Slide 2.11
-
-  * Item 1
-  * Item 2
-
-Example
-
-  * Item 3
-  * Item 4
-
-
-## Slide 2.12
-
-  1. Item 1
-  2. Item 2
-  3. Item 3
-
-Text
-
-  4. Item 4
-  5. Item 5
-  6. Item 6
-
-
-## Slide 2.13
-
-  4. Item 4
-  5. Item 5
-  6. Item 6
-
-## Slide 2.14
-
-  1. Item 1
-  2. Item 2
-    1. Item 2.1
-    2. Item 2.2
-  3. Item 3
-  4. Item 4
-
-## Slide 3.1
-
-!INCLUDESRC "#{@temp_file.path}"
-!INCLUDESRC[2] "#{@temp_file.path}"
-!INCLUDESRC "#{@temp_file.path}" Java
-!INCLUDESRC[2] "#{@temp_file.path}" Java
-
-## Slide 4.1
-
-Some text
-
-[ ] A question
-[*] A correct question
-[ ] A question
-
-Some text at the end
-
-## Slide 4.2
-
-Some text
-
-[ ]. A question
-[*]. A correct question
-[ ]. A question
-
-Some text at the end
-
-## Slide 5.1
-
-| Dezimal | Binär    | Oktal | Hexadezimal |
-|---------|----------|-------|-------------|
-| 521,125 |          |       |             |
-|         | 1011,11  |       |             |
-|         |          |  15,7 |             |
-|         |          |       | AC,8        |
-
-## Slide 5.2
-
-|  Dezimal  |  Binär          |  Oktal  |  Hexadezimal  |
-|-----------|-----------------|---------|---------------|
-|  521,125  |  1000001001,001 |  1011,1 |  209,2        |
-|   11,75   |        1011,11  |    13,6 |    B,C        |
-|   13,875  |        1101,111 |    15,7 |    D,E        |
-|  172,5    |    10101100,1   |   254,4 |   AC,8        |
-
-## Slide 6.1
-
-Text using a footnote[^1] and another one[^label].
-
-  * In a list[^1]
-
-> Or a quote[^1]
-
->! Or Important[^1]
-
->? Or Question[^1]
-
-Text using a footnote[^withquote] with a quote inside.
-
-[^1]: Footnote with number.
-[^label]: Footnote with label.
-[^withquote]: Footnote containing a "quote"
-
-## Slide 6.2
-
-Text using a footnote[^2] and another one[^label2].
-
----
-[^2]: Footnote with number.
-[^label2]: Footnote with label.
-
-## Slide 6.3
-
-Text with a [one][1] and another [two][2]
-
-  * [three][3]
-  * [four][4]
-
-> Quote [five][5]
-
->! Important [six][6]
-
->? Question [seven][7]
-
->? Question [eight][8]
-
-[1]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle
-[2]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle "Hobbit lifestyles"
-[3]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle 'Hobbit lifestyles'
-[4]: https://en.wikipedia.org/wiki/Hobbit#Lifestyle (Hobbit lifestyles)
-[5]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> "Hobbit lifestyles"
-[6]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> 'Hobbit lifestyles'
-[7]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle> (Hobbit lifestyles)
-[8]: <https://en.wikipedia.org/wiki/Hobbit#Lifestyle>
-
-## Slide 6.4 Comment before slide
-
----
-This is a comment before the actual slide
-
-  * BC1
-  * BC2
----
-
-Slide Text
-
-  * BS1
-  * BS2
-
----
-End Comment
-
-  * BE1
-  * BE2
-
-## Slide 6.5 Just a plain slide
-
-With some text
-
-
-    ENDOFTEXT
+    content = File.read(File.dirname(__FILE__) + "/parser_test/input.md")
+    content.gsub!('#{@temp_file.path}', "#{@temp_file.path}")
   end
 
   ##
@@ -440,7 +75,7 @@ With some text
     assert_equal('Section 3',         presentation.section_name)
     assert_equal(3,                   presentation.section_number)
     assert_equal('(c) 2014',          presentation.copyright)
-    assert_equal('java',              presentation.default_language)
+    assert_equal('java',              presentation.def_prog_lang)
     assert_equal('Test Presentation', presentation.description)
 
     chapter1 = presentation.chapters[0]
@@ -453,7 +88,7 @@ With some text
 
     check_slide(slides[slide_index], 'Slide 1.1', false, false,
                 [Domain::Text, Domain::UnorderedList, Domain::Text],
-                ['Text before the list', '', 'Text after the list']) do |e|
+                ['Text before the list', 'Item 1 Item 2 Item 2.1 Item 2.2', 'Text after the list']) do |e|
 
       assert_equal('Item 1', e[1].entries[0].to_s)
       assert_equal('Item 2', e[1].entries[1].to_s)
@@ -464,12 +99,12 @@ With some text
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.2', true, false,
                 [Domain::Source],
-                ["int i = 7;\ni++;"]) { |e| assert_equal('java', e[0].language) }
+                ["int i = 7;\ni++;"]) { |e| assert_equal('java', e[0].prog_lang) }
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.3', true, false,
                 [Domain::Source],
-                ["int k = 9;\nk++;"]) { |e| assert_equal('java', e[0].language) }
+                ["int k = 9;\nk++;"]) { |e| assert_equal('java', e[0].prog_lang) }
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 1.4', false, true)
@@ -755,9 +390,9 @@ With some text
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[0].to_s)
       assert_equal('AT LEAST SOME', e[1].to_s)
       assert_equal("THIS IS SOURCE CODE\nAT LEAST SOME", e[2].to_s)
-      assert_equal('Java', e[2].language)
+      assert_equal('Java', e[2].prog_lang)
       assert_equal('AT LEAST SOME', e[3].to_s)
-      assert_equal('Java', e[3].language)
+      assert_equal('Java', e[3].prog_lang)
     end
 
     slide_index += 1
@@ -769,11 +404,11 @@ With some text
       assert_equal(false, e[1].inline)
 
       assert_equal('Some text', e[0].to_s)
-      assert_equal('A question', e[1].questions[0].text)
+      assert_equal('A question', e[1].questions[0].content)
       assert_equal(false, e[1].questions[0].correct)
-      assert_equal('A correct question', e[1].questions[1].text)
+      assert_equal('A correct question', e[1].questions[1].content)
       assert_equal(true, e[1].questions[1].correct)
-      assert_equal('A question', e[1].questions[2].text)
+      assert_equal('A question', e[1].questions[2].content)
       assert_equal(false, e[1].questions[2].correct)
       assert_equal('Some text at the end', e[2].to_s)
     end
@@ -787,11 +422,47 @@ With some text
       assert_equal(true, e[1].inline)
 
       assert_equal('Some text', e[0].to_s)
-      assert_equal('A question', e[1].questions[0].text)
+      assert_equal('A question', e[1].questions[0].content)
       assert_equal(false, e[1].questions[0].correct)
-      assert_equal('A correct question', e[1].questions[1].text)
+      assert_equal('A correct question', e[1].questions[1].content)
       assert_equal(true, e[1].questions[1].correct)
-      assert_equal('A question', e[1].questions[2].text)
+      assert_equal('A question', e[1].questions[2].content)
+      assert_equal(false, e[1].questions[2].correct)
+      assert_equal('Some text at the end', e[2].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 4.3', false, false,
+                [Domain::Text, Domain::MultipleChoiceQuestions],
+                [],
+                false) do |e|
+
+      assert_equal(false, e[1].inline)
+
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].content)
+      assert_equal(false, e[1].questions[0].correct)
+      assert_equal('A correct question', e[1].questions[1].content)
+      assert_equal(true, e[1].questions[1].correct)
+      assert_equal('A question', e[1].questions[2].content)
+      assert_equal(false, e[1].questions[2].correct)
+      assert_equal('Some text at the end', e[2].to_s)
+    end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 4.4', false, false,
+                [Domain::Text, Domain::MultipleChoiceQuestions],
+                [],
+                false) do |e|
+
+      assert_equal(true, e[1].inline)
+
+      assert_equal('Some text', e[0].to_s)
+      assert_equal('A question', e[1].questions[0].content)
+      assert_equal(false, e[1].questions[0].correct)
+      assert_equal('A correct question', e[1].questions[1].content)
+      assert_equal(true, e[1].questions[1].correct)
+      assert_equal('A question', e[1].questions[2].content)
       assert_equal(false, e[1].questions[2].correct)
       assert_equal('Some text at the end', e[2].to_s)
     end
@@ -808,25 +479,25 @@ With some text
 
       row = e[0].rows
       assert_nil(row[0])
-      assert_equal('521,125', row[1][0].strip)
-      assert_equal('', row[1][1].strip)
-      assert_equal('', row[1][2].strip)
-      assert_equal('', row[1][3].strip)
+      assert_equal('521,125', row[1][0].to_s)
+      assert_equal('', row[1][1].to_s)
+      assert_equal('', row[1][2].to_s)
+      assert_equal('', row[1][3].to_s)
 
-      assert_equal('', row[2][0].strip)
-      assert_equal('1011,11', row[2][1].strip)
-      assert_equal('', row[2][2].strip)
-      assert_equal('', row[2][3].strip)
+      assert_equal('', row[2][0].to_s)
+      assert_equal('1011,11', row[2][1].to_s)
+      assert_equal('', row[2][2].to_s)
+      assert_equal('', row[2][3].to_s)
 
-      assert_equal('', row[3][0].strip)
-      assert_equal('', row[3][1].strip)
-      assert_equal('15,7', row[3][2].strip)
-      assert_equal('', row[3][3].strip)
+      assert_equal('', row[3][0].to_s)
+      assert_equal('', row[3][1].to_s)
+      assert_equal('15,7', row[3][2].to_s)
+      assert_equal('', row[3][3].to_s)
 
-      assert_equal('', row[4][0].strip)
-      assert_equal('', row[4][1].strip)
-      assert_equal('', row[4][2].strip)
-      assert_equal('AC,8', row[4][3].strip)
+      assert_equal('', row[4][0].to_s)
+      assert_equal('', row[4][1].to_s)
+      assert_equal('', row[4][2].to_s)
+      assert_equal('AC,8', row[4][3].to_s)
     end
 
     slide_index += 1
@@ -841,25 +512,25 @@ With some text
 
       row = e[0].rows
       assert_nil(row[0])
-      assert_equal('521,125', row[1][0].strip)
-      assert_equal('1000001001,001', row[1][1].strip)
-      assert_equal('1011,1', row[1][2].strip)
-      assert_equal('209,2', row[1][3].strip)
+      assert_equal('521,125', row[1][0].to_s)
+      assert_equal('1000001001,001', row[1][1].to_s)
+      assert_equal('1011,1', row[1][2].to_s)
+      assert_equal('209,2', row[1][3].to_s)
 
-      assert_equal('11,75', row[2][0].strip)
-      assert_equal('1011,11', row[2][1].strip)
-      assert_equal('13,6', row[2][2].strip)
-      assert_equal('B,C', row[2][3].strip)
+      assert_equal('11,75', row[2][0].to_s)
+      assert_equal('1011,11', row[2][1].to_s)
+      assert_equal('13,6', row[2][2].to_s)
+      assert_equal('B,C', row[2][3].to_s)
 
-      assert_equal('13,875', row[3][0].strip)
-      assert_equal('1101,111', row[3][1].strip)
-      assert_equal('15,7', row[3][2].strip)
-      assert_equal('D,E', row[3][3].strip)
+      assert_equal('13,875', row[3][0].to_s)
+      assert_equal('1101,111', row[3][1].to_s)
+      assert_equal('15,7', row[3][2].to_s)
+      assert_equal('D,E', row[3][3].to_s)
 
-      assert_equal('172,5', row[4][0].strip)
-      assert_equal('10101100,1', row[4][1].strip)
-      assert_equal('254,4', row[4][2].strip)
-      assert_equal('AC,8', row[4][3].strip)
+      assert_equal('172,5', row[4][0].to_s)
+      assert_equal('10101100,1', row[4][1].to_s)
+      assert_equal('254,4', row[4][2].to_s)
+      assert_equal('AC,8', row[4][3].to_s)
     end
 
     slide_index += 1
@@ -939,7 +610,7 @@ With some text
   # @param [Boolean] code does the slide contain any kind of code
   # @param [Boolean] skipped is the slide skipped
   # @param [Class[]] content_types expected types of content
-  # @param [String[]] contents expected Strings of content
+  # @param [Array<String>] contents expected Strings of content
   # @param [Proc] checks additional checks to be performed
   # @param [Boolean] strip strip content before comparison
   def check_slide(slide, title, code, skipped, content_types = [], contents = [], strip = true, &checks)
@@ -960,7 +631,7 @@ With some text
   ##
   # Create array of lines from a string
   # @param [String] string the string to be converted
-  # @return [String[]] array of lines
+  # @return [Array<String>] array of lines
   def lines(string)
     io = StringIO.new(string)
     result = io.readlines

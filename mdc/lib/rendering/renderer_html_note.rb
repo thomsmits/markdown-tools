@@ -459,7 +459,7 @@ module Rendering
       ),
 
       code_start: erb(
-        "<pre><code class='<%= language %>'>"
+        "<pre><code class='<%= prog_lang %>'>"
       ),
 
       toc_start: erb(
@@ -560,12 +560,12 @@ module Rendering
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir, tags, date, topic)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir, tags, date, topic)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
       @tags = tags
@@ -595,14 +595,14 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] _contains_code indicates whether the slide contains code fragments
     def slide_start(title, _number, id, _contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
 
       @io << "<section id='#{id}' class='slide'>" << nl
 
-      unless title == @last_title
-        @io << "<h2 class='title'>#{escaped_title} <span class='title_number'></span></h2>" << nl
-        @last_title = title
-      end
+      return if title == @last_title
+
+      @io << "<h2 class='title'>#{escaped_title} <span class='title_number'></span></h2>" << nl
+      @last_title = title
     end
 
     ##
@@ -615,7 +615,7 @@ module Rendering
 
     ##
     # Print the first 10 tags.
-    # @param [String[]] tags the tags
+    # @param [Array<String>] tags the tags
     # @return [String] the tags in HTML form
     def print_tags(tags)
       result = ''
@@ -635,7 +635,7 @@ module Rendering
     # @param [String] name name of the file
     # @param [String] title title of the file
     # @param [Date] date creation data
-    # @param [String[]] tags tags
+    # @param [Array<String>] tags tags
     # @param [String] digest digest of file content
     def index_file_entry(name, title, date, tags, digest)
       @io << @templates[:index_file_entry].result(binding)
@@ -647,7 +647,7 @@ module Rendering
     # @param [String] title title of the folder
     # @param [String] description description of folder
     # @param [Fixnum] count number of contained files
-    # @param [String[]] tags the tags
+    # @param [Array<String>] tags the tags
     def index_folder_entry(name, title, description, count, tags)
       @io << @templates[:index_folder_entry].result(binding)
     end

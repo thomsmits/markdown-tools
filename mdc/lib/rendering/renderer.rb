@@ -1,7 +1,12 @@
+require 'erb'
+
 module Rendering
   ##
   # Base class for all renderer used by the markdown compiler
   class Renderer
+    attr_reader :line_renderer
+    attr_accessor :io
+
     ##
     # Remove all trailing spaces on all lines of the string
     # @param [String] input the input string
@@ -16,7 +21,7 @@ module Rendering
     # and trailing spaces before
     # @param [String] input the input string for the template
     def self.erb(input)
-      ERB.new(clean(input), nil, '-')
+      ERB.new(clean(input), trim_mode: '-')
     end
 
     ## ERB templates to be used by the renderer
@@ -24,6 +29,17 @@ module Rendering
       vertical_space: erb(
         '<br>
           '
+      ),
+
+      chapter_start: erb(
+        "
+        # <%= line_renderer.meta(title) %>
+        "
+      ),
+
+      chapter_end: erb(
+        '
+        '
       ),
 
       equation: erb(
@@ -35,33 +51,31 @@ module Rendering
       ),
 
       ol_start: erb(
-        '<%= number %> '
+        '  '
       ),
 
       ol_item: erb(
-        '<%= inline_code(content) %>'
+        '<%= "  "*@ol_level %>1. <%= content %>'
       ),
 
       ol_end: erb(
-        '
-        '
+        ''
       ),
 
       ul_start: erb(
-        '  * '
+        ''
       ),
 
       ul_item: erb(
-        '<%= inline_code(content) %>'
+        '<%= "  "*@ul_level %>* <%= content %>'
       ),
 
       ul_end: erb(
-        '
-        '
+        ' '
       ),
 
       quote: erb(
-        '> <%= inline_code(content) %>
+        '> <%= content %>
         <% if !source.nil? %>
         >> <%= source %>
         <% end %>
@@ -69,17 +83,17 @@ module Rendering
       ),
 
       important: erb(
-        '>!<%= inline_code(content) %>
+        '>! <%= content %>
         '
       ),
 
       question: erb(
-        '>? <%= inline_code(content) %>
+        '>? <%= content %>
         '
       ),
 
       box: erb(
-        '>: <%= inline_code(content) %>
+        '>: <%= content %>
         '
       ),
 
@@ -88,7 +102,7 @@ module Rendering
       ),
 
       code_start: erb(
-        '```<%= language %>'
+        '```<%= prog_lang %>'
       ),
 
       code: erb(
@@ -109,7 +123,7 @@ module Rendering
       ),
 
       heading: erb(
-        '# <%= title %>
+        '# <%= line_renderer.meta(title) %>
         '
       ),
 
@@ -142,7 +156,7 @@ module Rendering
       ),
 
       index_entry: erb(
-        '<%= chapter_name %>
+        '<%= line_renderer.meta(chapter_name) %>
         '
       ),
 
@@ -198,7 +212,8 @@ module Rendering
       ),
 
       comment_start: erb(
-        ''
+        '
+        ---'
       ),
 
       comment_end: erb(
@@ -210,7 +225,8 @@ module Rendering
       ),
 
       slide_start: erb(
-        ''
+        '## <%= line_renderer.meta(title) %>
+        '
       ),
 
       slide_end: erb(
@@ -227,11 +243,16 @@ module Rendering
       ),
 
       text: erb(
-        '<%= inline_code(content) %>'
+        '
+         <%= content %>'
       ),
 
       table_row: erb(
-        '<%= inline_code(content) %>'
+        '<%= content %>'
+      ),
+
+      table_separator: erb(
+        ''
       ),
 
       multiple_choice_start: erb(
@@ -243,46 +264,40 @@ module Rendering
       ),
 
       multiple_choice: erb(
-        "[<%= if correct then 'X' else ' ' end %>] <%= text %>"
+        "[<%= if correct then 'X' else ' ' end %>]<%= if inline then '. ' else ' ' end %><%= text %>"
+      ),
+
+      input_question: erb(
+        %q|<!-- INPUT answer="<%= values.join(',') %>" -->|
+      ),
+
+      matching_question_start: erb(
+        '<!-- SHUFFLE type="<%= shuffle %>" -->'
+      ),
+
+      matching_question_end: erb(
+        ''
+      ),
+
+      matching_question: erb(
+        '  * <%= left %> -> <%= right %>'
       )
+
     }.freeze
-
-    ## Inline replacements
-    INLINE = [].freeze
-
-    ##
-    # Class representing the parts of a line
-    class LinePart
-      attr_accessor :matched, :content
-
-      ##
-      # Create a new instance
-      # @param [String] content content of the part
-      # @param [Boolean] matched indicates whether we have a match
-      #                  or normal text
-      def initialize(content, matched)
-        @matched = matched
-        @content = content
-      end
-
-      ##
-      # @return [String] representation
-      def to_s
-        @content
-      end
-    end
 
     ##
     # Initialize the renderer
-    # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [IO, StringIO] io target of output operations
+    # @param [Rendering::LineRenderer] line_renderer renderer for the lines
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images
     #                 (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, line_renderer, prog_lang, result_dir, image_dir, temp_dir)
       @io = io
-      @language = language
+      @line_renderer = line_renderer
+      @prog_lang = prog_lang
       @result_dir = result_dir
       @image_dir = image_dir
       @temp_dir = temp_dir
@@ -304,66 +319,11 @@ module Rendering
     end
 
     ##
-    # Method returning the inline replacements.Should be overwritten by the
-    # subclasses.
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return [String[]] the templates
-    def all_inline_replacements(_alternate = false)
-      INLINE
-    end
-
-    ##
     # Indicates whether the renderer handles animations or not. false indicates
     # that slides should not be repeated.
     # @return [Boolean] +true+ if animations are supported, otherwise +false+
     def handles_animation?
       false
-    end
-
-    ##
-    # Replace `inline code` in input
-    # @param [String] input the input
-    # @param [boolean] _table code used in a table
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return the input with replaced code fragments
-    def inline_code(input, _table = false, _alternate = false)
-      input
-    end
-
-    ##
-    # Apply regular expressions to replace inline content
-    # @param [String] input Text to be replaced
-    # @param [Boolean] alternate should alternate replacements be used
-    # @return [String] Text with replacements performed
-    def replace_inline_content(input, alternate = false)
-      return '' if input.nil?
-
-      result = input
-
-      all_inline_replacements(alternate).each { |e| result.gsub!(e[0], e[1]) }
-
-      result
-    end
-
-    ##
-    # Split the line into tokens. One token for each code / non-code fragment
-    # is created
-    # @param [String] input the input
-    # @param [Pattern] expression regex used for tokenizing
-    # @return [Renderer::LinePart[]] the input tokenized
-    def tokenize_line(input, expression)
-      parts = []
-      remainder = input
-
-      while expression =~ remainder
-        parts << LinePart.new($`, false)
-        parts << LinePart.new(Regexp.last_match(1), true)
-        remainder = $'
-      end
-
-      parts << LinePart.new(remainder, false)
-
-      parts
     end
 
     ##
@@ -449,7 +409,7 @@ module Rendering
     ##
     # Quote
     # @param [String] content the content
-    # @param [String] source the source of the quote
+    # @param [String, nil] source the source of the quote
     def quote(content, source)
       with_source = !source.nil? && !source.empty?
       @io << @templates[:quote].result(binding)
@@ -485,15 +445,15 @@ module Rendering
 
     ##
     # Start of a code fragment
-    # @param [String] language language of the code fragment
-    # @param [String] caption caption of the sourcecode
-    def code_start(language, caption)
+    # @param [String] prog_lang language of the code fragment
+    # @param [String, nil] caption caption of the sourcecode
+    def code_start(prog_lang, caption)
       @io << @templates[:code_start].result(binding).strip
     end
 
     ##
     # End of a code fragment
-    # @param [String] caption caption of the sourcecode
+    # @param [String, nil] caption caption of the sourcecode
     def code_end(caption)
       @io << @templates[:code_end].result(binding)
     end
@@ -506,19 +466,38 @@ module Rendering
     end
 
     ##
-    # Start of a table
+    # Header of table
     # @param [Array] headers the headers
     # @param [Array] alignment alignments of the cells
     def table_start(headers, alignment)
       @io << @templates[:table_start].result(binding)
+
+      headers.each_with_index do |h, i|
+        @io << "|#{h}" if alignment[i] != Constants::SEPARATOR
+        @io << '|---'  if alignment[i] == Constants::SEPARATOR
+      end
+
+      @io << '|' << nl
+
+      headers.each do |h|
+        @io << '|---'
+      end
+
+      @io << '|' << nl
     end
 
     ##
     # Row of the table
-    # @param [Array] row row of the table
+    # @param [Array<String>] row row of the table
     # @param [Array] alignment alignments of the cells
     def table_row(row, alignment)
-      @io << @templates[:table_row].result(binding)
+      row.each_with_index do |e, i|
+        @io << '|'
+        @io << e     if alignment[i] != Constants::SEPARATOR
+        @io << '---' if alignment[i] == Constants::SEPARATOR
+      end
+
+      @io << '|' << nl
     end
 
     ##
@@ -711,10 +690,17 @@ module Rendering
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
+    # @param [String, nil] source source of the image
     def image(location, formats, alt, title, width_slide,
               width_plain, source = nil)
       @io << @templates[:image].result(binding)
+    end
+
+    ##
+    # Render an input question
+    # @param [Arra<String>] values possible, correct answers
+    def input_question(values)
+      @io << @templates[:input_question].result(binding)
     end
 
     ##
@@ -733,12 +719,34 @@ module Rendering
 
     ##
     # Render multiple choice question
-    # @param [Domain::MultipleChoice] question the question
-    def multiple_choice(question)
-      correct = question.correct
-      text = inline_code(question.text)
-
+    # @param [String] text text of the question
+    # @param [Boolean] correct indicates if this is a correct answer
+    # @param [Float] p_correct percentage for correct answers
+    # @param [Float] p_wrong percentage for wrong answers
+    # @param [Boolean] inline should we use inline checkboxes
+    def multiple_choice(text, correct, p_correct = 1.0, p_wrong = 1.0, inline = false)
       @io << @templates[:multiple_choice].result(binding)
+    end
+
+    ##
+    # Render start of assignment questions
+    # @param [Symbol] shuffle type of shuffling to be performed
+    def matching_question_start(shuffle)
+      @io << @templates[:matching_question_start].result(binding)
+    end
+
+    ##
+    # Render end of assignment questions
+    def matching_question_end(shuffle)
+      @io << @templates[:matching_question_end].result(binding)
+    end
+
+    ##
+    # Render assignment questions
+    # @param [String] left
+    # @param [String] right
+    def matching_question(left, right)
+      @io << @templates[:matching_question].result(binding)
     end
 
     ##

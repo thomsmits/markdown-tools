@@ -31,11 +31,11 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.ul_start
-      @entries.each { |e| e >> renderer }
-      renderer.ul_end
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.ul_start
+      @entries.each { |e| e >> other }
+      other.ul_end
     end
 
     ##

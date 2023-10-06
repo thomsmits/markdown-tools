@@ -3,7 +3,7 @@ module Parsing
   class PropertiesReader
     ##
     # Create a new instance
-    # @param [String|IO] file name of properties file
+    # @param [String, IO] file name of properties file or IO object to read from
     # @param [String] defaults_file file containing the default values
     # @param [String] separator the separation character
     def initialize(file, separator = '=', defaults_file = nil)
@@ -18,7 +18,7 @@ module Parsing
 
     ##
     # Read the contents of a java properties file into an associative array
-    # @param [String|IO] file name of properties file
+    # @param [String|IO] file name of properties file or IO object to read from
     # @param [String] separator the separation character
     def read_file_into_array(file, separator)
       lines = if file.respond_to?(:readlines)
@@ -33,7 +33,7 @@ module Parsing
 
       lines.each do |line|
         # ignore comments
-        next if /^[ ]*#.*/ =~ line
+        next if /^ *#.*/ =~ line
 
         # Add entry to the hash
         regex.match(line) { |m| result[m[1].strip] = m[2].strip }
@@ -57,6 +57,12 @@ module Parsing
     def method_missing(name, *_args)
       key = name.to_s
       self[key]
+    end
+
+    ##
+    # We respond to the missing method call.
+    def respond_to_missing?(*_args)
+      true
     end
 
     ##

@@ -20,14 +20,14 @@ class Main
       type = 'pdf'
     end
 
-    diagram = Domain::Diagram.new
-    p = Parsing::Parser.new
+    diagram = DomainUML::Diagram.new
+    p = ParsingUML::Parser.new
 
     puts "Parsing: #{input_file}"
     p.parse(input_file, diagram)
 
     io = StringIO.new
-    r = Rendering::RendererDOT.new(io)
+    r = RenderingUML::RendererDOT.new(io)
 
     diagram.render(r)
 

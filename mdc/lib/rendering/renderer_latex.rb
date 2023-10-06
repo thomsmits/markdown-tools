@@ -1,9 +1,11 @@
 require_relative 'renderer'
+require_relative 'line_renderer_latex'
 require_relative '../messages'
 require_relative '../constants'
 
 module Rendering
   ##
+  # Render the presentation into a latex file for further processing
   # Render the presentation into a latex file for further processing
   # using LaTeX
   class RendererLatex < Renderer
@@ -19,7 +21,7 @@ module Rendering
         %q(
         \abovedisplayskip=0mm
         \begin{align*}
-        <%= contents %>\end{align*}
+        <%= line_renderer.formula(contents) %>\end{align*}
         \belowdisplayskip=0mm
         )
       ),
@@ -34,9 +36,9 @@ module Rendering
       ),
 
       ol_item: erb(
-        %q|
-        \item <%= inline_code(content) %>
-        |
+        %q(
+        \item <%= content %>
+        )
       ),
 
       ol_end: erb(
@@ -51,37 +53,37 @@ module Rendering
       ),
 
       ul_item: erb(
-        %q|\item <%= inline_code(content) %>|
+        %q(\item <%= content %>)
       ),
 
       ul_end: erb(
-        %q|\end{ul<%= @ul_level %>}|
+        %q(\end{ul<%= @ul_level %>})
       ),
 
       quote: erb(
-        %q|<%- if with_source -%>
-          \quoted{<%= inline_code(content) %>}{<%= inline(source.strip) %>}
+        %q(<%- if with_source -%>
+          \quoted{<%= content %>}{<%= source.strip %>}
         <%- else -%>
-          \quotedns{<%= inline_code(content) %>}
-        <%- end -%>|
+          \quotedns{<%= content %>}
+        <%- end -%>)
       ),
 
       important: erb(
-        %q|
-        \important{<%= inline_code(content, false, true) %>}
-        |
+        %q(
+        \important{<%= content %>}
+        )
       ),
 
       question: erb(
-        %q|
-        \question{<%= inline_code(content, false, true) %>}
-        |
+        %q(
+        \question{<%= content %>}
+        )
       ),
 
       box: erb(
-        %q|
-        \mybox{<%= inline_code(content, false, true) %>}
-        |
+        %q(
+        \mybox{<%= content %>}
+        )
       ),
 
       script: erb(
@@ -91,7 +93,7 @@ module Rendering
       code_start: erb(
         %q(\begin{lstblock}%
         {\setstretch{1.3}\small
-        \begin{lstlisting}[language=<%= language %>,<%= caption_command %>,basicstyle=\scriptsize\ttfamily])
+        \begin{lstlisting}[language=<%= prog_lang %>,<%= caption_command %>,basicstyle=\scriptsize\ttfamily])
       ),
 
       code: erb(
@@ -132,17 +134,17 @@ module Rendering
       ),
 
       text: erb(
-        %q|
-        <%= inline_code(cleaned_content) %>
-        \vspace{0.1mm}|
+        %q(
+        <%= content %>
+        \vspace{0.1mm})
       ),
 
       heading_3: erb(
-        %q|\subsubsection*{<%= inline_code(title) %>}|
+        %q|\subsubsection*{<%= line_renderer.meta(title) %>}|
       ),
 
       heading_4: erb(
-        %q|\paragraph{<%= inline_code(title) %>}|
+        %q|\paragraph{<%= line_renderer.meta(title) %>}|
       ),
 
       image: erb(
@@ -170,158 +172,20 @@ module Rendering
       multiple_choice: erb(
         %q(<%= if correct then '\CorrectChoice' else '\choice' end %> <%= text %>
         )
-      )
+      ),
+
+      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|)
     }.freeze
-
-    ## Inline replacements
-    INLINE_BASIC_BEFORE = [
-      [/\\/,                  '\textbackslash '],
-      ['{',                   '\{'],
-      ['}',                   '\}'],
-      ['α',                   '\begin{math}\alpha\end{math}'],
-      ['β',                   '\begin{math}\beta\end{math}'],
-      ['Γ',                   '\begin{math}\Gamma\end{math}'],
-      ['γ',                   '\begin{math}\gamma\end{math}'],
-      ['Δ',                   '\begin{math}\Delta\end{math}'],
-      ['δ',                   '\begin{math}\delta\end{math}'],
-      ['ϵ',                   '\begin{math}\epsilon\end{math}'],
-      ['ζ',                   '\begin{math}\zeta\end{math}'],
-      ['η',                   '\begin{math}\eta\end{math}'],
-      ['Θ',                   '\begin{math}\Theta\end{math}'],
-      ['θ',                   '\begin{math}\theta\end{math}'],
-      ['ι',                   '\begin{math}\iota\end{math}'],
-      ['κ',                   '\begin{math}\kappa\end{math}'],
-      ['Λ',                   '\begin{math}\Lambda\end{math}'],
-      ['λ',                   '\begin{math}\lambda\end{math}'],
-      ['μ',                   '\begin{math}\mu\end{math}'],
-      ['ν',                   '\begin{math}\nu\end{math}'],
-      ['Ξ',                   '\begin{math}\Xi\end{math}'],
-      ['ξ',                   '\begin{math}\xi\end{math}'],
-      ['Π',                   '\begin{math}\Pi\end{math}'],
-      ['π',                   '\begin{math}\pi\end{math}'],
-      ['ρ',                   '\begin{math}\rho\end{math}'],
-      ['∑',                   '\begin{math}\Sigma\end{math}'],
-      ['σ^2',                 '\begin{math}\sigma\textsuperscript{2}\end{math}'],
-      ['σ',                   '\begin{math}\sigma\end{math}'],
-      ['τ',                   '\begin{math}\tau\end{math}'],
-      ['Υ',                   '\begin{math}\Upsilon\end{math}'],
-      ['υ',                   '\begin{math}\upsilon\end{math}'],
-      ['Φ',                   '\begin{math}\Phi\end{math}'],
-      ['ϕ',                   '\begin{math}\phi\end{math}'],
-      ['φ',                   '\begin{math}\varphi\end{math}'],
-      ['χ',                   '\begin{math}\chi\end{math}'],
-      ['Ψ',                   '\begin{math}\Psi\end{math}'],
-      ['ψ',                   '\begin{math}\psi\end{math}'],
-      ['Ω',                   '\begin{math}\Omega\end{math}'],
-      ['ω', '\begin{math}\omega\end{math}'],
-      ['≤',                   '\begin{math}\le\end{math}'],
-      ['≥',                   '\begin{math}\ge\end{math}'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\begin{math}\2\textsubscript{\3}\end{math}\4'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\begin{math}\2\textsuperscript{\3}\end{math}\4'],
-      [/"(.*?)"/,             '\enquote{\1}'],
-      [/~~(.+?)~~/,           '\sout{\1}'],
-      [/~(.+?)~/,             '\underline{\1}'],
-      [/\[\[(.*?)\]\]/,       '[\cite{\1}]'],
-      [/\[\^(.*?)\]/,         '\footnote{\1}'],
-    ].freeze
-
-    INLINE_BASIC_AFTER = [
-      ['Z.B.',                'Z.\,B.'],
-      ['z.B.',                'z.\,B.'],
-      ['D.h.',                'D.\,h.'],
-      ['d.h.',                'd.\,h.'],
-      ['u.a.',                'u.\,a.'],
-      ['s.u.',                's.\,u.'],
-      ['s.o.',                's.\,o.'],
-      ['u.U.',                'u.\,U.'],
-      ['i.e.',                'i.\,e.'],
-      ['e.g.',                'e.\,g.'],
-      ['o.O.',                'o.\,O.'],
-      ['o.J.',                'o.\,J.'],
-      ['$',                   '\$'],
-      ['%',                   '\%'],
-      [/^-> /,                '$\rightarrow$ '],
-      ['(-> ',                '($\rightarrow$ '],
-      ['(->)',                '($\rightarrow$)'],
-      ['{-> ',                '{$\rightarrow$ '],
-      [' -> ',                ' $\rightarrow$ '],
-      ['<br>-> ',             '<br>$\rightarrow$ '],
-
-      [/^=> /,                '$\Rightarrow$ '],
-      ['(=> ',                '($\Rightarrow$ '],
-      ['(=>)',                '($\Rightarrow$)'],
-      ['{=> ',                '{$\Rightarrow$ '],
-      [' => ',                ' $\Rightarrow$ '],
-      ['<br>=> ',             '<br>$\Rightarrow$ '],
-
-      [/^<- /,                '$\leftarrow$ '],
-      ['(<- ',                '($\leftarrow$ '],
-      ['(<-)',                '($\leftarrow$)'],
-      [' <- ',                ' $\leftarrow$ '],
-      ['{<- ',                '{$\leftarrow$ '],
-      ['<br><- ',             '<br>$\leftarrow$ '],
-
-      [/^<= /,                '$\Leftarrow$ '],
-      ['(<= ',                '($\Leftarrow$ '],
-      ['(<=)',                '($\Leftarrow$)'],
-      ['{<= ',                '{$\Leftarrow$ '],
-      [' <= ',                ' $\Leftarrow$ '],
-      ['<br><= ',             '<br>$\Leftarrow$ '],
-
-      [/^<=> /,               '$\Leftrightarrow$ '],
-      ['(<=> ',               '($\Leftrightarrow$ '],
-      ['(<=>)',               '($\Leftrightarrow$)'],
-      ['{<=> ',               '{$\Leftrightarrow$ '],
-      [' <=> ',               ' $\Leftrightarrow$ '],
-      ['<br><=> ',            '<br>$\Leftrightarrow$ '],
-
-      [/^<-> /,               '$\leftrightarrow$ '],
-      ['(<-> ',               '($\leftrightarrow$ '],
-      ['(<->)',               '($\leftrightarrow$)'],
-      ['{<-> ',               '{$\leftrightarrow$ '],
-      [' <-> ',               ' $\leftrightarrow$ '],
-      ['<br><-> ',            '<br>$\leftrightarrow$ '],
-
-      [/^<br>/, "\\ \\newline\n"],
-      [/<br>/,                "\\newline\n"],
-      ['#',                   '\#'],
-      ['&',                   '\\\\&'],
-      ['_',                   '\_'],
-      ['<<',                  '{\flqq}'],
-      ['>>',                  '{\frqq}'],
-      ['<',                   '{\textless}'],
-      ['>',                   '{\textgreater}'],
-      ['~',                   '{\textasciitilde}'],
-      ['^',                   '{\textasciicircum}'],
-      ['\textsubscript',      '_'],
-      ['\textsuperscript',    '^']
-    ].freeze
-
-    INLINE_NORMAL = INLINE_BASIC_BEFORE + [
-      [/__(.+?)__/,           '\term{\1}\index{\1}'],
-      [/_(.+?)_/,             '\strong{\1}'],
-      [/\*\*(.+?)\*\*/,       '\termenglish{\1}'],
-      [/\*(.+?)\*/,           '\strongenglish{\1}']
-    ] + INLINE_BASIC_AFTER
-
-    INLINE_ALTERNATE = INLINE_BASIC_BEFORE + [
-      [/__(.+?)__/,           '\termalt{\1}\index{\1}'],
-      [/_(.+?)_/,             '\strongalt{\1}'],
-      [/\*\*(.+?)\*\*/,       '\termenglishalt{\1}'],
-      [/\*(.+?)\*/,           '\strongenglishalt{\1}']
-    ] + INLINE_BASIC_AFTER
 
     ##
     # Initialize the renderer
     # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
+      super(io, LineRendererLatex.new(prog_lang), prog_lang, result_dir, image_dir, temp_dir)
     end
 
     ##
@@ -333,82 +197,14 @@ module Rendering
     end
 
     ##
-    # Method returning the inline replacements.Should be overwritten by the
-    # subclasses.
-    # @return [String[]] the templates
-    def all_inline_replacements(alternate = false)
-      alternate ? INLINE_ALTERNATE : INLINE_NORMAL
-    end
-
-    ##
-    # Replace inline elements like emphasis (_..._)
-    #
-    # @param [String] input Text to be replaced
-    # @param [Boolean] alternate should alternate replacements be used
-    # @return [String] Text with replacements performed
-    def inline(input, alternate = false)
-      # Separate Hyperlinks from other contents
-      parts = tokenize_line(input, /(\[.+?\]\(.+?\))/)
-      result = ''
-
-      parts.each do |p|
-        if p.matched
-          # Hyperlink
-          result << p.content.gsub(/\[(.+?)\]\((.+?)\)/, '\href{\2}{\1}').gsub('_', '\_')
-        elsif p.content =~ /\\\[(.*?)\\\]/
-          # Inline formula, treat special
-          sub_parts = tokenize_line(p.content, /\\\[(.*?)\\\]/)
-          sub_parts.each do |sp|
-            result << replace_inline_content(sp.content, alternate)  unless sp.matched
-            result << '\begin{math}' << sp.content << '\end{math}'   if sp.matched
-          end
-        else
-          # No Hyperlink, no inline formula
-          result << replace_inline_content(p.content, alternate)
-        end
-      end
-
-      result
-    end
-
-    ##
-    # Replace `inline code` in input
-    # @param [String] input the input
-    # @param [boolean] table code used in a table
-    # @param [Boolean] alternate should alternate replacements be used
-    # @return the input with replaced code fragments
-    def inline_code(input, table = false, alternate = false)
-      parts = tokenize_line(input, /`(.+?)`/)
-
-      result = ''
-      size = table ? ',basicstyle=\scriptsize' : ',style=inline'
-
-      options = 'literate={-}{{\textminus}}1 {-\ }{{\textminus}\ }2,'
-
-      parts.each do |p|
-        if p.matched
-          result << if p.content.include?('|')
-                      "\\lstinline[#{options}language=#{@language}#{size}]+#{p.content}+"
-                    else
-                      "\\lstinline[#{options}language=#{@language}#{size}]|#{p.content}|"
-                    end
-        else
-          result << inline(p.content, alternate)
-        end
-      end
-
-      result
-    end
-
-    ##
     # Start of a code fragment
-    # @param [String] language language of the code fragment
+    # @param [String] prog_lang language of the code fragment
     # @param [String] caption caption of the sourcecode
-    def code_start(language, caption)
+    def code_start(prog_lang, caption)
       if caption.nil?
         caption_command = ''
       else
-        replaced_caption = replace_inline_content(caption)
+        replaced_caption = line_renderer.meta(caption)
         caption_command = "title={\\fontfamily{phv}\\selectfont\\textbf{#{replaced_caption}}},aboveskip=-0.4 \\baselineskip,"
       end
 
@@ -453,7 +249,7 @@ module Rendering
       i = 0
 
       headers.each_with_index do |e, k|
-        result << "\\textbf{#{inline_code(e)}} " if alignment[k] != Constants::SEPARATOR
+        result << "\\textbf{#{e}} " if alignment[k] != Constants::SEPARATOR
         result << ' & ' if i < headers.size - 1 && alignment[k] != Constants::SEPARATOR
         i += 1
       end
@@ -472,7 +268,7 @@ module Rendering
       row.each_with_index do |e, k|
         next if alignment[k] == Constants::SEPARATOR
 
-        text = inline_code(e, true)
+        text = e
 
         if /\\newline/ === text
           text = "\\specialcell[t]{#{text}}"
@@ -492,7 +288,7 @@ module Rendering
     # @param [String] location path to image
     # @param [String] title title of image
     # @param [String] width width for slide
-    # @param [String] source source of the image
+    # @param [String|nil] source source of the image
     def image_latex(location, title, width, source = nil)
       stripped_location = location.gsub(/\..../, '')
 

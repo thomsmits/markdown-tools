@@ -4,24 +4,49 @@ module Domain
   ##
   # Table
   class Table < BlockElement
-    ## Header of the table
+    ##
+    # A cell of the table outside of the header
+    class TableCell
+      attr_accessor :content, :nodes
+
+      ##
+      # Create a new cell
+      # @param [String] content the content of the cell
+      def initialize(content)
+        @content = content
+        # @type [LineNodes]
+        @nodes = nil
+      end
+
+      ##
+      # Return a string representation
+      # @return [String] String representation
+      def to_s
+        @content.strip
+      end
+    end
+
+    ##
+    # Header of the table
     class TableHeader
-      attr_accessor :name, :alignment, :separator
+      attr_accessor :content, :nodes, :alignment, :separator
 
       ##
       # Create a new header
-      # @param [String] name name of the header
+      # @param [String] content name of the header
       # @param [Fixnum] alignment alignment of the header cell
-      def initialize(name, alignment = Constants::LEFT)
-        @name = name
+      def initialize(content, alignment = Constants::LEFT)
+        @content = content
         @alignment = alignment
+        # @type [LineNodes]
+        @nodes = nil
       end
 
       ##
       # Return the header's name
       # @return String the name of the header
       def to_s
-        @name
+        @content
       end
     end
 
@@ -29,10 +54,12 @@ module Domain
 
     ##
     # Create a new table
-    def initialize
+    # @param [Array<TableHeader>] headers headers of the table
+    # @param [Array<Array<TableCell>>] rows rows of the table
+    def initialize(headers = [], rows = [])
       super('')
-      @headers = []
-      @rows = []
+      @headers = headers
+      @rows = rows
     end
 
     ##
@@ -45,7 +72,7 @@ module Domain
 
     ##
     # Add a full row to the table
-    # @param [Array] row of the row
+    # @param [Array<TableCell>] row of the row
     def add_row(row)
       @rows << row
     end
@@ -58,25 +85,26 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used.
+    def >>(other)
       alignment = []
       titles = []
       @headers.each do |h|
         alignment << h.alignment
-        titles << h.name
+        titles << h.nodes.render(other.line_renderer)
       end
 
-      renderer.table_start(titles, alignment)
+      other.table_start(titles, alignment)
 
       @rows.each do |r|
         if r.nil?
-          renderer.table_separator(@headers)
+          other.table_separator(@headers)
         else
-          renderer.table_row(r, alignment)
+          c = r.map { |e| e.nodes.render(other.line_renderer) }
+          other.table_row(c, alignment)
         end
       end
-      renderer.table_end
+      other.table_end
     end
   end
 end

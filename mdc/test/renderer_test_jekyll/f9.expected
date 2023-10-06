@@ -1,0 +1,14 @@
+---
+layout: page
+parent: "Section 3"
+title: "Chapter"
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide 7.1
+
+<p>This is a <a href="http://www.example.com" title="Title">link](http://www.example.com) and this another one [link</a>
+</p>
+
+
+

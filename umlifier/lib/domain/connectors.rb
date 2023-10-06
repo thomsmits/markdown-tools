@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-module Domain
+module DomainUML
 
   ##
   # Base class for all elements connecting two entities in the diagram

@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+
 require 'stringio'
 require 'tmpdir'
 
@@ -19,24 +20,17 @@ $project_path = ''
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
-
   def self.check_element(container)
     result = false
     container.each do |element|
-      if element.is_a?(Domain::Comment)
-        result |= check_element(element)
-      end
-      if element.is_a?(Domain::Equation)
-        return true
-      end
-      if element.to_s =~ /\\\[(.*?)\\\]/
-        return true
-      end
+      result |= check_element(element) if element.is_a?(Domain::Comment)
+      return true if element.is_a?(Domain::Equation)
+      return true if element.to_s =~ /\\\[(.*?)\\\]/
     end
     result
   end
 
-  def self.has_equation(chapters)
+  def self.equation?(chapters)
     chapters.each do |chapter|
       chapter.each do |slides|
         slides.each do |slide|
@@ -48,7 +42,6 @@ class Main
   end
 
   def self.main(directory, result_dir)
-
     # Determine my own directory to make invocation of the UML tool
     # more dynamic
     $project_path = File.expand_path($PROGRAM_NAME)
@@ -57,15 +50,20 @@ class Main
 
     # Read global properties
     dir = Dir.new(directory)
-    prop_file = directory + '/metadata.properties'
+    prop_file = "#{directory}/metadata.properties"
 
-    defaults_file = directory + '/..' + '/metadata.properties'
+    # Determine the chapter number from the directory
+    chapter_no_from_file = if /([0-9][0-9])_.*/ =~ File.basename(File.expand_path(directory))
+                             Regexp.last_match(1).to_i
+                           end
+
+    defaults_file = "#{directory}/../metadata.properties"
 
     props = Parsing::PropertiesReader.new(prop_file, '=', defaults_file)
 
     title1           = props['title_1']
     title2           = props['title_2']
-    chapter_no       = props['chapter_no']
+    chapter_no       = props['chapter_no'] || chapter_no_from_file
     chapter_name     = props['chapter_name']
     copyright        = props['copyright']
     author           = props['author']
@@ -108,19 +106,20 @@ class Main
 
       chapters << presentation.chapters
       puts "Parsing: #{file}"
-      parser.parse(directory + '/' + file, default_syntax, presentation)
+      parser.parse("#{directory}/#{file}", default_syntax, presentation)
       parser.second_pass(presentation)
 
-      has_equation = has_equation(chapters)
+      has_equation = equation?(chapters)
 
       io = StringIO.new
       io.set_encoding('UTF-8')
 
-      output_file = result_dir + "/" + File.basename(file, ".md") +  ".markdown"
+      output_file = "#{result_dir}/#{File.basename(file, '.md')}.markdown"
 
       renderer = Rendering::RendererJekyll.new(
-                     io, default_syntax, result_dir,
-                     image_dir, temp_dir, nav_order + 1, has_equation)
+        io, default_syntax, result_dir,
+        image_dir, temp_dir, nav_order + 1, has_equation
+      )
 
       puts "Result written to: #{output_file}"
 
@@ -130,9 +129,9 @@ class Main
     end
 
     # Write index file
-    File.open(result_dir + "/" + "index.markdown", 'w', encoding: 'UTF-8') do |f|
+    File.open("#{result_dir}/index.markdown", 'w', encoding: 'UTF-8') do |f|
       f << "---\n"
-      f << "title: #{chapter_name}\n"
+      f << "title: \"#{chapter_name}\"\n"
       f << "layout: default\n"
       f << "has_children: true\n"
       f << "has_toc: true\n"
@@ -143,20 +142,20 @@ class Main
     end
 
     # Write welcome file
-    File.open(result_dir + "/../" + "index.markdown", 'w', encoding: 'UTF-8') do |f|
+    File.open("#{result_dir}/../index.markdown", 'w', encoding: 'UTF-8') do |f|
       nl = "\n"
-      f << %Q|---| << nl
-      f << %Q|layout: home| << nl
-      f << %Q|---| << nl
-      f << %Q|| << nl
-      f << %Q|<div class="text-purple-200 fs-6 fw-700">#{title1}</div>| << nl
-      f << %Q|<div class="fs-4 fw-700">#{title2}</div>| << nl
-      f << %Q|<div>#{term}</div>| << nl
-      f << %Q|<div class="fs-3 fw-300">Stand: #{Time.new.strftime("%d.%m.%Y")}</div>| << nl
-      #f << %Q|<br>| << nl
-      #f << %Q|<div class="fs-4 fw-500">#{copyright}</div>| << nl
-      f << %Q|<br>| << nl
-      f << %Q|<div class="text-grey-dk-000 fs-2 fw-300">#{description}</div>| << nl
+      f << %(---) << nl
+      f << %(layout: home) << nl
+      f << %(---) << nl
+      f << %() << nl
+      f << %(<div class="text-purple-200 fs-6 fw-700">#{title1}</div>) << nl
+      f << %(<div class="fs-4 fw-700">#{title2}</div>) << nl
+      f << %(<div>#{term}</div>) << nl
+      f << %(<div class="fs-3 fw-300">Stand: #{Time.new.strftime('%d.%m.%Y')}</div>) << nl
+      # f << %Q|<br>| << nl
+      # f << %Q|<div class="fs-4 fw-500">#{copyright}</div>| << nl
+      f << %(<br>) << nl
+      f << %(<div class="text-grey-dk-000 fs-2 fw-300">#{description}</div>) << nl
     end
   end
 end

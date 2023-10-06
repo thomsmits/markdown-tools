@@ -49,6 +49,8 @@ module Rendering
               pdfsubject={<%= title2 %>}
           }
 
+          \usepackage[euler]{textgreek}
+
           \mode<presentation>{\input{beamer-template}}
           \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
           \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
@@ -103,9 +105,9 @@ module Rendering
       chapter_start: erb(
         %q|
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        \section{<%= inline_code(title) %>}\label{<%= id %>}
+        \section{<%= line_renderer.render_text(title) %>}\label{<%= id %>}
         \begin{frame}
-        \separator{<%= title %>}
+        \separator{<%= line_renderer.render_text(title) %>}
         \end{frame}|
       ),
 
@@ -117,7 +119,7 @@ module Rendering
       slide_start: erb(
         %q|
         % ********************************************************************************************
-        \begin{frame}[fragile]{<%= inline_code(title) %>}\label{<%= id %>}
+        \begin{frame}[fragile]{<%= line_renderer.render_text(title) %>}\label{<%= id %>}
         |
       ),
 
@@ -127,7 +129,7 @@ module Rendering
       ),
 
       comment_start: erb(
-        %q|\iffalse|
+        %q(\iffalse)
       ),
 
       comment_end: erb(
@@ -135,10 +137,10 @@ module Rendering
       ),
 
       text: erb(
-        %q|
-        <%= inline_code(content) %>
+        %q(
+        <%= content %>
         \vspace{0.1mm}
-        |
+        )
       ),
 
       ul_start: erb(
@@ -149,19 +151,17 @@ module Rendering
           \vspace{0.2mm}
         <%- end -%>
         \begin{ul<%= @ul_level %>})
-      )
-    }.freeze
+      ),
 
-    ##
-    # Initialize the renderer
-    # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
-    # @param [String] result_dir location for results
-    # @param [String] image_dir location for generated images (relative to result_dir)
-    # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
-    end
+      heading_3: erb(
+        %q|
+          \vspace{1.5mm}
+          \textbf{<%= line_renderer.meta(title) %>}
+          \vspace{2mm}
+        |
+      )
+
+    }.freeze
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the

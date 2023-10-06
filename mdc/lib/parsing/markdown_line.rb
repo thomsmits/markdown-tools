@@ -30,7 +30,7 @@ module Parsing
     # Cut away the first characters
     # @param [Fixnum] from number of characters to be removed
     def substr!(from)
-      @line = @line[from..-1]
+      @line = @line[from..]
     end
 
     ##
@@ -67,7 +67,7 @@ module Parsing
 
     ## Source code prefixed by four blanks
     def source?
-      /^ {4}[^*\-](.*)/ =~ @line
+      /^ {4}[^*-](.*)/ =~ @line
     end
 
     ## Row of a table
@@ -112,14 +112,14 @@ module Parsing
 
     ## Just text
     def text?
-      /^[=\-A-Za-z0-9_ÄÖÜäöüß`*"].*$/ =~ @line
+      /^[=\-A-Za-z0-9_ÄÖÜäöüß`*"()].*$/ =~ @line
     end
 
     ## Multiple choice
     def multiple_choice
-      if /^(  \* |)\[([ Xx*])\](\.?) (.*)/ =~ @line
-        [Regexp.last_match(2) != ' ', Regexp.last_match(3) == '.', Regexp.last_match(4)]
-      end
+      return unless /^( {2}\* |)\[([ Xx*])\](\.?) (.*)/ =~ @line
+
+      [Regexp.last_match(2) != ' ', Regexp.last_match(3) == '.', Regexp.last_match(4)]
     end
 
     ## Multiple choice
@@ -135,6 +135,31 @@ module Parsing
     ## Image
     def image?
       /!\[.*\]\(.+\)/ =~ @line
+    end
+
+    ## Input Question
+    def input_question?
+      /<!-- INPUT.*-->/ =~ @line
+    end
+
+    ## Assignment question
+    def matching_question_start
+      @line[/<!-- SHUFFLE type="(.*)" -->/, 1]
+    end
+
+    def matching_question_start?
+      !!matching_question_start
+    end
+
+    ## Assignment question
+    def matching_question
+      return unless /^\*(.*)->(.*)$/ =~ @line.strip
+
+      [Regexp.last_match(1).strip, Regexp.last_match(2).strip]
+    end
+
+    def matching_question?
+      !!matching_question
     end
 
     ## Beginning of a fenced code block
@@ -199,12 +224,12 @@ module Parsing
 
     ## Separator of table headers
     def table_separator?
-      /^\|[-]{2,}\|.*/ =~ @line.strip
+      /^\|-{2,}\|.*/ =~ @line.strip
     end
 
     ## unordered list, level 1
     def ul1
-      @line[/^ {2}[*\-] (.*)/, 1]
+      @line[/^ {2}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 1
@@ -214,7 +239,7 @@ module Parsing
 
     ## unordered list, level 2
     def ul2
-      @line[/^ {4}[*\-] (.*)/, 1]
+      @line[/^ {4}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 2
@@ -224,7 +249,7 @@ module Parsing
 
     ## unordered list, level 3
     def ul3
-      @line[/^ {6}[*\-] (.*)/, 1]
+      @line[/^ {6}[*-] (.*)/, 1]
     end
 
     ## unordered list, level 3
@@ -280,7 +305,7 @@ module Parsing
     ## Title of a slide
     def slide_title
       title = @line[/^ *## (.*)/, 1]
-      title.nil? ? nil : title.sub(/##/, '').strip
+      title&.sub(/##/, '')&.strip
     end
 
     ## Title of a slide
@@ -291,7 +316,7 @@ module Parsing
     ## Title of a chapter
     def chapter_title
       title = @line[/^ *# (.*)/, 1]
-      title.nil? ? nil : title.sub(/#/, '').strip
+      title&.sub(/#/, '')&.strip
     end
 
     ## Title of a chapter
@@ -320,13 +345,22 @@ module Parsing
 
     ## Include of sources
     def code_include
-      if /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/ =~ @line.strip
+      case @line.strip
+      when /^!INCLUDESRC\[([0-9]*?)\] "(.*?)" (.*?)$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, Regexp.last_match(3)]
-      elsif /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/ =~ @line.strip
+      when /^!INCLUDESRC\[([0-9]*?)\] "(.*?)"$/
         [Regexp.last_match(2), Regexp.last_match(1).to_i, '']
-      elsif /^!INCLUDESRC "(.*?)" (.*?)$/ =~ @line.strip
+      when /^!INCLUDESRC "(.*?)" (.*?)$/
         [Regexp.last_match(1), 0, Regexp.last_match(2)]
-      elsif /^!INCLUDESRC "(.*?)"$/ =~ @line.strip
+      when /^!INCLUDESRC "(.*?)"$/
+        [Regexp.last_match(1), 0, '']
+      when /^<!-- include_src\[([0-9]*?)\]: "(.*?)" (.*?) -->$/
+        [Regexp.last_match(2), Regexp.last_match(1).to_i, Regexp.last_match(3)]
+      when /^<!-- include_src\[([0-9]*?)\]: "(.*?)" -->$/
+        [Regexp.last_match(2), Regexp.last_match(1).to_i, '']
+      when /^<!-- include_src: "(.*?)" (.*?) -->$/
+        [Regexp.last_match(1), 0, Regexp.last_match(2)]
+      when /^<!-- include_src: "(.*?)" -->$/
         [Regexp.last_match(1), 0, '']
       end
     end
@@ -347,7 +381,7 @@ module Parsing
     # @param [Domain::Footnote] footnote the footnote to transform
     # @return [[Regexp, String]] ref and inline version
     def self.footnote_ref_to_inline(footnote)
-      [ /\[\^#{footnote.key}\]/, "[^#{footnote.text}]" ]
+      [/\[\^#{footnote.key}\]/, "[^#{footnote.text}]"]
     end
 
     ##
@@ -357,9 +391,9 @@ module Parsing
     # @return [[Regexp, String]] ref and inline version
     def self.link_ref_to_inline(link)
       if link.title
-        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target} \"#{link.title}\")" ]
+        [/\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target} \"#{link.title}\")"]
       else
-        [ /\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target})" ]
+        [/\[(.*?)\] ?\[#{link.key}\]/, "[\\1](#{link.target})"]
       end
     end
 

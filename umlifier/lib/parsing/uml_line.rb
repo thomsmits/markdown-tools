@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-module Parsing
+module ParsingUML
 
   ##
   # Wrapper around a single line to ease matching of special elements that

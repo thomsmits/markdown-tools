@@ -1,0 +1,29 @@
+---
+layout: page
+parent: "Section 3"
+title: "Chapter"
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide 4.1
+
+<p>Some text
+</p>
+
+[ ] A question
+[X] A correct <code>question</code>
+[ ] A question
+
+<p>Some text at the end
+</p>
+
+## Slide 4.2
+
+<p>Some text
+</p>
+
+[ ]. A question
+[X]. A correct <strong class="text-grey-dk-000 fw-500">question</strong>
+[ ]. A question
+
+

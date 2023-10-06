@@ -1,4 +1,5 @@
 require_relative 'renderer_html'
+require_relative 'line_renderer_jekyll'
 require_relative '../messages'
 
 module Rendering
@@ -43,7 +44,7 @@ module Rendering
       ),
 
       comment_start: erb(
-        ""
+        ''
       ),
 
       comment_end: erb(
@@ -51,9 +52,10 @@ module Rendering
       ),
 
       code_start: erb(
-        %q|<div class="fw-300 fs-3"><%= caption_command %></div>
-        ```<%= language %>
-        |
+        '<div class="fw-300 fs-3"><%= caption_command %></div>
+        {% raw  %}
+        ```<%= prog_lang %>
+        '
       ),
 
       code: erb(
@@ -61,18 +63,20 @@ module Rendering
       ),
 
       code_end: erb(
-        '```'
+        '```
+        {% endraw %}
+        '
       ),
 
       image: erb(
-        %q{
+        '
         <%- unless /^0$/ === width_plain || /^0%$/ === width_plain -%>
         <figure class="picture">
         <img alt="<%= alt %>" src="<%= chosen_image %>"<%= width_attr_plain %>>
-        <figcaption class="fs-2"><%= inline(full_title) %></figcaption>
+        <figcaption class="fs-2"><%= line_renderer.meta(full_title) %></figcaption>
         </figure>
         <%- end -%>
-        }
+        '
       ),
 
       uml: erb(
@@ -82,14 +86,17 @@ module Rendering
       ),
 
       chapter_start: erb(
-      %q|title: <%= title %>
+        'title: "<%= title %>"
           nav_order: <%= nav_order %>
           ---
         <%- if @has_equation -%>
-          <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-          <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.css" integrity="sha384-bYdxxUwYipFNohQlHt0bjN/LCpueqWz13HufFEV1SUatKs1cm4L6fFgCi1jT643X" crossorigin="anonymous">
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/katex.min.js" integrity="sha384-Qsn9KnoKISj6dI8g7p1HBlNpVx0I8p1SvlwOldgi3IorMle61nQy4zEahWYtljaz" crossorigin="anonymous"></script>
+          <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.2/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+            onload="renderMathInElement(document.body);">
+          </script>
         <%- end -%>
-        <h1 class="fw-700 text-purple-300"><%= title %></h1>|
+        <h1 class="fw-700 text-purple-300"><%= title %></h1>'
       ),
 
       chapter_end: erb(
@@ -98,7 +105,7 @@ module Rendering
       ),
 
       slide_start: erb(
-        ""
+        ''
       ),
 
       slide_end: erb(
@@ -106,23 +113,23 @@ module Rendering
       ),
 
       presentation_start: erb(
-        "---
+        '---
           layout: page
-          parent: <%= section_name %>"
+          parent: "<%= section_name %>"'
       ),
 
       presentation_end: erb(
-        ""
+        ''
       ),
 
       vertical_space: erb(
-      '
+        '
           <br>
           '
       ),
 
       equation: erb(
-      %q(
+        %q(
         <div>
         \[
         \begin{align*}
@@ -134,11 +141,11 @@ module Rendering
       ),
 
       ol_start: erb(
-        %q|<ol start="<%= number %>"><% no = number %>|
+        '<ol start="<%= number %>"><% no = number %>'
       ),
 
       ol_item: erb(
-        '  <li><%= inline_code(content) %></li>'
+        '  <li><%= content %></li>'
       ),
 
       ol_end: erb(
@@ -152,7 +159,7 @@ module Rendering
       ),
 
       ul_item: erb(
-        '  <li><%= inline_code(content) %></li>'
+        '  <li><%= content %></li>'
       ),
 
       ul_end: erb(
@@ -160,209 +167,130 @@ module Rendering
       ),
 
       quote: erb(
-        %q|
+        %q(
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         <% if !source.nil? %>
           <br>
           <span class='fw-300'><%= source %></span>
         <% end %>
         </div>
-        |
-    ),
+        )
+      ),
 
       important: erb(
-        %q|
+        '
         <div class="bg-yellow-000" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       question: erb(
-        %q|
+        '
         <div class="bg-green-000" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       box: erb(
-        %q|
+        '
         <div class="bg-grey-lt-100" style="padding: 0.5em 1.0em">
-        <%= inline_code(content) %>
+        <%= content %>
         </div>
-        |
-    ),
+        '
+      ),
 
       script: erb(
-      '
+        '
         <script><%= content %></script>
         '
-    ),
+      ),
 
       table_start: erb(
-      "
+        "
         <table class='small content'>
         <thead><tr>
         "
-    ),
+      ),
 
       table_separator: erb(
+        '
       '
-      '
-    ),
+      ),
 
       table_end: erb(
-      '
+        '
         </tbody></table>
         '
-    ),
+      ),
 
       text: erb(
-      '
-        <p><%= inline_code(content) %></p>
         '
-    ),
+        <p><%= content %></p>
+        '
+      ),
 
       heading: erb(
-      '
-        ### <%= title %>
         '
-    ),
+        ### <%= line_renderer.meta(title) %>
+        '
+      ),
 
       toc_start: erb(
-      ""
-    ),
+        ''
+      ),
 
       toc_entry: erb(
-      ""
-    ),
+        ''
+      ),
 
       toc_end: erb(
-      ''
-    ),
+        ''
+      ),
 
       toc_sub_entries_start: erb(
-      ""
-    ),
+        ''
+      ),
 
       toc_sub_entry: erb(
-      ""
-    ),
+        ''
+      ),
 
       toc_sub_entries_end: erb(
-      ''
-    ),
+        ''
+      ),
 
       index_start: erb(
-      ""
-    ),
+        ''
+      ),
 
       index_entry: erb(
-      ""
-    ),
+        ''
+      ),
 
       index_end: erb(
-      ''
-    ),
+        ''
+      ),
 
       html: erb(
-      '<%= content %>'
-    )
+        '<%= content %>'
+      )
     }.freeze
-
-    ## Inline replacements
-    INLINE = [
-      [/"(.*?)"/,                        '&bdquo;\1&ldquo;'],
-      [/\[\^(.*?)\]/,                    '<sup><span title=\'\1\'>&#x22C6;</span></sup>'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})_([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\2<sub>\3</sub>\4'],
-      [/(^|[ _*(>])([A-Za-z0-9\-+]{1,2})\^([A-Za-z0-9+\-]{1,})([_*<,.;:!) ]|$)/,
-       '\1\2<sup>\3</sup>\4'],
-      [/__(.+?)__/,                      '<em class="text-purple-100 fw-500">\1</em>'],
-      [/_(.+?)_/,                        '<strong class="text-purple-100 fw-500">\1</strong>'],
-      [/\*\*(.+?)\*\*/,                  '<em class="text-grey-dk-000 fw-500">\1</em>'],
-      [/\*(.+?)\*/,                      '<strong class="text-grey-dk-000 fw-300">\1</strong>'],
-      [/~~(.+?)~~/,                      '<del>\1</del>'],
-      [/~(.+?)~/,                        '<u>\1</u>'],
-      [/Z\.B\./,                         'Z.&nbsp;B.'],
-      [/z\.B\./,                         'z.&nbsp;B.'],
-      [/D\.h\./,                         'D.&nbsp;h.'],
-      [/d\.h\./,                         'd.&nbsp;h.'],
-      [/u\.a\./,                         'u.&nbsp;a.'],
-      [/s\.o\./,                         's.&nbsp;o.'],
-      [/s\.u\./,                         's.&nbsp;u.'],
-      [/i\.e\./,                         'i.&nbsp;e.'],
-      [/e\.g\./,                         'e.&nbsp;g.'],
-      [/---/,                            '&mdash;'],
-      [/--/,                             '&ndash;'],
-      [/\.\.\./,                         '&hellip;'],
-
-      [/^-> /,                '&rarr; '],
-      ['(-> ',                '(&rarr; '],
-      ['(->)',                '(&rarr;)'],
-      ['{-> ',                '{&rarr; '],
-      [' -> ',                ' &rarr; '],
-      ['<br>-> ',             '<br>&rarr; '],
-
-      [/^=> /,                '&rArr; '],
-      ['(=> ',                '(&rArr; '],
-      ['(=>)',                '(&rArr;)'],
-      ['{=> ',                '{&rArr; '],
-      [' => ',                ' &rArr; '],
-      ['<br>=> ',             '<br>&rArr; '],
-
-      [/^<- /,                '&larr; '],
-      ['(<- ',                '(&larr; '],
-      ['(<-)',                '(&larr;)'],
-      [' <- ',                ' &larr; '],
-      ['{<- ',                '{&larr; '],
-      ['<br><- ',             '<br>&larr; '],
-
-      [/^<= /,                '&lArr; '],
-      ['(<= ',                '(&lArr; '],
-      ['(<=)',                '(&lArr;)'],
-      ['{<= ',                '{&lArr; '],
-      [' <= ',                ' &lArr; '],
-      ['<br><= ',             '<br>&lArr; '],
-
-      [/^<=> /,               '&hArr; '],
-      ['(<=> ',               '(&hArr; '],
-      ['(<=>)',               '(&hArr;)'],
-      ['{<=> ',               '{&hArr; '],
-      [' <=> ',               ' &hArr; '],
-      ['<br><=> ',            '<br>&hArr; '],
-
-      [/^<-> /,               '&harr; '],
-      ['(<-> ',               '(&harr; '],
-      ['(<->)',               '(&harr;)'],
-      ['{<-> ',               '{&harr; '],
-      [' <-> ',               ' &harr; '],
-      ['<br><-> ',            '<br>&harr; ']
-
-    ].freeze
-
-    ##
-    # Method returning the inline replacements. Should be overwritten by the
-    # subclasses.
-    # @param [Boolean] _alternate should alternate replacements be used
-    # @return [String[]] the templates
-    def all_inline_replacements(_alternate = false)
-      INLINE
-    end
 
     ##
     # Initialize the renderer
-    # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [IO, StringIO] io target of output operations
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
     # @param [Numeric] nav_order navigation order of the page
     # @param [Boolean] has_equation indicates that the presentation contains an equation
-    def initialize(io, language, result_dir, image_dir, temp_dir, nav_order, has_equation)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir, nav_order, has_equation)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
+      @line_renderer = LineRendererJekyll.new(prog_lang)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
       @nav_order = nav_order
@@ -403,13 +331,13 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
-      unless title == @last_title
-        @io << "## #{escaped_title}" << nl
-        @last_title = title
-      end
+      return if title == @last_title
+
+      @io << "## #{escaped_title}" << nl
+      @last_title = title
     end
 
     ##
@@ -420,16 +348,6 @@ module Rendering
     def chapter_start(title, number, id)
       nav_order = @nav_order
       @io << @templates[:chapter_start].result(binding)
-    end
-
-    ##
-    # Replace inline elements like emphasis (_..._)
-    #
-    # @param [String] input Text to be replaced
-    # @param [boolean] alternate alternate emphasis to be used
-    # @return [String] Text with replacements performed
-    def inline(input, alternate = false, inline_math_start = '\(', inline_math_end = '\)')
-      super(input, alternate, '<span>\(', '\)</span>')
     end
   end
 end

@@ -14,6 +14,7 @@ require_relative 'line_matcher'
 require_relative 'properties_reader'
 require_relative 'parser_state'
 require_relative 'parser_handler'
+require_relative 'line_parser'
 
 module Parsing
   ##
@@ -44,11 +45,11 @@ module Parsing
 
     ##
     # Parse the given string or file into the given presentation.
-    # @param [String] lines input to be parsed
+    # @param [Array<String>] lines input to be parsed
     # @param [String] file_name File to be parsed
-    # @param [String] default_language language for code blocks not tagged
+    # @param [String] def_prog_lang language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
-    def parse_lines(lines, file_name, default_language, presentation)
+    def parse_lines(lines, file_name, def_prog_lang, presentation)
       #     begin
       ps = ParserState.new(presentation, file_name, @last_slide_counter,
                            :NORMAL,
@@ -67,9 +68,10 @@ module Parsing
                            :UML,
                            :IMPORTANT,
                            :QUESTION,
-                           :BOX)
+                           :BOX,
+                           :MATCHING_QUESTION)
 
-      ps.language = default_language
+      ps.prog_lang = def_prog_lang
       ps.comment_mode = false
       ps.chapter_counter = @chapter_counter
 
@@ -80,7 +82,7 @@ module Parsing
         ps.line_counter = ps.line_counter + 1
 
         if line.code_include? && !ps.code_or_code_fenced?
-          # !INCLUDESRC[x] "path" Language
+          # !INCLUDESRC[x] "path" prog_lang
           handler.code_include(ps, line)
 
         elsif line.multiple_choice?
@@ -149,6 +151,16 @@ module Parsing
         elsif ps.uml?
           handler.uml_line(ps, line)
 
+        elsif line.matching_question_start?
+          # <!-- SHUFFLE type="questions" -->
+          handler.matching_question_start(ps, line)
+
+        elsif ps.matching_question? && !line.matching_question?
+          ps.normal!
+
+        elsif ps.matching_question? && line.matching_question?
+          handler.matching_question(ps, line)
+
         elsif line.ol1? && !ps.code_or_code_fenced?
           #   1. item
           handler.ol1(ps, line)
@@ -211,7 +223,7 @@ module Parsing
           # <!-- Spacing: xx -->
           handler.space_comment(ps, line)
 
-        elsif line.comment? & !line.image?
+        elsif line.comment? && !line.image? && !line.input_question?
           # <!-- --> but not after an image, to allow image dimensions
           # in comments.
           handler.comment(ps, line)
@@ -238,32 +250,36 @@ module Parsing
     ##
     # Parse the given file
     # @param [String] file_name File to be parsed
-    # @param [String] default_language language for code blocks not tagged
+    # @param [String] def_prog_lang language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
-    def parse(file_name, default_language, presentation)
+    def parse(file_name, def_prog_lang, presentation)
       # Read whole file into an array to allow looking ahead
       lines = File.readlines(file_name, "\n", encoding: 'UTF-8')
-      parse_lines(lines, file_name, default_language, presentation)
+      parse_lines(lines, file_name, def_prog_lang, presentation)
     end
 
     ##
-    # Perform a second pass to replace links and footnotes in the reference
+    # Perform a second pass to replace links and footnotes in the reference.
+    # Split up the text of the elements into node lists.
     # Format (i.e. [...] and [^...]) with inline versions.
     # @param [Domain::Presentation] presentation Storage of results
     def second_pass(presentation)
+      line_parser = Parsing::LineParser.new
 
       presentation.each do |chapter|
         footnotes = chapter.footnotes
         links = chapter.links
 
-        chapter.each_content_element do |type, content|
-          # Types of content to do the footnote replacement with
-          if [ Domain::Text,
-               Domain::OrderedListItem,
-               Domain::UnorderedListItem,
-               Domain::Quote,
-               Domain::Question,
-               Domain::Important ].include? type
+        chapter.each_content_element do |element, type, content|
+          # Types of content to do the footnote and inline replacement with
+          if [Domain::Text,
+              Domain::OrderedListItem,
+              Domain::UnorderedListItem,
+              Domain::Quote,
+              Domain::Question,
+              Domain::Box,
+              Domain::Important,
+              Domain::MultipleChoice].include? type
 
             footnotes.each do |footnote|
               # Replace the footnote references with the footnote
@@ -274,6 +290,28 @@ module Parsing
             links.each do |link|
               ref, inline = MarkdownLine.link_ref_to_inline(link)
               content.gsub!(ref, inline)
+            end
+
+            # Parse the contents of the elements into nodes
+            element.nodes = line_parser.parse(element.content)
+
+            # A quote may have an additional source field
+            element.source_nodes = line_parser.parse(element.source) if type == Domain::Quote && !element.source.nil?
+          end
+
+          if [Domain::Table].include? type
+            # Parse table contents
+            element.headers.each do |header|
+              header.nodes = line_parser.parse(header.content)
+            end
+
+            element.rows.each do |row|
+              # Separator?
+              next if row.nil?
+
+              row.each do |cell|
+                cell.nodes = line_parser.parse(cell.content)
+              end
             end
           end
         end

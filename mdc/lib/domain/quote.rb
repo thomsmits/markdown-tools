@@ -4,7 +4,7 @@ module Domain
   ##
   # Quote
   class Quote < BlockElement
-    attr_accessor :source
+    attr_accessor :source, :source_nodes
 
     ##
     # Create a new quote with the given content
@@ -16,9 +16,15 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.quote(@content, source)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      c = render_sub_nodes(other)
+      s = if @source_nodes.nil?
+            nil
+          else
+            @source_nodes.render(other.line_renderer)
+          end
+      other.quote(c, s)
     end
   end
 end

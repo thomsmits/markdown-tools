@@ -69,14 +69,14 @@ module Rendering
       ),
 
       code_start: erb(
-          "<figure class='code'><%= caption_command %><pre><code class='<%= language %>'>"
+        "<figure class='code'><%= caption_command %><pre><code class='<%= prog_lang %>'>"
       ),
 
       image: erb(
         "
         <figure class='picture'>
         <img alt='<%= alt %>' src='<%= chosen_image %>'<%= width_attr_plain %>>
-        <figcaption><%= inline(full_title) %></figcaption>
+        <figcaption><%= line_renderer.meta(full_title) %></figcaption>
         </figure>
         "
       ),
@@ -122,7 +122,7 @@ module Rendering
           <link rel='stylesheet' href='css/zenburn.css'>
 
           <script src='lib/js/head.min.js'></script>
-          <script src='js/thomas.js'></script>
+          <script src='js/custom.js'></script>
           <script src='lib/js/highlight.js'></script>
           <script src='lib/js/jquery-1.9.1.js'></script>
           <script src='lib/mathjax/MathJax.js?config=TeX-AMS_HTML'></script>
@@ -149,13 +149,13 @@ module Rendering
 
     ##
     # Initialize the renderer
-    # @param [IO] io target of output operations
-    # @param [String] language the default language for code snippets
+    # @param [IO, StringIO] io target of output operations
+    # @param [String] prog_lang the default language for code snippets
     # @param [String] result_dir location for results
     # @param [String] image_dir location for generated images (relative to result_dir)
     # @param [String] temp_dir location for temporary files
-    def initialize(io, language, result_dir, image_dir, temp_dir)
-      super(io, language, result_dir, image_dir, temp_dir)
+    def initialize(io, prog_lang, result_dir, image_dir, temp_dir)
+      super(io, prog_lang, result_dir, image_dir, temp_dir)
       @dialog_counter = 1   # counter for dialog popups
       @last_title = ''      # last slide title
     end
@@ -194,13 +194,12 @@ module Rendering
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
     def slide_start(title, number, id, contains_code)
-      escaped_title = inline_code(title)
+      escaped_title = line_renderer.meta(title)
       @io << @templates[:slide_start].result(binding)
 
-      unless title == @last_title
+      return if title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl
         @last_title = title
-      end
     end
   end
 end

@@ -4,16 +4,16 @@ module Domain
   ##
   # Source code
   class Source < BlockElement
-    attr_accessor :language, :caption
+    attr_accessor :prog_lang, :caption
 
     ##
     # Create a new source code fragment with the given language
-    # @param [String] language the programming language
+    # @param [String] prog_lang the programming language
     # @param [String] caption caption of the source code
     # @param [Fixnum] order the order of displaying the item
-    def initialize(language, caption = nil, order = 0)
+    def initialize(prog_lang, caption = nil, order = 0)
       super('', order)
-      @language = language
+      @prog_lang = prog_lang
       @caption = caption
     end
 
@@ -26,11 +26,11 @@ module Domain
 
     ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.code_start(@language, @caption)
-      renderer.code(@content)
-      renderer.code_end(@caption)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.code_start(@prog_lang, @caption)
+      other.code(@content)
+      other.code_end(@caption)
     end
   end
 end

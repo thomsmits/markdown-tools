@@ -1,6 +1,8 @@
 require_relative '../domain/element'
 
 module Transformer
+  ##
+  # Class representing inline UML diagrams.
   class InlineUML
     def initialize(temp_dir)
       @temp_dir = temp_dir

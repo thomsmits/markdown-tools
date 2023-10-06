@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 require_relative 'member'
-module Domain
+module DomainUML
 
   class Type
     attr_accessor :name, :fields, :methods

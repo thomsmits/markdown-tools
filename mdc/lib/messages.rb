@@ -1,6 +1,6 @@
 require 'yaml'
 
-$messages = YAML.load_file(File.dirname(__FILE__) + '/messages.yml')
+$messages = YAML.load_file("#{File.dirname(__FILE__)}/messages.yml")
 $language = 'en'
 
 public

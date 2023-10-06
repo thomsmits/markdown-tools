@@ -1,0 +1,1 @@
+::If-Bedingung mit Elif::[html]<p>Welche <strong>Ausgabe</strong> macht das folgende Programm? <strong>Begründen</strong> Sie Ihre Antwort kurz.</p><code><pre>a \= 8\n\nif (a &lt; 0)\:\n    print('A')\nelif (a &lt; 10)\:\n    print('B')\nelse\:\n    print('C')\n</pre></code>{}

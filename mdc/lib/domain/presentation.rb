@@ -2,13 +2,12 @@ require_relative 'chapter'
 require_relative 'toc'
 
 module Domain
-
   ##
   # Representation of the whole presentation
   class Presentation
     attr_accessor :slide_language, :title1, :title2, :section_number,
                   :section_name, :author, :copyright,
-                  :default_language, :chapters, :toc,
+                  :def_prog_lang, :chapters, :toc,
                   :description, :term, :comments, :create_index,
                   :bibliography
 
@@ -17,20 +16,20 @@ module Domain
     # @param [String] slide_language the language
     # @param [String] title1 first title
     # @param [String] title2 second title
-    # @param [String] section_number number of the section
+    # @param [String|Integer] section_number number of the section
     # @param [String] section_name name of the section
     # @param [String] copyright copyright information
     # @param [String] author author of the presentation
-    # @param [String] default_language default programming language
+    # @param [String] def_prog_lang default programming language
     # @param [String] description additional description, e.g.
     #                 copyright information
     # @param [String] term Term of the presentation
     # @param [Boolean] create_index Should the document
     #                  contain an index at the end
-    # @param [String] bibliography File with bibliography information
+    # @param [String, nil] bibliography File with bibliography information
     #
     def initialize(slide_language, title1, title2, section_number, section_name,
-                   copyright, author, default_language, description,
+                   copyright, author, def_prog_lang, description,
                    term, create_index, bibliography)
       @slide_language = slide_language
       @title1 = title1
@@ -39,7 +38,7 @@ module Domain
       @section_name = section_name
       @copyright = copyright
       @author = author
-      @default_language = default_language
+      @def_prog_lang = def_prog_lang
       @description = description
       @term = term
       @create_index = create_index
@@ -88,23 +87,23 @@ module Domain
 
     ##
     # Render the presentation
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
       build_toc
-      renderer.presentation_start(@slide_language, @title1,
-                                  @title2, @section_number, @section_name,
-                                  @copyright, @author, @description, @term, @bibliography)
-      renderer.render_toc(@toc)
-      @chapters.each { |chapter| chapter >> renderer }
-      renderer.presentation_end(@slide_language, @title1,
-                                @title2, @section_number, @section_name,
-                                @copyright, @author, @create_index, @bibliography)
+      other.presentation_start(@slide_language, @title1,
+                               @title2, @section_number, @section_name,
+                               @copyright, @author, @description, @term, @bibliography)
+      other.render_toc(@toc)
+      @chapters.each { |chapter| chapter >> other }
+      other.presentation_end(@slide_language, @title1,
+                             @title2, @section_number, @section_name,
+                             @copyright, @author, @create_index, @bibliography)
     end
 
     ##
     # Iterate over all chapters.
-    def each
-      @chapters.each { |e| yield e }
+    def each(&block)
+      @chapters.each(&block)
     end
   end
 end

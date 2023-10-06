@@ -1,17 +1,19 @@
 require_relative 'element'
-require_relative 'line_element'
+require_relative 'block_element'
 
 module Domain
   ##
   # A multiple choice element
-  class MultipleChoice < LineElement
-    attr_accessor :text, :correct
+  class MultipleChoice < BlockElement
+    attr_accessor :correct
 
     ##
-    # Create a new object
-    def initialize(text, correct)
+    # Create a new object.
+    # @param [String] content The text of the multiple choice element
+    # @param [Boolean] correct Indicator whether this is the correct choice
+    def initialize(content, correct)
       super()
-      @text = text
+      @content = content
       @correct = correct
     end
 
@@ -19,14 +21,14 @@ module Domain
     # Return a string representation of this element
     # @return [String] string representation
     def to_s
-      "[X] #{@text}"  if @correct
-      "[ ] #{@text}"  unless @correct
+      "[X] #{@content}"  if @correct
+      "[ ] #{@content}"  unless @correct
     end
 
     ##
     # Call the provided block on each content element.
     def each_content_element(&block)
-      block.call(self.class, @text)
+      block.call(self, self.class, @content)
     end
   end
 end

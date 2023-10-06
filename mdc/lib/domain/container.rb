@@ -13,6 +13,7 @@ module Domain
     # Create a new instance
     def initialize
       super()
+      # @type [Array<Element>]
       @elements = []
     end
 
@@ -27,7 +28,7 @@ module Domain
 
     ##
     # Return the last element added
-    # @return [Element] last element added
+    # @return [Element|nil] last element added
     def current_element
       @elements.last
     end
@@ -43,8 +44,8 @@ module Domain
 
     ##
     # Iterate over all contained elements.
-    def each
-      @elements.each { |e| yield e }
+    def each(&block)
+      @elements.each(&block)
     end
 
     ##

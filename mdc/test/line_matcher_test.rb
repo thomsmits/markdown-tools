@@ -58,7 +58,7 @@ class LineMatcherTest < Minitest::Test
   ##
   # Helper function for test of images
   def img(text, alt, location, title, width1, width2)
-    # @type [Domsin::Image]
+    # @type [Domain::Image]
     img = Parsing::LineMatcher.match(text, '')
     assert_instance_of(Image, img)
     assert_equal(alt, img.alt) if alt

@@ -6,16 +6,10 @@ module Domain
   # A vertical space
   class VerticalSpace < LineElement
     ##
-    # Create a new object
-    def initialize
-      super()
-    end
-
-    ##
     # Render the element
-    # @param [Rendering::Renderer] renderer to be used
-    def >>(renderer)
-      renderer.vertical_space
+    # @param [Rendering::Renderer] other Renderer to be used..
+    def >>(other)
+      other.vertical_space
     end
 
     ##

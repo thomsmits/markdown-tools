@@ -1,0 +1,1 @@
+::Morse-Alphabet::[html]<p>Warum werden beim Morse-Alphabet manche Buchstaben mit kurzen und manche mit langen Folgen der Zeichen <code>.</code> und <code>-</code> dargestellt?</p><p>Handelt es sich beim Morse-Alphabet um eine binäre Codierung? Begründen Sie Ihre Antwort.</p>{}

@@ -1,0 +1,18 @@
+---
+layout: page
+parent: "Section 3"
+title: "Arrows"
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Arrows</h1>
+## Arrows
+
+<p>(&rarr; Arrow) (&larr; Arrow) (&rArr; darrow) (&lArr; darrow) (&hArr; DArrow) (&harr; darrow)
+</p>
+
+<p>&rarr; Arrow &larr; Arrow &rArr; darrow &lArr; darrow &hArr; DArrow &harr; darrow
+</p>
+
+<p>&rarr; Arrow<br>&larr; Arrow<br>&rArr; darrow<br>&lArr; darrow<br>&hArr; DArrow<br>&harr; darrow
+</p>
+

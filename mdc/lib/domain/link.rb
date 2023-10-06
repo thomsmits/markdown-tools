@@ -12,7 +12,7 @@ module Domain
     # @param [String] key key of the link
     # @param [String] target target URL of the link
     # @param [String] title an (optional) title
-    def initialize(key, target, title=nil)
+    def initialize(key, target, title = nil)
       super()
       @key = key
       @target = target
@@ -34,4 +34,3 @@ module Domain
     end
   end
 end
-

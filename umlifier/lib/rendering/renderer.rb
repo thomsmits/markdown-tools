@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-module Rendering
+module RenderingUML
 
   class Renderer
     ##
