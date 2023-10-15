@@ -488,7 +488,7 @@ module Parsing
         else
           raise StandardError, "Line #{ps.line_counter} of file '#{ps.file_name}' " \
                            "has a syntax error - #{ps}, '#{line}' - " \
-                           "#{File.absolute_path(ps.file_name)}"
+                           "#{File.absolute_path(ps.file_name)}:#{ps.line_counter}"
         end
       else
         if e.instance_of?(Domain::Footnote)
