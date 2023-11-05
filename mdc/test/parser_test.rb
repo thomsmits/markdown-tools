@@ -599,6 +599,15 @@ class ParserTest < Minitest::Test
 
       assert_equal('With some text', e[0].to_s)
     end
+
+    slide_index += 1
+    check_slide(slides[slide_index], 'Slide 6.6 Slide with dots', false, false,
+                  [Domain::Text],
+                  [],
+                  false) do |e|
+
+        assert_equal('... with some text', e[0].to_s)
+    end
   end
 
   private

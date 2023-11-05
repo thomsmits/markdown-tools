@@ -119,7 +119,7 @@ class MarkdownLineTest < Minitest::Test
   def test_text
     assert(line('Hello World').text?)
     assert(line('Hello World with special characters äöüßÄÖÜ').text?)
-    assert(!line('.:!').text?)
+    assert(!line(':!').text?)
   end
 
   ##
