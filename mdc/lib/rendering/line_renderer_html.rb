@@ -50,7 +50,7 @@ module Rendering
     end
 
     def render_strongunderscore(content)
-      "<strong>#{content}</strong>}"
+      "<strong>#{content}</strong>"
     end
 
     def render_strongstar(content)
