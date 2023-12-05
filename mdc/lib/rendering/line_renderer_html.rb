@@ -50,11 +50,11 @@ module Rendering
     end
 
     def render_strongunderscore(content)
-      "<strong>#{content}</strong>"
+      "<strong>#{content}</strong>}"
     end
 
     def render_strongstar(content)
-      "<strong>#{content}</strong>"
+      %{<strong class="alternate">#{content}</strong>}
     end
 
     def render_emphasisunderscore(content)
@@ -62,7 +62,7 @@ module Rendering
     end
 
     def render_emphasisstar(content)
-      "<em>#{content}</em>"
+      %{<em class="alternate">#{content}</em>}
     end
 
     def render_superscript(content)
