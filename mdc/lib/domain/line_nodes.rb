@@ -229,4 +229,25 @@ module Domain
       end
     end
   end
+
+  ##
+  # Footnote [^1]
+  class FootnoteNode < TextNode
+    attr_accessor :footnotes
+
+    ##
+    # Create a new instance.
+    # @param [String] key The key of the footnote
+    def initialize(key)
+      super(key)
+      @footnotes = []
+    end
+
+    ##
+    # Render the element.
+    # @param [Rendering::LineRenderer] renderer The renderer used
+    def render(renderer)
+      renderer.render_footnote(@content, @footnotes)
+    end
+  end
 end

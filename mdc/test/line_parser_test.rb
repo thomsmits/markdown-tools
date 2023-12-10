@@ -220,7 +220,7 @@ class LineParserTest < Minitest::Test
 
   def test_line_parser
     CASES.each do |t|
-      line = Parsing::LineParser.new.parse(t[1])
+      line = Parsing::LineParser.new.parse(t[1], [])
       renderer = Rendering::LineRendererHTML.new('java')
       result = line.render(renderer).gsub('&ldquo;', '&quot;').gsub('&rdquo;', '&quot;')
 

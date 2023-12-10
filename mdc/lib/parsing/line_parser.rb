@@ -206,7 +206,15 @@ module Parsing
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md,
                                                                        Domain::SingleEmphOrStrong.new(md[:char]))
-                                 end)
+                                 end),
+
+      MatcherForLineElements.new([
+                                   /\[\^(.*?)\]/,
+                                 ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md,
+                                                                       Domain::FootnoteNode.new(md[1]))
+                                 end),
     ].freeze
 
     ##
@@ -328,8 +336,9 @@ module Parsing
     ##
     # Parse the given line of text
     # @param [String] line_text The line to be parsed
+    # @param [Array[Footnotes]] footnotes the footnotes
     # @return [Domain::LineNodes] the resulting line object
-    def parse(line_text)
+    def parse(line_text, footnotes)
       line = Domain::LineNodes.new(line_text)
       changed = true
 
@@ -341,6 +350,7 @@ module Parsing
           c, es = parse_node(node)
           elements << es
           changed ||= c
+          node.footnotes = footnotes if node.respond_to? :footnotes=
         end
         line.elements = elements.flatten
       end

@@ -5,7 +5,7 @@ module Domain
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
-    attr_accessor :title, :id, :slides, :footnotes, :links
+    attr_accessor :title, :id, :slides, :links
 
     ##
     # Create a new chapter
@@ -16,7 +16,6 @@ module Domain
       @title = title
       @id = id
       @slides = []
-      @footnotes = []
       @links = []
     end
 
@@ -26,13 +25,6 @@ module Domain
     def <<(slide)
       @slides << slide
       self
-    end
-
-    ##
-    # Add a footnote to the presentation
-    # @param [Footnote] footnote the footnote to be added
-    def add_footnote(footnote)
-      @footnotes << footnote
     end
 
     ##

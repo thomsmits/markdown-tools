@@ -1,0 +1,13 @@
+---
+layout: page
+parent: "Section 3"
+title: "Chapter"
+nav_order: 0
+---
+<h1 class="fw-700 text-purple-300">Chapter</h1>
+## Slide Footnote
+
+<p>Text using a footnote<a href="#footnote_1"><sup>1</sup></a> and another one<a href="#footnote_label"><sup>label</sup></a>.</p>
+
+<p class="fs-2 text-blue-100" id="footnote_1">1. Footnote with number.</p>
+<p class="fs-2 text-blue-100" id="footnote_label">label. Footnote with label.</p>

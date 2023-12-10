@@ -281,8 +281,11 @@ module Rendering
 
       matching_question: erb(
         '  * <%= left %> -> <%= right %>'
-      )
+      ),
 
+      footnote: erb(
+        '[^<%= key %>]: <%= line_renderer.meta(text) %>'
+      )
     }.freeze
 
     ##
@@ -805,6 +808,12 @@ module Rendering
     # End of slide
     def slide_end
       @io << @templates[:slide_end].result(binding)
+    end
+
+    ##
+    # Render a footnote
+    def footnote(key, text)
+      @io << @templates[:footnote].result(binding)
     end
 
     ##

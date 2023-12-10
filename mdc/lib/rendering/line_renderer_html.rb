@@ -102,5 +102,9 @@ module Rendering
         "&quot;#{content}&quot;"
       end
     end
+
+    def render_footnote(content, _)
+      %(<a href="#footnote_#{content}"><sup>#{content}</sup></a>)
+    end
   end
 end

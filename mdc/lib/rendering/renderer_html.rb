@@ -216,6 +216,10 @@ module Rendering
 
       html: erb(
         '<%= content %>'
+      ),
+
+      footnote: erb(
+        '<p class="footnote" id="footnote_<%= key %>"><%= key %>. <%= text %></p>'
       )
     }.freeze
 

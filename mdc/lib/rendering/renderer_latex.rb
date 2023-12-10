@@ -174,7 +174,13 @@ module Rendering
         )
       ),
 
-      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|)
+      input_question: erb(%q|\vspace{5mm}<%= translate(:answer) %>: \dotfill|),
+
+      footnote: erb(''),
+
+      comment_start: erb(''),
+
+      comment_end: erb(''),
     }.freeze
 
     ##

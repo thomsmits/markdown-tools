@@ -4,7 +4,7 @@ module Domain
   ##
   # A single slide of the presentation
   class Slide < Container
-    attr_accessor :title, :id, :number, :skip
+    attr_accessor :title, :id, :number, :skip, :footnotes
 
     ##
     # Create a new instance
@@ -18,6 +18,7 @@ module Domain
       @id = id
       @number = number
       @skip = skip
+      @footnotes = []
     end
 
     ##
@@ -47,6 +48,7 @@ module Domain
       else
         other.slide_start(@title, @number, @id, contains_code?)
         @elements.each { |e| e >> other }
+        @footnotes.each { |e| e >> other }
         other.slide_end
       end
     end
@@ -57,6 +59,13 @@ module Domain
     def contains_code?
       @elements.each { |e| return true if e.instance_of?(Domain::Source) }
       false
+    end
+
+    ##
+    # Add a footnote to the slide
+    # @param [Footnote] footnote the footnote to be added
+    def add_footnote(footnote)
+      @footnotes << footnote
     end
 
     ##

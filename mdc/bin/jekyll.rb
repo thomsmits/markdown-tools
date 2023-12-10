@@ -155,7 +155,7 @@ class Main
       # f << %Q|<br>| << nl
       # f << %Q|<div class="fs-4 fw-500">#{copyright}</div>| << nl
       f << %(<br>) << nl
-      f << %(<div class="text-grey-dk-000 fs-2 fw-300">#{description}</div>) << nl
+      f << %(<div class="text-grey-dk-000 fs-2 fw-500">#{description}</div>) << nl
     end
   end
 end

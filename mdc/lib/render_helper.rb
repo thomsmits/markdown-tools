@@ -11,7 +11,7 @@ require_relative 'rendering/line_renderer_jekyll'
 # @param [String] def_prog_lang Programming language for code blocks
 def markdown_to_html_line(input, def_prog_lang)
   lp = Parsing::LineParser.new
-  nodes = lp.parse(input)
+  nodes = lp.parse(input, [])
   renderer = Rendering::LineRendererHTML.new(def_prog_lang)
   nodes.render(renderer)
 end

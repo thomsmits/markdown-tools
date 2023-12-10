@@ -493,7 +493,7 @@ module Parsing
       else
         if e.instance_of?(Domain::Footnote)
           # This is the footnote text, not the reference in the text
-          ps.chapter.add_footnote(e)
+          ps.slide.add_footnote(e)
         elsif e.instance_of?(Domain::Link)
           # This is a reference style link, not the reference in ths text
           ps.chapter.add_link(e)

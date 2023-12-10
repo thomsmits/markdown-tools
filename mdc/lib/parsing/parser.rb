@@ -267,50 +267,51 @@ module Parsing
       line_parser = Parsing::LineParser.new
 
       presentation.each do |chapter|
-        footnotes = chapter.footnotes
         links = chapter.links
+        chapter.each do |slide|
+          footnotes = slide.footnotes
 
-        chapter.each_content_element do |element, type, content|
-          # Types of content to do the footnote and inline replacement with
-          if [Domain::Text,
-              Domain::OrderedListItem,
-              Domain::UnorderedListItem,
-              Domain::Quote,
-              Domain::Question,
-              Domain::Box,
-              Domain::Important,
-              Domain::MultipleChoice].include? type
-
-            footnotes.each do |footnote|
-              # Replace the footnote references with the footnote
-              ref, inline = MarkdownLine.footnote_ref_to_inline(footnote)
-              content.gsub!(ref, inline)
-            end
-
-            links.each do |link|
-              ref, inline = MarkdownLine.link_ref_to_inline(link)
-              content.gsub!(ref, inline)
-            end
-
-            # Parse the contents of the elements into nodes
-            element.nodes = line_parser.parse(element.content)
-
-            # A quote may have an additional source field
-            element.source_nodes = line_parser.parse(element.source) if type == Domain::Quote && !element.source.nil?
+          footnotes.each do |footnote|
+            footnote.nodes  = line_parser.parse(footnote.content, footnotes)
           end
 
-          if [Domain::Table].include? type
-            # Parse table contents
-            element.headers.each do |header|
-              header.nodes = line_parser.parse(header.content)
+          slide.each_content_element do |element, type, content|
+
+            # Types of content to do the inline replacement with
+            if [Domain::Text,
+                Domain::OrderedListItem,
+                Domain::UnorderedListItem,
+                Domain::Quote,
+                Domain::Question,
+                Domain::Box,
+                Domain::Important,
+                Domain::MultipleChoice].include? type
+
+              links.each do |link|
+                ref, inline = MarkdownLine.link_ref_to_inline(link)
+                content.gsub!(ref, inline)
+              end
+
+              # Parse the contents of the elements into nodes
+              element.nodes = line_parser.parse(element.content, footnotes)
+
+              # A quote may have an additional source field
+              element.source_nodes = line_parser.parse(element.source, footnotes) if type == Domain::Quote && !element.source.nil?
             end
 
-            element.rows.each do |row|
-              # Separator?
-              next if row.nil?
+            if [Domain::Table].include? type
+              # Parse table contents
+              element.headers.each do |header|
+                header.nodes = line_parser.parse(header.content, footnotes)
+              end
 
-              row.each do |cell|
-                cell.nodes = line_parser.parse(cell.content)
+              element.rows.each do |row|
+                # Separator?
+                next if row.nil?
+
+                row.each do |cell|
+                  cell.nodes = line_parser.parse(cell.content, footnotes)
+                end
               end
             end
           end

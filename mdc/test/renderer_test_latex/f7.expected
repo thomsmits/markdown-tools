@@ -1,0 +1,4 @@
+# Chapter
+## Slide Footnote
+
+Text using a footnote\footnote{Footnote with number.} and another one\footnote{Footnote with label.}. Quote\footnote{Footnote with \enquote{quote}.}.\vspace{0.1mm}

@@ -276,6 +276,10 @@ module Rendering
 
       html: erb(
         '<%= content %>'
+      ),
+
+      footnote: erb(
+        '<p class="fs-2 text-blue-100" id="footnote_<%= key %>"><%= key %>. <%= text %></p>'
       )
     }.freeze
 

@@ -222,5 +222,23 @@ module Rendering
     def render_quoted(content)
       "\\enquote{#{content}}"
     end
+
+    ##
+    # Return reference to myself. This is necessary to allow
+    # passing self to the render_sub_nodes method of block
+    # nodes
+    def line_renderer
+      self
+    end
+
+    def render_footnote(content, footnotes)
+      footnotes.each do |footnote|
+        if footnote.key == content
+          c = footnote.render_sub_nodes(self)
+          return %(\\footnote{#{c}})
+        end
+      end
+      ''
+    end
   end
 end

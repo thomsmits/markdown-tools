@@ -536,26 +536,24 @@ class ParserTest < Minitest::Test
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 6.1', false, false,
     [Domain::Text, Domain::UnorderedList, Domain::Quote, Domain::Important, Domain::Question],
-        [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
+        [ "Text using a footnote[^1] and another one[^label]." ],
                 false) do |e|
       assert_equal([ Domain::Footnote.new("1", "Footnote with number."),
                      Domain::Footnote.new("label", "Footnote with label."),
-                     Domain::Footnote.new("withquote", 'Footnote containing a "quote"'),
-                     Domain::Footnote.new("2", "Footnote with number."),
-                     Domain::Footnote.new("label2", "Footnote with label.") ],
-                   chapter2.footnotes)
+                     Domain::Footnote.new("withquote", 'Footnote containing a "quote"') ],
+                   slides[slide_index].footnotes)
 
-      assert_equal('In a list[^Footnote with number.]', e[1].entries[0].to_s)
-      assert_equal('Or a quote[^Footnote with number.]', e[2].to_s)
-      assert_equal('Or Important[^Footnote with number.]', e[3].to_s)
-      assert_equal('Or Question[^Footnote with number.]', e[4].to_s)
-      assert_equal('Text using a footnote[^Footnote containing a "quote"] with a quote inside.', e[5].to_s)
+      assert_equal('In a list[^1]', e[1].entries[0].to_s)
+      assert_equal('Or a quote[^1]', e[2].to_s)
+      assert_equal('Or Important[^1]', e[3].to_s)
+      assert_equal('Or Question[^1]', e[4].to_s)
+      assert_equal('Text using a footnote[^withquote] with a quote inside.', e[5].to_s)
     end
 
     slide_index += 1
     check_slide(slides[slide_index], 'Slide 6.2', false, false,
                 [Domain::Text],
-                [ "Text using a footnote[^Footnote with number.] and another one[^Footnote with label.]." ],
+                [ "Text using a footnote[^2] and another one[^label2]." ],
                 false) do |e|
     end
 

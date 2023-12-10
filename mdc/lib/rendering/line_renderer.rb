@@ -193,5 +193,9 @@ module Rendering
     def render_quoted(content)
       %("#{content}")
     end
+
+    def render_footnote(content, _)
+      %([^#{meta(content)}])
+    end
   end
 end
