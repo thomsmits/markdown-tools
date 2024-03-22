@@ -7,6 +7,14 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['__ exclamation 1', 'aaa __Vorsicht!__ bb', %q|aaa <strong>Vorsicht!</strong> bb|],
+    ['__ exclamation 2', 'aaa (__Vorsicht!__) bb', %q|aaa (<strong>Vorsicht!</strong>) bb|],
+    ['_ exclamation 1', 'aaa _Vorsicht!_ bb', %q|aaa <em>Vorsicht!</em> bb|],
+    ['_ exclamation 2', 'aaa (_Vorsicht!_) bb', %q|aaa (<em>Vorsicht!</em>) bb|],
+    ['** exclamation 1', 'aaa **Vorsicht!** bb', %q|aaa <strong class="alternate">Vorsicht!</strong> bb|],
+    ['** exclamation 2', 'aaa (**Vorsicht!**) bb', %q|aaa (<strong class="alternate">Vorsicht!</strong>) bb|],
+    ['* exclamation 1', 'aaa *Vorsicht!* bb', %q|aaa <em class="alternate">Vorsicht!</em> bb|],
+    ['* exclamation 2', 'aaa (*Vorsicht!*) bb', %q|aaa (<em class="alternate">Vorsicht!</em>) bb|],
     ['multi `', 'text <br> `code1` <br> `    code2` <br> `code3`', %q|text <br> <code>code1</code> <br> <code>    code2</code> <br> <code>code3</code>|],
     ['it paren', '_Zeichenkodierung (encoding)_ und einem _Zeichensatz (font)_', %q|<em>Zeichenkodierung (encoding)</em> und einem <em>Zeichensatz (font)</em>|],
     ['emph paren', 'Ursachen für Krisen können endogen *(z.B. schlechte Projektplanung)* oder exogen *(z.B. Insolvenz von Partnern)* sein', %q|Ursachen für Krisen können endogen <em class="alternate">(z.&nbsp;B. schlechte Projektplanung)</em> oder exogen <em class="alternate">(z.&nbsp;B. Insolvenz von Partnern)</em> sein|],
