@@ -12,6 +12,10 @@ module Rendering
       %(<strong class="text-purple-100 fw-500">#{content}</strong>)
     end
 
+    def render_strongunderscorecode(content)
+      %(<strong class="text-purple-100 fw-500"><code>#{content}</code></strong>)
+    end
+
     def render_strongstar(content)
       %(<strong class="text-grey-dk-000 fw-500">#{content}</strong>)
     end

@@ -118,6 +118,12 @@ module Domain
   end
 
   ##
+  # Strong emphasis, using underscore with embedded code: __`text`__
+  class StrongUnderscoreCodeNode < TextNode
+    add_renderer
+  end
+
+  ##
   # Strong emphasis, using a star: **text**
   class StrongStarNode < TextNode
     add_renderer

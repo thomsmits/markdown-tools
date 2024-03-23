@@ -99,6 +99,14 @@ module Rendering
     end
 
     ##
+    # Render a __`code`__ node.
+    # @param [String] content contents of the node
+    # @return [String] rendered version of the content
+    def render_strongunderscorecode(content)
+      "__`#{content}`__"
+    end
+
+    ##
     # Render a **strong** node.
     # @param [String] content contents of the node
     # @return [String] rendered version of the content

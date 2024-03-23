@@ -53,6 +53,10 @@ module Rendering
       "<strong>#{content}</strong>"
     end
 
+    def render_strongunderscorecode(content)
+      "<strong><code>#{content}</code></strong>"
+    end
+
     def render_strongstar(content)
       %{<strong class="alternate">#{content}</strong>}
     end

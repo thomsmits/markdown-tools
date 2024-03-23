@@ -172,7 +172,11 @@ module Rendering
     end
 
     def render_strongunderscore(content)
-      "\\term{#{content}}\\index{#{content}}"
+      "\\term{#{content}}"
+    end
+
+    def render_strongunderscorecode(content)
+      "#{render_code(content)}\\margincodeterm{#{render_text(content)}}"
     end
 
     def render_strongstar(content)

@@ -74,6 +74,14 @@ module Parsing
     PARSERS = [
 
       MatcherForLineElements.new([
+                                   %r{(?<pre>^|\s+|[-().,;?:>/])__`(?<em>.*?)`__(?<post>[-+!().,;?:> /"]+|$)}
+                                 ],
+                                 lambda do |elements, md|
+                                   MatcherForLineElements.add_elements(elements, md,
+                                                                       Domain::StrongUnderscoreCodeNode.new(md[:em]))
+                                 end),
+
+      MatcherForLineElements.new([
                                    /``[ \n]([\s\S]*?\S[\s\S]*?)[ \n]``/,
                                    /``([\s\S]*?\S[\s\S]*?)``/,
                                    /`([^` ][^`]*?)`/,
@@ -255,7 +263,7 @@ module Parsing
         result << Domain::TextNode.new(node.content) unless touched
         changed = true
       # Node has not been parsed
-      elsif node.class != Domain::HtmlNode && node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
+      elsif node.class != Domain::HtmlNode && node.class != Domain::TextNode && node.class != Domain::CodeNode && node.class != Domain::StrongUnderscoreCodeNode && node.class != Domain::FormulaNode && node.class != Domain::SingleEmphOrStrong && node.respond_to?(:content)
         # Node has the potential for parsing into sub nodes
         _, result = apply_parsers(node)
         if result.length >= 1
