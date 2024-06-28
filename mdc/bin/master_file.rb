@@ -164,9 +164,9 @@ class MasterFile
         end
       when /([+KU-]):\[([0-9]*)\]\((.*)\)/, / {2}\* \[([+KU-])\] \|([0-9]*)\| \[.*\]\((.*)\)/
         # File reference
-        file_path = Regexp.last_match(3).gsub(/\.md$/, '')
-        points = Integer(Regexp.last_match(2) || 0)
         status = Regexp.last_match(1)
+        points = Integer(Regexp.last_match(2) || 0)
+        file_path = Regexp.last_match(3).gsub(/\.md$/, '')
 
         section << MasterFileEntry.new("#{path}/#{file_path}", points, status) if desired_status.include?(status)
       when /([+KU-]):---/, / {2}\* \[([+KU-])\] ---/
