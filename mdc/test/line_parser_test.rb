@@ -7,6 +7,7 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['_ double', '_T_: _Trend_ als', '<em>T</em>: <em>Trend</em> als' ],
     ['__ code 1', '__`#define NAME [KONSTANTE]`__', %q|<strong><code>#define NAME [KONSTANTE]</code></strong>|],
     ['__ code 2', '__`codehere`__', %q|<strong><code>codehere</code></strong>|],
     ['__ exclamation 1', 'aaa __Vorsicht!__ bb', %q|aaa <strong>Vorsicht!</strong> bb|],
