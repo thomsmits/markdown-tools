@@ -137,7 +137,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   %r{(?<pre>^|\s+|[-().,;?:>/])__(?<em>[\p{L}\p{N}(\[].*?[\p{L}\p{N}+)\]]|[\p{L}\p{N}+)\]!]+?)__(?<post>[-+!().,;?:> /"]+|$)}
+                                   %r{(?<pre>^|\s+|[-().,;?:>/])__(?<em>[\p{L}\p{N}(\[][^_]*?[\p{L}\p{N}+)\]]|[\p{L}\p{N}+)\]!]+?)__(?<post>[-+!().,;?:> /"]+|$)}
                                  ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md,
@@ -145,7 +145,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   %r{(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> /])\*(?<em>[\p{L}\p{N}]|[\p{L}\p{N}(].*?[\p{L}\p{N})!])\*(?<post>[-+!().,;?:> /"]?|$)}
+                                   %r{(?<pre>^|\s+|[\p{L}\p{N}]|[().,;?\-:> /])\*(?<em>[\p{L}\p{N}(][^*]*?[\p{L}\p{N})!]|[\p{L}\p{N}])\*(?<post>[-+!().,;?:> /"]?|$)}
                                  ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md,
@@ -153,7 +153,7 @@ module Parsing
                                  end),
 
       MatcherForLineElements.new([
-                                   %r{(?<pre>^|\s+|[().,;?\-:> /])_(?<em>[\p{L}\p{N}]|[\p{L}\p{N}(].*?[\p{L}\p{N})!])_(?<post><br>|[-+!().,;?:> /"]+|$)}
+                                   %r{(?<pre>^|\s+|[().,;?\-:> /])_(?<em>[\p{L}\p{N}(][^_]*[\p{L}\p{N})!]|[\p{L}\p{N}])_(?<post>[-+!().,;?:> /"]+|$)}
                                  ],
                                  lambda do |elements, md|
                                    MatcherForLineElements.add_elements(elements, md,
