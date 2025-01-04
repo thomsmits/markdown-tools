@@ -112,7 +112,7 @@ module Parsing
 
     ## Just text
     def text?
-      /^[=\-A-Za-z0-9_ÄÖÜäöüß`*"().].*$/ =~ @line
+      /^[=\-A-Za-z0-9_ÄÖÜäöüß`*"().\[].*$/ =~ @line
     end
 
     ## Multiple choice
