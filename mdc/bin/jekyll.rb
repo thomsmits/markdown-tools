@@ -73,6 +73,7 @@ class Main
     description      = props['description']
     term             = props['term']
     slide_language   = props['language']
+    last_change      = props['last_change']
     bibliography     = props['bibliography']
     create_index     = (props['create_index'] || 'false') == 'true'
 
@@ -101,7 +102,7 @@ class Main
       presentation = Domain::Presentation.new(
         slide_language, title1, title2, chapter_no, chapter_name,
         copyright, author, default_syntax, description,
-        term, create_index, bibliography
+        term, create_index, last_change, bibliography
       )
 
       chapters << presentation.chapters

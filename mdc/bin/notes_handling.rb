@@ -56,7 +56,7 @@ class NotesHandling
       presentation = Domain::Presentation.new('', '', '',
                                               '', '',
                                               '', '', '',
-                                              '', '', false, nil)
+                                              '', '', false, nil, nil)
       parser.parse(src_path, '', presentation)
       presentation.title1 = presentation.chapters[0].title
       file.title = presentation.title1

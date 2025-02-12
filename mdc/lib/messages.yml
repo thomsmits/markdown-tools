@@ -15,6 +15,7 @@ en:
   answer: "Answer"
   matching_question: "Please match the answers"
   version: "Version"
+  last_change: "Version "
 
 de:
   contents: "Inhalt"
@@ -33,3 +34,4 @@ de:
   answer: "Antwort"
   matching_question: "Bitte ordnen Sie entsprechend zu"
   version: "Stand"
+  last_change: "Stand "

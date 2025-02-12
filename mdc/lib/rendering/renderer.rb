@@ -767,7 +767,8 @@ module Rendering
     def presentation_start(slide_language, title1, title2,
                            section_number, section_name,
                            copyright, author, description,
-                           term = '', bibliography = nil)
+                           term = '', last_change = nil, bibliography = nil)
+      last_change ||= translate(:last_change) + Date.today.strftime("%Y-%m-%d")
       @io << @templates[:presentation_start].result(binding)
     end
 

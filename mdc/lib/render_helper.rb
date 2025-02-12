@@ -54,7 +54,7 @@ def parse_file(file, def_prog_lang, slide_language)
   presentation = Domain::Presentation.new(
     slide_language, '', '', '', '',
     '', '', def_prog_lang, '',
-    '', false, nil
+    '', false, nil, nil
   )
 
   parser.parse(file, def_prog_lang, presentation)

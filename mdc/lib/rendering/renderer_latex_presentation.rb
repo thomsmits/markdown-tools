@@ -55,7 +55,7 @@ module Rendering
           \newcommand{\copyrightline}[0]{<%= title1 %> | <%= copyright %>}
           \title{<%= title1 %>\\\\ \small <%= title2 %>\\\\ \Large \vspace{8mm} <%= section_name %>}
           \author{\small <%= author %>}
-          \date{\color{grau} \small <%= term %>\tiny\vspace{2mm}\\\\ \today}
+          \date{\color{grau} \small <%= term %>\tiny\vspace{2mm}\\\\ <%= last_change %>}
           \begin{document}
           <% section_id = 'sect_' + Random.rand(10000000).to_s(16) %>
           \begin{frame}\label{<%= section_id %>}

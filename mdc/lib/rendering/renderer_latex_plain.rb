@@ -95,7 +95,7 @@ module Rendering
 
 
           \begin{textblock*}{\textwidth}(2.5cm,28cm) %
-          {\sffamily\scriptsize\color{grau}<%= translate('version') %>: \today}
+          {\sffamily\scriptsize\color{grau}<%= last_change %>}
           \end{textblock*}%
 
           \newpage

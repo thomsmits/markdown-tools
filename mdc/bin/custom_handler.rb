@@ -38,7 +38,7 @@ class CustomHandler
 
     presentation = Domain::Presentation.new('DE', '', '', '', '',
                                             '', '', prog_language, '', '',
-                                            false, nil)
+                                            false, nil, nil)
 
     # Set the slide language
     set_language(presentation.slide_language.downcase)

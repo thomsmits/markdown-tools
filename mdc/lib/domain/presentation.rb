@@ -9,7 +9,7 @@ module Domain
                   :section_name, :author, :copyright,
                   :def_prog_lang, :chapters, :toc,
                   :description, :term, :comments, :create_index,
-                  :bibliography
+                  :bibliography, :last_change
 
     ##
     # Create a new presentation
@@ -30,7 +30,7 @@ module Domain
     #
     def initialize(slide_language, title1, title2, section_number, section_name,
                    copyright, author, def_prog_lang, description,
-                   term, create_index, bibliography)
+                   term, create_index, last_change, bibliography)
       @slide_language = slide_language
       @title1 = title1
       @title2 = title2
@@ -42,6 +42,7 @@ module Domain
       @description = description
       @term = term
       @create_index = create_index
+      @last_change = last_change
       @bibliography = bibliography
 
       @chapters = []
@@ -92,7 +93,8 @@ module Domain
       build_toc
       other.presentation_start(@slide_language, @title1,
                                @title2, @section_number, @section_name,
-                               @copyright, @author, @description, @term, @bibliography)
+                               @copyright, @author, @description, @term, @last_change,
+                               @bibliography)
       other.render_toc(@toc)
       @chapters.each { |chapter| chapter >> other }
       other.presentation_end(@slide_language, @title1,

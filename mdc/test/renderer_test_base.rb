@@ -51,7 +51,7 @@ class RendererTestBase < Minitest::Test
   def parse_and_render(input, renderer, prepend = '')
     presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
                                             'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
-                                            false, nil)
+                                            false, nil, nil)
 
     parser = Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
     lines = lines(input)
