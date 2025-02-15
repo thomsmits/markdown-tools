@@ -1,4 +1,5 @@
 require 'erb'
+require 'date'
 
 module Rendering
   ##
