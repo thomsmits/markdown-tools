@@ -7,6 +7,10 @@ require_relative '../lib/rendering/line_renderer_html'
 # Test class for the MarkdownLine class
 class LineParserTest < Minitest::Test
   CASES = [
+    ['(**text?**)', '(**text?**)', '(<strong class="alternate">text?</strong>)' ],
+    ['(*text?*)', '(*text?*)', '(<em class="alternate">text?</em>)' ],
+    ['(_text?_)', '(_text?_)', '(<em>text?</em>)' ],
+    ['(__text?__)', '(__text?__)', '(<strong>text?</strong>)' ],
     ['* double with <br>', '*T*<br>*Trend* als', '<em class="alternate">T</em><br><em class="alternate">Trend</em> als' ],
     ['_ double with <br>', '_T_<br>_Trend_ als', '<em>T</em><br><em>Trend</em> als' ],
     ['_ double', '_T_: _Trend_ als', '<em>T</em>: <em>Trend</em> als' ],
