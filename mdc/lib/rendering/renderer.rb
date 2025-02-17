@@ -1,5 +1,6 @@
 require 'erb'
 require 'date'
+require_relative '../messages'
 
 module Rendering
   ##
