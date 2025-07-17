@@ -46,7 +46,7 @@ module Rendering
       table_start: erb('<table><thead><tr><%-  -%>'),
       table_separator: erb(''),
       table_end: erb('</tbody></table><%-  -%>'),
-      text: erb(%q|<p><%= content.strip.gsub("\n", '<br>') %></p><%-  -%>|),
+      text: erb(%q|<p><%= line_renderer.meta(content).strip.gsub("\n", '<br>') %></p><%-  -%>|),
       heading: erb(''),
       toc_start: erb(''),
       toc_entry: erb(''),
