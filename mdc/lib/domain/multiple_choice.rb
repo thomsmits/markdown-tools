@@ -21,8 +21,11 @@ module Domain
     # Return a string representation of this element
     # @return [String] string representation
     def to_s
-      "[X] #{@content}"  if @correct
-      "[ ] #{@content}"  unless @correct
+      if @correct
+        "[X] #{@content}"
+      else
+        "[ ] #{@content}"
+      end
     end
 
     ##
