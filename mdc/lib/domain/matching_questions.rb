@@ -41,5 +41,12 @@ module Domain
     def each_content_element(&block)
       @questions.each { |e| e.each_content_element(&block) }
     end
+
+    ##
+    # Return a string representation.
+    # @return [String] the string representation.
+    def to_s
+      "<!-- SHUFFLE type=\"#{@shuffle}\" -->\n" + @questions.map { |q| "  * #{q}" }.join("\n")
+    end
   end
 end
