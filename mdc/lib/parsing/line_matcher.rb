@@ -1,21 +1,21 @@
-require_relative '../../lib/domain/line_element'
-require_relative '../../lib/domain/button'
-require_relative '../../lib/domain/button_with_log'
-require_relative '../../lib/domain/button_with_log_pre'
-require_relative '../../lib/domain/heading'
-require_relative '../../lib/domain/image'
-require_relative '../../lib/domain/button_link_previous'
-require_relative '../../lib/domain/button_live_css'
-require_relative '../../lib/domain/button_live_preview'
-require_relative '../../lib/domain/button_live_preview_float'
-require_relative '../../lib/domain/multiple_choice'
-require_relative '../../lib/domain/vertical_space'
-require_relative '../../lib/domain/footnote'
-require_relative '../../lib/domain/input_question'
+require_relative '../../lib/domain/line_elements/line_element'
+require_relative '../../lib/domain/line_elements/button'
+require_relative '../../lib/domain/line_elements/button_with_log'
+require_relative '../../lib/domain/line_elements/button_with_log_pre'
+require_relative '../../lib/domain/line_elements/heading'
+require_relative '../../lib/domain/line_elements/image'
+require_relative '../../lib/domain/line_elements/button_link_previous'
+require_relative '../../lib/domain/line_elements/button_live_css'
+require_relative '../../lib/domain/line_elements/button_live_preview'
+require_relative '../../lib/domain/line_elements/button_live_preview_float'
+require_relative '../../lib/domain/questions/multiple_choice'
+require_relative '../../lib/domain/line_elements/vertical_space'
+require_relative '../../lib/domain/block_elements/footnote'
+require_relative '../../lib/domain/questions/input_question'
 
 module Parsing
   ##
-  # Helper class for simple line based matches that do not require a stateful
+  # Helper class for simple line-based matches that do not require a stateful
   # parser
   class LineMatcher
     ##
@@ -124,7 +124,7 @@ module Parsing
     ].freeze
 
     ##
-    # Match and call function if match succeed
+    # Match and call function if match succeeds
     # @param [String] line input to match against
     # @param [String] line_id id of the current line
     # @return [Domain::Element] the matching element or nil

@@ -147,14 +147,14 @@ module Rendering
         '
       ),
 
-      slide_start: erb(
+      section_start: erb(
         %q|
         % ********************************************************************************************
         \Needspace{5\baselineskip}\section{<%= line_renderer.render_text(title) %> [<%= number %>]}\label{<%= id %>}
         |
       ),
 
-      slide_end: erb(
+      section_end: erb(
         '
         '.strip
       ),
@@ -205,7 +205,7 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
+    def section_start(title, number, id, contains_code)
       super unless title == @last_title
     end
 

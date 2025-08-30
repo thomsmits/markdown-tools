@@ -26,11 +26,11 @@ module Rendering
         ''
       ),
 
-      slide_start: erb(
+      section_start: erb(
         ''
       ),
 
-      slide_end: erb(
+      section_end: erb(
         ''
       ),
 
@@ -124,12 +124,12 @@ module Rendering
     end
 
     ##
-    # Start of slide
-    # @param [String] title the title of the slide
-    # @param [String] number the number of the slide
-    # @param [String] id the unique id of the slide (for references)
-    # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
+    # Start of the section
+    # @param [String] title the title of the section
+    # @param [String] number the number of the section
+    # @param [String] id the unique id of the section (for references)
+    # @param [Boolean] contains_code indicates whether the section contains code fragments
+    def section_start(title, number, id, contains_code)
       super unless title == @last_title
     end
 

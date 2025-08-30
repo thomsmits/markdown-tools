@@ -32,7 +32,7 @@ class RendererTestBase < Minitest::Test
   end
 
   ##
-  # Create array of lines from a string
+  # Create an array of lines from a string
   # @param [String] string the string to be converted
   # @return [Array<String>] array of lines
   def lines(string)
@@ -49,20 +49,17 @@ class RendererTestBase < Minitest::Test
   # @param [Rendering::Renderer] renderer renderer to use for the rendering
   # @param [String] prepend a text to place before input, e.g. the '# Chapter'
   def parse_and_render(input, renderer, prepend = '')
-    presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
-                                            'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
-                                            false, nil, nil)
-
+    document = Domain::Document.new('Title')
     parser = Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
     lines = lines(input)
     lines.prepend(prepend)
-    parser.parse_lines(lines, 'testfile.md', 'java', presentation)
-    parser.second_pass(presentation)
+    parser.parse_lines(lines, 'testfile.md', 'java', document)
+    parser.second_pass(document)
 
     output = StringIO.new
 
     renderer.io = output
-    presentation >> renderer
+    document >> renderer
     output.string
   end
 

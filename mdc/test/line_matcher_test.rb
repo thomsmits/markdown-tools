@@ -1,10 +1,10 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/line_matcher'
-require_relative '../lib/domain/footnote'
-require_relative '../lib/domain/link'
-require_relative '../lib/domain/html'
-require_relative '../lib/domain/heading'
-require_relative '../lib/domain/image'
+require_relative '../lib/domain/block_elements/footnote'
+require_relative '../lib/domain/line_elements/link'
+require_relative '../lib/domain/block_elements/html'
+require_relative '../lib/domain/line_elements/heading'
+require_relative '../lib/domain/line_elements/image'
 
 include Domain
 

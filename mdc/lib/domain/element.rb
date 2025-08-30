@@ -1,6 +1,7 @@
 module Domain
   ##
-  # Element of the presentation
+  # Element of the section. Base class for
+  # all elements that can appear on a page.
   class Element
     attr_accessor :order
 
@@ -9,13 +10,6 @@ module Domain
     # @param [Fixnum] order the order of displaying the item
     def initialize(order = 0)
       @order = order
-    end
-
-    ##
-    # Create a digest of the content
-    # @return [String] a digest of the slide
-    def digest
-      ''
     end
 
     ##

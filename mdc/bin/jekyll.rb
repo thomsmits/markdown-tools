@@ -16,7 +16,7 @@ require_relative '../lib/rendering/renderer_jekyll'
 $project_path = ''
 
 ##
-# Main entry point into the markdown compiler.
+# The main entry point into the Markdown compiler.
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
@@ -142,7 +142,7 @@ class Main
       f << "# #{chapter_name}\n"
     end
 
-    # Write welcome file
+    # Write the welcome file
     File.open("#{result_dir}/../index.markdown", 'w', encoding: 'UTF-8') do |f|
       nl = "\n"
       f << %(---) << nl

@@ -1,4 +1,4 @@
-require_relative 'block_element'
+require_relative '../block_elements/block_element'
 
 module Domain
   ##

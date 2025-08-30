@@ -1,11 +1,11 @@
-require_relative '../../lib/domain/matching_question'
-require_relative '../../lib/domain/matching_questions'
-require_relative '../../lib/domain/multiple_choice'
-require_relative '../../lib/domain/multiple_choice_questions'
-require_relative '../../lib/domain/input_question'
+require_relative '../../lib/domain/questions/matching_question'
+require_relative '../../lib/domain/questions/matching_questions'
+require_relative '../../lib/domain/questions/multiple_choice'
+require_relative '../../lib/domain/questions/multiple_choice_questions'
+require_relative '../../lib/domain/questions/input_question'
 require_relative '../../lib/domain/presentation'
-require_relative '../../lib/domain/slide'
-require_relative '../../lib/domain/text'
+require_relative '../../lib/domain/section'
+require_relative '../../lib/domain/block_elements/text'
 
 module Parsing
   ##
@@ -131,7 +131,7 @@ module Parsing
         title = title.gsub('\\', '')
         # each line is a new question
 
-        slide = Domain::Slide.new('', title, 0, false)
+        slide = Domain::Section.new('', title, 0, false)
         slide << Domain::Text.new(text)
         slide << questions
         chapter << slide
@@ -143,5 +143,4 @@ module Parsing
       presentation
     end
   end
-
-  end
+end

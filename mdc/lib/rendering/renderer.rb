@@ -226,12 +226,12 @@ module Rendering
         '<%= chosen_image %>'
       ),
 
-      slide_start: erb(
+      section_start: erb(
         '## <%= line_renderer.meta(title) %>
         '
       ),
 
-      slide_end: erb(
+      section_end: erb(
         ''
       ),
 
@@ -240,6 +240,15 @@ module Rendering
       ),
 
       presentation_end: erb(
+        '
+        '
+      ),
+
+      document_start: erb(
+        ''
+      ),
+
+      document_end: erb(
         '
         '
       ),
@@ -775,6 +784,21 @@ module Rendering
     end
 
     ##
+    # Start of a document
+    # @param [String] title title
+    def document_start(title)
+      @io << @templates[:document_start].result(binding)
+    end
+
+    ##
+    # End of a document.
+    #
+    # @param [String] title title
+    def document_end(title)
+      @io << @templates[:document_end].result(binding)
+    end
+    
+    ##
     # End of presentation
     # @param [String] slide_language the language
     # @param [String] title1 first title
@@ -802,15 +826,15 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
-      @io << @templates[:slide_start].result(binding)
+    def section_start(title, number, id, contains_code)
+      @io << @templates[:section_start].result(binding)
       @last_title = title
     end
 
     ##
     # End of slide
-    def slide_end
-      @io << @templates[:slide_end].result(binding)
+    def section_end
+      @io << @templates[:section_end].result(binding)
     end
 
     ##

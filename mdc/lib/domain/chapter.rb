@@ -1,11 +1,11 @@
 require_relative 'element'
-require_relative 'footnote'
+require_relative 'block_elements/footnote'
 
 module Domain
   ##
   # Represents a single chapter of the presentation.
   class Chapter < Element
-    attr_accessor :title, :id, :slides, :links
+    attr_accessor :title, :id, :sections, :links
 
     ##
     # Create a new chapter
@@ -15,15 +15,15 @@ module Domain
       super()
       @title = title
       @id = id
-      @slides = []
+      @sections = []
       @links = []
     end
 
     # Add a slide to the presentation
-    # @param [Slide] slide the slide to be added
+    # @param [Section] section the section to be added
     # @return self
-    def <<(slide)
-      @slides << slide
+    def <<(section)
+      @sections << section
       self
     end
 
@@ -43,32 +43,23 @@ module Domain
     ##
     # Iterate over all slides of the chapter
     def each(&block)
-      @slides.each(&block)
+      @sections.each(&block)
     end
 
     ##
     # Call the provided block on each content element.
     def each_content_element(&block)
-      @slides.each { |s| s.each_content_element(&block) }
-    end
-
-    ##
-    # Create a digest of the content
-    # @return [String] a digest of the slide
-    def digest
-      digest = ' '
-      @slides.each { |slide| digest << slide.digest << ' ' }
-      digest
+      @sections.each { |s| s.each_content_element(&block) }
     end
 
     ##
     # Render contents
     # @param [Renderer] other renderer used for generation
     def >>(other)
-      page_number = !@slides.empty? ? @slides[0].number - 1 : 0
+      page_number = !@sections.empty? ? @sections[0].number - 1 : 0
 
       other.chapter_start(title, page_number, id)
-      @slides.each { |slide| slide >> other }
+      @sections.each { |section| section >> other }
       other.chapter_end
     end
   end

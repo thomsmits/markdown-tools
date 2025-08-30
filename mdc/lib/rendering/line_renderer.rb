@@ -1,7 +1,7 @@
 module Rendering
   ##
   # Default implementation of the line renderer.
-  # This class does nothing but return the Markdown
+  # This class does nothing but returns the Markdown
   # code. You have to overwrite it with the desired
   # behavior.
   class LineRenderer

@@ -116,14 +116,14 @@ module Rendering
         '
       ),
 
-      slide_start: erb(
+      section_start: erb(
         %q|
         % ********************************************************************************************
         \begin{frame}[fragile]{<%= line_renderer.render_text(title) %>}\label{<%= id %>}
         |
       ),
 
-      slide_end: erb(
+      section_end: erb(
         %q(
         \end{frame})
       ),
@@ -181,8 +181,8 @@ module Rendering
 
     ##
     # End of slide
-    def slide_end
-      @io << @templates[:slide_end].result(binding)
+    def section_end
+      @io << @templates[:section_end].result(binding)
     end
 
     ##

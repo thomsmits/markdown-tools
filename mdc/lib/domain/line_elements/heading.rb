@@ -1,4 +1,4 @@
-require_relative 'element'
+require_relative '../element'
 require_relative 'line_element'
 
 module Domain
@@ -22,13 +22,6 @@ module Domain
     # @param [Rendering::Renderer] other Renderer to be used.
     def >>(other)
       other.heading(@level, @title)
-    end
-
-    ##
-    # Create a digest of the content
-    # @return [String] a digest of the slide
-    def digest
-      @title
     end
 
     ##

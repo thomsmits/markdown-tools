@@ -1,4 +1,4 @@
-require_relative 'element'
+require_relative '../element'
 require_relative 'line_element'
 
 module Domain

@@ -93,14 +93,14 @@ module Rendering
         '
       ),
 
-      slide_start: erb(
+      section_start: erb(
         "
         <section id='<%= id %>' class='slide' data-number='<%= number %>'>
         <h2 class='title'><%= line_renderer.meta(title) %></h2>
         "
       ),
 
-      slide_end: erb(
+      section_end: erb(
         '
         </section>
         '

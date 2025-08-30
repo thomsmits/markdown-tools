@@ -2,9 +2,9 @@
 require_relative 'custom_handler'
 require_relative '../lib/rendering/renderer_gift'
 require_relative 'master_file'
-require_relative '../lib/domain/matching_questions'
-require_relative '../lib/domain/multiple_choice_questions'
-require_relative '../lib/domain/input_question'
+require_relative '../lib/domain/questions/matching_questions'
+require_relative '../lib/domain/questions/multiple_choice_questions'
+require_relative '../lib/domain/questions/input_question'
 
 ##
 # Parse a Markdown snippet of an exam question and render
@@ -41,7 +41,7 @@ class GIFT
     CustomHandler.convert_stream(src_dir, dest_dir, prog_language,
                                  'Rendering::RendererGIFT', lines, input_file) do |presentation|
       # Ensure that every exercise is at least an input question
-      exercise = presentation.chapters[0].slides[0]
+      exercise = presentation.chapters[0].sections[0]
       question_found = exercise.elements.filter do |e|
         [Domain::MultipleChoiceQuestions, Domain::InputQuestion, Domain::MatchingQuestions].include?(e.class)
       end.length.positive?

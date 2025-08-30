@@ -14,7 +14,7 @@ require_relative '../lib/rendering/renderer_latex_plain'
 $project_path = ''
 
 ##
-# Main entry point into the markdown compiler.
+# The main entry point into the Markdown compiler.
 # The +self.main+ method is called with the command
 # line parameters.
 class Main
@@ -71,7 +71,7 @@ class Main
 
     result_dir = File.dirname(output_file)
 
-    # Scan files matching the pattern 01_...
+    # Scan files matching pattern 01_...
     files = []
 
     dir.each { |file| files << file if /[0-9][0-9]_.*\.md/ =~ file }

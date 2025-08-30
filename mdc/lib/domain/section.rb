@@ -2,16 +2,17 @@ require_relative 'container'
 
 module Domain
   ##
-  # A single slide of the presentation
-  class Slide < Container
+  # A single section of the document, e.g., a single slide in
+  # the presentation.
+  class Section < Container
     attr_accessor :title, :id, :number, :skip, :footnotes
 
     ##
     # Create a new instance
-    # @param [String] id slide id
-    # @param [String] title title of the slide
-    # @param [Fixnum] number number of slide
-    # @param [Boolean] skip indicates a hidden slide
+    # @param [String] id section id
+    # @param [String] title title of the section
+    # @param [Fixnum] number number of the section
+    # @param [Boolean] skip indicates a hidden section
     def initialize(id, title, number, skip)
       super()
       @title = title
@@ -22,34 +23,24 @@ module Domain
     end
 
     ##
-    # Create a digest of the content
-    # @return [String] a digest of the slide
-    def digest
-      digest = ''
-      digest << @title << ' '
-      digest << super
-      digest
-    end
-
-    ##
-    # Render the Slide
+    # Render the section
     # @param [Rendering::Renderer] other Renderer to be used..
     def >>(other)
       return if @skip
 
       if other.handles_animation?
         (0...max_order + 1).each do |order|
-          other.slide_start(@title, @number, @id, contains_code?)
+          other.section_start(@title, @number, @id, contains_code?)
           @elements.each do |e|
             e >> other if !e.order.nil? && e.order <= order
           end
-          other.slide_end
+          other.section_end
         end
       else
-        other.slide_start(@title, @number, @id, contains_code?)
+        other.section_start(@title, @number, @id, contains_code?)
         @elements.each { |e| e >> other }
         @footnotes.each { |e| e >> other }
-        other.slide_end
+        other.section_end
       end
     end
 

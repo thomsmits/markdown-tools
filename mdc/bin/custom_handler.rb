@@ -5,7 +5,7 @@ require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
 
 ##
-# Helper class for the direct parsing of markdown to other formats
+# Helper class for the direct parsing of Markdown to other formats
 # without using the whole logic of the Main class.
 class CustomHandler
   ##

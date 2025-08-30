@@ -98,13 +98,13 @@ module Rendering
         '
       ),
 
-      slide_start: erb(
+      section_start: erb(
         "
         <section id='<%= id %>' class='slide'>
         "
       ),
 
-      slide_end: erb(
+      section_end: erb(
         '
         </section>
         '
@@ -193,9 +193,9 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
+    def section_start(title, number, id, contains_code)
       escaped_title = line_renderer.meta(title)
-      @io << @templates[:slide_start].result(binding)
+      @io << @templates[:section_start].result(binding)
 
       return if title == @last_title
         @io << "<h2 class='title'>#{escaped_title} <span class='title_number'>[#{number}]</span></h2>" << nl

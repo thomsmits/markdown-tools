@@ -26,8 +26,8 @@ module Rendering
       uml: erb(''),
       chapter_start: erb(''),
       chapter_end: erb(''),
-      slide_start: erb('::<%= line_renderer.meta(title) %>::[html]<% -%>'),
-      slide_end: erb(''),
+      section_start: erb('::<%= line_renderer.meta(title) %>::[html]<% -%>'),
+      section_end: erb(''),
       presentation_start: erb(''),
       presentation_end: erb(''),
       vertical_space: erb(''),
@@ -46,7 +46,7 @@ module Rendering
       table_start: erb('<table><thead><tr><%-  -%>'),
       table_separator: erb(''),
       table_end: erb('</tbody></table><%-  -%>'),
-      text: erb(%q|<p><%= line_renderer.meta(content).strip.gsub("\n", '<br>') %></p><%-  -%>|),
+      text: erb(%q|<p><%= content.strip.gsub("\n", '<br>') %></p><%-  -%>|),
       heading: erb(''),
       toc_start: erb(''),
       toc_entry: erb(''),
@@ -117,8 +117,8 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
-      @io << @templates[:slide_start].result(binding)
+    def section_start(title, number, id, contains_code)
+      @io << @templates[:section_start].result(binding)
     end
 
     ##

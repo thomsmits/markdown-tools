@@ -2,9 +2,9 @@
 require_relative 'custom_handler'
 require_relative '../lib/rendering/renderer_gift'
 require_relative 'master_file'
-require_relative '../lib/domain/matching_questions'
-require_relative '../lib/domain/multiple_choice_questions'
-require_relative '../lib/domain/input_question'
+require_relative '../lib/domain/questions/matching_questions'
+require_relative '../lib/domain/questions/multiple_choice_questions'
+require_relative '../lib/domain/questions/input_question'
 
 
 ##

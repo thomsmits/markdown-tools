@@ -1,7 +1,7 @@
-require_relative 'element'
-require_relative 'line_element'
-require_relative 'text'
-require_relative 'container'
+require_relative '../element'
+require_relative '../line_elements/line_element'
+require_relative '../block_elements/text'
+require_relative '../container'
 
 module Domain
   ##

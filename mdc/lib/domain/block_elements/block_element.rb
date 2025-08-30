@@ -1,6 +1,6 @@
-require_relative 'element'
-require_relative '../constants'
-require_relative 'line_nodes'
+require_relative '../element'
+require_relative '../../constants'
+require_relative '../line_nodes'
 
 module Domain
   ##
@@ -31,13 +31,6 @@ module Domain
     end
 
     ##
-    # Create a digest of the content
-    # @return [String] a digest of the slide
-    def digest
-      @content
-    end
-
-    ##
     # Return a string representation of the object
     # @return [String] a string representation
     def to_s
@@ -45,8 +38,7 @@ module Domain
     end
 
     ##
-    # Render sub nodes, if present and return rendering
-    # result
+    # Render sub nodes, if present and return rendering result
     # @param [Rendering::Renderer] renderer The current renderer
     # @return [String] the rendered content
     def render_sub_nodes(renderer)

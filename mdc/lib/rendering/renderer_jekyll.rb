@@ -104,11 +104,11 @@ module Rendering
         '
       ),
 
-      slide_start: erb(
+      section_start: erb(
         ''
       ),
 
-      slide_end: erb(
+      section_end: erb(
         ''
       ),
 
@@ -334,9 +334,9 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def slide_start(title, number, id, contains_code)
+    def section_start(title, number, id, contains_code)
       escaped_title = line_renderer.meta(title)
-      @io << @templates[:slide_start].result(binding)
+      @io << @templates[:section_start].result(binding)
 
       return if title == @last_title
 

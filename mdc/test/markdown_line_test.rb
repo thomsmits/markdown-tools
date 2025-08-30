@@ -13,21 +13,6 @@ class MarkdownLineTest < Minitest::Test
   end
 
   ##
-  # Test parsing of comments
-  def test_comment
-    line = line('<!--Hallo-->')
-    assert(line.comment?)
-    assert_equal('Hallo', line.comment)
-
-    line = line('<!-- <br>Hallo</br> -->')
-    assert(line.comment?)
-    assert_equal(' <br>Hallo</br> ', line.comment)
-
-    assert(!line('<--Hallo-->').comment?)
-    assert(!line('<!-- Hallo ->').comment?)
-  end
-
-  ##
   # Test parsing of vertical spaces
   def test_vspace
     assert(line('<br>').vertical_space?)

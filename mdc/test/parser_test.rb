@@ -1,36 +1,36 @@
 require 'minitest/autorun'
 require_relative '../lib/parsing/parser'
 require_relative '../lib/domain/presentation'
-require_relative '../lib/domain/block_element'
-require_relative '../lib/domain/box'
-require_relative '../lib/domain/footnote'
-require_relative '../lib/domain/equation'
-require_relative '../lib/domain/html'
-require_relative '../lib/domain/important'
-require_relative '../lib/domain/multiple_choice_questions'
-require_relative '../lib/domain/ordered_list'
-require_relative '../lib/domain/ordered_list_item'
-require_relative '../lib/domain/question'
-require_relative '../lib/domain/quote'
-require_relative '../lib/domain/script'
-require_relative '../lib/domain/source'
-require_relative '../lib/domain/table'
-require_relative '../lib/domain/text'
-require_relative '../lib/domain/uml'
-require_relative '../lib/domain/unordered_list'
-require_relative '../lib/domain/unordered_list_item'
-require_relative '../lib/domain/line_element'
-require_relative '../lib/domain/button'
-require_relative '../lib/domain/button_with_log'
-require_relative '../lib/domain/button_with_log_pre'
-require_relative '../lib/domain/button_link_previous'
-require_relative '../lib/domain/button_live_css'
-require_relative '../lib/domain/button_live_preview'
-require_relative '../lib/domain/button_live_preview_float'
-require_relative '../lib/domain/heading'
-require_relative '../lib/domain/image'
-require_relative '../lib/domain/multiple_choice'
-require_relative '../lib/domain/vertical_space'
+require_relative '../lib/domain/block_elements/block_element'
+require_relative '../lib/domain/block_elements/box'
+require_relative '../lib/domain/block_elements/footnote'
+require_relative '../lib/domain/block_elements/equation'
+require_relative '../lib/domain/block_elements/html'
+require_relative '../lib/domain/block_elements/important'
+require_relative '../lib/domain/questions/multiple_choice_questions'
+require_relative '../lib/domain/block_elements/ordered_list'
+require_relative '../lib/domain/block_elements/ordered_list_item'
+require_relative '../lib/domain/questions/question'
+require_relative '../lib/domain/block_elements/quote'
+require_relative '../lib/domain/block_elements/script'
+require_relative '../lib/domain/block_elements/source'
+require_relative '../lib/domain/block_elements/table'
+require_relative '../lib/domain/block_elements/text'
+require_relative '../lib/domain/block_elements/uml'
+require_relative '../lib/domain/block_elements/unordered_list'
+require_relative '../lib/domain/block_elements/unordered_list_item'
+require_relative '../lib/domain/line_elements/line_element'
+require_relative '../lib/domain/line_elements/button'
+require_relative '../lib/domain/line_elements/button_with_log'
+require_relative '../lib/domain/line_elements/button_with_log_pre'
+require_relative '../lib/domain/line_elements/button_link_previous'
+require_relative '../lib/domain/line_elements/button_live_css'
+require_relative '../lib/domain/line_elements/button_live_preview'
+require_relative '../lib/domain/line_elements/button_live_preview_float'
+require_relative '../lib/domain/line_elements/heading'
+require_relative '../lib/domain/line_elements/image'
+require_relative '../lib/domain/questions/multiple_choice'
+require_relative '../lib/domain/line_elements/vertical_space'
 
 ##
 # Test the parser
@@ -84,7 +84,7 @@ class ParserTest < Minitest::Test
 
     slide_index = 0
 
-    slides = chapter1.slides
+    slides = chapter1.sections
 
     check_slide(slides[slide_index], 'Slide 1.1', false, false,
                 [Domain::Text, Domain::UnorderedList, Domain::Text],
@@ -151,7 +151,7 @@ class ParserTest < Minitest::Test
 
     chapter2 = presentation.chapters[1]
 
-    slides = chapter2.slides
+    slides = chapter2.sections
 
     assert_equal('Chapter 2', chapter2.title)
 
@@ -612,7 +612,7 @@ class ParserTest < Minitest::Test
 
   ##
   # Helper method to simplify checks
-  # @param [Domain::Slide] slide the slide to check
+  # @param [Domain::Section] slide the slide to check
   # @param [String] title expected title of the slide
   # @param [Boolean] code does the slide contain any kind of code
   # @param [Boolean] skipped is the slide skipped

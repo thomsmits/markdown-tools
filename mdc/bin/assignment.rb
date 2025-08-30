@@ -12,7 +12,7 @@ require_relative '../lib/rendering/renderer_latex_assignment'
 # use the fle `main.rb`
 class Assignment
   ##
-  # Parse lines containing a markdown file and return the rendered result.
+  # Parse lines containing a Markdown file and return the rendered result.
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir target directory
   # @param [String] prog_language the default programming language

@@ -71,11 +71,9 @@ int k = 17;
 
 ## Slide 1.10
 
-<!-- Comment before -->
 <script>
   alert('Javascript goes here!');
 </script>
-<!-- Comment after -->
 
 
 # Chapter 2

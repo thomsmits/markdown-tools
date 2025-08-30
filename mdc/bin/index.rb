@@ -14,7 +14,7 @@ class Index
 
     ##
     # Create new a new instance
-    # @param [String] chapter_number Number of chapter
+    # @param [String] chapter_number Number of the chapter
     # @param [String] chapter_name Name of chapter
     # @param [String] slide_file file containing the slides
     # @param [String] plain_file file containing the plain data

@@ -1,5 +1,5 @@
-require_relative '../domain/footnote'
-require_relative '../domain/link'
+require_relative '../domain/block_elements/footnote'
+require_relative '../domain/line_elements/link'
 
 module Parsing
   ##
@@ -37,16 +37,6 @@ module Parsing
     # Remove the code prefix (i.e. four blanks) from the line
     def trim_code_prefix!
       substr!(4) if @line.length > 4
-    end
-
-    ## HTML comment
-    def comment
-      @line.strip[/<!--(.*)-->/, 1]
-    end
-
-    ## HTML comment
-    def comment?
-      !!comment
     end
 
     ## Special Space comment

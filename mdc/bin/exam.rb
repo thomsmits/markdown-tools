@@ -23,7 +23,7 @@ class Exam
   end
 
   ##
-  # Parse lines containing a markdown file and return the rendered result.
+  # Parse lines containing a Markdown file and return the rendered result.
   # @param [String] src_dir directory with source files
   # @param [String] dest_dir target directory
   # @param [String] prog_lang the default programming language

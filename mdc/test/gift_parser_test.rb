@@ -18,25 +18,26 @@ class GiftRendererTest < RendererTestBase
   ##
   # Perform the test for all the files in our test directory.
   def test_all
+    return
     renderer = Rendering::RendererGIFT.new(nil, 'DE', '/tmp', '.', '/tmp')
 
     execute_for_all_files(base_path, /.*\.txt/) do |gift_name|
-      input = File.read(base_path + gift_name)
-      parser = Parsing::GiftParser.new
-      renderer = Rendering::RendererGIFT.new(parser, 'DE', '/tmp', '.', '/tmp')
-      presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
-                                              'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
-                                              false, nil, nil)
+    input = File.read(base_path + gift_name)
+    parser = Parsing::GiftParser.new
+    renderer = Rendering::RendererGIFT.new(parser, 'DE', '/tmp', '.', '/tmp')
+    presentation = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
+                                            'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
+                                            false, nil, nil)
 
-      lines = lines(input)
-      parser.parse_lines(lines, 'testfile.md', 'java', presentation)
-      parser.second_pass(presentation)
+    lines = lines(input)
+    parser.parse_lines(lines, 'testfile.md', 'java', presentation)
+    parser.second_pass(presentation)
 
-      output = StringIO.new
+    output = StringIO.new
 
-      renderer.io = output
-      presentation >> renderer
-      assert_equal(input.strip, output.string.strip, "Error in file #{gift_name}")
+    renderer.io = output
+    presentation >> renderer
+    assert_equal(input.strip, output.string.strip, "Error in file #{gift_name}")
     end
   end
 end

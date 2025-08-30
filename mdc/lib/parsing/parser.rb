@@ -1,10 +1,9 @@
 require 'stringio'
 
 require_relative '../../lib/domain/chapter'
-require_relative '../../lib/domain/slide'
+require_relative '../../lib/domain/section'
 require_relative '../../lib/domain/comment'
 require_relative '../../lib/domain/presentation'
-require_relative '../../lib/domain/comment'
 require_relative '../../lib/domain/element'
 require_relative '../../lib/domain/license'
 require_relative '../constants'
@@ -29,8 +28,8 @@ module Parsing
   end
 
   ##
-  # Parser for markdown presentation files. The files parsed by this
-  # class are normal markdown files with special tags possible to use
+  # Parser for Markdown files. The files parsed by this
+  # class are normal Markdown files with special tags possible to use
   # them in presentations.
   class Parser
     ##
@@ -223,23 +222,18 @@ module Parsing
             # <!-- Spacing: xx -->
             handler.space_comment(ps, line)
 
-          elsif line.comment? && !line.image? && !line.input_question?
-            # <!-- --> but not after an image, to allow image dimensions
-            # in comments.
-            handler.comment(ps, line)
-
           else
             # Other cases (simple inline matches)
             handler.inline(ps, line)
 
           end
         rescue StandardError => e
-          warn "#####################################"
-          warn "An error occured"
+          warn '#####################################'
+          warn 'An error occurred'
           warn "File: #{file_name}"
           warn "Line: #{ps.line_counter}"
           warn "Code: #{e.backtrace_locations[0]}"
-          warn "#####################################"
+          warn '#####################################'
           exit(-1)
         end
       end

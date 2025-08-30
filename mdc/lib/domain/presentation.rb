@@ -1,14 +1,15 @@
 require_relative 'chapter'
 require_relative 'toc'
+require_relative 'document'
 
 module Domain
   ##
   # Representation of the whole presentation
-  class Presentation
-    attr_accessor :slide_language, :title1, :title2, :section_number,
+  class Presentation < Document
+    attr_accessor :slide_language, :title2, :section_number,
                   :section_name, :author, :copyright,
                   :def_prog_lang, :chapters, :toc,
-                  :description, :term, :comments, :create_index,
+                  :description, :term, :create_index,
                   :bibliography, :last_change
 
     ##
@@ -31,8 +32,8 @@ module Domain
     def initialize(slide_language, title1, title2, section_number, section_name,
                    copyright, author, def_prog_lang, description,
                    term, create_index, last_change, bibliography)
+      super(title1)
       @slide_language = slide_language
-      @title1 = title1
       @title2 = title2
       @section_number = section_number
       @section_name = section_name
@@ -44,46 +45,13 @@ module Domain
       @create_index = create_index
       @last_change = last_change
       @bibliography = bibliography
-
-      @chapters = []
-      @comments = []
-      @toc = TOC.new
     end
 
     ##
-    # Add a chapter to the presentation
-    # @param [Domain::Chapter] chapter the chapter to add
-    # @return self
-    def <<(chapter)
-      @chapters << chapter
-      self
-    end
-
-    ##
-    # Build the table of contents from the contained data. This method must be
-    # called after all slides and chapters have been added to the presentation
-    def build_toc
-      @chapters.each do |chapter|
-        @toc.add(chapter.id, chapter.title)
-
-        chapter.each do |slide|
-          toc.add_sub_entry(chapter.id, slide.id, slide.title) unless slide.skip
-        end
-      end
-    end
-
-    ##
-    # Create a digest of the content with the given length
-    # @param [Fixnum] length length of the digest in characters
-    # @return [String] a digest of the presentation, i.e. the first length characters
-    def digest(length)
-      digest = ''
-      @chapters.each { |chapter| digest << chapter.digest }
-      digest.delete!("\n")
-      digest.delete!('_')
-      digest.delete!('*')
-      digest.squeeze!(' ')
-      digest[0...length]
+    # Access to the first title.
+    # @return [String] the first title.
+    def title1
+      @title
     end
 
     ##
@@ -100,12 +68,6 @@ module Domain
       other.presentation_end(@slide_language, @title1,
                              @title2, @section_number, @section_name,
                              @copyright, @author, @create_index, @bibliography)
-    end
-
-    ##
-    # Iterate over all chapters.
-    def each(&block)
-      @chapters.each(&block)
     end
   end
 end
