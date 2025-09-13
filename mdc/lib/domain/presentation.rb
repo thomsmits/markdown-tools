@@ -59,15 +59,15 @@ module Domain
     # @param [Rendering::Renderer] other Renderer to be used..
     def >>(other)
       build_toc
-      other.presentation_start(@slide_language, @title1,
-                               @title2, @section_number, @section_name,
-                               @copyright, @author, @description, @term, @last_change,
-                               @bibliography)
+      other.presentation_start(slide_language, title1,
+                               title2, section_number, section_name,
+                               copyright, author, description, term, last_change,
+                               bibliography)
       other.render_toc(@toc)
       @chapters.each { |chapter| chapter >> other }
-      other.presentation_end(@slide_language, @title1,
-                             @title2, @section_number, @section_name,
-                             @copyright, @author, @create_index, @bibliography)
+      other.presentation_end(slide_language, title1,
+                             title2, section_number, section_name,
+                             copyright, author, create_index, bibliography)
     end
   end
 end
