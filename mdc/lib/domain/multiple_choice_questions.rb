@@ -59,5 +59,12 @@ module Domain
       percentage_wrong   = (1.0 / (@questions.length - no_correct) * 100).round(5)
       [percentage_correct, percentage_wrong]
     end
+
+    ##
+    # Return a string representation.
+    # @return [String] the string representation.
+    def to_s
+      @questions.map { |q| "  * #{q}" }.join("\n")
+    end
   end
 end

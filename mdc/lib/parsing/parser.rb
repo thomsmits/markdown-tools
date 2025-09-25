@@ -257,7 +257,7 @@ module Parsing
     # @param [String] def_prog_lang language for code blocks not tagged
     # @param [Domain::Presentation] presentation Storage of results
     def parse(file_name, def_prog_lang, presentation)
-      # Read whole file into an array to allow looking ahead
+      # Read THE whole file into an array to allow looking ahead
       lines = File.readlines(file_name, "\n", encoding: 'UTF-8')
       parse_lines(lines, file_name, def_prog_lang, presentation)
     end

@@ -77,7 +77,7 @@ class CustomHandler
   # @param [Proc] custom_handler custom handler to manipulate the parsed structure before rendering it
   def self.convert_file(src_dir, dest_dir, src_file, dest_file, prog_language,
                         renderer_class, img_dir = 'img', tmp_dir = '../temp', &custom_handler)
-    # Read source file
+    # Read the source file
     lines = File.readlines("#{src_dir}/#{src_file}", "\n", encoding: 'UTF-8')
 
     # Open output file

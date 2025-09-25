@@ -636,7 +636,7 @@ class ParserTest < Minitest::Test
   end
 
   ##
-  # Create array of lines from a string
+  # Create an array of lines from a string
   # @param [String] string the string to be converted
   # @return [Array<String>] array of lines
   def lines(string)
@@ -645,5 +645,5 @@ class ParserTest < Minitest::Test
     io.close
 
     result
-    end
+  end
 end
