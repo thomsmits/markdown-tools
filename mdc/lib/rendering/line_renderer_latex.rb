@@ -73,6 +73,7 @@ module Rendering
       ['o.O.',                'o.\,O.'],
       ['o.ä.',                'o.\,ä.'],
       ['o.J.',                'o.\,J.'],
+      ['i.d.R.',              'i.\,d.\,R.',],
 
       # Arrows
       [/([^<]|^)<->(\s|\))/,  '\1$\leftrightarrow$\2'],
