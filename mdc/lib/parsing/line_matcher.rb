@@ -32,6 +32,9 @@ module Parsing
       LineMatcher.new(/^<!-- INPUT answer="(.*)" -->/) \
           { |_line, _line_id, values| Domain::InputQuestion.new(values.split(',')) },
 
+      LineMatcher.new(/^<!-- .* -->/) \
+        { |_line, _line_id, values| Domain::Text.new('') },
+
       LineMatcher.new(/^<(.*)/) \
           { |line, _line_id| Domain::HTML.new(line) },
 
