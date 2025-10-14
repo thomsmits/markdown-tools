@@ -78,9 +78,9 @@ module Rendering
 
       matching_question_end: erb(%q|
         \begin{enumerate}[label=\alph{enumi}.]
-        <% for question in questions %>
-          <% if question.length > 0 %>
-            \item <%= question %> $\rightarrow$  \fillin[][1cm]
+        <% for answer in answers %>
+          <% if answer.length > 0 %>
+            \item <%= answer %>
           <% end %>
         <% end %>
         \end{enumerate}
@@ -88,9 +88,9 @@ module Rendering
         \textit{<%= translate(:matching_question) %>}
 
         \begin{enumerate}
-        <% for answer in answers %>
-          <% if answer.length > 0 %>
-            \item <%= answer %>
+        <% for question in questions %>
+          <% if question.length > 0 %>
+            \item \fillin[][1cm] $\leftarrow$ <%= question %>
           <% end %>
         <% end %>
         \end{enumerate}|),

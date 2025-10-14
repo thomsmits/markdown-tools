@@ -296,7 +296,7 @@ module Rendering
     # @param [String] width width for slide
     # @param [String|nil] source source of the image
     def image_latex(location, title, width, source = nil)
-      stripped_location = location.gsub(/\..../, '')
+      stripped_location = location.gsub(/\.\.\\/, '')
 
       full_title = title
 
