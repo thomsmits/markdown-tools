@@ -239,6 +239,7 @@ module Parsing
           warn "File: #{file_name}"
           warn "Line: #{ps.line_counter}"
           warn "Code: #{e.backtrace_locations[0]}"
+          warn "Message: #{e}"
           warn "#####################################"
           exit(-1)
         end
