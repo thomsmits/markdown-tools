@@ -86,9 +86,10 @@ module Rendering
       ),
 
       chapter_start: erb(
-        'title: "<%= title %>"
-          nav_order: <%= nav_order %>
-          ---
+        '
+        title: "<%= title %>"
+        nav_order: <%= nav_order %>
+        ---
         <%- if @has_equation -%>
           <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
           <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
@@ -113,7 +114,8 @@ module Rendering
       ),
 
       presentation_start: erb(
-        '---
+        '
+          ---
           layout: page
           parent: "<%= section_name %>"'
       ),

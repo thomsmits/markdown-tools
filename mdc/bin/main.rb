@@ -10,6 +10,8 @@ require_relative '../lib/rendering/renderer_html_presentation'
 require_relative '../lib/rendering/renderer_html_plain'
 require_relative '../lib/rendering/renderer_latex_presentation'
 require_relative '../lib/rendering/renderer_latex_plain'
+require_relative '../lib/rendering/renderer_typst_plain'
+require_relative '../lib/rendering/renderer_typst_presentation'
 
 $project_path = ''
 
@@ -116,6 +118,16 @@ class Main
                  )
                when 'tex-plain'
                  Rendering::RendererLatexPlain.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               when 'typst-slide'
+                 Rendering::RendererTypstPresentation.new(
+                   io, default_syntax, result_dir,
+                   image_dir, temp_dir
+                 )
+               when 'typst-plain'
+                 Rendering::RendererTypstPlain.new(
                    io, default_syntax, result_dir,
                    image_dir, temp_dir
                  )

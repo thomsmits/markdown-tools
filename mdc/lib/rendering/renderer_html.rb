@@ -341,33 +341,5 @@ module Rendering
 
       @io << @templates[:image].result(binding)
     end
-
-    ##
-    # Return the most suitable image file for the given
-    # @param [String] file_name name of the image
-    # @param [Array] formats available file formats
-    # @return the most preferred image file name
-    def choose_image(file_name, formats)
-      format = nil
-
-      formats.each do |f|
-        if PREFERRED_IMAGE_FORMATS.include?(f)
-          format = f
-          break
-        end
-      end
-
-      if format.nil?
-        raise StandardError,
-              "No suitable format found for image #{file_name}; " \
-              "Found: #{formats}; Supported: #{PREFERRED_IMAGE_FORMATS}"
-      end
-
-      if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name
-        "#{Regexp.last_match(1)}.#{format}"
-      else
-        "#{file_name}.#{format}"
-      end
-    end
   end
 end

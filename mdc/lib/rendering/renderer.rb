@@ -13,9 +13,12 @@ module Rendering
     # Remove all trailing spaces on all lines of the string
     # @param [String] input the input string
     def self.clean(input)
-      result = ''
-      input.split(/\n/).each { |line| result.concat(line.strip).concat("\n") }
-      result
+      # min indentation
+      indent = input.split("\n")
+                    .map { |e| e.length - e.lstrip.length }
+                    .filter { |e| e != 0 }
+                    .min
+      input.gsub(/^ {#{indent}}/, '') + "\n"
     end
 
     ##
@@ -25,6 +28,8 @@ module Rendering
     def self.erb(input)
       ERB.new(clean(input), trim_mode: '-')
     end
+
+    PREFERRED_IMAGE_FORMATS = %w[svg png jpg jpeg gif pdf].freeze
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
@@ -842,6 +847,38 @@ module Rendering
     # Render a footnote
     def footnote(key, text)
       @io << @templates[:footnote].result(binding)
+    end
+
+    def preferred_image_formats
+      PREFERRED_IMAGE_FORMATS
+    end
+
+    ##
+    # Return the most suitable image file for the given
+    # @param [String] file_name name of the image
+    # @param [Array] formats available file formats
+    # @return the most preferred image file name
+    def choose_image(file_name, formats)
+      format = nil
+
+      formats.each do |f|
+        if preferred_image_formats.include?(f)
+          format = f
+          break
+        end
+      end
+
+      if format.nil?
+        raise StandardError,
+              "No suitable format found for image #{file_name}; " \
+                "Found: #{formats}; Supported: #{preferred_image_formats}"
+      end
+
+      if /(.*?)\.[A-Za-z]{3,4}/ =~ file_name
+        "#{Regexp.last_match(1)}.#{format}"
+      else
+        "#{file_name}.#{format}"
+      end
     end
 
     ##
