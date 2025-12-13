@@ -57,6 +57,9 @@ module Rendering
       ['ω',                   '\textomega{}'],
       ['≤',                   '\begin{math}\le\end{math}'],
       ['≥',                   '\begin{math}\ge\end{math}'],
+      ['∧',                   '\begin{math}\wedge\end{math}'],
+      ['⊆',                   '\begin{math}\subseteq\end{math}'],
+      ['⊈',                   '\begin{math}\nsubseteq\end{math}'],
 
       # Abbreviations
       ['Z.B.',                'Z.\,B.'],

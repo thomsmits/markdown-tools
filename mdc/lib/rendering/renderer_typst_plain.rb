@@ -26,7 +26,7 @@ module Rendering
       code_start: erb(
         '
       <%- if caption then -%>
-      #text(size: 10pt, fill: mittelgrau, font: "Liberation Sans")[🖹 <%= caption %>]#v(-0.5em)
+      #text(size: 9pt, fill: mittelgrau, font: "Liberation Sans", weight: "bold")[🖹 <%= line_renderer.meta(caption) %>]#v(-0.6em)
       <%- end -%>
       ```<%= prog_lang %>'
       ),
