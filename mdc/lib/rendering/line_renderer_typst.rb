@@ -288,6 +288,8 @@ module Rendering
       [/\\sqrt\{(.*?)}/, 'sqrt(\\1)'],
       [/\\sqrt \{(.*?)}/, 'sqrt(\\1)'],
       [/\\text\{(.*?)}/, '"\\1"'],
+      [/\\begin\{cases}(.*?)\\end\{cases}/m, 'cases(\1)'],
+      [/\\begin\{bmatrix}(.*?)\\end\{bmatrix}/m, 'mat(\1)'],
       [/(\S)\\ /, '\1 '],
       ['\\\\', '\\'],
       [/sum###(.*?)###(.*?)###/, 'sum_(\1)^(\2)'],
@@ -407,6 +409,20 @@ module Rendering
       else
         # TODO: #{title} is missing
         %{#link("#{meta(target)}")[#{meta(content)}]}
+      end
+    end
+
+    ##
+    # Replace characters inside math formula
+    # @param [String] input Input string
+    # @return [String] result with replaced meta characters
+    def formula(input)
+      result = super(input)
+      if result =~ /mat\(/
+        result.gsub(/\\$/, ';')
+              .gsub(' & ', ', ')
+      else
+        result
       end
     end
 
