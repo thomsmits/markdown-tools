@@ -832,7 +832,8 @@ module Rendering
     # @param [String] number the number of the slide
     # @param [String] id the unique id of the slide (for references)
     # @param [Boolean] contains_code indicates whether the slide contains code fragments
-    def section_start(title, number, id, contains_code)
+    # @param [Boolean] suppress_numbering suppress numbering of chapters
+    def section_start(title, number, id, contains_code, suppress_numbering)
       @io << @templates[:section_start].result(binding)
       @last_title = title
     end

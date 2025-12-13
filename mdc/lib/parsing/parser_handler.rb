@@ -116,9 +116,10 @@ module Parsing
     def slide_title(ps, line)
       skip = line.skipped_slide?
       ps.slide_counter += 1 unless skip
-      title = line.slide_title.delete('#').gsub('--skip--', '').strip
+      suppress_numbering = line.slide_title.delete('#')[0] == '^'
+      title = line.slide_title.delete('#').gsub('--skip--', '').gsub(/^\^/, '').strip
       ps.slide = Domain::Section.new(slide_id(ps.slide_counter),
-                                     title, ps.slide_counter, skip)
+                                     title, ps.slide_counter, skip, suppress_numbering)
 
       unless ps.chapter
         raise "No chapter here to add '#{title}'. Maybe the " \

@@ -44,11 +44,19 @@ module Rendering
       code_start: erb(
         '
       <%- if caption then -%>
-      #text(size: 7pt, fill: mittelgrau)[<%= caption %>]#v(-0.9em)
+      #text(size: 8pt, fill: mittelgrau, weight: "bold")[<%= caption %>]#v(-0.7em)
       <%- end -%>
       ```<%= prog_lang %>'
         ),
     }.freeze
+
+    ##
+    # Indicates whether the renderer handles animations or not. false indicates
+    # that slides should not be repeated.
+    # @return [Boolean] +true+ if animations are supported, otherwise +false+
+    def handles_animation?
+      true
+    end
 
     ##
     # Method returning the templates used by the renderer. Should be overwritten by the
@@ -56,6 +64,19 @@ module Rendering
     # @return [Hash] the templates
     def all_templates
       @templates = super.merge(TEMPLATES)
+    end
+
+    ##
+    # Render an image
+    # @param [String] location path to image
+    # @param [Array] formats available file formats
+    # @param [String] _alt alt text
+    # @param [String] title title of image
+    # @param [String] width_slide width for slide
+    # @param [String] source source of the image
+    def image(location, formats, _alt, title, width_slide, _width_plain, source = nil)
+      calculated_width = ((width_slide.gsub('%', '').to_i / 100.0) * 16).to_s + "cm"
+      image_typst(location, formats, title, calculated_width, source)
     end
   end
 end

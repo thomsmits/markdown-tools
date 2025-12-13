@@ -7,7 +7,7 @@ module Rendering
 
   class RendererTypst < Renderer
 
-    PREFERRED_IMAGE_FORMATS = %w[png jpg jpeg gif pdf].freeze
+    PREFERRED_IMAGE_FORMATS = %w[pdf png jpg jpeg gif].freeze
 
     ## ERB templates to be used by the renderer
     TEMPLATES = {
@@ -22,7 +22,6 @@ module Rendering
       ),
 
       section_end: erb(''),
-
 
       heading_3: erb(
         "=== <%= line_renderer.meta(title) %>"
@@ -82,21 +81,15 @@ module Rendering
 
       code_start: erb(
         '
-        <%- if caption then -%>
-        #figure(
-          caption: [<%= caption %>],
-        ```<%= prog_lang %>
-        <%- else -%>
-        ```<%= prog_lang %>
-        <%- end -%>'
+        ```<%= prog_lang %>'
       ),
 
       code: erb(
-        '<%= content %>'
+        "<%= content %>"
       ),
 
       code_end: erb('
-       ```'),
+        ```'),
 
       table_start: erb(
         '
@@ -119,9 +112,14 @@ module Rendering
 
       image: erb(
         '
+         <%- if full_title.length > 0 then -%>
         #figure(
           image("<%= chosen_image %>", width: <%= width %>),
           caption: [<%= full_title %>],)
+        <%- else %>
+          #align(center,
+          image("<%= chosen_image %>", width: <%= width %>))
+        <%- end -%>
       '),
 
       multiple_choice_start: erb(""),
@@ -192,7 +190,6 @@ module Rendering
       @io << @templates[:ol_item].result(binding)
     end
 
-
     ##
     # Heading of a given level
     # @param [Fixnum] level heading level
@@ -252,36 +249,23 @@ module Rendering
     # @param [String] title title of image
     # @param [String] width_slide width for slide
     # @param [String] width_plain width for plain text
-    # @param [String] source source of the image
-    def image(location, formats, alt, title, width_slide, width_plain, source = nil)
-      chosen_image = choose_image(location, formats)
-
-      width_attr_plain = ''
-      width_attr_plain = " width='#{width_plain}'" if width_plain
-
-      width_attr_slide = ''
-      width_attr_slide = " width='#{width_slide}'" if width_slide
-
-      full_title = title
-
-      unless source.nil?
-        full_title << ', ' if !full_title.nil? && !full_title.empty?
-        full_title = "#{full_title}#{translate(:source)}#{source}"
-      end
-
-      width = width_slide # TODO: replace
-      @io << @templates[:image].result(binding)
+    # @param [String, nil] source source of the image
+    def image(location, formats, alt, title, width_slide,
+              width_plain, source = nil)
+      image_typst(location, formats, title, width_slide, source)
     end
+
     ##
     # Render an image
     # @param [String] location path to image
     # @param [String] title title of image
     # @param [String] width width for slide
     # @param [String|nil] source source of the image
-    def image_typst(location, title, width, source = nil)
+    def image_typst(location, formats, title, width, source = nil)
 
       stripped_location = location.gsub(/\.\.\\/, '')
 
+      chosen_image = choose_image(location, formats)
       full_title = title
 
       unless source.nil?
@@ -289,24 +273,7 @@ module Rendering
         full_title = "#{full_title}#{translate(:source)}#{source}"
       end
 
-      new_width = width ? calculate_width(width) : '\textwidth'
-
       @io << @templates[:image].result(binding)
-    end
-
-    ##
-    # Transform width given in % into a latex compatible format
-    # @param [String] width width in %, e.g. "80%"
-    def calculate_width(width)
-      new_width = width
-
-      if /%/ === new_width
-        new_width.delete!('%')
-        width_num = new_width.to_i / 100.0
-        new_width = "#{width_num}\\textwidth"
-      end
-
-      new_width
     end
   end
 end

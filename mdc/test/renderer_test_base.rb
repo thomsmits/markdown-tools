@@ -49,7 +49,9 @@ class RendererTestBase < Minitest::Test
   # @param [Rendering::Renderer] renderer renderer to use for the rendering
   # @param [String] prepend a text to place before input, e.g. the '# Chapter'
   def parse_and_render(input, renderer, prepend = '')
-    document = Domain::Document.new('Title')
+    document = Domain::Presentation.new('DE', 'Title1', 'Title2', 3, 'Section 3', '(c) 2014',
+                                        'Thomas Smits', 'java', 'Test Presentation', 'WS2014',
+                                        false, nil, nil)
     parser = Parsing::Parser.new(5, Parsing::ParserHandler.new(true))
     lines = lines(input)
     lines.prepend(prepend)

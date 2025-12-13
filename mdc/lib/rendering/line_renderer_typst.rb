@@ -11,6 +11,7 @@ module Rendering
       ['@', '\@'],
       ['$', '\$'],
       ['*', '\*'],
+      ['_', '\_'],
     ].freeze
 
     REPLACEMENTS = [
@@ -157,9 +158,11 @@ module Rendering
       ['\ddagger', 'dagger.double'],
       ['\ddots', 'dots.down'],
       ['\diamond', 'diamond'],
+      ['\displaystyle', ''],
       ['\div', 'div'],
       ['\divideontimes', 'times.div'],
       ['\dotplus', 'plus.dot'],
+      ['\dotsb', 'dots.c'],
       ['\ell', 'ell'],
       ['\emptyset', 'nothing'],
       ['\equiv', 'equiv'],
@@ -185,6 +188,8 @@ module Rendering
       ['\leqslant', 'lt.eq.slant'],
       ['\lhd', 'triangle.l'],
       ['\ll', 'lt.double'],
+      [/\\log\{(.*?)}/, 'log(\1)'],
+      [/\\log_(.)\{(.*?)}/, 'log_\1 (\2)'],
       ['\log{}', 'log'],
       ['\log', 'log'],
       ['\ltimes', 'times.l'],
@@ -243,7 +248,10 @@ module Rendering
       ['\subsetneq', 'subset.neq'],
       ['\succ', 'succ'],
       ['\succeq', 'succ.eq'],
+      [/\\sum_\{(.*?)}\^\{(.*?)}/, 'sum###\1###\2###'],
       ['\sum', 'sum'],
+      [/(\S)\^\{(.*?)}/, 'attach(\1, t:"\2")'],
+      [/(\S)_{(.*?)}/, 'attach(\1, b:"\2")'],
       ['\supsetneq', 'supset.neq'],
       ['\times', 'times'],
       ['\top', 'top'],
@@ -264,6 +272,7 @@ module Rendering
       [/\\mathbf\{(.*?)}/, 'upright(bold(\\1))'],
       [/\\mathcal\{(.*?)}/, 'cal(\\1)'],
       [/\\mathit\{(.*?)}/, 'italic(\\1)'],
+      [/\\frac\{(.*?)}\{(.*?)}/, 'frac(\\1, \\2)'],
       [/\\mathfrak\{(.*?)}/, 'frak(\\1)'],
       [/\\mathrm\{(.*?)}/, 'upright(\\1)'],
       [/\\mathsf\{(.*?)}/, 'sans(\\1)'],
@@ -280,9 +289,8 @@ module Rendering
       [/\\sqrt \{(.*?)}/, 'sqrt(\\1)'],
       [/\\text\{(.*?)}/, '"\\1"'],
       [/(\S)\\ /, '\1 '],
-      [/(\S)\^\{(.*?)}/, 'attach(\1, t:"\2")'],
-      [/(\S)_{(.*?)}/, 'attach(\1, b:"\2")'],
       ['\\\\', '\\'],
+      [/sum###(.*?)###(.*?)###/, 'sum_(\1)^(\2)'],
     ].freeze
 
     ##
@@ -330,7 +338,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_strongunderscore(content)
-      "#strong([#{content}])"
+      "#strong([#{content}])#marginale([#{content}])#index[#{content}]"
     end
 
     ##
@@ -338,7 +346,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_strongunderscorecode(content)
-      "#strong([`#{content}`])"
+      "#strong([`#{content}`])#marginale([`#{content}`])#index([`#{content}`])"
     end
 
     ##
@@ -386,7 +394,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_citation(content)
-      "@#{content}"
+      "#cite(<#{content}>)"
     end
 
     ##

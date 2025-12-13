@@ -5,7 +5,7 @@ module Domain
   # A single section of the document, e.g., a single slide in
   # the presentation.
   class Section < Container
-    attr_accessor :title, :id, :number, :skip, :footnotes
+    attr_accessor :title, :id, :number, :skip, :footnotes, :suppress_numbering
 
     ##
     # Create a new instance
@@ -13,13 +13,14 @@ module Domain
     # @param [String] title title of the section
     # @param [Fixnum] number number of the section
     # @param [Boolean] skip indicates a hidden section
-    def initialize(id, title, number, skip)
+    def initialize(id, title, number, skip, suppress_numbering = false)
       super()
       @title = title
       @id = id
       @number = number
       @skip = skip
       @footnotes = []
+      @suppress_numbering = suppress_numbering
     end
 
     ##
@@ -30,14 +31,14 @@ module Domain
 
       if other.handles_animation?
         (0...max_order + 1).each do |order|
-          other.section_start(@title, @number, @id, contains_code?)
+          other.section_start(@title, @number, @id, contains_code?, @suppress_numbering)
           @elements.each do |e|
             e >> other if !e.order.nil? && e.order <= order
           end
           other.section_end
         end
       else
-        other.section_start(@title, @number, @id, contains_code?)
+        other.section_start(@title, @number, @id, contains_code?, @suppress_numbering)
         @elements.each { |e| e >> other }
         @footnotes.each { |e| e >> other }
         other.section_end

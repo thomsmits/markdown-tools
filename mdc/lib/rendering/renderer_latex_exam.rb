@@ -131,7 +131,8 @@ module Rendering
     # @param [String] number the number of the section
     # @param [String] id the unique id of the section (for references)
     # @param [Boolean] contains_code indicates whether the section contains code fragments
-    def section_start(title, number, id, contains_code)
+    # @param [Boolean] suppress_numbering suppress numbering of chapters
+    def section_start(title, number, id, contains_code, suppress_numbering)
       super unless title == @last_title
     end
 
