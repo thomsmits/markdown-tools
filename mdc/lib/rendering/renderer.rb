@@ -18,7 +18,7 @@ module Rendering
                     .map { |e| e.length - e.lstrip.length }
                     .filter { |e| e != 0 }
                     .min
-      input.gsub(/^ {#{indent}}/, '') + "\n"
+      input.gsub(/^ {#{indent}}/, '')
     end
 
     ##

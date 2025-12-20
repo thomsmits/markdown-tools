@@ -1,0 +1,6 @@
+= Chapter
+== Slide
+
+- Die Bestellung lautet \ `100 Schokoriegel`
+- Die RSA-Signatur (SHA-1) in Base64: #link("https://test.com/courses/1964/modules/items/54797")[bestellung\_signatur.txt]
+- Der Public-Key von Alice ist: #link("https://test.com/courses/1964/modules/items/54796")[alice\_pub.txt]

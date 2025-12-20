@@ -12,48 +12,68 @@ module Rendering
     ## ERB templates to be used by the renderer
     TEMPLATES = {
       chapter_start: erb(
-        "= <%= line_renderer.render_text(title) %>\n"
+        '
+        = <%= line_renderer.render_text(title) %>
+        '
       ),
 
-      chapter_end: erb(''),
+      chapter_end: erb(
+        '
+        '),
 
       section_start: erb(
-        "== <%= line_renderer.render_text(title) %><<%= id %>>"
+        '
+        == <%= line_renderer.render_text(title) %>
+        '
       ),
 
-      section_end: erb(''),
+      section_end: erb(
+        '
+             '),
 
       heading_3: erb(
-        "=== <%= line_renderer.meta(title) %>"
+        '
+        === <%= line_renderer.render_text(title) %>
+        '
       ),
 
       heading_4: erb(
-        "==== <%= line_renderer.meta(title) %>"
+        '
+        ==== <%= line_renderer.render_text(title) %>
+        '
       ),
 
       vertical_space: erb(
-        '#v(4mm)'
+        '
+        #v(4mm)
+        '
       ),
 
       equation: erb(
-        '$ <%= line_renderer.formula(contents) %> $'
+        '
+        $ <%= line_renderer.formula(contents) %> $
+        '
       ),
 
-      ol_start: erb(""),
+      ol_start: erb('
+      '),
 
       ol_item: erb(
-        '<%= "  "*(@ol_level - 1) %><%= @ol_counter %>. <%= content %>'
+        '<%= "  "*(@ol_level - 1) %><%= @ol_counter %>. <%= content %>
+        '
       ),
 
-      ol_end: erb(""),
+      ol_end: erb(''),
 
-      ul_start: erb(""),
+      ul_start: erb('
+      '),
 
       ul_item: erb(
-        '<%= "  "*(@ul_level - 1) %>- <%= content %>'
+        '<%= "  "*(@ul_level - 1) %>- <%= content %>
+        '
       ),
 
-      ul_end: erb(""),
+      ul_end: erb(''),
 
       quote: erb(
         '<%- if with_source -%>
@@ -64,15 +84,21 @@ module Rendering
       ),
 
       important: erb(
-        "#important[<%= content %>]"
+        '
+        #important[<%= content %>]
+        '
       ),
 
       question: erb(
-        "#question[<%= content %>]"
+        '
+        #question[<%= content %>]
+        '
       ),
 
       box: erb(
-        "#block[<%= content %>]"
+        '
+        #block[<%= content %>]
+        '
       ),
 
       script: erb(
@@ -81,11 +107,12 @@ module Rendering
 
       code_start: erb(
         '
-        ```<%= prog_lang %>'
+        ```<%= prog_lang %>
+        '
       ),
 
       code: erb(
-        "<%= content %>"
+        '<%= content %>'
       ),
 
       code_end: erb('
@@ -108,29 +135,30 @@ module Rendering
         "\n)\n]\n"
       ),
 
-      text: erb("<%= content %>"),
+      text: erb('<%= content %>'),
 
       image: erb(
         '
          <%- if full_title.length > 0 then -%>
         #figure(
           image("<%= chosen_image %>", width: <%= width %>),
-          caption: [<%= full_title %>],)
+          caption: [<%= line_renderer.meta(full_title) %>],)
         <%- else %>
           #align(center,
           image("<%= chosen_image %>", width: <%= width %>))
         <%- end -%>
       '),
 
-      multiple_choice_start: erb(""),
+      multiple_choice_start: erb(''),
 
-      multiple_choice_end: erb(""),
+      multiple_choice_end: erb(''),
 
       multiple_choice: erb(
         "- <%= if correct then '[X]' else '[ ]' end %> <%= text %>"
       ),
 
-      input_question: erb(%q|<%= translate(:answer) %>: ..........|),
+      input_question: erb('<%= translate(:answer) %>: ..........
+      '),
 
       footnote: erb(''),
 
@@ -167,7 +195,6 @@ module Rendering
         caption_command = ''
       else
         replaced_caption = line_renderer.meta(caption)
-        caption_command = "title={\\fontfamily{phv}\\selectfont\\textbf{#{replaced_caption}}},aboveskip=-0.4 \\baselineskip,"
       end
 
       @io << @templates[:code_start].result(binding)
@@ -263,7 +290,7 @@ module Rendering
     # @param [String|nil] source source of the image
     def image_typst(location, formats, title, width, source = nil)
 
-      stripped_location = location.gsub(/\.\.\\/, '')
+      stripped_location = location.gsub(/\.\.\//, '')
 
       chosen_image = choose_image(location, formats)
       full_title = title

@@ -495,7 +495,7 @@ module Parsing
           # This is the footnote text, not the reference in the text
           ps.slide.add_footnote(e)
         elsif e.instance_of?(Domain::Link)
-          # This is a reference style link, not the reference in ths text
+          # This is a reference style link, not the reference in the text
           ps.chapter.add_link(e)
         else
           slide(ps) << e
@@ -632,12 +632,10 @@ module Parsing
       dir = Dir.new(dirname)
 
       dir.each do |f|
-        if f.start_with?(basename)
-          /.*?\.([a-zA-Z]{3,4})/ =~ f
+        if /#{basename}\.([a-zA-Z]{3,4})/ =~ f
           extensions << Regexp.last_match(1)
         end
       end
-
       extensions
     end
 

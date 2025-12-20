@@ -15,12 +15,27 @@ module Rendering
     ].freeze
 
     REPLACEMENTS = [
-      [/([^<]|^)<->(\s|\))/,  '\1#sym.arrow.l.r\2'],
-      [/([^<]|^)<=>(\s|\))/,  '\1#sym.arrow.l.r.double\2'],
-      [/([^<]|^)->(\s|\))/,   '\1#sym.arrow.r\2'],
-      [/([^<]|^)=>(\s|\))/,   '\1#sym.arrow.r.double\2'],
-      [/([^<]|^)<-(\s|\))/,   '\1#sym.arrow.l\2'],
-      [/([^<]|^)<=(\s|\))/,   '\1#sym.arrow.l.double\2'],
+      ['Z.B.',                "Z.\u2009B."],
+      ['z.B.',                "z.\u2009B."],
+      ['D.h.',                "D.\u2009h."],
+      ['d.h.',                "d.\u2009h."],
+      ['u.a.',                "u.\u2009a."],
+      ['u.ä.',                "u.\u2009ä."],
+      ['s.u.',                "s.\u2009u."],
+      ['s.o.',                "s.\u2009o."],
+      ['u.U.',                "u.\u2009U."],
+      ['i.e.',                "i.\u2009e."],
+      ['e.g.',                "e.\u2009g."],
+      ['o.O.',                "o.\u2009O."],
+      ['o.ä.',                "o.\u2009ä."],
+      ['o.J.',                "o.\u2009J."],
+
+      [/([^<]|^)<->(\s|\))/,  '\1⟷\2'],
+      [/([^<]|^)<=>(\s|\))/,  '\1⇔\2'],
+      [/([^<]|^)->(\s|\))/,   '\1➛\2'],
+      [/([^<]|^)=>(\s|\))/,   '\1⇒\2'],
+      [/([^<]|^)<-(\s|\))/,   '\1←\2'],
+      [/([^<]|^)<=(\s|\))/,   '\1⇐\2'],
     ].freeze
 
     FORMULA_REPLACEMENTS = [
@@ -288,7 +303,9 @@ module Rendering
       [/\\sqrt\{(.*?)}/, 'sqrt(\\1)'],
       [/\\sqrt \{(.*?)}/, 'sqrt(\\1)'],
       [/\\text\{(.*?)}/, '"\\1"'],
+      [/\\begin\{cases}(.*?)\\\\(.*?)\\end\{cases}/m, 'cases(\1, \2)'],
       [/\\begin\{cases}(.*?)\\end\{cases}/m, 'cases(\1)'],
+      [/\\begin\{pmatrix}(.*?)\\end\{pmatrix}/m, 'mat(\1)'],
       [/\\begin\{bmatrix}(.*?)\\end\{bmatrix}/m, 'mat(\1)'],
       [/(\S)\\ /, '\1 '],
       ['\\\\', '\\'],
@@ -405,10 +422,10 @@ module Rendering
     # @return [String] rendered version of the content
     def render_link(content, target, title)
       if title.nil?
-        %{#link("#{meta(target)}")[#{meta(content)}]}
+        %{#link("#{meta(target)}")[#{content}]}
       else
         # TODO: #{title} is missing
-        %{#link("#{meta(target)}")[#{meta(content)}]}
+        %{#link("#{meta(target)}")[#{content}]}
       end
     end
 

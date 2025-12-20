@@ -11,7 +11,8 @@ module Rendering
     TEMPLATES = {
       chapter_start: erb(
         '#v(1.0em)
-              == <%= line_renderer.render_text(title) %>'),
+              == <%= line_renderer.render_text(title) %>
+              '),
 
       section_start: erb(
         "<%- if suppress_numbering -%>
@@ -42,11 +43,15 @@ module Rendering
       presentation_end: erb(''),
 
       heading_3: erb(
-        %Q|==== <%= line_renderer.meta(title) %> <nonum-sec>|
+        '
+        ==== <%= line_renderer.meta(title) %> <nonum-sec>
+        '
       ),
 
       heading_4: erb(
-        %q|===== <%= line_renderer.meta(title) %>|
+        '
+        ===== <%= line_renderer.meta(title) %>
+        '
       ),
 
     }.freeze

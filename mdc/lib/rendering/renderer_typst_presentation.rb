@@ -20,33 +20,43 @@ module Rendering
             author: " <%= author %>",
             ratio: 16/9,
             count: "number",
-            title-color: blau,
+            title-color: color_accent1,
       )'
       ),
 
+      section_start: erb(
+        '
+        == <%= line_renderer.render_text(title) %><<%= id %>>
+        '
+      ),
+
       comment_start: erb(
-        "/*"
+        '/*
+        '
       ),
 
       comment_end: erb(
-        '*/'
+        '
+        */
+        '
       ),
 
       image: erb(
         '
           #align(center)[
             #image("<%= chosen_image %>", width: <%= width %>)
-            #v(-0.4em)
-            #text(size: 6pt, fill: mittelgrau)[<%= full_title %>]#v(-0.4em)
+            #v(-0.95em)
+            #text(size: 6pt, fill: color_accent4)[<%= line_renderer.meta(full_title) %>]#v(-0.4em)
           ]
       '),
 
       code_start: erb(
         '
       <%- if caption then -%>
-      #text(size: 8pt, fill: mittelgrau, weight: "bold")[<%= caption %>]#v(-0.7em)
+      #text(size: 8pt, fill: color_accent4, weight: "bold")[<%= caption %>]#v(-0.7em)
       <%- end -%>
-      ```<%= prog_lang %>'
+      ```<%= prog_lang %>
+      '
         ),
     }.freeze
 
@@ -75,7 +85,7 @@ module Rendering
     # @param [String] width_slide width for slide
     # @param [String] source source of the image
     def image(location, formats, _alt, title, width_slide, _width_plain, source = nil)
-      calculated_width = ((width_slide.gsub('%', '').to_i / 100.0) * 16).to_s + "cm"
+      calculated_width = ((width_slide.gsub('%', '').to_i / 100.0) * 17).to_s + "cm"
       image_typst(location, formats, title, calculated_width, source)
     end
   end

@@ -66,6 +66,13 @@ module Rendering
       matching_question: erb(" =<%= left %> -> <%= right %><%= ' ' -%>")
     }.freeze
 
+    ##
+    # Remove all trailing spaces on all lines of the string
+    # @param [String] input the input string
+    def self.clean(input)
+      super.clean(input).strip
+    end
+
     def nl
       ''
     end
