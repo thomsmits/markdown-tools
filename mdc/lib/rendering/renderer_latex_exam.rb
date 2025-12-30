@@ -148,7 +148,7 @@ module Rendering
       width = width_plain || width_slide
 
       # Skip images with width 0
-      return if /^0$/ === width_plain || /^0%$/ === width_plain
+      return if /^0$/ =~ width_plain || /^0%$/ =~ width_plain  || width_plain.nil?
 
       image_latex(location, title, width, source)
     end

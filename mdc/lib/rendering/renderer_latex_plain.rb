@@ -220,7 +220,7 @@ module Rendering
     # @param [String] source source of the image
     def image(location, _formats, _alt, title, _width_slide, width_plain, source = nil)
       # Skip images with width 0
-      return if /^0$/ === width_plain || /^0%$/ === width_plain
+      return if /^0$/ =~ width_plain || /^0%$/ =~ width_plain || width_plain.nil?
 
       image_latex(location, title, width_plain, source)
     end

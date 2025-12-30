@@ -276,7 +276,7 @@ module Rendering
 
         text = e
 
-        if /\\newline/ === text
+        if /\\newline/ =~ text
           text = "\\specialcell[t]{#{text}}"
           text.gsub!(/\\newline/, '\\\\\\\\')
         end
@@ -316,7 +316,7 @@ module Rendering
     def calculate_width(width)
       new_width = width
 
-      if /%/ === new_width
+      if /%/ =~ new_width
         new_width.delete!('%')
         width_num = new_width.to_i / 100.0
         new_width = "#{width_num}\\textwidth"
