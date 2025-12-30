@@ -74,8 +74,9 @@ module Rendering
     # @param [String] source source of the image
     def image(location, formats, _alt, title, _width_slide, width_plain, source = nil)
       # Skip images with width 0
-      return if /^0$/ === width_plain || /^0%$/ === width_plain
-      calculated_width = ((width_plain.gsub('%', '').to_i / 100.0) * 14.5).to_s + "cm"
+      return if /^0$/ =~ width_plain || /^0%$/ =~ width_plain || width_plain.nil?
+
+      calculated_width = "#{(width_plain.gsub('%', '').to_i / 100.0) * 14.5}cm"
       image_typst(location, formats, title, calculated_width, source)
     end
 

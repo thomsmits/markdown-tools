@@ -131,6 +131,7 @@ class MarkdownLineTest < Minitest::Test
 
     assert(line('![](img/royal-baby)/40%/').image?)
     assert(line('![Royal Baby](img/royal-baby)/40%/').image?)
+    assert(line('![Royal Baby](img/royal-baby)/40%//0/').image?)
     assert(line('![Royal Baby](img/royal-baby "The Royal Baby")/40%/').image?)
 
     assert(line('![](img/royal-baby)/40%//30%/').image?)

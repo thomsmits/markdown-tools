@@ -53,7 +53,7 @@ module Rendering
       code_start: erb(
         '
       <%- if caption then -%>
-      #text(size: 8pt, fill: color_accent4, weight: "bold")[<%= caption %>]#v(-0.7em)
+      #text(size: 8pt, fill: color_accent4, weight: "bold")[<%= line_renderer.meta(caption) %>]#v(-0.7em)
       <%- end -%>
       ```<%= prog_lang %>
       '
