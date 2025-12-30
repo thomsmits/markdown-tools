@@ -242,7 +242,7 @@ module Rendering
         column_line << 'auto, '
       end
 
-      header_line = headers.map { |e| "[*#{line_renderer.meta(e)}*]" }.join(", ")
+      header_line = headers.map { |e| "[*#{e}*]" }.join(", ")
       @io << @templates[:table_start].result(binding)
     end
 
