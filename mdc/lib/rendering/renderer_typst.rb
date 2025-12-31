@@ -59,7 +59,7 @@ module Rendering
       '),
 
       ol_item: erb(
-        '<%= "  "*(@ol_level - 1) %><%= @ol_counter %>. <%= content %>
+        '<%= "  "*(@ul_level + @ol_level - 1) %><%= @ol_counter %>. <%= content %>
         '
       ),
 
@@ -69,7 +69,7 @@ module Rendering
       '),
 
       ul_item: erb(
-        '<%= "  "*(@ul_level - 1) %>- <%= content %>
+        '<%= "  "*(@ul_level + @ol_level - 1) %>- <%= content %>
         '
       ),
 

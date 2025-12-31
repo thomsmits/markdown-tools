@@ -14,6 +14,7 @@ module Rendering
       ['_', '\_'],
       ['<', '\<'],
       ['>', '\>'],
+      [/([0-9]+)\./, '\1\\.'],
     ].freeze
 
     REPLACEMENTS = [
