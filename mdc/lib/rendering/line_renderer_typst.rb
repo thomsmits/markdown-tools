@@ -32,12 +32,12 @@ module Rendering
       ['o.O.',                "o.\u2009O."],
       ['o.ä.',                "o.\u2009ä."],
       ['o.J.',                "o.\u2009J."],
-      [/([^<]|^)\\<-\\>(\s|\))/,  '\1⟷\2'],
-      [/([^<]|^)\\<=\\>(\s|\))/,  '\1⇔\2'],
-      [/([^<]|^)-\\>(\s|\))/,   '\1➛\2'],
-      [/([^<]|^)=\\>(\s|\))/,   '\1⇒\2'],
-      [/([^<]|^)\\<-(\s|\))/,   '\1←\2'],
-      [/([^<]|^)\\<=(\s|\))/,   '\1⇐\2'],
+      [/([^<]|^)\\<-\\>(\s|\))/,   '\1⟷\2'],
+      [/([^<]|^)\\<=\\>(\s|\))/,   '\1⇔\2'],
+      [/([^<]|^)-\\>(\s|\))/,      '\1➛\2'],
+      [/([^<]|^)=\\>(\s|\))/,      '\1⇒\2'],
+      [/([^<]|^)\\<-(\s|\))/,      '\1←\2'],
+      [/([^<]|^)\\<=(\s|\))/,      '\1⇐\2'],
     ].freeze
 
     FORMULA_REPLACEMENTS = [
@@ -371,7 +371,7 @@ module Rendering
     # @param [String] content contents of the node
     # @return [String] rendered version of the content
     def render_strongunderscorecode(content)
-      "#strong([`#{content}`])#marginale([`#{content}`])#index([`#{content}`])"
+      "`#{content}`#marginale([`#{content}`])#index([`#{content}`])"
     end
 
     ##

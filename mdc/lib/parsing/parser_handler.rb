@@ -345,6 +345,9 @@ module Parsing
     def table(ps, line)
       # remove quoted table separators
       cleaned_line = line.string.gsub('\|', '~~pipe~~')
+      # Hack for special case of `|` or `||` in Table
+      cleaned_line = cleaned_line.gsub('`|`', '`~~pipe~~`')
+      cleaned_line = cleaned_line.gsub('`||`', '`~~pipe~~~~pipe~~`')
 
       if !ps.table?
         table = Domain::Table.new

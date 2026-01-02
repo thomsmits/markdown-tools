@@ -60,6 +60,7 @@ module Rendering
       ['∧',                   '\begin{math}\wedge\end{math}'],
       ['⊆',                   '\begin{math}\subseteq\end{math}'],
       ['⊈',                   '\begin{math}\nsubseteq\end{math}'],
+      ['≠',                   '\begin{math}\ne\end{math}'],
 
       # Abbreviations
       ['Z.B.',                'Z.\,B.'],
