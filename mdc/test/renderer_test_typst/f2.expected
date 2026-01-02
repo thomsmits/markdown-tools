@@ -1,0 +1,23 @@
+= Chapter
+== Slide
+
+#align(center)[
+#table(
+  columns: (auto, auto, ),
+  align: (left, left, ),
+  table.header([*Assoziativität*], [*Operator*]),  [ R to L ],[ `++` `--` `+` `-` `~` `!` `(data type)` ],
+  [ L to R ],[ `*` `/` `%` ],
+  [ L to R ],[ `+` `-` ],
+  [ L to R ],[ `<<` `>>` `>>>` ],
+  [ L to R ],[ `<` `>` `<=` `>=` `instanceof` ],
+  [ L to R ],[ `!` `==` ],
+  [ L to R ],[ `&` ],
+  [ L to R ],[ `^` ],
+  [ L to R ],[ `|` ],
+  [ L to R ],[ `&&` ],
+  [ L to R ],[ `||` ],
+  [ R to L ],[ `?:` ],
+  [ R to L ],[ `*=` `/=` `%=` `+=` `-=` ... ],
+
+)
+]

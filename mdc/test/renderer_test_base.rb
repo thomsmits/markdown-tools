@@ -9,10 +9,16 @@ require_relative '../lib/parsing/parser_handler'
 class RendererTestBase < Minitest::Test
 
   ##
+  # Initialize test
+  def initialize(name = nil)
+    super(name || self.class.name)
+  end
+
+  ##
   # Determine the base path of this file.
   # @return [String] path pointing to this file
   def base_path
-    raise RuntimeError.new("Overwrite this method!")
+    raise RuntimeError.new('Overwrite this method!')
   end
 
   ##
@@ -72,12 +78,12 @@ class RendererTestBase < Minitest::Test
     execute_for_all_files(base_path) do |md_name|
       md = File.read(base_path + md_name)
 
-      result_file = base_path + File.basename(md_name, ".*") + ".expected"
+      result_file = "#{base_path}#{File.basename(md_name, '.*')}.expected"
       result = parse_and_render(md, renderer)
 
       puts result if print_result
 
-      result = result.gsub("\n", "").gsub(' ', '')
+      result = result.gsub("\n", '').gsub(' ', '')
 
       expected = if File.exist?(result_file)
                    File.read(result_file)
@@ -85,7 +91,7 @@ class RendererTestBase < Minitest::Test
                    md
                  end
 
-      assert_equal(expected.gsub("\n", "").gsub(' ', ''), result, "Error in file #{md_name}")
+      assert_equal(expected.gsub("\n", '').gsub(' ', ''), result, "Error in file #{md_name}")
     end
   end
 end
