@@ -428,10 +428,10 @@ module Rendering
     # @return [String] rendered version of the content
     def render_link(content, target, title)
       if title.nil?
-        %{#link("#{target}")[#{meta(content)}]}
+        %{#link("#{target}")[#{content}]}
       else
         # TODO: #{title} is missing
-        %{#link("#{target}")[#{meta(content)}]}
+        %{#link("#{target}")[#{content}]}
       end
     end
 
