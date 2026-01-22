@@ -55,6 +55,7 @@ module Rendering
         '<div class="fw-300 fs-3"><%= caption_command %></div>
         {% raw  %}
         ```<%= prog_lang %>
+
         '
       ),
 
@@ -63,7 +64,8 @@ module Rendering
       ),
 
       code_end: erb(
-        '```
+        '
+        ```
         {% endraw %}
         '
       ),
