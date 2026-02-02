@@ -116,7 +116,8 @@ module Rendering
       ),
 
       code_end: erb('
-        ```'),
+        ```
+        '),
 
       table_start: erb(
         '

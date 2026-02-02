@@ -20,7 +20,6 @@ module Rendering
             author: " <%= author %>",
             ratio: 16/9,
             count: "number",
-            title-color: color_accent1,
       )'
       ),
 

@@ -29,7 +29,8 @@ module Rendering
       <%- if caption then -%>
       #text(size: 9pt, fill: mittelgrau, font: "Liberation Sans", weight: "bold")[🖹 <%= line_renderer.meta(caption) %>]#v(-0.6em)
       <%- end -%>
-      ```<%= prog_lang %>'
+      ```<%= prog_lang %>
+      '
       ),
 
       chapter_end: erb(''),
