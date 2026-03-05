@@ -10,6 +10,7 @@ module Rendering
     TEMPLATES = {
       presentation_start: erb(
         '#include "slide-template.typst"
+
           #show: slides.with(
             title: "<%= title1 %>",
             subtitle: "<%= title2 %>",
@@ -20,6 +21,10 @@ module Rendering
             author: " <%= author %>",
             ratio: 16/9,
             count: "number",
+          <%- unless bibliography.nil? -%>
+            bib: "<%= bibliography %>",
+          <%- end -%>
+
       )'
       ),
 
