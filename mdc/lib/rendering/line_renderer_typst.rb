@@ -47,7 +47,9 @@ module Rendering
       ['\delta', 'delta'],
       ['\epsilon', 'epsilon.alt'],
       ['\zeta', 'zeta'],
+      ['\Zeta', 'Zeta'],
       ['\eta', 'eta'],
+      ['\Eta', 'Eta'],
       ['\theta', 'theta'],
       ['\iota', 'iota'],
       ['\kappa', 'kappa'],
@@ -270,9 +272,8 @@ module Rendering
       ['\succ', 'succ'],
       ['\succeq', 'succ.eq'],
       [/\\sum_\{(.*?)}\^\{(.*?)}/, 'sum###\1###\2###'],
+      [/\\sum_\{(.*?)}/, 'sum###\1###'],
       ['\sum', 'sum'],
-      [/(\S)\^\{(.*?)}/, 'attach(\1, t:"\2")'],
-      [/(\S)_{(.*?)}/, 'attach(\1, b:"\2")'],
       ['\supsetneq', 'supset.neq'],
       ['\times', 'times'],
       ['\top', 'top'],
@@ -288,6 +289,8 @@ module Rendering
       ['\vee', 'or'],
       ['\wedge', 'and'],
       ['\wr', 'wreath'],
+      [/(\S*)\^\{(.*?)}/, 'attach("\1", t:"\2")'],
+      [/(\S*)_{(.*?)}/, 'attach("\1", b:"\2")'],
       [/^([0-9a-zA-Z]*)/, '#super[\\1]'],
       [/\\boldsymbol\{(.*?)}/, 'bold(\\1)'],
       [/\\mathbb\{(.*?)}/, '\\1\\1'],
@@ -317,6 +320,7 @@ module Rendering
       [/(\S)\\ /, '\1 '],
       ['\\\\', '\\'],
       [/sum###(.*?)###(.*?)###/, 'sum_(\1)^(\2)'],
+      [/sum###(.*?)###/, 'sum_(\1)'],
     ].freeze
 
     ##

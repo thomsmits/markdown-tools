@@ -136,8 +136,7 @@ module Rendering
         "\n)\n]\n"
       ),
 
-      text: erb('<%= content %>
-      '),
+      text: erb('<%= content %>'),
 
       image: erb(
         '
