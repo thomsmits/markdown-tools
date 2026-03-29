@@ -1,9 +1,5 @@
-# Markdown Tools
+# Repository moved to Codeberg
 
-## Purpose
+Due to GitHub's AI policy changes and the permanent nudges to use Copilot for my coding, I decided to move away all my repositories from GitHub :broken_heart:. After 16 years on this platform it is time to say goodbye :disappointed:.
 
-I am a big fan of Markdown and I am currently changing all my workflows to use markdown as the only source and several tools to compile the Markdown input into the desired target formats.
-
-Due to my job, I am performing lots of lectures regarding programming topics. For these, I need presentation slides and text documents containing the contents of the slides plus additional information.
-
-See the readme files in the sub projects for details.
+The tools are still under active development and can now be found at Codeberg: [https://codeberg.org/thomsmits/markdown-tools](https://codeberg.org/thomsmits/markdown-tools)
